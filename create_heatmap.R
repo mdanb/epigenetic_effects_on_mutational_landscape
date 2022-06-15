@@ -177,6 +177,12 @@ lapply(seq_along(per_tissue_cor), create_per_tissue_heatmap,
        n=names(per_tissue_cor),
        normalize=F)
 
+# Correlation analysis between num mutation and average correlation 
+tot_mutations_per_cancer_type = colSums(mut_count_data, na.rm = T)
+cor(t(correlations), tot_mutations_per_cancer_type)
+mean(cor(t(correlations), tot_mutations_per_cancer_type))
+
+
 # polak_combined_count_overlaps = data.frame()
 # if (!file.exists("polak_count_overlap_data/polak_combined_count_overlaps.rds")) {
 #   polak_combined_count_overlaps = data.frame()
