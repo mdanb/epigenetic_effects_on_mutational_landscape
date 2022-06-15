@@ -1,2 +1,4 @@
 count_overlap_data/
 raw_dir/
+figures/
+.Rhistory
