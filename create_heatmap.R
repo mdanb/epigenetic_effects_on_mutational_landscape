@@ -17,6 +17,8 @@ if (length(args) != 1) {
   CELL_NUMBER_FILTER = args[1]
 } 
 
+dir.create("figures") 
+
 get_tissue_name <- function(filename) {
   if (grepl("frontal_cortex", file)) {
     tissue_name = "frontal_cortex"
@@ -31,6 +33,23 @@ get_tissue_name <- function(filename) {
   return(tissue_name)
 }
 
+create_per_tissue_heatmap <- function(cor_df, n, i, normalize) {
+  tissue = n[i]
+  tissue = gsub(" ", "_", tolower(tissue), )
+  heatmap_filename = tissue
+  correlations = cor_df[[i]]
+  if (normalize) {
+    correlations = t(scale(t(correlations)))
+    heatmap_filename = paste(heatmap_filename, "normalized", sep="_")
+  }
+
+  path = paste("figures/per_tissue_heatmaps/", heatmap_filename, ".pdf", sep="")
+  pdf(path)
+  h = Heatmap(correlations, row_names_gp = gpar(fontsize = 8),
+                            column_names_gp = gpar(fontsize = 6))
+  print(h)
+  dev.off()
+}
 # get all mutations, without distinctions e.g clonal vs subclonal 
 mut = mut[, 1:37]
 
@@ -84,20 +103,79 @@ if (!file.exists(combined_filepath)) {
   saveRDS(combined_count_overlaps, combined_filepath)
 }
 
-# tissue_specific_counts = list()
-# for (file in list.files("count_overlap_data", pattern=pattern, 
-#                         full.names = TRUE)) {
-#   count_overlaps = readRDS(file)
-#   tissue_name <- get_tissue_name(file)
-# 
-#   count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
-#                                  row.names = paste(tissue_name,
-#                                                    names(count_overlaps)))
-#   tissue_specific_counts[[tissue_name]] = append(
-#                                           tissue_specific_counts[[tissue_name]],
-#                                           count_overlaps)
-# }
+combined_filepath = paste("count_overlap_data/processed_count_overlaps/", 
+                          "count_filter_",
+                          100, 
+                          "_combined_count_overlaps.rds", sep="")
 
+combined_count_overlaps = t(readRDS(combined_filepath))
+
+correlations = cor(combined_count_overlaps, mut_count_data, use="complete.obs")
+correlations = t(scale(t(correlations)))
+# correlations = scale(correlations)
+
+write.csv(correlations, "all_corrs.csv")
+
+#png(file="/home/mdanb/research/mount_sinai/bing_ren/corrs.png")
+pdf ("/home/mdanb/research/mount_sinai/bing_ren/corrs.pdf", width = 10, height = 30)
+h = Heatmap(correlations,
+            row_names_gp = gpar(fontsize = 6),
+            column_names_gp = gpar(fontsize = 6),height=18,
+)
+print(h)
+dev.off()
+
+
+tissue_specific_counts_path = "count_overlap_data/processed_count_overlaps/tissue_specific_counts_list.rds"
+tissue_specific_counts = list()
+
+if (!file.exists(tissue_specific_counts_path)) {
+  for (file in list.files("count_overlap_data", pattern=pattern,
+                          full.names = TRUE)) {
+    count_overlaps = readRDS(file)
+    tissue_name <- get_tissue_name(file)
+    
+    count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
+                                   row.names = paste(tissue_name,
+                                   names(count_overlaps)))
+    if (dim(count_overlaps)[1] != 0) {
+      if (!tissue_name %in% names(tissue_specific_counts)) {
+        tissue_specific_counts[[tissue_name]] = count_overlaps
+      }
+      else {
+        for (row in 1:nrow(count_overlaps)) {
+          current_cell_subtype = rownames(count_overlaps)[row]
+          current_tissue_counts = tissue_specific_counts[[tissue_name]]
+          if(current_cell_subtype %in% 
+            rownames(current_tissue_counts)) {
+            idx = match(current_cell_subtype, rownames(current_tissue_counts)) 
+            tissue_specific_counts[[tissue_name]][idx, ] = current_tissue_counts[idx, ] +
+                                                           count_overlaps[row, ]
+          }
+          else {
+            tissue_specific_counts[[tissue_name]][current_cell_subtype, ] = 
+              count_overlaps[row, ]
+          }
+        }
+      }
+    }
+  }
+  saveRDS(tissue_specific_counts, tissue_specific_counts_path)
+}
+
+tissue_specific_counts = readRDS("count_overlap_data/processed_count_overlaps/tissue_specific_counts_list.rds")
+tissue_specific_counts = lapply(tissue_specific_counts, t)
+per_tissue_cor = lapply(tissue_specific_counts, cor, mut_count_data, use="complete.obs")
+
+dir.create("figures/per_tissue_heatmaps")
+lapply(seq_along(per_tissue_cor), create_per_tissue_heatmap, 
+       cor_df=per_tissue_cor, 
+       n=names(per_tissue_cor),
+       normalize=T)
+lapply(seq_along(per_tissue_cor), create_per_tissue_heatmap, 
+       cor_df=per_tissue_cor, 
+       n=names(per_tissue_cor),
+       normalize=F)
 
 # polak_combined_count_overlaps = data.frame()
 # if (!file.exists("polak_count_overlap_data/polak_combined_count_overlaps.rds")) {
@@ -134,20 +212,3 @@ if (!file.exists(combined_filepath)) {
 #   }
 #   saveRDS(combined_count_overlaps, "count_overlap_data/combined_count_overlaps.rds")
 # }
-
-
-combined_count_overlaps = t(readRDS(combined_filepath))
-
-correlations = cor(combined_count_overlaps, mut_count_data, use="complete.obs")
-correlations = t(scale(t(correlations)))
-
-write.csv(correlations, "all_corrs.csv")
-
-
-png(file="/home/mdanb/research/mount_sinai/bing_ren/corrs.png")
-h = Heatmap(correlations,
-        row_names_gp = gpar(fontsize = 4),
-        column_names_gp = gpar(fontsize = 6))
-
-dev.off()
-
