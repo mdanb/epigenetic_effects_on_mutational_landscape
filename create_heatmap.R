@@ -1,13 +1,9 @@
 library(stringr)
 library(ComplexHeatmap)
 
-# proj_dir = '/ahg/regevdata/projects/ICA_Lung/Bruno/celloforigin_prj/'
-# mut = readRDS(paste0(proj_dir, 'mutations.aggregated.PCAWG.RK.20181215.Rds'))
-# load('/ahg/regevdata/projects/ICA_Lung/Bruno/celloforigin_prj/hg19.1Mb.ranges.Polak.Nature2015.RData')
-# interval.ranges
-
-mut = readRDS('mutations.aggregated.PCAWG.RK.20181215.Rds')
-load('hg19.1Mb.ranges.Polak.Nature2015.RData')
+proj_dir = '/ahg/regevdata/projects/ICA_Lung/Bruno/celloforigin_prj/'
+mut = readRDS(paste0(proj_dir, 'mutations.aggregated.PCAWG.RK.20181215.Rds'))
+load('/ahg/regevdata/projects/ICA_Lung/Bruno/celloforigin_prj/hg19.1Mb.ranges.Polak.Nature2015.RData')
 interval.ranges
 
 args = commandArgs(trailingOnly=TRUE)
@@ -33,22 +29,33 @@ get_tissue_name <- function(filename) {
   return(tissue_name)
 }
 
-create_per_tissue_heatmap <- function(cor_df, n, i, normalize) {
+save_heatmap_file <- function(path, df) {
+  pdf(path)
+  h = Heatmap(df, row_names_gp = gpar(fontsize = 8),
+  	      column_names_gp = gpar(fontsize = 6))
+  print(h)
+  dev.off()
+}
+
+create_per_tissue_heatmap <- function(cor_df, n, i) {
   tissue = n[i]
   tissue = gsub(" ", "_", tolower(tissue), )
   heatmap_filename = tissue
   correlations = cor_df[[i]]
-  if (normalize) {
-    correlations = t(scale(t(correlations)))
-    heatmap_filename = paste(heatmap_filename, "normalized", sep="_")
-  }
-
+  
   path = paste("figures/per_tissue_heatmaps/", heatmap_filename, ".pdf", sep="")
-  pdf(path)
-  h = Heatmap(correlations, row_names_gp = gpar(fontsize = 8),
-                            column_names_gp = gpar(fontsize = 6))
-  print(h)
-  dev.off()
+  save_heatmap_file(path, correlations) 
+  
+  correlations_rowwise = t(scale(t(correlations)))
+  correlations_columnwise = scale(correlations)
+  row_heatmap_filename = paste(heatmap_filename, "row_normalized", sep="_")
+  column_heatmap_filename = paste(heatmap_filename, "column_normalized", sep="_")
+  
+  row_path = paste("figures/per_tissue_heatmaps/", row_heatmap_filename, ".pdf", sep="")
+  column_path = paste("figures/per_tissue_heatmaps/", column_heatmap_filename, ".pdf", sep="")
+
+  save_heatmap_file(row_path, correlations_rowwise)
+  save_heatmap_file(column_path, correlations_columnwise)
 }
 # get all mutations, without distinctions e.g clonal vs subclonal 
 mut = mut[, 1:37]
@@ -114,16 +121,16 @@ correlations = cor(combined_count_overlaps, mut_count_data, use="complete.obs")
 correlations = t(scale(t(correlations)))
 # correlations = scale(correlations)
 
-write.csv(correlations, "all_corrs.csv")
+#write.csv(correlations, "all_corrs.csv")
 
 #png(file="/home/mdanb/research/mount_sinai/bing_ren/corrs.png")
-pdf ("/home/mdanb/research/mount_sinai/bing_ren/corrs.pdf", width = 10, height = 30)
-h = Heatmap(correlations,
-            row_names_gp = gpar(fontsize = 6),
-            column_names_gp = gpar(fontsize = 6),height=18,
-)
-print(h)
-dev.off()
+#pdf ("/home/mdanb/research/mount_sinai/bing_ren/corrs.pdf", width = 10, height = 30)
+#h = Heatmap(correlations,
+#            row_names_gp = gpar(fontsize = 6),
+#            column_names_gp = gpar(fontsize = 6),height=18,
+#)
+#print(h)
+#dev.off()
 
 
 tissue_specific_counts_path = "count_overlap_data/processed_count_overlaps/tissue_specific_counts_list.rds"
@@ -170,12 +177,7 @@ per_tissue_cor = lapply(tissue_specific_counts, cor, mut_count_data, use="comple
 dir.create("figures/per_tissue_heatmaps")
 lapply(seq_along(per_tissue_cor), create_per_tissue_heatmap, 
        cor_df=per_tissue_cor, 
-       n=names(per_tissue_cor),
-       normalize=T)
-lapply(seq_along(per_tissue_cor), create_per_tissue_heatmap, 
-       cor_df=per_tissue_cor, 
-       n=names(per_tissue_cor),
-       normalize=F)
+       n=names(per_tissue_cor))
 
 # polak_combined_count_overlaps = data.frame()
 # if (!file.exists("polak_count_overlap_data/polak_combined_count_overlaps.rds")) {
