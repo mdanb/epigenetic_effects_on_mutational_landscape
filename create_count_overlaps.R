@@ -13,7 +13,7 @@ if (length(args) != 1) {
 } 
 
 #load('/ahg/regevdata/projects/ICA_Lung/Bruno/celloforigin_prj/hg19.1Mb.ranges.Polak.Nature2015.RData')
-load('hg19.1Mb.ranges.Polak.Nature2015.RData')
+load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 
 interval.ranges                                 
 
