@@ -1,9 +1,14 @@
 figures/
 raw_dir/
 count_overlap_data/
+processed_data/
+polak_count_overlap_data/
+models/
 
 bing_ren.Rproj
 
+.idea/
+.ipynb_checkpoints/
 .Rproj.user
 .Rhistory
 .RData
