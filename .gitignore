@@ -1,7 +1,9 @@
 figures/
-bing_ren.Rproj
 raw_dir/
 count_overlap_data/
+
+bing_ren.Rproj
+
 .Rproj.user
 .Rhistory
 .RData
