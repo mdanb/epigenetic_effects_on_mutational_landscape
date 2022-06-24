@@ -109,4 +109,4 @@ mclapply(files, create_count_overlaps_file,
                 cell_number_filter=CELL_NUMBER_FILTER,
                 metadata=metadata,
                 interval_ranges=interval.ranges,
-                mc.cores = 6)
+                mc.cores = 8)
