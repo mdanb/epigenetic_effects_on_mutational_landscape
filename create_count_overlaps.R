@@ -63,7 +63,11 @@ create_count_overlaps_file <- function(file, cell_number_filter, metadata,
                               "subdivided_count_overlaps", 
                               paste(file_path_sans_ext(file, TRUE),
                                     "rds", sep="."), sep="_")
-  if (!file.exists(filename) || !file.exists(subdivided_filename)) {
+  filepath = paste("count_overlap_data", filename, sep="/")
+  subdivided_filepath = paste("count_overlap_data", 
+                              subdivided_filename, 
+                              sep="/")
+  if (!file.exists(filepath) || !file.exists(subdivided_filepath)) {
     print(paste("Processing", file, sep= " "))
     sample = import(paste("raw_dir", "bed_files", file, sep="/"), format="bed")
     sample_name = get_sample_name(file)
@@ -71,16 +75,14 @@ create_count_overlaps_file <- function(file, cell_number_filter, metadata,
     sample <- filter_sample_by_cell_number(sample, CELL_NUMBER_FILTER)
     if (!file.exists(filename)) {
       count_overlaps <- compute_count_overlaps(sample, interval_ranges)
-      saveRDS(count_overlaps, paste("count_overlap_data", filename, sep="/"))
+      saveRDS(count_overlaps, filepath)
     }
     if (!file.exists(subdivided_filename)) {
       subdivided_interval_ranges = subdivideGRanges(interval.ranges, 
                                                     subsize = 200000)
       count_overlaps_subdivided <- compute_count_overlaps(sample, 
                                                      subdivided_interval_ranges)
-      saveRDS(count_overlaps_subdivided, paste("count_overlap_data", 
-                                               subdivided_filename, 
-                                               sep="/"))
+      saveRDS(count_overlaps_subdivided, subdivided_filepath)
     }
   }
 }
