@@ -1,6 +1,5 @@
 figures/
 raw_dir/
-count_overlap_data/
 processed_data/
 polak_count_overlap_data/
 models/
