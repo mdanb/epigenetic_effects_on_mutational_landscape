@@ -6,6 +6,7 @@ library(dplyr)
 library(tibble)                                                                 
 library(exomeCopy)
 library(parallel)
+library(liftOver)
 
 get_sample_name <- function(file) {
   if (grepl("frontal_cortex", file)) {
@@ -54,8 +55,14 @@ get_sample_cell_types <- function(sample, sample_name, metadata) {
   return(as.tibble(sample))
 }
 
+migrate_bed_file_to_hg37 <- function(bed_sample, chain) {
+  seqlevelsStyle(bed_sample) = "UCSC"  # necessary
+  bed_sample = unlist (liftOver(bed_sample, ch))
+  return(bed_sample)
+}
+
 create_count_overlaps_file <- function(file, cell_number_filter, metadata,
-                                       interval_ranges) {
+                                       interval_ranges, chain) {
   filename = paste("count_filter", CELL_NUMBER_FILTER,  
                    "count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                            "rds", sep="."), sep="_")
@@ -70,6 +77,7 @@ create_count_overlaps_file <- function(file, cell_number_filter, metadata,
   if (!file.exists(filepath) || !file.exists(subdivided_filepath)) {
     print(paste("Processing", file, sep= " "))
     sample = import(paste("raw_dir", "bed_files", file, sep="/"), format="bed")
+    sample = migrate_bed_file_to_hg37(sample, chain)
     sample_name = get_sample_name(file)
     sample <- get_sample_cell_types(sample, sample_name, metadata)
     sample <- filter_sample_by_cell_number(sample, CELL_NUMBER_FILTER)
@@ -104,9 +112,12 @@ dir.create("count_overlap_data")
 files = setdiff(list.files("raw_dir/bed_files/"), 
                 list.dirs("raw_dir/bed_files", recursive = FALSE, 
                           full.names = FALSE))
+hg38_path = system.file (package="liftOver", "extdata", "hg38ToHg19.over.chain")
+ch = import.chain(hg38_path)
 
 mclapply(files, create_count_overlaps_file, 
                 cell_number_filter=CELL_NUMBER_FILTER,
                 metadata=metadata,
                 interval_ranges=interval.ranges,
+                chain=ch,
                 mc.cores = 8)
