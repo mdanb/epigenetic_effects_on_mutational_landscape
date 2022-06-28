@@ -33,8 +33,8 @@ filter_sample_by_cell_number <- function(sample, cell_number_filter) {
 
 compute_count_overlaps <- function(sample, interval_ranges) {
   grl_in = sample %>%                                             
-    group_split(cell_type) %>%                             
-    lapply(makeGRangesFromDataFrame, keep.extra.columns=TRUE)
+           group_split(cell_type) %>%                             
+           lapply(makeGRangesFromDataFrame, keep.extra.columns=TRUE)
   grl = GRangesList(grl_in)
   count_overlaps = lapply(grl, function(x) countOverlaps (interval_ranges, x))
   cell_types = unlist(lapply(grl, function(x) unique(x$cell_type)))
@@ -70,8 +70,8 @@ create_count_overlaps_file <- function(file, cell_number_filter, metadata,
                               "subdivided_count_overlaps", 
                               paste(file_path_sans_ext(file, TRUE),
                                     "rds", sep="."), sep="_")
-  filepath = paste("count_overlap_data", filename, sep="/")
-  subdivided_filepath = paste("count_overlap_data", 
+  filepath = paste("processed_data/count_overlap_data", filename, sep="/")
+  subdivided_filepath = paste("processed_data/count_overlap_data", 
                               subdivided_filename, 
                               sep="/")
   if (!file.exists(filepath) || !file.exists(subdivided_filepath)) {
@@ -107,7 +107,7 @@ metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv", sep="\t",
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 interval.ranges
 
-dir.create("count_overlap_data")                                                
+dir.create("processed_data/count_overlap_data", recursive=TRUE)                                       
 
 files = setdiff(list.files("raw_dir/bed_files/"), 
                 list.dirs("raw_dir/bed_files", recursive = FALSE, 
