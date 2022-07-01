@@ -85,9 +85,6 @@ def print_and_save_top_features(top_features, filepath):
 
 def backward_eliminate_features(X_train, y_train, starting_clf, starting_n,
                                 params, num_k_folds, backwards_elim_dir):
-    # dir=f"models/{cancer_type}/backwards_elimination_results"
-    # if (tissue_spec):
-    #     dir = dir + "_tissue_spec"
     os.makedirs(backwards_elim_dir, exist_ok=True)
     top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values)
     X_train = X_train.loc[:, top_n_feats]
@@ -148,12 +145,9 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
     #print_top_features(top_n_feats)
 
     backward_eliminate_features(X_train, y_train, best_model, n, params, 10, backwards_elim_dir)
-    # backward_eliminate_features(X_train_tissue_spec, y_train_tissue_spec,
-    #                             best_model_tissue_spec, 20, params, 10, cancer_type, True)
 
     #### Test Set Performance ####
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filename)
-    # print_and_save_test_set_perf(X_test_tissue_spec, y_test_tissue_spec, best_model_tissue_spec, cancer_type, True)
 
 def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec):
     mutations_df = load_agg_mutations()
@@ -197,97 +191,28 @@ def run_clustered_data_analysis(scATAC_df):
     for cancer_type in cancer_types:
         os.makedirs(f"models/{cancer_type}", exist_ok=True)
         cancer_hierarchical_dir = f"processed_data/hierarchically_clustered_mutations/{cancer_type}"
-        for threshold_dir in os.listdir(cancer_hierarchical_dir):
-            for cluster_file in glob.glob(f"{cancer_hierarchical_dir}/{threshold_dir}/aggregated*"):
-                mutations_df = pd.read_csv(cluster_file, index_col=0)
-                cluster_dir = cluster_file.split("/")[-1].split(".")[0]
-                backwards_elim_dir=f"models/{cancer_type}/{threshold_dir}/{cluster_dir}/backwards_elimination_results"
-                os.makedirs(backwards_elim_dir, exist_ok=True)
-                grid_search_filename = f"models/{cancer_type}/{threshold_dir}/{cluster_dir}/grid_search_results.pkl"
-                test_set_perf_filename = f"models/{cancer_type}/{threshold_dir}/{cluster_dir}/test_set_performance.txt"
+        for cluster_method_dir in os.listdir(cancer_hierarchical_dir):
+            for threshold_dir in os.listdir(f"{cancer_hierarchical_dir}/{cluster_method_dir}"):
+                run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, cluster_method_dir,
+                                       threshold_dir)
 
-                scATAC_df = filter_clustered_data(scATAC_df, mutations_df)
-                mutations = mutations_df.values.reshape(-1)
-                train_val_test(scATAC_df, mutations,
-                               grid_search_filename,
-                               backwards_elim_dir,
-                               test_set_perf_filename)
+def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, cluster_method_dir,
+                           threshold_dir):
+    for cluster_file in glob.glob(f"{cancer_hierarchical_dir}/{cluster_method_dir}/{threshold_dir}/aggregated*"):
+        mutations_df = pd.read_csv(cluster_file, index_col=0)
+        cluster_dir = cluster_file.split("/")[-1].split(".")[0]
+        cluster_dir = f"models/{cancer_type}/{cluster_method_dir}/{threshold_dir}/{cluster_dir}/"
+        os.makedirs(cluster_dir, exist_ok=True)
+        backwards_elim_dir=f"{cluster_dir}/backwards_elimination_results"
+        grid_search_filename = f"{cluster_dir}/grid_search_results.pkl"
+        test_set_perf_filename = f"{cluster_dir}/test_set_performance.txt"
 
-# def run_clustered_data_analysis(scATAC_df):
-#     mutations_per_cancer_type = {}
-#     for cancer_type in cancer_types:
-#         # Clustered mutations
-#         if (run_clustered_mutations):
-#             clustered_mutations_list = list()
-#             for cluster_file in os.listdir(f"processed_data/hierarchically_clustered_mutations/{cancer_type}"):
-#                 clustered_mutations_list.append(pd.read_csv(cluster_file))
-#         # elif (tissue_spec_cells):
-#         cancer_type_specific_mut_idx = [i for i, s in enumerate(mutations_df.columns.values) if cancer_type == s][0]
-#         mutations_per_cancer_type[cancer_type] = mutations_df.iloc[:, cancer_type_specific_mut_idx]
-#
-#     #### Split Train/Test ####
-#     # All cells
-#     X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations_per_cancer_type[cancer_type],
-#                                                             0.10)
-#
-#     # Tissue Specific
-#     tissue = cancer_type.split("-")[0]
-#     tissue_specific_cell_types = [cell_type for cell_type in scATAC_df.columns.values if tissue in cell_type]
-#     per_tissue_df = scATAC_df.loc[:, tissue_specific_cell_types]
-#     X_train_tissue_spec, X_test_tissue_spec, y_train_tissue_spec, y_test_tissue_spec = \
-#                                                                             get_train_test_split(
-#                                                                                 per_tissue_df,
-#                                                                                 mutations_per_cancer_type[cancer_type],
-#                                                                                 0.10)
-#
-#     #### Cross Validate ####
-#     filename = f"models/{cancer_type}/grid_search_results.pkl"
-#     filename_tissue_spec = f"models/{cancer_type}/grid_search_results_tissue_specific.pkl"
-#
-#     os.makedirs(f"models/{cancer_type}", exist_ok=True)
-#     pipe = Pipeline([
-#         ('regressor', PipelineHelper([
-#             ('rf', RandomForestRegressor(random_state=0)),
-#         ])),
-#     ])
-#
-#     params = {
-#         'regressor__selected_model': pipe.named_steps['regressor'].generate({
-#             'rf__n_estimators':[10, 100, 1000],
-#         })
-#     }
-#
-#     if (not os.path.exists(filename)):
-#         grid_search_results = grid_search(X_train, y_train, pipe, params, 10)
-#         pickle.dump(grid_search_results, open(filename, 'wb'))
-#     if (not os.path.exists(filename_tissue_spec)):
-#         grid_search_results_tissue_spec = grid_search(X_train_tissue_spec, y_train_tissue_spec, pipe, params, 10)
-#         pickle.dump(grid_search_results_tissue_spec, open(filename_tissue_spec, 'wb'))
-#
-#     grid_search_results = pickle.load(open(filename, 'rb'))
-#     grid_search_results_tissue_spec = pickle.load(open(filename_tissue_spec, 'rb'))
-#     print(f"Best Score: {grid_search_results.best_score_}\n")
-#     print(f"Best Score: {grid_search_results_tissue_spec.best_score_}\n")
-#
-#     #### Feature Selection ####
-#
-#     best_model = grid_search_results.best_estimator_.get_params()['regressor__selected_model']
-#     best_model_tissue_spec = grid_search_results_tissue_spec.best_estimator_.get_params()['regressor__selected_model']
-#
-#     n = 20
-#     top_n_feats = get_top_n_features(best_model, n, scATAC_df.columns.values)
-#     top_n_feats_tissue_spec = get_top_n_features(best_model_tissue_spec, n, X_train_tissue_spec.columns.values)
-#
-#     #print_top_features(top_n_feats)
-#
-#     backward_eliminate_features(X_train, y_train, best_model, 20, params, 10, cancer_type)
-#     backward_eliminate_features(X_train_tissue_spec, y_train_tissue_spec,
-#                                 best_model_tissue_spec, 20, params, 10, cancer_type, True)
-#
-#     #### Test Set Performance ####
-#     print_and_save_test_set_perf(X_test, y_test, best_model, cancer_type)
-#     print_and_save_test_set_perf(X_test_tissue_spec, y_test_tissue_spec, best_model_tissue_spec, cancer_type, True)
-
+        scATAC_df = filter_clustered_data(scATAC_df, mutations_df)
+        mutations = mutations_df.values.reshape(-1)
+        train_val_test(scATAC_df, mutations,
+                       grid_search_filename,
+                       backwards_elim_dir,
+                       test_set_perf_filename)
 
 #### Load scATAC ####
 scATAC_df = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
