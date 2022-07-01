@@ -1,7 +1,8 @@
 library(GenomicRanges)
 
-Lung_AdenoCA = list.files("processed_data/per_patient_mutations/Lung-AdenoCA/", 
+Lung_AdenoCA = list.files("processed_data/per_patient_mutations/Lung-AdenoCA", 
                            full.names = TRUE)
+
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 
 count_overlaps_and_save <- function(filepath, per_patient_mutations_dir) {
@@ -23,6 +24,6 @@ count_overlaps_and_save <- function(filepath, per_patient_mutations_dir) {
                                                  filename, sep="/"))
 }
 
-lapply(LUAD_US_files, count_overlaps_and_save, 
-       "processed_data/per_patient_mutations/Lung_AdenoCA")
+lapply(Lung_AdenoCA, count_overlaps_and_save, 
+       "processed_data/per_patient_mutations/Lung-AdenoCA")
 
