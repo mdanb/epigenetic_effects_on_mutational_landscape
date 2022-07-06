@@ -218,6 +218,7 @@ def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, clus
 scATAC_df = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                         "/count_filter_100_combined_count_overlaps.rds")
 
-run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells)
+if (run_all_cells or run_tissue_spec_cells):
+    run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells)
 if (run_clustered_mutations):
     run_clustered_data_analysis(scATAC_df)
