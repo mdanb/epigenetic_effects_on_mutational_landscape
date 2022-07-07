@@ -103,12 +103,15 @@ def get_per_cancer_mutations(cancer_type):
 #                        on=["icgc_donor_id", "icgc_mutation_id"])
 
 Lung_AdenoCA = get_per_cancer_mutations("Lung-AdenoCA")
-a = Lung_AdenoCA.sum(axis=0)
-cluster_data_and_display_clustering(200, Lung_AdenoCA, "Lung-AdenoCA", False)
-cluster_data_and_display_clustering(100, Lung_AdenoCA, "Lung-AdenoCA", False)
-cluster_data_and_display_clustering(70, Lung_AdenoCA, "Lung-AdenoCA", False)
+Skin_Melanoma = get_per_cancer_mutations("Skin-Melanoma")
+cluster_data_and_display_clustering(5, Skin_Melanoma, "Skin-Melanoma", False,
+                                    affinity="pearson", affinity_matrix= 1 - np.corrcoef(Skin_Melanoma),
+                                    linkage="average")
+# cluster_data_and_display_clustering(200, Lung_AdenoCA, "Lung-AdenoCA", False)
+# cluster_data_and_display_clustering(100, Lung_AdenoCA, "Lung-AdenoCA", False)
+# cluster_data_and_display_clustering(70, Lung_AdenoCA, "Lung-AdenoCA", False)
 
-cluster_data_and_display_clustering(2.5, Lung_AdenoCA, "Lung-AdenoCA", False,
+cluster_data_and_display_clustering(2.5, Lung_AdenoCA, "Lung-AdenoCA", True,
                                     affinity="pearson", affinity_matrix=
                                     1 - np.corrcoef(Lung_AdenoCA),
                                     linkage="average")

@@ -2,7 +2,9 @@ import pandas as pd
 import os
 
 def load_and_clean_mutations(filepath, *args):
-    per_patient_mutations = pd.read_csv(filepath, sep="\t")
+    per_patient_mutations = pd.read_csv(filepath, sep="\t", usecols=["icgc_mutation_id", "icgc_donor_id",
+                                                                     "chromosome", "chromosome_start",
+                                                                     "chromosome_end"])
     for file in args:
         df = pd.read_csv(file, sep="\t")
         per_patient_mutations = pd.concat((per_patient_mutations, df), axis=0)
@@ -28,11 +30,14 @@ def create_mutations_per_patient_files(mutations, cancer_type):
                     index=False)
 
 
-per_patient_mutations_lung_adeno = load_and_clean_mutations("raw_dir/mutation_data/per_cancer_icgc/LUAD-US/"
-                                                            "simple_somatic_mutation.open.LUAD-US.tsv")
+# per_patient_mutations_lung_adeno = load_and_clean_mutations("raw_dir/mutation_data/per_cancer_icgc/LUAD-US/"
+#                                                             "simple_somatic_mutation.open.LUAD-US.tsv")
+# create_mutations_per_patient_files(per_patient_mutations_lung_adeno, "Lung-AdenoCA")
+
 per_patient_mutations_skin_melanoma = load_and_clean_mutations("raw_dir/mutation_data/per_cancer_icgc/Skin-Melanoma/"
-                                                                "simple_somatic_mutation.open.MELA-AU.tsv",
-                                                               "raw_dir/mutation_data/per_cancer_icgc/Skin-Melanoma/"
-                                                                "simple_somatic_mutation.open.SKCM-US.tsv")
-create_mutations_per_patient_files(per_patient_mutations_lung_adeno, "Lung-AdenoCA")
+                                                               "melanoma_combined_mutations.tsv")
+# per_patient_mutations_skin_melanoma = load_and_clean_mutations("raw_dir/mutation_data/per_cancer_icgc/Skin-Melanoma/"
+#                                                                 "simple_somatic_mutation.open.MELA-AU.tsv",
+#                                                                "raw_dir/mutation_data/per_cancer_icgc/Skin-Melanoma/"
+#                                                                 "simple_somatic_mutation.open.SKCM-US.tsv")
 create_mutations_per_patient_files(per_patient_mutations_skin_melanoma, "Skin-Melanoma")
