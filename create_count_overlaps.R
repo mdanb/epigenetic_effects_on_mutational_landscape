@@ -20,7 +20,9 @@ get_sample_name <- function(file) {
 }
 
 get_sample_name_shendure <- function(file) {
-  
+  sample_name = unlist(strsplit(file, split="_"))[3]
+  sample_name = unlist(strsplit(sample_name, split="[.]"))[1]
+  return(sample_name)
 }
 
 filter_sample_by_cell_number <- function(sample, cell_number_filter) {
@@ -56,6 +58,16 @@ get_sample_cell_types <- function(sample, sample_name, metadata) {
   sample_idx_in_metadata = match(sample$name, sample_barcodes_in_metadata)
   sample$cell_type = filtered_metadata[unlist(sample_idx_in_metadata), 
                                        "cell.type"]
+  return(as.tibble(sample))
+}
+
+get_sample_cell_types_shendure <- function(sample, sample_name, metadata) {
+  filtered_metadata = metadata[metadata$sample %like% sample_name, ]
+  sample_barcodes_in_metadata = filtered_metadata[["cell"]]                  
+  sample = sample[sample$name %in% sample_barcodes_in_metadata]   
+  sample_idx_in_metadata = match(sample$name, sample_barcodes_in_metadata)
+  sample$cell_type = filtered_metadata[unlist(sample_idx_in_metadata), 
+                                       "cell_type"]
   return(as.tibble(sample))
 }
 
@@ -110,8 +122,7 @@ create_count_overlaps_file_shendure <- function(file, cell_number_filter,
     sample = import(paste("raw_dir", "bed_files", "JShendure_scATAC", file, 
                           sep="/"), format="bed")
     sample_name = get_sample_name_shendure(file)
-    ##################
-    sample <- get_sample_cell_types(sample, sample_name, metadata)
+    sample <- get_sample_cell_types_shendure(sample, sample_name, metadata)
     sample <- filter_sample_by_cell_number(sample, CELL_NUMBER_FILTER)
     if (!file.exists(filename)) {
       count_overlaps <- compute_count_overlaps(sample, interval_ranges)
@@ -155,3 +166,9 @@ mclapply(files, create_count_overlaps_file,
                 interval_ranges=interval.ranges,
                 chain=ch,
                 mc.cores = 8)
+
+mclapply(files_Shendure, create_count_overlaps_file_shendure, 
+         cell_number_filter=CELL_NUMBER_FILTER,
+         metadata=metadata_Shendure,
+         interval_ranges=interval.ranges,
+         mc.cores = 8)
