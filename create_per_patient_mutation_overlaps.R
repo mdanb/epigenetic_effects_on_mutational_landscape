@@ -7,9 +7,7 @@ option_list <- list(
   make_option(c("--cancer_types", type="str"))
 )
 
-cancer_types = parse_args(OptionParser(option_list=option_list), 
-                args = c("--cancer_types", "Skin-Melanoma"))
-
+cancer_types = parse_args(OptionParser(option_list=option_list))
 cancer_types = unlist(strsplit(cancer_types$cancer_types, split = ","))
 
 count_overlaps_and_save <- function(filepath, per_patient_mutations_dir) {
