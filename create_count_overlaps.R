@@ -19,6 +19,10 @@ get_sample_name <- function(file) {
   return(sample_name)
 }
 
+get_sample_name_shendure <- function(file) {
+  
+}
+
 filter_sample_by_cell_number <- function(sample, cell_number_filter) {
   counts_per_cell_type = sample %>%                               
     group_by(cell_type) %>%                 
@@ -95,6 +99,27 @@ create_count_overlaps_file <- function(file, cell_number_filter, metadata,
   }
 }
 
+create_count_overlaps_file_shendure <- function(file, cell_number_filter, 
+                                                metadata, interval_ranges) {
+  filename = paste("Shendure_count_filter", CELL_NUMBER_FILTER,  
+                   "count_overlaps", paste(file_path_sans_ext(file, TRUE),
+                                           "rds", sep="."), sep="_")
+  filepath = paste("processed_data/count_overlap_data", filename, sep="/")
+  if (!file.exists(filepath)) {
+    print(paste("Processing", file, sep= " "))
+    sample = import(paste("raw_dir", "bed_files", "JShendure_scATAC", file, 
+                          sep="/"), format="bed")
+    sample_name = get_sample_name_shendure(file)
+    ##################
+    sample <- get_sample_cell_types(sample, sample_name, metadata)
+    sample <- filter_sample_by_cell_number(sample, CELL_NUMBER_FILTER)
+    if (!file.exists(filename)) {
+      count_overlaps <- compute_count_overlaps(sample, interval_ranges)
+      saveRDS(count_overlaps, filepath)
+    }
+  }
+}
+
 args = commandArgs(trailingOnly=TRUE)
 if (length(args) != 1) {
   stop("One argument must be supplied", call.=FALSE)
@@ -103,7 +128,11 @@ if (length(args) != 1) {
 } 
 
 metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv", sep="\t", 
-                      header=TRUE)  
+                      header=TRUE)
+metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt", 
+                               sep="\t", 
+                               header=TRUE)
+
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 interval.ranges
 
@@ -112,6 +141,11 @@ dir.create("processed_data/count_overlap_data", recursive=TRUE)
 files = setdiff(list.files("raw_dir/bed_files/"), 
                 list.dirs("raw_dir/bed_files", recursive = FALSE, 
                           full.names = FALSE))
+files_Shendure = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/"), 
+                         list.dirs("raw_dir/bed_files/JShendure_scATAC/", 
+                                   recursive = FALSE, 
+                                   full.names = FALSE))
+
 hg38_path = system.file (package="liftOver", "extdata", "hg38ToHg19.over.chain")
 ch = import.chain(hg38_path)
 
