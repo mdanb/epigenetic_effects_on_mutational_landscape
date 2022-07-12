@@ -171,10 +171,4 @@ mclapply(files_Shendure, create_count_overlaps_file_shendure,
          cell_number_filter=CELL_NUMBER_FILTER,
          metadata=metadata_Shendure,
          interval_ranges=interval.ranges,
-         mc.cores = 8)
-
-mclapply(files_Shendure, create_count_overlaps_file_shendure, 
-         cell_number_filter=CELL_NUMBER_FILTER,
-         metadata=metadata_Shendure,
-         interval_ranges=interval.ranges,
          mc.cores = 1)
