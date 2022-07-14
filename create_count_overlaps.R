@@ -185,9 +185,14 @@ metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv", sep="\t",
 metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt", 
                                sep="\t", 
                                header=TRUE)
-metadata_tsankov = read.table("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv", 
-                              sep=",", 
-                              header=TRUE)
+metadata_tsankov_proximal = read.table("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv", 
+                                       sep=",", 
+                                       header=TRUE)
+metadata_tsankov_distal = read.table("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv", 
+                                       sep=",", 
+                                       header=TRUE)
+colnames(metadata_tsankov_distal)[2] <- "celltypes"
+metadata_tsankov = rbind(metadata_tsankov_proximal, metadata_tsankov_distal)
 
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 interval.ranges
@@ -202,9 +207,9 @@ files_Shendure = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/"),
                                    recursive = FALSE, 
                                    full.names = FALSE))
 files_Tsankov = setdiff(list.files("raw_dir/bed_files/Tsankov_scATAC/"), 
-                         list.dirs("raw_dir/bed_files/Tsankov_scATAC/", 
-                                   recursive = FALSE, 
-                                   full.names = FALSE))
+                               list.dirs("raw_dir/bed_files/Tsankov_scATAC/", 
+                               recursive = FALSE, 
+                               full.names = FALSE))
 
 hg38_path = system.file (package="liftOver", "extdata", "hg38ToHg19.over.chain")
 ch = import.chain(hg38_path)
