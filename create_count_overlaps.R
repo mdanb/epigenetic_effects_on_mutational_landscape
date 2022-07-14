@@ -25,6 +25,14 @@ get_sample_name_shendure <- function(file) {
   return(sample_name)
 }
 
+get_sample_name_tsankov <- function(file) {
+  sample_name = str_extract(file, pattern="fragments_.*_patient")
+  sample_name = unlist(strsplit(sample_name, split="_"))
+  sample_name = sample_name[2:(length(sample_name) - 1)]
+  sample_name = paste(sample_name, collapse="_")
+  return(sample_name)
+}
+
 filter_sample_by_cell_number <- function(sample, cell_number_filter) {
   counts_per_cell_type = sample %>%                               
     group_by(cell_type) %>%                 
@@ -70,6 +78,17 @@ get_sample_cell_types_shendure <- function(sample, sample_name, metadata) {
                                        "cell_type"]
   return(as.tibble(sample))
 }
+
+# get_sample_cell_types_tsankov <- function(sample, metadata) {
+#   sample_barcodes_in_metadata = unlist(lapply(metadata[["X"]], 
+#                                               function(x) unlist(strsplit(x, 
+#                                                                     '#'))[2]))
+#   sample = sample[sample$name %in% sample_barcodes_in_metadata]
+#   sample_idx_in_metadata = match(sample$name, sample_barcodes_in_metadata)
+#   sample$cell_type = metadata[unlist(sample_idx_in_metadata), 
+#                                        "celltypes"]
+#   return(as.tibble(sample))
+# }
 
 migrate_bed_file_to_hg37 <- function(bed_sample, chain) {
   seqlevelsStyle(bed_sample) = "UCSC"  # necessary
@@ -131,6 +150,36 @@ create_count_overlaps_file_shendure <- function(file, cell_number_filter,
   }
 }
 
+create_count_overlaps_file_tsankov <- function(file, cell_number_filter, metadata,
+                                       interval_ranges, chain) {
+  filename = paste(file_path_sans_ext(file, TRUE), "rds", sep=".")
+  filename = unlist(strsplit(filename, split = "_"))
+  filename = paste(filename[2:length(filename)], collapse="_")
+  filename = paste("count_filter", CELL_NUMBER_FILTER,  
+                   "count_overlaps", filename, sep="_")
+  filepath = paste("processed_data/count_overlap_data", filename, sep="/")
+  if (!file.exists(filepath)) {
+    print(paste("Processing", file, sep= " "))
+    sample = import(paste("raw_dir", "bed_files", "Tsankov_scATAC", 
+                          substr(file, 1, nchar(file) - 3), sep="/"),
+                          format="bed")
+    sample = migrate_bed_file_to_hg37(sample, chain)
+    sample = get_sample_cell_types_tsankov(sample, metadata)
+    sample = filter_sample_by_cell_number(sample, CELL_NUMBER_FILTER)
+    if (!file.exists(filename)) {
+      count_overlaps = compute_count_overlaps(sample, interval_ranges)
+      saveRDS(count_overlaps, filepath)
+    }
+    if (!file.exists(subdivided_filename)) {
+      subdivided_interval_ranges = subdivideGRanges(interval.ranges, 
+                                                    subsize = 200000)
+      count_overlaps_subdivided = compute_count_overlaps(sample, 
+                                                          subdivided_interval_ranges)
+      saveRDS(count_overlaps_subdivided, subdivided_filepath)
+    }
+  }
+}
+
 args = commandArgs(trailingOnly=TRUE)
 if (length(args) != 1) {
   stop("One argument must be supplied", call.=FALSE)
@@ -143,6 +192,9 @@ metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv", sep="\t",
 metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt", 
                                sep="\t", 
                                header=TRUE)
+metadata_tsankov = read.table("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv", 
+                              sep=",", 
+                              header=TRUE)
 
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 interval.ranges
@@ -156,6 +208,10 @@ files_Shendure = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/"),
                          list.dirs("raw_dir/bed_files/JShendure_scATAC/", 
                                    recursive = FALSE, 
                                    full.names = FALSE))
+files_Tsankov = setdiff(list.files("raw_dir/bed_files/Tsankov_scATAC/"), 
+                         list.dirs("raw_dir/bed_files/Tsankov_scATAC/", 
+                                   recursive = FALSE, 
+                                   full.names = FALSE))
 
 hg38_path = system.file (package="liftOver", "extdata", "hg38ToHg19.over.chain")
 ch = import.chain(hg38_path)
@@ -166,6 +222,12 @@ mclapply(files, create_count_overlaps_file,
                 interval_ranges=interval.ranges,
                 chain=ch,
                 mc.cores = 8)
+
+mclapply(files_Tsankov, create_count_overlaps_file_tsankov, 
+         cell_number_filter=CELL_NUMBER_FILTER,
+         metadata=metadata_tsankov,
+         interval_ranges=interval.ranges,
+         mc.cores = 8)
 
 mclapply(files_Shendure, create_count_overlaps_file_shendure, 
          cell_number_filter=CELL_NUMBER_FILTER,
