@@ -25,13 +25,13 @@ get_sample_name_shendure <- function(file) {
   return(sample_name)
 }
 
-get_sample_name_tsankov <- function(file) {
-  sample_name = str_extract(file, pattern="fragments_.*_patient")
-  sample_name = unlist(strsplit(sample_name, split="_"))
-  sample_name = sample_name[2:(length(sample_name) - 1)]
-  sample_name = paste(sample_name, collapse="_")
-  return(sample_name)
-}
+# get_sample_name_tsankov <- function(file) {
+#   sample_name = str_extract(file, pattern="fragments_.*_patient")
+#   sample_name = unlist(strsplit(sample_name, split="_"))
+#   sample_name = sample_name[2:(length(sample_name) - 1)]
+#   sample_name = paste(sample_name, collapse="_")
+#   return(sample_name)
+# }
 
 filter_sample_by_cell_number <- function(sample, cell_number_filter) {
   counts_per_cell_type = sample %>%                               
@@ -79,16 +79,16 @@ get_sample_cell_types_shendure <- function(sample, sample_name, metadata) {
   return(as.tibble(sample))
 }
 
-# get_sample_cell_types_tsankov <- function(sample, metadata) {
-#   sample_barcodes_in_metadata = unlist(lapply(metadata[["X"]], 
-#                                               function(x) unlist(strsplit(x, 
-#                                                                     '#'))[2]))
-#   sample = sample[sample$name %in% sample_barcodes_in_metadata]
-#   sample_idx_in_metadata = match(sample$name, sample_barcodes_in_metadata)
-#   sample$cell_type = metadata[unlist(sample_idx_in_metadata), 
-#                                        "celltypes"]
-#   return(as.tibble(sample))
-# }
+get_sample_cell_types_tsankov <- function(sample, metadata) {
+  sample_barcodes_in_metadata = unlist(lapply(metadata[["X"]],
+                                              function(x) unlist(strsplit(x,
+                                                                    '#'))[2]))
+  sample = sample[sample$name %in% sample_barcodes_in_metadata]
+  sample_idx_in_metadata = match(sample$name, sample_barcodes_in_metadata)
+  sample$cell_type = metadata[unlist(sample_idx_in_metadata),
+                                       "celltypes"]
+  return(as.tibble(sample))
+}
 
 migrate_bed_file_to_hg37 <- function(bed_sample, chain) {
   seqlevelsStyle(bed_sample) = "UCSC"  # necessary
@@ -164,6 +164,7 @@ create_count_overlaps_file_tsankov <- function(file, cell_number_filter, metadat
                           substr(file, 1, nchar(file) - 3), sep="/"), "tsv"),
                           format="bed")
     sample = migrate_bed_file_to_hg37(sample, chain)
+    sample <- get_sample_cell_types_tsankov(sample, metadata)
     sample = filter_sample_by_cell_number(sample, CELL_NUMBER_FILTER)
     if (!file.exists(filename)) {
       count_overlaps = compute_count_overlaps(sample, interval_ranges)
