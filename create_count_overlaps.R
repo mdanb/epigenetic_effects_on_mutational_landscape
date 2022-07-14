@@ -164,7 +164,6 @@ create_count_overlaps_file_tsankov <- function(file, cell_number_filter, metadat
                           substr(file, 1, nchar(file) - 3), sep="/"), "tsv"),
                           format="bed")
     sample = migrate_bed_file_to_hg37(sample, chain)
-    sample = get_sample_cell_types_tsankov(sample, metadata)
     sample = filter_sample_by_cell_number(sample, CELL_NUMBER_FILTER)
     if (!file.exists(filename)) {
       count_overlaps = compute_count_overlaps(sample, interval_ranges)
