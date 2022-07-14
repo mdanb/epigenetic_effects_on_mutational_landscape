@@ -155,7 +155,7 @@ create_count_overlaps_file_tsankov <- function(file, cell_number_filter, metadat
   filename = paste(file_path_sans_ext(file, TRUE), "rds", sep=".")
   filename = unlist(strsplit(filename, split = "_"))
   filename = paste(filename[2:length(filename)], collapse="_")
-  filename = paste("count_filter", CELL_NUMBER_FILTER,  
+  filename = paste("Tsankov_count_filter", CELL_NUMBER_FILTER,  
                    "count_overlaps", filename, sep="_")
   filepath = paste("processed_data/count_overlap_data", filename, sep="/")
   if (!file.exists(filepath)) {
@@ -169,13 +169,6 @@ create_count_overlaps_file_tsankov <- function(file, cell_number_filter, metadat
     if (!file.exists(filename)) {
       count_overlaps = compute_count_overlaps(sample, interval_ranges)
       saveRDS(count_overlaps, filepath)
-    }
-    if (!file.exists(subdivided_filename)) {
-      subdivided_interval_ranges = subdivideGRanges(interval.ranges, 
-                                                    subsize = 200000)
-      count_overlaps_subdivided = compute_count_overlaps(sample, 
-                                                          subdivided_interval_ranges)
-      saveRDS(count_overlaps_subdivided, subdivided_filepath)
     }
   }
 }
