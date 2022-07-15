@@ -191,8 +191,7 @@ metadata_tsankov_proximal = read.table("raw_dir/metadata/tsankov_lung_proximal_b
 metadata_tsankov_distal = read.table("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv", 
                                        sep=",", 
                                        header=TRUE)
-colnames(metadata_tsankov_distal)[2] <- "celltypes"
-metadata_tsankov = rbind(metadata_tsankov_proximal, metadata_tsankov_distal)
+colnames(metadata_tsankov_proximal)[2] <- "celltypes"
 
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 interval.ranges
@@ -206,10 +205,9 @@ files_Shendure = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/"),
                          list.dirs("raw_dir/bed_files/JShendure_scATAC/", 
                                    recursive = FALSE, 
                                    full.names = FALSE))
-files_Tsankov = setdiff(list.files("raw_dir/bed_files/Tsankov_scATAC/"), 
-                               list.dirs("raw_dir/bed_files/Tsankov_scATAC/", 
-                               recursive = FALSE, 
-                               full.names = FALSE))
+
+files_Tsankov_distal = list.files("raw_dir/bed_files/Tsankov_scATAC/", pattern=".*distal.*")
+files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/", pattern=".*proximal*")
 
 hg38_path = system.file (package="liftOver", "extdata", "hg38ToHg19.over.chain")
 ch = import.chain(hg38_path)
@@ -221,9 +219,15 @@ mclapply(files, create_count_overlaps_file,
                 chain=ch,
                 mc.cores = 8)
 
-mclapply(files_Tsankov, create_count_overlaps_file_tsankov, 
+mclapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov, 
          cell_number_filter=CELL_NUMBER_FILTER,
-         metadata=metadata_tsankov,
+         metadata=metadata_tsankov_proximal,
+         interval_ranges=interval.ranges,
+         mc.cores = 8)
+
+mclapply(files_Tsankov_distal, create_count_overlaps_file_tsankov, 
+         cell_number_filter=CELL_NUMBER_FILTER,
+         metadata=metadata_tsankov_distal,
          interval_ranges=interval.ranges,
          mc.cores = 8)
 
