@@ -29,6 +29,8 @@ parser.add_argument('--bing_ren', action="store_true",
                     help='use Bing Ren ATACseq', default=False)
 parser.add_argument('--shendure', action="store_true",
                     help='use Shendure ATACseq', default=False)
+parser.add_argument('--combined_datasets', action="store_true",
+                    help='combine all scATACseq', default=False)
 
 config = parser.parse_args()
 cancer_types = config.cancer_types
@@ -37,7 +39,7 @@ run_tissue_spec_cells = config.tissue_spec_cells
 run_clustered_mutations = config.clustered_mutations
 bing_ren = config.bing_ren
 shendure = config.shendure
-
+combined_datasets = config.combined_datasets
 #### Helpers ####
 # Load Data helpers
 def load_scATAC(scATAC_path):
@@ -233,5 +235,13 @@ if (run_clustered_mutations and bing_ren):
 
 scATAC_df_shendure = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                                  "/shendure_count_filter_100_combined_count_overlaps.rds")
-if ((run_all_cells or run_tissue_spec_cells) and shendure):
+
+if (run_all_cells and shendure):
     run_unclustered_data_analysis(scATAC_df_shendure, run_all_cells, run_tissue_spec_cells, "shendure")
+
+scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
+                                 "/tsankov_count_filter_100_combined_count_overlaps.rds")
+
+combined_scATAC_df = pd.concat((scATAC_df, scATAC_df_shendure, scATAC_df_tsankov), axis=1)
+if (run_all_cells and combined_datasets):
+    run_unclustered_data_analysis(scATAC_df_tsankov, run_all_cells, run_tissue_spec_cells, "combined_datasets")
