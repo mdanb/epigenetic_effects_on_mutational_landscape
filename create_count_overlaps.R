@@ -202,8 +202,10 @@ files_Shendure = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/"),
                                    recursive = FALSE, 
                                    full.names = FALSE))
 
-files_Tsankov_distal = list.files("raw_dir/bed_files/Tsankov_scATAC/", pattern=".*distal.*")
-files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/", pattern=".*proximal*")
+files_Tsankov_distal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
+                                  pattern=".*distal.*")
+files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
+                                    pattern=".*proximal*")
 
 hg38_path = system.file (package="liftOver", "extdata", "hg38ToHg19.over.chain")
 ch = import.chain(hg38_path)
