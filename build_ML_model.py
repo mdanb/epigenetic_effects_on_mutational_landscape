@@ -22,7 +22,7 @@ parser.add_argument('--cancer_types', nargs="+", type=str,
 parser.add_argument('--all_cells', action="store_true",
                     help='run model on all cells', default=False)
 parser.add_argument('--tissue_spec_cells', action="store_true",
-                    help='run model on tissue specific cells', default=False)
+                     help='run model on tissue specific cells', default=False)
 parser.add_argument('--clustered_mutations', action="store_true",
                     help='run model on hierarchically clustered mutations', default=False)
 parser.add_argument('--bing_ren', action="store_true",
@@ -157,7 +157,8 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
     #### Test Set Performance ####
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filename)
 
-def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, scATAC_source="bing_ren"):
+def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types,
+                                  scATAC_source="bing_ren"):
     mutations_df = load_agg_mutations()
 
     #### Filter data ####
@@ -198,7 +199,7 @@ def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, scA
                            test_set_perf_filename)
 
 
-def run_clustered_data_analysis(scATAC_df):
+def run_clustered_data_analysis(scATAC_df, cancer_types):
     for cancer_type in cancer_types:
         os.makedirs(f"models/{cancer_type}", exist_ok=True)
         cancer_hierarchical_dir = f"processed_data/hierarchically_clustered_mutations/{cancer_type}"
@@ -229,19 +230,19 @@ def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, clus
 scATAC_df = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                         "/count_filter_100_combined_count_overlaps.rds")
 if ((run_all_cells or run_tissue_spec_cells) and bing_ren):
-    run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells)
+    run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells, cancer_types)
 if (run_clustered_mutations and bing_ren):
-    run_clustered_data_analysis(scATAC_df)
+    run_clustered_data_analysis(scATAC_df, cancer_types)
 
 scATAC_df_shendure = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                                  "/shendure_count_filter_100_combined_count_overlaps.rds")
 
 if (run_all_cells and shendure):
-    run_unclustered_data_analysis(scATAC_df_shendure, run_all_cells, run_tissue_spec_cells, "shendure")
+    run_unclustered_data_analysis(scATAC_df_shendure, run_all_cells, run_tissue_spec_cells, cancer_types, "shendure")
 
 scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                                  "/tsankov_count_filter_100_combined_count_overlaps.rds")
 
 combined_scATAC_df = pd.concat((scATAC_df, scATAC_df_shendure, scATAC_df_tsankov), axis=1)
 if (run_all_cells and combined_datasets):
-    run_unclustered_data_analysis(scATAC_df_tsankov, run_all_cells, run_tissue_spec_cells, "combined_datasets")
+    run_unclustered_data_analysis(combined_scATAC_df, run_all_cells, run_tissue_spec_cells, cancer_types, "combined_datasets")
