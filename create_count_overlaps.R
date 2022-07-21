@@ -33,8 +33,8 @@ get_sample_name_shendure <- function(file) {
 }
 
 get_and_save_num_cells_per_sample <- function(sample, sample_file_name) {
-  sample_file_name = paste0("cell_counts_", file_path_sans_ext(file, TRUE),
-                            ".rds")
+  sample_file_name = paste0("cell_counts_", file_path_sans_ext(sample_file_name, 
+                                                               TRUE), ".rds")
   counts_per_cell_type = sample %>%                               
                          group_by(cell_type) %>%                 
                          summarize(n_cells = n_distinct(name))
@@ -44,7 +44,8 @@ get_and_save_num_cells_per_sample <- function(sample, sample_file_name) {
   return(counts_per_cell_type)
 }
 
-filter_sample_by_cell_number <- function(counts_per_cell_type, 
+filter_sample_by_cell_number <- function(sample, 
+                                         counts_per_cell_type, 
                                          cell_number_filter) {
   cell_type_keep = counts_per_cell_type[counts_per_cell_type$n_cells >= 
                                           cell_number_filter, ]$cell_type
@@ -124,7 +125,8 @@ create_count_overlaps_file <- function(file, cell_number_filter, metadata,
     sample_name = get_sample_name(file)
     sample <- get_sample_cell_types(sample, sample_name, metadata)
     counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
-    sample <- filter_sample_by_cell_number(counts_per_cell_type, 
+    sample <- filter_sample_by_cell_number(sample,
+                                           counts_per_cell_type, 
                                            CELL_NUMBER_FILTER)
     if (!file.exists(filename)) {
       count_overlaps <- compute_count_overlaps(sample, interval_ranges)
@@ -157,7 +159,8 @@ create_count_overlaps_file_shendure <- function(file, cell_number_filter,
     sample_name = get_sample_name_shendure(file)
     sample <- get_sample_cell_types_shendure(sample, sample_name, metadata)
     counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
-    sample <- filter_sample_by_cell_number(counts_per_cell_type, 
+    sample <- filter_sample_by_cell_number(sample,
+                                           counts_per_cell_type, 
                                            CELL_NUMBER_FILTER)
     if (!file.exists(filename)) {
       count_overlaps <- compute_count_overlaps(sample, interval_ranges)
@@ -166,8 +169,9 @@ create_count_overlaps_file_shendure <- function(file, cell_number_filter,
   }
 }
 
-create_count_overlaps_file_tsankov <- function(file, cell_number_filter, metadata,
-                                       interval_ranges, chain) {
+create_count_overlaps_file_tsankov <- function(file, cell_number_filter, 
+                                               metadata, interval_ranges, 
+                                               chain) {
   filename = paste(file_path_sans_ext(file, TRUE), "rds", sep=".")
   filename = unlist(strsplit(filename, split = "_"))
   filename = paste(filename[2:length(filename)], collapse="_")
@@ -182,7 +186,8 @@ create_count_overlaps_file_tsankov <- function(file, cell_number_filter, metadat
     sample = migrate_bed_file_to_hg37(sample, chain)
     sample <- get_sample_cell_types_tsankov(sample, metadata)
     counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
-    sample <- filter_sample_by_cell_number(counts_per_cell_type, 
+    sample <- filter_sample_by_cell_number(sample,
+                                           counts_per_cell_type, 
                                            CELL_NUMBER_FILTER)
     if (!file.exists(filename)) {
       count_overlaps = compute_count_overlaps(sample, interval_ranges)
@@ -226,12 +231,11 @@ files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/",
 hg38_path = system.file (package="liftOver", "extdata", "hg38ToHg19.over.chain")
 ch = import.chain(hg38_path)
 
-mclapply(files, create_count_overlaps_file,
-                cell_number_filter=CELL_NUMBER_FILTER,
-                metadata=metadata,
-                interval_ranges=interval.ranges,
-                chain=ch,
-                mc.cores = 8)
+# lapply(files, create_count_overlaps_file,
+#                 cell_number_filter=CELL_NUMBER_FILTER,
+#                 metadata=metadata,
+#                 interval_ranges=interval.ranges,
+#                 chain=ch)
 
 #lapply(files_Shendure, create_count_overlaps_file_shendure,
 #         cell_number_filter=CELL_NUMBER_FILTER,
@@ -239,11 +243,11 @@ mclapply(files, create_count_overlaps_file,
 #         interval_ranges=interval.ranges)
 #         mc.cores = 1)
 
-#lapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
-#         cell_number_filter=CELL_NUMBER_FILTER,
-#         metadata=metadata_tsankov_proximal,
-#         interval_ranges=interval.ranges)
-#         mc.cores = 1)
+lapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
+        cell_number_filter=CELL_NUMBER_FILTER,
+        metadata=metadata_tsankov_proximal,
+        interval_ranges=interval.ranges)
+        # mc.cores = 1)
 
 #lapply(files_Tsankov_distal, create_count_overlaps_file_tsankov, 
 #         cell_number_filter=CELL_NUMBER_FILTER,
