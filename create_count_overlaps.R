@@ -32,15 +32,24 @@ get_sample_name_shendure <- function(file) {
   return(sample_name)
 }
 
-filter_sample_by_cell_number <- function(sample, cell_number_filter) {
+get_and_save_num_cells_per_sample <- function(sample, sample_file_name) {
+  sample_file_name = paste0("cell_counts_", file_path_sans_ext(file, TRUE),
+                            ".rds")
   counts_per_cell_type = sample %>%                               
-    group_by(cell_type) %>%                 
-    summarize(n_cells = n_distinct(name))    
-  
+                         group_by(cell_type) %>%                 
+                         summarize(n_cells = n_distinct(name))
+  path = "processed_data/cell_counts_per_sample"
+  file_path = paste(path, sample_file_name, sep="/")
+  saveRDS(counts_per_cell_type, file_path)
+  return(counts_per_cell_type)
+}
+
+filter_sample_by_cell_number <- function(counts_per_cell_type, 
+                                         cell_number_filter) {
   cell_type_keep = counts_per_cell_type[counts_per_cell_type$n_cells >= 
-                                          CELL_NUMBER_FILTER, ]$cell_type
+                                          cell_number_filter, ]$cell_type
   sample = sample %>%                                             
-    filter(cell_type %in% cell_type_keep)
+           filter(cell_type %in% cell_type_keep)
   return(sample)
 }
 
@@ -114,7 +123,9 @@ create_count_overlaps_file <- function(file, cell_number_filter, metadata,
     sample = migrate_bed_file_to_hg37(sample, chain)
     sample_name = get_sample_name(file)
     sample <- get_sample_cell_types(sample, sample_name, metadata)
-    sample <- filter_sample_by_cell_number(sample, CELL_NUMBER_FILTER)
+    counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
+    sample <- filter_sample_by_cell_number(counts_per_cell_type, 
+                                           CELL_NUMBER_FILTER)
     if (!file.exists(filename)) {
       count_overlaps <- compute_count_overlaps(sample, interval_ranges)
       saveRDS(count_overlaps, filepath)
@@ -145,7 +156,9 @@ create_count_overlaps_file_shendure <- function(file, cell_number_filter,
                           sep="/"), format="bed")
     sample_name = get_sample_name_shendure(file)
     sample <- get_sample_cell_types_shendure(sample, sample_name, metadata)
-    sample <- filter_sample_by_cell_number(sample, CELL_NUMBER_FILTER)
+    counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
+    sample <- filter_sample_by_cell_number(counts_per_cell_type, 
+                                           CELL_NUMBER_FILTER)
     if (!file.exists(filename)) {
       count_overlaps <- compute_count_overlaps(sample, interval_ranges)
       saveRDS(count_overlaps, filepath)
@@ -168,7 +181,9 @@ create_count_overlaps_file_tsankov <- function(file, cell_number_filter, metadat
                           format="bed")
     sample = migrate_bed_file_to_hg37(sample, chain)
     sample <- get_sample_cell_types_tsankov(sample, metadata)
-    sample = filter_sample_by_cell_number(sample, CELL_NUMBER_FILTER)
+    counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
+    sample <- filter_sample_by_cell_number(counts_per_cell_type, 
+                                           CELL_NUMBER_FILTER)
     if (!file.exists(filename)) {
       count_overlaps = compute_count_overlaps(sample, interval_ranges)
       saveRDS(count_overlaps, filepath)
@@ -193,6 +208,7 @@ load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 interval.ranges
 
 dir.create("processed_data/count_overlap_data", recursive=TRUE)                                       
+dir.create("processed_data/cell_counts_per_sample", recursive=TRUE)                                       
 
 files = setdiff(list.files("raw_dir/bed_files/"), 
                 list.dirs("raw_dir/bed_files", recursive = FALSE, 
