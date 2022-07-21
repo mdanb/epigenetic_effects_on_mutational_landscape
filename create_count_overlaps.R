@@ -208,27 +208,27 @@ files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/", pattern
 hg38_path = system.file (package="liftOver", "extdata", "hg38ToHg19.over.chain")
 ch = import.chain(hg38_path)
 
-mclapply(files, create_count_overlaps_file,
-                cell_number_filter=CELL_NUMBER_FILTER,
-                metadata=metadata,
-                interval_ranges=interval.ranges,
-                chain=ch,
-                mc.cores = 8)
+#lapply(files, create_count_overlaps_file,
+#                cell_number_filter=CELL_NUMBER_FILTER,
+#                metadata=metadata,
+#                interval_ranges=interval.ranges,
+#                chain=ch)
+#                mc.cores = 1)
 
-mclapply(files_Shendure, create_count_overlaps_file_shendure,
+lapply(files_Shendure, create_count_overlaps_file_shendure,
          cell_number_filter=CELL_NUMBER_FILTER,
          metadata=metadata_Shendure,
-         interval_ranges=interval.ranges,
-         mc.cores = 8)
+         interval_ranges=interval.ranges)
+#         mc.cores = 1)
 
-mclapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
-         cell_number_filter=CELL_NUMBER_FILTER,
-         metadata=metadata_tsankov_proximal,
-         interval_ranges=interval.ranges,
-         mc.cores = 8)
+#lapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
+#         cell_number_filter=CELL_NUMBER_FILTER,
+#         metadata=metadata_tsankov_proximal,
+#         interval_ranges=interval.ranges)
+#         mc.cores = 1)
 
-mclapply(files_Tsankov_distal, create_count_overlaps_file_tsankov, 
-         cell_number_filter=CELL_NUMBER_FILTER,
-         metadata=metadata_tsankov_distal,
-         interval_ranges=interval.ranges,
-         mc.cores = 8)
+#lapply(files_Tsankov_distal, create_count_overlaps_file_tsankov, 
+#         cell_number_filter=CELL_NUMBER_FILTER,
+#         metadata=metadata_tsankov_distal,
+#         interval_ranges=interval.ranges)
+#         #mc.cores = 1)
