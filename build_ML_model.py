@@ -1,5 +1,4 @@
 #### Imports ####
-import pyreadr
 import pandas as pd
 import numpy as np
 import pickle
@@ -14,6 +13,7 @@ from sklearn.model_selection import KFold
 from sklearn.metrics import explained_variance_score
 import argparse
 import glob
+from utils import load_scATAC, load_agg_mutations, filter_agg_data, filter_mutations_by_cancer
 
 parser = argparse.ArgumentParser()
 
@@ -41,24 +41,7 @@ bing_ren = config.bing_ren
 shendure = config.shendure
 combined_datasets = config.combined_datasets
 #### Helpers ####
-# Load Data helpers
-def load_scATAC(scATAC_path):
-    scATAC_df = pyreadr.read_r(scATAC_path)
-    scATAC_df = scATAC_df[None]
-    scATAC_df = scATAC_df.T
-    return scATAC_df
-
-def load_agg_mutations():
-    return pd.read_csv("processed_data/mut_count_data.csv",
-                       index_col=0)
-
 # Filter Data helpers
-def filter_agg_data(scATAC_df, mutations_df):
-    idx_select = ~pd.isnull(mutations_df).any(axis=1)
-    scATAC_df = scATAC_df[idx_select]
-    mutations_df = mutations_df[idx_select]
-    return scATAC_df, mutations_df
-
 def filter_clustered_data(scATAC_df, mutations_df):
     return pd.DataFrame(scATAC_df, index=mutations_df.index)
 # Split Train/Test helpers
@@ -164,11 +147,10 @@ def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, can
     #### Filter data ####
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
 
-    mutations_per_cancer_type = {}
+
     for cancer_type in cancer_types:
         os.makedirs(f"models/{cancer_type}/scATAC_source_{scATAC_source}", exist_ok=True)
-        cancer_type_specific_mut_idx = [i for i, s in enumerate(mutations_df.columns.values) if cancer_type == s][0]
-        mutations_per_cancer_type[cancer_type] = mutations_df.iloc[:, cancer_type_specific_mut_idx]
+        cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
 
         if (run_all_cells):
             backwards_elim_dir=f"models/{cancer_type}/scATAC_source_{scATAC_source}/backwards_elimination_results"
@@ -176,7 +158,7 @@ def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, can
             test_set_perf_filename = f"models/{cancer_type}/scATAC_source_{scATAC_source}/test_set_performance.txt"
 
             # All Cells
-            train_val_test(scATAC_df, mutations_per_cancer_type[cancer_type],
+            train_val_test(scATAC_df, cancer_specific_mutations,
                            grid_search_filename,
                            backwards_elim_dir,
                            test_set_perf_filename)
@@ -193,7 +175,7 @@ def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, can
             tissue = cancer_type.split("-")[0]
             tissue_specific_cell_types = [cell_type for cell_type in scATAC_df.columns.values if tissue in cell_type]
             per_tissue_df = scATAC_df.loc[:, tissue_specific_cell_types]
-            train_val_test(per_tissue_df, mutations_per_cancer_type[cancer_type],
+            train_val_test(per_tissue_df, cancer_specific_mutations,
                            grid_search_filename,
                            backwards_elim_dir,
                            test_set_perf_filename)
@@ -245,4 +227,5 @@ scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/combined_coun
 
 combined_scATAC_df = pd.concat((scATAC_df, scATAC_df_shendure, scATAC_df_tsankov), axis=1)
 if (run_all_cells and combined_datasets):
-    run_unclustered_data_analysis(combined_scATAC_df, run_all_cells, run_tissue_spec_cells, cancer_types, "combined_datasets")
+    run_unclustered_data_analysis(combined_scATAC_df, run_all_cells, run_tissue_spec_cells,
+                                  cancer_types, "combined_datasets")
