@@ -208,6 +208,7 @@ metadata_tsankov_distal = read.table("raw_dir/metadata/tsankov_lung_distal_barco
                                        sep=",", 
                                        header=TRUE)
 colnames(metadata_tsankov_proximal)[2] <- "celltypes"
+colnames(metadata_tsankov_distal)[2] <- "celltypes"
 
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 interval.ranges
