@@ -208,6 +208,7 @@ metadata_tsankov_distal = read.table("raw_dir/metadata/tsankov_lung_distal_barco
                                        sep=",", 
                                        header=TRUE)
 colnames(metadata_tsankov_proximal)[2] <- "celltypes"
+colnames(metadata_tsankov_distal)[2] <- "celltypes"
 
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 interval.ranges
@@ -243,14 +244,14 @@ ch = import.chain(hg38_path)
 #         interval_ranges=interval.ranges)
 #         mc.cores = 1)
 
-lapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
-        cell_number_filter=CELL_NUMBER_FILTER,
-        metadata=metadata_tsankov_proximal,
-        interval_ranges=interval.ranges)
-        # mc.cores = 1)
-
-#lapply(files_Tsankov_distal, create_count_overlaps_file_tsankov, 
+# lapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
 #         cell_number_filter=CELL_NUMBER_FILTER,
-#         metadata=metadata_tsankov_distal,
+#         metadata=metadata_tsankov_proximal,
 #         interval_ranges=interval.ranges)
-#         #mc.cores = 1)
+#         # mc.cores = 1)
+
+lapply(files_Tsankov_distal, create_count_overlaps_file_tsankov,
+        cell_number_filter=CELL_NUMBER_FILTER,
+        metadata=metadata_tsankov_distal,
+        interval_ranges=interval.ranges)
+        #mc.cores = 1)
