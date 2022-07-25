@@ -243,14 +243,14 @@ ch = import.chain(hg38_path)
 #         interval_ranges=interval.ranges)
 #         mc.cores = 1)
 
-lapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
-        cell_number_filter=CELL_NUMBER_FILTER,
-        metadata=metadata_tsankov_proximal,
-        interval_ranges=interval.ranges)
-        # mc.cores = 1)
-
-#lapply(files_Tsankov_distal, create_count_overlaps_file_tsankov, 
+# lapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
 #         cell_number_filter=CELL_NUMBER_FILTER,
-#         metadata=metadata_tsankov_distal,
+#         metadata=metadata_tsankov_proximal,
 #         interval_ranges=interval.ranges)
-#         #mc.cores = 1)
+#         # mc.cores = 1)
+
+lapply(files_Tsankov_distal, create_count_overlaps_file_tsankov,
+        cell_number_filter=CELL_NUMBER_FILTER,
+        metadata=metadata_tsankov_distal,
+        interval_ranges=interval.ranges)
+        #mc.cores = 1)
