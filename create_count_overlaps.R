@@ -257,8 +257,8 @@ mclapply(files, create_count_overlaps_file,
 #        interval_ranges=interval.ranges)
 #        # mc.cores = 1)
 
-#lapply(files_Tsankov_distal, create_count_overlaps_file_tsankov, 
-#         cell_number_filter=CELL_NUMBER_FILTER,
-#         metadata=metadata_tsankov_distal,
-#         interval_ranges=interval.ranges)
-#         #mc.cores = 1)
+lapply(files_Tsankov_distal, create_count_overlaps_file_tsankov,
+        cell_number_filter=CELL_NUMBER_FILTER,
+        metadata=metadata_tsankov_distal,
+        interval_ranges=interval.ranges)
+        #mc.cores = 1)
