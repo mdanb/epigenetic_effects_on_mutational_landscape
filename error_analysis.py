@@ -50,10 +50,12 @@ for scATAC_source in scATAC_sources:
             errors.append(error)
         errors = [err for err_list in errors for err in err_list]
         figure(figsize=(16, 12))
-        plt.bar(np.arange(len(errors), dtype=np.float32),
-                np.asarray(errors, dtype=np.float32),
-                width=4)
+        x = np.arange(len(errors))
+        plt.bar(x, np.asarray(errors, dtype=np.float32), width=4)
+        for i in range(0, 2200, 213):
+            plt.axvline(x=i, c="red")
+        plt.xticks(np.arange(min(x), max(x)+1, 100))
         plt.xlabel("Bin")
         plt.ylabel("Percent error")
         # plt.title("Percent error versus chromosomal bins")
-        plt.savefig('foo.png')
+        plt.savefig('figures/bin_vs_percent_error.png')
