@@ -7,6 +7,7 @@ library(tidyr)
 library(stringr)
 library(exomeCopy)
 library(parallel)
+library(RColorBrewer)
 source("utils.R")
 
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
@@ -435,7 +436,7 @@ run_subsampling_simulations <- function(num_fragments_to_subsample,
     if (log) {
       i = as.integer(2^i)
     }
-    samples_100 = mclapply(rep(i, 100), run_one_simulation, 
+    samples_100 = mclapply(rep(i, 2), run_one_simulation, 
                            cell_type_count_overlaps,
                            sampling_vec, mutations,
                            mc.cores=8)
@@ -478,6 +479,7 @@ add_escape_if_necessary <- function(cell_type) {
 
 plot_and_save_boxplots <- function(correlations_long, cell_types, 
                                    plot_filename) {
+  # colors = get_n_colors(length(cell_types), 4)
   ggplot(correlations_long) +
     geom_boxplot(aes(x=factor(num_fragments, levels=unique(num_fragments)), 
                      y=correlation, color=cell_type)) +
@@ -485,7 +487,8 @@ plot_and_save_boxplots <- function(correlations_long, cell_types,
     xlab("Num Fragments") +
     labs(color="Cell type") + 
     scale_x_discrete(limits = as.factor(sort(as.integer(
-                     unique(correlations_long["num_fragments"]) %>% pull))))
+                     unique(correlations_long["num_fragments"]) %>% pull)))) #+
+    #scale_color_manual(values=colors)
   # ggplot() +
   #   geom_boxplot(data = subset(correlations_long, cell_type == cell_types[1]), 
   #                aes(x=factor(num_fragments, levels=unique(num_fragments)), 
@@ -636,14 +639,13 @@ cell_types = c("Skin Sun Exposed Melanocyte",
                "Skin Macrophage (General,Alveolar)",
                "Skin Sun Exposed Macrophage (General,Alveolar)")
 
-# MAKE SURE TO KEEP
-# prep_boxplots_per_cancer_type(combined_count_overlaps, 
-#                               mut_count_data,
-#                               "Skin.Melanoma", 
-#                               cell_types, 
-#                               1000, 
-#                               T, 
-#                               "log_num_frags_vs_correlation.png")
+prep_boxplots_per_cancer_type(combined_count_overlaps,
+                              mut_count_data,
+                              "Skin.Melanoma",
+                              cell_types,
+                              1000,
+                              T,
+                              "skin_log_num_frags_vs_correlation.png")
 
 # prep_boxplots(combined_count_overlaps, "Skin.Melanoma", cell_types, 200000, F,
 #               "num_frags_vs_correlation.png")
@@ -670,13 +672,13 @@ lung_cell_types = c("Lung Alveolar Type 2 (AT2) Cell",
                     "Lung Bronchiolar and alveolar epithelial cells",
                     "Proximal Lung AT2")
 
-prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data, 
-                              mut_count_data,
-                              "Lung.AdenoCA", 
-                              lung_cell_types, 
-                              1000, 
-                              T, 
-                              "lung_log_num_frags_vs_correlation.png")
+# prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data, 
+#                               mut_count_data,
+#                               "Lung.AdenoCA", 
+#                               lung_cell_types, 
+#                               1000, 
+#                               T, 
+#                               "lung_log_num_frags_vs_correlation.png")
 
 # TSS
 # metadata = readRDS("processed_data/count_overlap_data/combined_count_overlaps/count_filter_1_combined_count_overlaps_metadata.rds")
