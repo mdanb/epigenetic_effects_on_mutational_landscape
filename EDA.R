@@ -377,7 +377,7 @@ ggplot(correlations_long_no_outliers) +
   geom_abline(intercept = coefs[1], slope = coefs[2])
 
 
-#### Cell number / Fragment counts / TSS vs R for Melanoma boxplots ####
+#### Fragment counts / TSS vs R for Melanoma boxplots ####
 # Fragment counts
 run_one_simulation <- function(n_samples, count_overlaps, 
                                sampling_vec, mutations) {
@@ -604,8 +604,12 @@ combined_counts_overlaps_all_scATAC_data = combine_scATAC(combined_filepath,
                                                           combined_filepath_shendure,
                                                           combined_filepath_tsankov)
 # RECALL that Shendure and Tsankov do NOT have Melanocytes
-cell_types = c("Skin Sun Exposed melanocyte", 
-               "Skin Sun Exposed Fibroblast (Epithelial)")
+cell_types = c("Skin Sun Exposed Melanocyte", 
+               "Skin Sun Exposed Fibroblast (Epithelial)",
+               "Skin Melanocyte",
+               "Skin Fibroblast (Epithelial)",
+               "Skin Keratinocyte 1", 
+               "Skin Sun Exposed Keratinocyte 1")
 
 prep_boxplots(combined_count_overlaps, 
               mut_count_data,
@@ -618,8 +622,8 @@ prep_boxplots(combined_count_overlaps,
 prep_boxplots(combined_count_overlaps, "Skin.Melanoma", cell_types, 200000, F, 
               "num_frags_vs_correlation.png")
 
-# Cell number
+# TSS
 metadata = readRDS("processed_data/count_overlap_data/combined_count_overlaps/count_filter_1_combined_count_overlaps_metadata.rds")
-melanocyte_n_cells = metadata[metadata["tissue_name"] == 
-                             "Skin" & metadata["cell_type"] == 
-                             "Melanocyte", "num_cells"]
+# melanocyte_n_cells = metadata[metadata["tissue_name"] == 
+#                              "Skin" & metadata["cell_type"] == 
+#                              "Melanocyte", "num_cells"]
