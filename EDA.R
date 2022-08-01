@@ -561,8 +561,10 @@ get_long_correlations_per_cell_type <- function(i,
   return(curr_correlations_long)
 }
 
-prep_boxplots <- function(combined_count_overlaps, mut_count_data, cancer_type, 
-                          cell_types, lower, log, plot_filename) {
+prep_boxplots_per_cancer_type <- function(combined_count_overlaps, 
+                                          mut_count_data, cancer_type, 
+                                          cell_types, lower, log, 
+                                          plot_filename) {
   correlations_long = tibble()
   cell_type_for_grep = lapply(cell_types, add_escape_if_necessary)
   cell_type_col_idx = lapply(cell_type_for_grep, grep,
@@ -598,19 +600,19 @@ prep_boxplots <- function(combined_count_overlaps, mut_count_data, cancer_type,
                          plot_filename)
 }
 
-combine_scATAC <- function(combined_filepath, combined_filepath_shendure,
-                           combined_filepath_tsankov) {
-  combined_count_overlaps = t(readRDS(combined_filepath))
-  shendure_combined_count_overlaps = t(readRDS(combined_filepath_shendure))
-  tsankov_combined_count_overlaps = t(readRDS(combined_filepath_tsankov))
-  return(cbind(combined_count_overlaps, shendure_combined_count_overlaps,
-               tsankov_combined_count_overlaps))
-}
+# prep_boxplots <- function(cancer_types) {
+#   mclapply(cancer_types, 
+#            )
+# }
 
-combined_counts_overlaps_all_scATAC_data = combine_scATAC(combined_filepath,
-                                                          combined_filepath_shendure,
-                                                          combined_filepath_tsankov)
-# RECALL that Shendure and Tsankov do NOT have Melanocytes
+# combine_scATAC <- function(combined_filepath, combined_filepath_shendure,
+#                            combined_filepath_tsankov) {
+#   combined_count_overlaps = t(readRDS(combined_filepath))
+#   shendure_combined_count_overlaps = t(readRDS(combined_filepath_shendure))
+#   tsankov_combined_count_overlaps = t(readRDS(combined_filepath_tsankov))
+#   return(cbind(combined_count_overlaps, shendure_combined_count_overlaps,
+#                tsankov_combined_count_overlaps))
+# }
 
 # colnames(combined_count_overlaps)[grep("Skin", colnames(combined_count_overlaps))]
 # sum(combined_count_overlaps[grep("Skin T lymphocyte 2 \\(CD4\\+\\)", 
@@ -634,19 +636,53 @@ cell_types = c("Skin Sun Exposed Melanocyte",
                "Skin Macrophage (General,Alveolar)",
                "Skin Sun Exposed Macrophage (General,Alveolar)")
 
-prep_boxplots(combined_count_overlaps, 
-              mut_count_data,
-              "Skin.Melanoma", 
-              cell_types, 
-              1000, 
-              T, 
-              "log_num_frags_vs_correlation.png")
+# MAKE SURE TO KEEP
+# prep_boxplots_per_cancer_type(combined_count_overlaps, 
+#                               mut_count_data,
+#                               "Skin.Melanoma", 
+#                               cell_types, 
+#                               1000, 
+#                               T, 
+#                               "log_num_frags_vs_correlation.png")
 
-# prep_boxplots(combined_count_overlaps, "Skin.Melanoma", cell_types, 200000, F, 
+# prep_boxplots(combined_count_overlaps, "Skin.Melanoma", cell_types, 200000, F,
 #               "num_frags_vs_correlation.png")
 
+# combined_counts_overlaps_all_scATAC_data = combine_scATAC(combined_filepath,
+#                                                           combined_filepath_shendure,
+#                                                           combined_filepath_tsankov)
+combined_count_overlaps = t(readRDS(combined_filepath))
+shendure_combined_count_overlaps = t(readRDS(combined_filepath_shendure))
+tsankov_combined_count_overlaps = t(readRDS(combined_filepath_tsankov))
+combined_counts_overlaps_all_scATAC_data = cbind(combined_count_overlaps, 
+                                                 shendure_combined_count_overlaps,
+                                                 tsankov_combined_count_overlaps)
+
+# RECALL that Shendure and Tsankov do NOT have Melanocytes
+colnames(combined_count_overlaps)[grep("Lung", 
+                                       colnames(combined_count_overlaps))]
+colnames(shendure_combined_count_overlaps)[grep("Lung", 
+                                    colnames(shendure_combined_count_overlaps))]
+colnames(tsankov_combined_count_overlaps)[grep("Lung", 
+                                     colnames(tsankov_combined_count_overlaps))]
+
+lung_cell_types = c("Lung Alveolar Type 2 (AT2) Cell",
+                    "Lung Bronchiolar and alveolar epithelial cells",
+                    "Proximal Lung AT2")
+
+prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data, 
+                              mut_count_data,
+                              "Lung.AdenoCA", 
+                              lung_cell_types, 
+                              1000, 
+                              T, 
+                              "lung_log_num_frags_vs_correlation.png")
+
 # TSS
-metadata = readRDS("processed_data/count_overlap_data/combined_count_overlaps/count_filter_1_combined_count_overlaps_metadata.rds")
+# metadata = readRDS("processed_data/count_overlap_data/combined_count_overlaps/count_filter_1_combined_count_overlaps_metadata.rds")
+
+
+# Num Cells
 # melanocyte_n_cells = metadata[metadata["tissue_name"] == 
 #                              "Skin" & metadata["cell_type"] == 
 #                              "Melanocyte", "num_cells"]
