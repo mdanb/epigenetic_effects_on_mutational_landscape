@@ -612,14 +612,15 @@ combined_counts_overlaps_all_scATAC_data = combine_scATAC(combined_filepath,
                                                           combined_filepath_tsankov)
 # RECALL that Shendure and Tsankov do NOT have Melanocytes
 
-colnames(combined_count_overlaps)[grep("Skin", colnames(combined_count_overlaps))]
-sum(combined_count_overlaps[grep("Skin T lymphocyte 2 \\(CD4\\+\\)", 
-                             colnames(combined_count_overlaps)), ])
+# colnames(combined_count_overlaps)[grep("Skin", colnames(combined_count_overlaps))]
+# sum(combined_count_overlaps[grep("Skin T lymphocyte 2 \\(CD4\\+\\)", 
+#                              colnames(combined_count_overlaps)), ])
 # sum(combined_count_overlaps[grep("Skin Sun Exposed Macrophage \\(General,Alveolar\\)", 
 #                                  colnames(combined_count_overlaps)), ])
 # grep("Skin Fibroblast \\(Epithelial\\)", colnames(combined_count_overlaps))
-colnames(combined_count_overlaps)[grep("Skin", 
-                                       colnames(combined_count_overlaps))]
+# colnames(combined_count_overlaps)[grep("Skin", 
+#                                        colnames(combined_count_overlaps))]
+
 cell_types = c("Skin Sun Exposed Melanocyte", 
                "Skin Melanocyte",
                "Skin Sun Exposed Fibroblast (Epithelial)",
