@@ -454,19 +454,26 @@ run_subsampling_simulations <- function(num_fragments_to_subsample,
   return(subsampling_simulations)
 }
 
+add_escape_helper <- function(char_to_escape, cell_type) {
+  escaped = paste0("\\", char_to_escape)
+  left_idx = unlist(gregexpr(escaped, cell_type))[1]
+  left_substr = substr(cell_type, 1, left_idx - 1)
+  right_substr = substr(cell_type, left_idx, nchar(cell_type))
+  cell_type_for_grep = paste0(left_substr, "\\", right_substr)
+  return(cell_type_for_grep)
+}
+
 add_escape_if_necessary <- function(cell_type) {
   if (grepl("\\(", cell_type)) {
-    left_paranthesis_idx = unlist(gregexpr("\\(", cell_type))[1]
-    left_substr = substr(cell_type, 1, left_paranthesis_idx - 1)
-    middle_substr = substr(cell_type, left_paranthesis_idx, nchar(cell_type) - 1)
-    right_substr = "\\)"
-    cell_type_for_grep = paste0(left_substr, "\\", 
-                                middle_substr, right_substr)
+    cell_type = add_escape_helper("(", cell_type)
   }
-  else {
-    cell_type_for_grep = cell_type
+  if (grepl("\\)", cell_type)) {
+    cell_type = add_escape_helper(")", cell_type)
   }
-  return(cell_type_for_grep)
+  if (grepl("\\+", cell_type)) {
+    cell_type = add_escape_helper("+", cell_type)
+  }
+  return(cell_type)
 }
 
 plot_and_save_boxplots <- function(correlations_long, cell_types, 
@@ -604,12 +611,27 @@ combined_counts_overlaps_all_scATAC_data = combine_scATAC(combined_filepath,
                                                           combined_filepath_shendure,
                                                           combined_filepath_tsankov)
 # RECALL that Shendure and Tsankov do NOT have Melanocytes
+
+colnames(combined_count_overlaps)[grep("Skin", colnames(combined_count_overlaps))]
+sum(combined_count_overlaps[grep("Skin T lymphocyte 2 \\(CD4\\+\\)", 
+                             colnames(combined_count_overlaps)), ])
+# sum(combined_count_overlaps[grep("Skin Sun Exposed Macrophage \\(General,Alveolar\\)", 
+#                                  colnames(combined_count_overlaps)), ])
+# grep("Skin Fibroblast \\(Epithelial\\)", colnames(combined_count_overlaps))
+colnames(combined_count_overlaps)[grep("Skin", 
+                                       colnames(combined_count_overlaps))]
 cell_types = c("Skin Sun Exposed Melanocyte", 
-               "Skin Sun Exposed Fibroblast (Epithelial)",
                "Skin Melanocyte",
+               "Skin Sun Exposed Fibroblast (Epithelial)",
                "Skin Fibroblast (Epithelial)",
                "Skin Keratinocyte 1", 
-               "Skin Sun Exposed Keratinocyte 1")
+               "Skin Sun Exposed Keratinocyte 1",
+               "Skin T Lymphocyte 1 (CD8+)", 
+               "Skin Sun Exposed T Lymphocyte 1 (CD8+)",
+               "Skin T lymphocyte 2 (CD4+)",
+               "Skin Sun Exposed T lymphocyte 2 (CD4+)",
+               "Skin Macrophage (General,Alveolar)",
+               "Skin Sun Exposed Macrophage (General,Alveolar)")
 
 prep_boxplots(combined_count_overlaps, 
               mut_count_data,
