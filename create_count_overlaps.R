@@ -106,15 +106,25 @@ migrate_bed_file_to_hg37 <- function(bed_sample, chain) {
 }
 
 create_count_overlaps_file <- function(file, cell_number_filter, metadata,
-                                       interval_ranges, chain) {
+                                       interval_ranges, chain, 
+                                       top_tsse_fragment_count_subsampling_range
+                                       = NA) {
   filename = paste("count_filter", CELL_NUMBER_FILTER,  
                    "count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                            "rds", sep="."), sep="_")
+  if (!is.na(top_tsse_fragment_count_subsampling_range)) {
+    filename = paste("tsse_filter", filename)
+    filepath = paste("processed_data/count_overlap_data/tsse_filtered", 
+                     filename, sep="/")
+  }
+  else {
+    filepath = paste("processed_data/count_overlap_data", filename, sep="/")
+  }
+  
   subdivided_filename = paste("count_filter", CELL_NUMBER_FILTER,  
                               "subdivided_count_overlaps", 
                               paste(file_path_sans_ext(file, TRUE),
                                     "rds", sep="."), sep="_")
-  filepath = paste("processed_data/count_overlap_data", filename, sep="/")
   subdivided_filepath = paste("processed_data/count_overlap_data", 
                               subdivided_filename, 
                               sep="/")
@@ -171,7 +181,9 @@ create_count_overlaps_file_shendure <- function(file, cell_number_filter,
 
 create_count_overlaps_file_tsankov <- function(file, cell_number_filter, 
                                                metadata, interval_ranges, 
-                                               chain) {
+                                               chain, 
+                                               top_tsse_fragment_count_subsampling_range
+                                               = NA) {
   filename = paste(file_path_sans_ext(file, TRUE), "rds", sep=".")
   filename = unlist(strsplit(filename, split = "_"))
   filename = paste(filename[2:length(filename)], collapse="_")
@@ -214,7 +226,8 @@ load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 interval.ranges
 
 dir.create("processed_data/count_overlap_data", recursive=TRUE)                                       
-dir.create("processed_data/cell_counts_per_sample", recursive=TRUE)                                       
+dir.create("processed_data/cell_counts_per_sample")                                       
+dir.create("processed_data/count_overlap_data/tsse_filtered")
 
 files = setdiff(list.files("raw_dir/bed_files/"), 
                 list.dirs("raw_dir/bed_files", recursive = FALSE, 
@@ -228,15 +241,27 @@ files_Tsankov_distal = list.files("raw_dir/bed_files/Tsankov_scATAC/",
                                   pattern=".*distal.*")
 files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
                                     pattern=".*proximal*")
-
-hg38_path = system.file (package="liftOver", "extdata", "hg38ToHg19.over.chain")
+bing_ren_lung_files = setdiff(list.files("raw_dir/bed_files/", 
+                                         pattern=".*lung.*"), 
+                              list.dirs("raw_dir/bed_files", recursive = FALSE, 
+                                        full.names = FALSE))
+hg38_path = system.file(package="liftOver", "extdata", "hg38ToHg19.over.chain")
 ch = import.chain(hg38_path)
 
 # lapply(files, create_count_overlaps_file,
-#                 cell_number_filter=CELL_NUMBER_FILTER,
-#                 metadata=metadata,
-#                 interval_ranges=interval.ranges,
-#                 chain=ch)
+#        cell_number_filter=CELL_NUMBER_FILTER,
+#        metadata=metadata,
+#        interval_ranges=interval.ranges,
+#        chain=ch)
+
+# lapply(bing_ren_lung_files, create_count_overlaps_file,
+#        cell_number_filter=CELL_NUMBER_FILTER,
+#        metadata=metadata,
+#        interval_ranges=interval.ranges,
+#        chain=ch,
+#        top_tsse_fragment_count_subsampling_range = c(1000, 3853, 14849, 57225,
+#                                                      220520, 849788, 3274710,
+#                                                      12619294))
 
 #lapply(files_Shendure, create_count_overlaps_file_shendure,
 #         cell_number_filter=CELL_NUMBER_FILTER,
@@ -250,8 +275,18 @@ ch = import.chain(hg38_path)
 #         interval_ranges=interval.ranges)
 #         # mc.cores = 1)
 
-lapply(files_Tsankov_distal, create_count_overlaps_file_tsankov,
-        cell_number_filter=CELL_NUMBER_FILTER,
-        metadata=metadata_tsankov_distal,
-        interval_ranges=interval.ranges)
-        #mc.cores = 1)
+# lapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
+#        cell_number_filter=CELL_NUMBER_FILTER,
+#        metadata=metadata_tsankov_proximal,
+#        interval_ranges=interval.ranges,
+#        chain=ch,
+#        top_tsse_fragment_count_subsampling_range = c(1000, 3853, 14849, 57225,
+#                                                      220520))
+mclapply(files_Tsankov_distal,
+         create_count_overlaps_file_tsankov,
+         cell_number_filter=CELL_NUMBER_FILTER,
+         metadata=metadata_tsankov_distal,
+         interval_ranges=interval.ranges,
+         mc.cores = 8)
+# 
+# thresholds = c("80k", "100k", "200k", "700k", "2M")
