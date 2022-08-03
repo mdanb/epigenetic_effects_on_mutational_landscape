@@ -626,26 +626,26 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
 # colnames(combined_count_overlaps)[grep("Skin", 
 #                                        colnames(combined_count_overlaps))]
 
-cell_types = c("Skin Sun Exposed Melanocyte", 
-               "Skin Melanocyte",
-               "Skin Sun Exposed Fibroblast (Epithelial)",
-               "Skin Fibroblast (Epithelial)",
-               "Skin Keratinocyte 1", 
-               "Skin Sun Exposed Keratinocyte 1",
-               "Skin T Lymphocyte 1 (CD8+)", 
-               "Skin Sun Exposed T Lymphocyte 1 (CD8+)",
-               "Skin T lymphocyte 2 (CD4+)",
-               "Skin Sun Exposed T lymphocyte 2 (CD4+)",
-               "Skin Macrophage (General,Alveolar)",
-               "Skin Sun Exposed Macrophage (General,Alveolar)")
-
-prep_boxplots_per_cancer_type(combined_count_overlaps,
-                              mut_count_data,
-                              "Skin.Melanoma",
-                              cell_types,
-                              1000,
-                              T,
-                              "skin_log_num_frags_vs_correlation.png")
+# cell_types = c("Skin Sun Exposed Melanocyte", 
+#                "Skin Melanocyte",
+#                "Skin Sun Exposed Fibroblast (Epithelial)",
+#                "Skin Fibroblast (Epithelial)",
+#                "Skin Keratinocyte 1", 
+#                "Skin Sun Exposed Keratinocyte 1",
+#                "Skin T Lymphocyte 1 (CD8+)", 
+#                "Skin Sun Exposed T Lymphocyte 1 (CD8+)",
+#                "Skin T lymphocyte 2 (CD4+)",
+#                "Skin Sun Exposed T lymphocyte 2 (CD4+)",
+#                "Skin Macrophage (General,Alveolar)",
+#                "Skin Sun Exposed Macrophage (General,Alveolar)")
+# 
+# prep_boxplots_per_cancer_type(combined_count_overlaps,
+#                               mut_count_data,
+#                               "Skin.Melanoma",
+#                               cell_types,
+#                               1000,
+#                               T,
+#                               "skin_log_num_frags_vs_correlation.png")
 
 # prep_boxplots(combined_count_overlaps, "Skin.Melanoma", cell_types, 200000, F,
 #               "num_frags_vs_correlation.png")
@@ -660,20 +660,21 @@ combined_counts_overlaps_all_scATAC_data = cbind(combined_count_overlaps,
                                                  shendure_combined_count_overlaps,
                                                  tsankov_combined_count_overlaps)
 
-# RECALL that Shendure and Tsankov do NOT have Melanocytes
-colnames(combined_count_overlaps)[grep("Lung", 
-                                       colnames(combined_count_overlaps))]
-colnames(shendure_combined_count_overlaps)[grep("Lung", 
-                                    colnames(shendure_combined_count_overlaps))]
-colnames(tsankov_combined_count_overlaps)[grep("Lung", 
-                                     colnames(tsankov_combined_count_overlaps))]
+# # RECALL that Shendure and Tsankov do NOT have Melanocytes
+# colnames(combined_count_overlaps)[grep("Lung", 
+#                                        colnames(combined_count_overlaps))]
+# colnames(shendure_combined_count_overlaps)[grep("Lung", 
+#                                     colnames(shendure_combined_count_overlaps))]
+# colnames(tsankov_combined_count_overlaps)[grep("Lung", 
+#                                      colnames(tsankov_combined_count_overlaps))]
 
 lung_cell_types = c("Lung Alveolar Type 2 (AT2) Cell",
                     "Lung Bronchiolar and alveolar epithelial cells",
                     "Distal Lung AT2")
+<<<<<<< HEAD
 
-sum(combined_counts_overlaps_all_scATAC_data[grep("Lung Bronchiolar and alveolar epithelial cells",
-                         colnames(combined_counts_overlaps_all_scATAC_data)), ])
+# sum(combined_counts_overlaps_all_scATAC_data[grep("Lung Bronchiolar and alveolar epithelial cells",
+#                          colnames(combined_counts_overlaps_all_scATAC_data)), ])
 
 prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               mut_count_data,
@@ -683,62 +684,64 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               T,
                               "lung_log_num_frags_vs_correlation.png")
 
-# TSS
-get_filtered_metadata <- function(metadata, life_stage, tis, cell_types) {
-  cell_types = paste(cell_types, collapse="|")
-  filtered_metadata = metadata %>% 
-                      filter(grepl(life_stage, Life.stage)) %>%
-                      filter(grepl(tis, tissue, ignore.case=T)) %>%
-                      filter(grepl(cell_types, 
-                                   cell.type, 
-                                   ignore.case=T)) 
-  return(filtered_metadata)
-}
+# # TSS
+# get_filtered_metadata <- function(metadata, life_stage, tis, cell_types) {
+#   cell_types = paste(cell_types, collapse="|")
+#   filtered_metadata = metadata %>% 
+#                       filter(grepl(life_stage, Life.stage)) %>%
+#                       filter(grepl(tis, tissue, ignore.case=T)) %>%
+#                       filter(grepl(cell_types, 
+#                                    cell.type, 
+#                                    ignore.case=T)) 
+#   return(filtered_metadata)
+# }
+# 
+# add_fragment_counts_to_metadata <- function(metadata, combined_count_overlaps) {
+#   where_to_substr = unlist(lapply("_SM", regexpr, metadata[["tissue"]]))
+#   tissue_name = unname(unlist(
+#            lapply(metadata["tissue"], substr, 1, where_to_substr - 1)))
+#   tissue_name = str_to_title(gsub("\\_", " ", tissue_name))
+#   metadata = metadata %>% mutate(full_cell_type_name = paste(tissue_name, 
+#                                                              cell.type))
+#   count_overlaps_idx_per_cell_type = match(metadata[["full_cell_type_name"]], 
+#                                            colnames(combined_count_overlaps))
+#   uniq_count_overlap_idxs = unique(count_overlaps_idx_per_cell_type)
+#   uniq_counts = apply(combined_count_overlaps[, uniq_count_overlap_idxs], 2, 
+#                       sum)
+#   names(uniq_counts) = uniq_count_overlap_idxs
+#   count_overlap_idx_per_cell_type = match(count_overlaps_idx_per_cell_type, 
+#                                           names(uniq_counts))
+#   count_overlaps = unname(uniq_counts[count_overlap_idx_per_cell_type])
+#   metadata["total_count_overlaps"] = count_overlaps
+#   return(metadata)
+# }
+# 
+# plot_num_frag_vs_tss_boxplot <- function(metadata, save_filename) {
+#   ggplot(metadata) +
+#     geom_boxplot(aes(x=factor(total_count_overlaps, levels=unique(total_count_overlaps)), 
+#                      y=tsse, color=full_cell_type_name)) +
+#     xlab("Num Fragments") +
+#     theme(axis.text.x=element_text(size=10, angle = 90)) +
+#     scale_x_discrete(limits = as.factor(sort(as.integer(
+#       unique(metadata["total_count_overlaps"]) %>% pull))))
+#   ggsave(paste("figures", save_filename, sep="/"), width = 20, height = 12)
+# }
+# 
+# metadata = as_tibble(read.table("raw_dir/metadata/GSE184462_metadata.tsv", 
+#                                 sep="\t",
+#                       header=T))
+# 
+# filtered_metadata = get_filtered_metadata(metadata, "Adult", "skin", 
+#                                           c("melanocyte",
+#                                             "keratinocyte",
+#                                             "fibroblast"))
+# filtered_metadata = add_fragment_counts_to_metadata(filtered_metadata, 
+#                                                     combined_count_overlaps)
+# 
+# plot_num_frag_vs_tss_boxplot(filtered_metadata, 
+#                              "skin_num_frag_vs_tss.png")
 
-add_fragment_counts_to_metadata <- function(metadata, combined_count_overlaps) {
-  where_to_substr = unlist(lapply("_SM", regexpr, metadata[["tissue"]]))
-  tissue_name = unname(unlist(
-           lapply(metadata["tissue"], substr, 1, where_to_substr - 1)))
-  tissue_name = str_to_title(gsub("\\_", " ", tissue_name))
-  metadata = metadata %>% mutate(full_cell_type_name = paste(tissue_name, 
-                                                             cell.type))
-  count_overlaps_idx_per_cell_type = match(metadata[["full_cell_type_name"]], 
-                                           colnames(combined_count_overlaps))
-  uniq_count_overlap_idxs = unique(count_overlaps_idx_per_cell_type)
-  uniq_counts = apply(combined_count_overlaps[, uniq_count_overlap_idxs], 2, 
-                      sum)
-  names(uniq_counts) = uniq_count_overlap_idxs
-  count_overlap_idx_per_cell_type = match(count_overlaps_idx_per_cell_type, 
-                                          names(uniq_counts))
-  count_overlaps = unname(uniq_counts[count_overlap_idx_per_cell_type])
-  metadata["total_count_overlaps"] = count_overlaps
-  return(metadata)
-}
 
-plot_num_frag_vs_tss_boxplot <- function(metadata, save_filename) {
-  ggplot(metadata) +
-    geom_boxplot(aes(x=factor(total_count_overlaps, levels=unique(total_count_overlaps)), 
-                     y=tsse, color=full_cell_type_name)) +
-    xlab("Num Fragments") +
-    theme(axis.text.x=element_text(size=10, angle = 90)) +
-    scale_x_discrete(limits = as.factor(sort(as.integer(
-      unique(metadata["total_count_overlaps"]) %>% pull))))
-  ggsave(paste("figures", save_filename, sep="/"), width = 20, height = 12)
-}
-
-metadata = as_tibble(read.table("raw_dir/metadata/GSE184462_metadata.tsv", 
-                                sep="\t",
-                      header=T))
-
-filtered_metadata = get_filtered_metadata(metadata, "Adult", "skin", 
-                                          c("melanocyte",
-                                            "keratinocyte",
-                                            "fibroblast"))
-filtered_metadata = add_fragment_counts_to_metadata(filtered_metadata, 
-                                                    combined_count_overlaps)
-
-plot_num_frag_vs_tss_boxplot(filtered_metadata, 
-                             "skin_num_frag_vs_tss.png")
 # metadata = readRDS("processed_data/count_overlap_data/combined_count_overlaps/count_filter_1_combined_count_overlaps_metadata.rds")
 
 
