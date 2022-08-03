@@ -671,7 +671,6 @@ combined_counts_overlaps_all_scATAC_data = cbind(combined_count_overlaps,
 lung_cell_types = c("Lung Alveolar Type 2 (AT2) Cell",
                     "Lung Bronchiolar and alveolar epithelial cells",
                     "Distal Lung AT2")
-<<<<<<< HEAD
 
 # sum(combined_counts_overlaps_all_scATAC_data[grep("Lung Bronchiolar and alveolar epithelial cells",
 #                          colnames(combined_counts_overlaps_all_scATAC_data)), ])
