@@ -741,8 +741,6 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
 #                              "skin_num_frag_vs_tss.png")
 
 
-
-
 # metadata = readRDS("processed_data/count_overlap_data/combined_count_overlaps/count_filter_1_combined_count_overlaps_metadata.rds")
 
 
