@@ -671,6 +671,7 @@ combined_counts_overlaps_all_scATAC_data = cbind(combined_count_overlaps,
 lung_cell_types = c("Lung Alveolar Type 2 (AT2) Cell",
                     "Lung Bronchiolar and alveolar epithelial cells",
                     "Distal Lung AT2")
+<<<<<<< HEAD
 
 # sum(combined_counts_overlaps_all_scATAC_data[grep("Lung Bronchiolar and alveolar epithelial cells",
 #                          colnames(combined_counts_overlaps_all_scATAC_data)), ])
@@ -739,8 +740,6 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
 # 
 # plot_num_frag_vs_tss_boxplot(filtered_metadata, 
 #                              "skin_num_frag_vs_tss.png")
-
-
 
 
 # metadata = readRDS("processed_data/count_overlap_data/combined_count_overlaps/count_filter_1_combined_count_overlaps_metadata.rds")
