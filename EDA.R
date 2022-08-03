@@ -414,7 +414,7 @@ run_simulations_per_num_fragments <- function(num_fragments, log) {
   if (log) {
     num_fragments = as.integer(2^num_fragments)
   }
-  samples_100 = mclapply(rep(i, 2), run_one_simulation, 
+  samples_100 = mclapply(rep(i, 100), run_one_simulation, 
                        cell_type_count_overlaps,
                        sampling_vec, mutations,
                        mc.cores=8)
@@ -670,17 +670,75 @@ colnames(tsankov_combined_count_overlaps)[grep("Lung",
 
 lung_cell_types = c("Lung Alveolar Type 2 (AT2) Cell",
                     "Lung Bronchiolar and alveolar epithelial cells",
-                    "Proximal Lung AT2")
+                    "Distal Lung AT2")
 
-# prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data, 
-#                               mut_count_data,
-#                               "Lung.AdenoCA", 
-#                               lung_cell_types, 
-#                               1000, 
-#                               T, 
-#                               "lung_log_num_frags_vs_correlation.png")
+sum(combined_counts_overlaps_all_scATAC_data[grep("Lung Bronchiolar and alveolar epithelial cells",
+                         colnames(combined_counts_overlaps_all_scATAC_data)), ])
+
+prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
+                              mut_count_data,
+                              "Lung.AdenoCA",
+                              lung_cell_types,
+                              1000,
+                              T,
+                              "lung_log_num_frags_vs_correlation.png")
 
 # TSS
+get_filtered_metadata <- function(metadata, life_stage, tis, cell_types) {
+  cell_types = paste(cell_types, collapse="|")
+  filtered_metadata = metadata %>% 
+                      filter(grepl(life_stage, Life.stage)) %>%
+                      filter(grepl(tis, tissue, ignore.case=T)) %>%
+                      filter(grepl(cell_types, 
+                                   cell.type, 
+                                   ignore.case=T)) 
+  return(filtered_metadata)
+}
+
+add_fragment_counts_to_metadata <- function(metadata, combined_count_overlaps) {
+  where_to_substr = unlist(lapply("_SM", regexpr, metadata[["tissue"]]))
+  tissue_name = unname(unlist(
+           lapply(metadata["tissue"], substr, 1, where_to_substr - 1)))
+  tissue_name = str_to_title(gsub("\\_", " ", tissue_name))
+  metadata = metadata %>% mutate(full_cell_type_name = paste(tissue_name, 
+                                                             cell.type))
+  count_overlaps_idx_per_cell_type = match(metadata[["full_cell_type_name"]], 
+                                           colnames(combined_count_overlaps))
+  uniq_count_overlap_idxs = unique(count_overlaps_idx_per_cell_type)
+  uniq_counts = apply(combined_count_overlaps[, uniq_count_overlap_idxs], 2, 
+                      sum)
+  names(uniq_counts) = uniq_count_overlap_idxs
+  count_overlap_idx_per_cell_type = match(count_overlaps_idx_per_cell_type, 
+                                          names(uniq_counts))
+  count_overlaps = unname(uniq_counts[count_overlap_idx_per_cell_type])
+  metadata["total_count_overlaps"] = count_overlaps
+  return(metadata)
+}
+
+plot_num_frag_vs_tss_boxplot <- function(metadata, save_filename) {
+  ggplot(metadata) +
+    geom_boxplot(aes(x=factor(total_count_overlaps, levels=unique(total_count_overlaps)), 
+                     y=tsse, color=full_cell_type_name)) +
+    xlab("Num Fragments") +
+    theme(axis.text.x=element_text(size=10, angle = 90)) +
+    scale_x_discrete(limits = as.factor(sort(as.integer(
+      unique(metadata["total_count_overlaps"]) %>% pull))))
+  ggsave(paste("figures", save_filename, sep="/"), width = 20, height = 12)
+}
+
+metadata = as_tibble(read.table("raw_dir/metadata/GSE184462_metadata.tsv", 
+                                sep="\t",
+                      header=T))
+
+filtered_metadata = get_filtered_metadata(metadata, "Adult", "skin", 
+                                          c("melanocyte",
+                                            "keratinocyte",
+                                            "fibroblast"))
+filtered_metadata = add_fragment_counts_to_metadata(filtered_metadata, 
+                                                    combined_count_overlaps)
+
+plot_num_frag_vs_tss_boxplot(filtered_metadata, 
+                             "skin_num_frag_vs_tss.png")
 # metadata = readRDS("processed_data/count_overlap_data/combined_count_overlaps/count_filter_1_combined_count_overlaps_metadata.rds")
 
 
