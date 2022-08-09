@@ -585,27 +585,37 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
                                                                     max(cell_types_total_fragments), 
                                                                     log)
   mutations <- mut_count_data[cancer_type]
-  correlations_long = mclapply(seq_along(cell_types),
-                               get_long_correlations_per_cell_type,
-                               colnames(cell_types_count_overlaps),
-                               cell_types_total_fragments,
-                               fragments_subsampling_range,
-                               mutations,
-                               cell_types_count_overlaps,
-                               log,
-                               mc.cores=8)
+  cell_types_underscore_sep = gsub(" ", "_", cell_types)
+  cell_types_being_considered_combined = paste(cell_types_underscore_sep, 
+                                               collapse="_and_")
+  correlations_filename = paste(cancer_type, 
+                                cell_types_being_considered_combined,
+                                sep = "_")
+  correlations_filename = paste0(correlations_filename, ".rds")
+  correlations_filepath = paste("processed_data", "tsse_filtered_correlations",
+                                correlations_filename, sep="/")
+  # correlations_filepath = ""
+  if (!file.exists(correlations_filepath)) {
+    correlations_long = mclapply(seq_along(cell_types),
+                                 get_long_correlations_per_cell_type,
+                                 colnames(cell_types_count_overlaps),
+                                 cell_types_total_fragments,
+                                 fragments_subsampling_range,
+                                 mutations,
+                                 cell_types_count_overlaps,
+                                 log,
+                                 mc.cores=8)
+    correlations_long = bind_rows(correlations_long)
+    saveRDS(correlations_long, correlations_filepath)
+  }
+  else {
+    # TODO: READ IN CORRELATIONS PER CELL TYPE FILE
+    correlations_long = readRDS(correlations_filepath)
+  }
+
+  # plot_and_save_boxplots(correlations_long, colnames(cell_types_count_overlaps), 
+  #                        correlations_for_tsse_filtered_cells, plot_filename)
   
-  correlations_long = bind_rows(correlations_long)
-  # correlations_long = lapply(seq_along(cell_types), 
-  #                              get_long_correlations_per_cell_type,
-  #                              colnames(cell_types_count_overlaps),
-  #                              cell_types_total_fragments,
-  #                              fragments_subsampling_range,
-  #                              mutations, 
-  #                              cell_types_count_overlaps, 
-  #                              log)
-  plot_and_save_boxplots(correlations_long, colnames(cell_types_count_overlaps), 
-                         correlations_for_tsse_filtered_cells, plot_filename)
 }
 
 # prep_boxplots <- function(cancer_types) {
@@ -686,7 +696,7 @@ for (file in mixedsort(list.files("processed_data/count_overlap_data/tsse_filter
   count_overlaps = readRDS(file)
   tsse_filtered_correlations = append(tsse_filtered_correlations,
                                       cor(count_overlaps, 
-                                          mut_count_data[, "Lung.AdenoCA"], 
+                                      mut_count_data[, "Lung.AdenoCA"], 
                                       use="complete"))
 }
 
