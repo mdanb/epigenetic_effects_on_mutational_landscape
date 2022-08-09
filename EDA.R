@@ -414,7 +414,7 @@ run_simulations_per_num_fragments <- function(num_fragments, log) {
   if (log) {
     num_fragments = as.integer(2^num_fragments)
   }
-  samples_100 = mclapply(rep(i, 2), run_one_simulation, 
+  samples_10 = mclapply(rep(i, 10), run_one_simulation, 
                        cell_type_count_overlaps,
                        sampling_vec, mutations,
                        mc.cores=8)
@@ -436,7 +436,7 @@ run_subsampling_simulations <- function(num_fragments_to_subsample,
     if (log) {
       i = as.integer(2^i)
     }
-    samples_100 = mclapply(rep(i, 2), run_one_simulation, 
+    samples_10 = mclapply(rep(i, 10), run_one_simulation, 
                            cell_type_count_overlaps,
                            sampling_vec, mutations,
                            mc.cores=8)

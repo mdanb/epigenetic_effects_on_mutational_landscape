@@ -1,3 +1,5 @@
+library(RColorBrewer)
+
 get_tissue_name <- function(filename) {
   if (grepl("frontal_cortex", filename)) {
     tissue_name = "frontal_cortex"
@@ -28,4 +30,13 @@ get_tissue_name_tsankov <- function(filename) {
   tissue_name = paste(tissue_name, collapse=" ")
   tissue_name = str_to_title(tissue_name)
   return(tissue_name)
+}
+
+get_n_colors <- function(n, seed) {
+  qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
+  col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, 
+                             rownames(qual_col_pals)))
+  set.seed(seed)
+  cols <- sample(col_vector, n)
+  return(cols)
 }

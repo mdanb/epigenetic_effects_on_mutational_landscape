@@ -276,23 +276,27 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   
   filepaths = paste("raw_dir", "bed_files", files, sep="/")
   
-  ##### DELETE #####
-  fragments = lapply(c("raw_dir/bed_files/temp_GSM5589379_lung_SM-JF1NZ_rep1.rds",
-                       "raw_dir/bed_files/temp_GSM5589377_lung_SM-A8WNH_rep1.rds"), 
-                     readRDS)
-  ##################
+  # ##### DELETE #####
+  # fragments = lapply(c("raw_dir/bed_files/temp_GSM5589379_lung_SM-JF1NZ_rep1.rds",
+  #                      "raw_dir/bed_files/temp_GSM5589377_lung_SM-A8WNH_rep1.rds"), 
+  #                    readRDS)
+  # ##################
+  print("Importing BED files...")
   fragments = mclapply(filepaths, import, format="bed", mc.cores=8)
+  print("Migrating BED files...")
   fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, mc.cores=8)
 
   sample_names = unlist(lapply(files, get_sample_name))
   
-  ##### DELETE #####
-  sample_names = c("lung_SM-JF1NZ_1", "lung_SM-A8WNH_1")
-  ##################
+  # ##### DELETE #####
+  # sample_names = c("lung_SM-JF1NZ_1", "lung_SM-A8WNH_1")
+  # ##################
   
   filtered_metadatas = mclapply(sample_names, filter_metadata_by_sample_name, 
                                 metadata, mc.cores=8) 
-  fragment_counts_per_sample = mclapply(fragments, count_fragments_per_cell)
+  print("Counting fragments per cell...")
+  fragment_counts_per_sample = mclapply(fragments, count_fragments_per_cell,
+                                        mc.cores=8)
   sample_barcodes_in_metadatas = mclapply(filtered_metadatas, 
                                           get_sample_barcodes_in_metadata,
                                           "cellID", 
@@ -327,28 +331,37 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
                                            cumsum(frag_counts))
   metadata_with_fragment_counts_per_cell_type = group_split(metadata_with_fragment_counts)
   
-  metadata_with_fragment_counts["frag_counts_cumsum"] = 
-    cumsum(metadata_with_fragment_counts$counts)
+  # metadata_with_fragment_counts_per_cell_type["frag_counts_cumsum"] = 
+  #   cumsum(metadata_with_fragment_counts_per_cell_type$counts)
   
   for (count in top_tsse_fragment_count_range) {
-    metadata_with_fragment_counts_per_cell_type = 
-                            lapply(metadata_with_fragment_counts_per_cell_type, 
-                                   filter_metadata_by_fragment_count, count)
-    top_barcodes = metadata_with_fragment_counts_per_cell_type[, "cell_barcode"]
-    fragments_from_top_cells = get_fragments_from_top_cells(seq_along(top_barcodes),
-                                                            top_barcodes,
-                                                            fragments)
+    debug_message = paste0("Creating count overlaps for num fragments = ", 
+                           count)
+    print(debug_message)
+    count_filtered_metadata_with_fragment_counts_per_cell_type = 
+                              lapply(metadata_with_fragment_counts_per_cell_type, 
+                                     filter_metadata_by_fragment_count, count)
+    # top_barcodes = lapply(count_filtered_metadata_with_fragment_counts_per_cell_type,
+    #                       function(x) x[["cell_barcode"]])
+    fragments_from_top_cells = lapply(seq_along(count_filtered_metadata_with_fragment_counts_per_cell_type),
+                                      get_fragments_from_top_cells,
+                                      count_filtered_metadata_with_fragment_counts_per_cell_type,
+                                      fragments,
+                                      sample_names)
     fragments_from_top_cells = lapply(fragments_from_top_cells, sample, count)
     count_overlaps = lapply(fragments_from_top_cells, 
                             countOverlaps, 
                             interval_ranges)
-    filenames = paste("count_filter", cell_number_filter,  
-                     "count_overlaps", "frag_count_filter", count,
-                     paste(file_path_sans_ext(file, TRUE), "rds", sep="."), 
-                     sep="_")
-    filepaths = paste("processed_data/count_overlap_data/tsse_filtered", 
-                     filenames, sep="/")    
-    saveRDS(count_overlaps, filepaths)
+    count_overlaps = as_tibble(count_overlaps, .name_repair="universal")
+    colnames(count_overlaps) = cell_types_to_consider
+    filename = paste("count_filter", cell_number_filter,  
+                     "count_overlaps", "frag_count_filter", count, sep="_")
+    filename = paste(filename, "rds", sep=".")
+    tissue_name = get_tissue_name(files[1])
+    filepath = paste("processed_data/count_overlap_data/tsse_filtered", 
+                      tissue_name, sep="/")   
+    dir.create(filepath)
+    saveRDS(count_overlaps, filepath)
   }
   
   
@@ -379,9 +392,92 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   #             arrange(desc())
 }
 
-get_fragments_from_top_cells <- function(i, top_cell_barcodes, fragments) {
-  fragments[[i]] = fragments[fragments$name %in% top_cell_barcodes[[i]]]
-  return(fragments[[i]])
+# TODO: CHANGE TO REFLECT SAMPLE RATHER THAN TISSUE
+# get_sample_name_shendure <- function(file) {
+#   sample_name = unlist(strsplit(file, split="_"))[3]
+#   sample_name = unlist(strsplit(sample_name, split="[.]"))[1]
+#   return(sample_name)
+# }
+filter_metadata_by_fragment_count <- function(metadata, min_frag_counts) {
+  metadata_cut_index_minus_one = sum(metadata["frag_counts_cumsum"] < 
+                                       min_frag_counts)
+  metadata_cut_index = metadata_cut_index_minus_one + 1
+  metadata <- metadata[1:metadata_cut_index, ]
+  return(metadata)
+}
+
+filter_metadata_by_sample_name <- function(sample_name, metadata) {
+  return(metadata[metadata$sample %like% sample_name, ])
+}
+
+filter_sample_by_cell_number <- function(sample, 
+                                         counts_per_cell_type, 
+                                         cell_number_filter) {
+  cell_type_keep = counts_per_cell_type[counts_per_cell_type$n_cells >= 
+                                          cell_number_filter, ]$cell_type
+  sample = sample %>%                                             
+    filter(cell_type %in% cell_type_keep)
+  return(sample)
+}
+
+# filter_sample_by_tss <- function(sample, subsampling_frag_count, metadata) {
+#   relevant_cell_types = unique(sample[["cell_type"]])
+#   filtered_metadata = metadata %>% 
+#                       filter(cell.type %in% relevant_cell_types)
+#   filtered_metadata = filtered_metadata %>% 
+#                       group_by(cell.type) %>%
+#                       arrange(desc(tsse))
+#   filtered_metadata = 
+#             add_cumulative_num_fragments_per_cell_to_metadata(filtered_metadata,
+#                                                               sample)
+# }
+
+filter_sample_to_contain_only_cells_in_metadata <- function(sample,
+                                                            sample_barcodes_in_metadata) {
+  sample = sample[sample$name %in% sample_barcodes_in_metadata]
+  return(sample)
+}
+
+get_fragments_by_cell_barcode <- function(i, sample_idx, fragments, 
+                                          top_barcodes) {
+  return(fragments[[sample_idx[i]]][fragments[[sample_idx[i]]]$name %in% 
+                                    top_barcodes[i]])
+}
+
+get_fragments_from_top_cells <- function(i, count_filtered_metadata_with_fragment_counts_per_cell_type, 
+                                         fragments, sample_names) {
+  top_barcodes = lapply(count_filtered_metadata_with_fragment_counts_per_cell_type,
+                        function(x) x[["cell_barcode"]])
+  samples = lapply(count_filtered_metadata_with_fragment_counts_per_cell_type, 
+                   function(x) x[["sample"]])
+  # count = 1
+  # frags_per_cell_type = c()
+  samples_per_cell_type = samples[[i]]
+  
+  sample_idx = unlist(lapply(samples_per_cell_type, match, sample_names))
+  fragments_from_relevant_barcodes = lapply(seq_along(sample_idx), 
+                                            get_fragments_by_cell_barcode, 
+                                            sample_idx, 
+                                            fragments, 
+                                            top_barcodes[[i]])
+  fragments_from_relevant_barcodes = do.call(c, 
+                                             fragments_from_relevant_barcodes)
+  # frags_per_cell_type[[count]] = fragments_from_relevant_barcodes
+  
+  # for (samples_per_cell_type in samples) {
+  #   sample_idx = unlist(lapply(samples_per_cell_type, match, sample_names))
+  #   fragments_from_relevant_barcodes = lapply(seq_along(sample_idx), 
+  #                                             get_fragments_by_cell_barcode, 
+  #                                             sample_idx, 
+  #                                             fragments, 
+  #                                             top_barcodes[[count]])
+  #   fragments_from_relevant_barcodes = do.call(c, 
+  #                                              fragments_from_relevant_barcodes)
+  #   frags_per_cell_type[[count]] = fragments_from_relevant_barcodes
+  #   
+  #   count = count + 1
+  # }
+  return(fragments_from_relevant_barcodes)
 }
 
 get_num_cells_per_sample <- function(sample) {
@@ -443,53 +539,19 @@ get_sample_name <- function(file) {
   sample_name = str_remove(file, "rep")
   sample_name = str_remove(sample_name, "_fragments.bed.gz")
   sample_name = unlist(strsplit(sample_name, split="_"))
-  sample_name = paste(sample_name[2:length(sample_name)], collapse="_")
+  sample_name = paste(sample_name[1:length(sample_name)], collapse="_")
   return(sample_name)
 }
 
-# TODO: CHANGE TO REFLECT SAMPLE RATHER THAN TISSUE
-# get_sample_name_shendure <- function(file) {
-#   sample_name = unlist(strsplit(file, split="_"))[3]
-#   sample_name = unlist(strsplit(sample_name, split="[.]"))[1]
-#   return(sample_name)
-# }
-filter_metadata_by_fragment_count <- function(metadata, min_frag_counts) {
-  metadata_cut_index_minus_one = sum(metadata["frag_counts"] < min_frag_counts)
-  metadata_cut_index = metadata_cut_index_minus_one + 1
-  metadata <- metadata[1:metadata_cut_index, ]
-  return(metadata)
-}
-
-filter_metadata_by_sample_name <- function(sample_name, metadata) {
-  return(metadata[metadata$sample %like% sample_name, ])
-}
-
-filter_sample_by_cell_number <- function(sample, 
-                                         counts_per_cell_type, 
-                                         cell_number_filter) {
-  cell_type_keep = counts_per_cell_type[counts_per_cell_type$n_cells >= 
-                                        cell_number_filter, ]$cell_type
-  sample = sample %>%                                             
-           filter(cell_type %in% cell_type_keep)
-  return(sample)
-}
-
-# filter_sample_by_tss <- function(sample, subsampling_frag_count, metadata) {
-#   relevant_cell_types = unique(sample[["cell_type"]])
-#   filtered_metadata = metadata %>% 
-#                       filter(cell.type %in% relevant_cell_types)
-#   filtered_metadata = filtered_metadata %>% 
-#                       group_by(cell.type) %>%
-#                       arrange(desc(tsse))
-#   filtered_metadata = 
-#             add_cumulative_num_fragments_per_cell_to_metadata(filtered_metadata,
-#                                                               sample)
-# }
-
-filter_sample_to_contain_only_cells_in_metadata <- function(sample,
-                                                  sample_barcodes_in_metadata) {
-  sample = sample[sample$name %in% sample_barcodes_in_metadata]
-  return(sample)
+get_tissue_name <- function(file) {
+  if (grepl("frontal_cortex", file)) {
+    tissue_name = "frontal_cortex"
+  } 
+  else {
+    tissue_name = str_extract(file, pattern="_.*_SM")              
+    tissue_name = substr(tissue_name, 2, nchar(tissue_name) - 3)    
+  }
+  return(tissue_name)
 }
 
 # match_barcodes_to_fragment_counts <- function(i, barcodes, fragment_counts) {
@@ -507,15 +569,15 @@ ch = import.chain(hg38_path)
 
 metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv", sep="\t", 
                       header=TRUE)
-metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt", 
-                               sep="\t", 
-                               header=TRUE)
-metadata_tsankov_proximal = read.table("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv", 
-                                       sep=",", 
-                                       header=TRUE)
-metadata_tsankov_distal = read.table("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv", 
-                                       sep=",", 
-                                       header=TRUE)
+# metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt", 
+#                                sep="\t", 
+#                                header=TRUE)
+# metadata_tsankov_proximal = read.table("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv", 
+#                                        sep=",", 
+#                                        header=TRUE)
+# metadata_tsankov_distal = read.table("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv", 
+#                                        sep=",", 
+#                                        header=TRUE)
 colnames(metadata_tsankov_proximal)[2] <- "celltypes"
 colnames(metadata_tsankov_distal)[2] <- "celltypes"
 
@@ -593,4 +655,4 @@ create_tsse_filtered_count_overlaps_per_tissue(bing_ren_lung_files,
                                                interval.ranges,
                                                ch,
                                                top_tsse_fragment_count_subsampling_range,
-                                               "Lung Alveolar Type 2 (AT2) Cell")
+                                               "Alveolar Type 2 (AT2) Cell")
