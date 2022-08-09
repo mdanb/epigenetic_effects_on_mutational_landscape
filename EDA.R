@@ -8,6 +8,7 @@ library(stringr)
 library(exomeCopy)
 library(parallel)
 library(RColorBrewer)
+library(gtools)
 source("utils.R")
 
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
@@ -418,7 +419,7 @@ run_simulations_per_num_fragments <- function(num_fragments, log) {
                        cell_type_count_overlaps,
                        sampling_vec, mutations,
                        mc.cores=8)
-  return(unlist(samples_100))
+  return(unlist(samples_10))
 }
 
 run_subsampling_simulations <- function(num_fragments_to_subsample, 
@@ -440,7 +441,7 @@ run_subsampling_simulations <- function(num_fragments_to_subsample,
                            cell_type_count_overlaps,
                            sampling_vec, mutations,
                            mc.cores=8)
-    subsampling_simulations[[list_idx]] = unlist(samples_100)
+    subsampling_simulations[[list_idx]] = unlist(samples_10)
     list_idx = list_idx + 1
   }
   names(subsampling_simulations) = num_fragments_to_subsample
@@ -478,11 +479,14 @@ add_escape_if_necessary <- function(cell_type) {
 }
 
 plot_and_save_boxplots <- function(correlations_long, cell_types, 
-                                   plot_filename) {
+                                   plot_filename, 
+                                   correlations_for_tsse_filtered_cells) {
   # colors = get_n_colors(length(cell_types), 4)
   ggplot(correlations_long) +
     geom_boxplot(aes(x=factor(num_fragments, levels=unique(num_fragments)), 
                      y=correlation, color=cell_type)) +
+    geom_point(aes(x=factor(num_fragments, levels=unique(num_fragments)), 
+                   y=correlations_for_tsse_filtered_cells)) +
     theme(axis.text.x=element_text(size=10, angle = 90)) +
     xlab("Num Fragments") +
     labs(color="Cell type") + 
@@ -567,7 +571,8 @@ get_long_correlations_per_cell_type <- function(i,
 prep_boxplots_per_cancer_type <- function(combined_count_overlaps, 
                                           mut_count_data, cancer_type, 
                                           cell_types, lower, log, 
-                                          plot_filename) {
+                                          plot_filename, 
+                                          correlations_for_tsse_filtered_cells) {
   correlations_long = tibble()
   cell_type_for_grep = lapply(cell_types, add_escape_if_necessary)
   cell_type_col_idx = lapply(cell_type_for_grep, grep,
@@ -600,7 +605,7 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
   #                              cell_types_count_overlaps, 
   #                              log)
   plot_and_save_boxplots(correlations_long, colnames(cell_types_count_overlaps), 
-                         plot_filename)
+                         correlations_for_tsse_filtered_cells, plot_filename)
 }
 
 # prep_boxplots <- function(cancer_types) {
@@ -674,6 +679,18 @@ lung_cell_types = c("Lung Alveolar Type 2 (AT2) Cell",
 
 # sum(combined_counts_overlaps_all_scATAC_data[grep("Lung Bronchiolar and alveolar epithelial cells",
 #                          colnames(combined_counts_overlaps_all_scATAC_data)), ])
+lung_tsse_filtered_count_overlaps = c()
+tsse_filtered_correlations = c()
+for (file in mixedsort(list.files("processed_data/count_overlap_data/tsse_filtered/lung",
+                        full.names = TRUE))) {
+  count_overlaps = readRDS(file)
+  tsse_filtered_correlations = append(tsse_filtered_correlations,
+                                      cor(count_overlaps, 
+                                          mut_count_data[, "Lung.AdenoCA"], 
+                                      use="complete"))
+}
+
+
 
 prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               mut_count_data,
@@ -681,7 +698,9 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               lung_cell_types,
                               1000,
                               T,
-                              "lung_log_num_frags_vs_correlation.png")
+                              "test_lung_log_num_frags_vs_correlation.png",
+                              tsse_filtered_correlations)
+
 
 # # TSS
 # get_filtered_metadata <- function(metadata, life_stage, tis, cell_types) {
