@@ -361,6 +361,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
     filepath = paste("processed_data/count_overlap_data/tsse_filtered", 
                       tissue_name, sep="/")   
     dir.create(filepath)
+    filepath = paste(filepath, filename, sep="/")
     saveRDS(count_overlaps, filepath)
   }
   
