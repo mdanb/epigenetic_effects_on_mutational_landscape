@@ -276,22 +276,25 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   
   filepaths = paste("raw_dir", "bed_files", files, sep="/")
   
-  ##### DELETE #####
-  fragments = lapply(c("raw_dir/bed_files/temp_GSM5589379_lung_SM-JF1NZ_rep1.rds",
-                       "raw_dir/bed_files/temp_GSM5589377_lung_SM-A8WNH_rep1.rds"), 
-                     readRDS)
-  ##################
+  # ##### DELETE #####
+  # fragments = lapply(c("raw_dir/bed_files/temp_GSM5589379_lung_SM-JF1NZ_rep1.rds",
+  #                      "raw_dir/bed_files/temp_GSM5589377_lung_SM-A8WNH_rep1.rds"), 
+  #                    readRDS)
+  # ##################
+  print("Importing BED files...")
   fragments = mclapply(filepaths, import, format="bed", mc.cores=8)
+  print("Migrating BED files...")
   fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, mc.cores=8)
 
   sample_names = unlist(lapply(files, get_sample_name))
   
-  ##### DELETE #####
-  sample_names = c("lung_SM-JF1NZ_1", "lung_SM-A8WNH_1")
-  ##################
+  # ##### DELETE #####
+  # sample_names = c("lung_SM-JF1NZ_1", "lung_SM-A8WNH_1")
+  # ##################
   
   filtered_metadatas = mclapply(sample_names, filter_metadata_by_sample_name, 
                                 metadata, mc.cores=8) 
+  print("Counting fragments per cell...")
   fragment_counts_per_sample = mclapply(fragments, count_fragments_per_cell,
                                         mc.cores=8)
   sample_barcodes_in_metadatas = mclapply(filtered_metadatas, 
@@ -332,6 +335,9 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   #   cumsum(metadata_with_fragment_counts_per_cell_type$counts)
   
   for (count in top_tsse_fragment_count_range) {
+    debug_message = paste0("Creating count overlaps for num fragments = ", 
+                           count)
+    print(debug_message)
     count_filtered_metadata_with_fragment_counts_per_cell_type = 
                               lapply(metadata_with_fragment_counts_per_cell_type, 
                                      filter_metadata_by_fragment_count, count)
@@ -351,9 +357,11 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
     filename = paste("count_filter", cell_number_filter,  
                      "count_overlaps", "frag_count_filter", count, sep="_")
     filename = paste(filename, "rds", sep=".")
-    filepaths = paste("processed_data/count_overlap_data/tsse_filtered", 
-                     tissue_name, sep="/")    
-    saveRDS(count_overlaps, filepaths)
+    tissue_name = get_tissue_name(files[1])
+    filepath = paste("processed_data/count_overlap_data/tsse_filtered", 
+                      tissue_name, sep="/")   
+    dir.create(filepath)
+    saveRDS(count_overlaps, filepath)
   }
   
   
@@ -537,10 +545,15 @@ get_sample_name <- function(file) {
 
 get_tissue_name <- function(file) {
   if (grepl("frontal_cortex", file)) {
-    return("frontal_cortex")
+    tissue_name = "frontal_cortex"
+  } 
+  else {
+    tissue_name = str_extract(file, pattern="_.*_SM")              
+    tissue_name = substr(tissue_name, 2, nchar(tissue_name) - 3)    
   }
-  
+  return(tissue_name)
 }
+
 # match_barcodes_to_fragment_counts <- function(i, barcodes, fragment_counts) {
 #   fragment_counts[match(barcodes[i], names(fragment_counts))]
 # }
@@ -556,17 +569,17 @@ ch = import.chain(hg38_path)
 
 metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv", sep="\t", 
                       header=TRUE)
-metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt", 
-                               sep="\t", 
-                               header=TRUE)
-metadata_tsankov_proximal = read.table("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv", 
-                                       sep=",", 
-                                       header=TRUE)
-metadata_tsankov_distal = read.table("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv", 
-                                       sep=",", 
-                                       header=TRUE)
-colnames(metadata_tsankov_proximal)[2] <- "celltypes"
-colnames(metadata_tsankov_distal)[2] <- "celltypes"
+# metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt", 
+#                                sep="\t", 
+#                                header=TRUE)
+# metadata_tsankov_proximal = read.table("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv", 
+#                                        sep=",", 
+#                                        header=TRUE)
+# metadata_tsankov_distal = read.table("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv", 
+#                                        sep=",", 
+#                                        header=TRUE)
+#colnames(metadata_tsankov_proximal)[2] <- "celltypes"
+#colnames(metadata_tsankov_distal)[2] <- "celltypes"
 
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 interval.ranges
