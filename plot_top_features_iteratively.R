@@ -3,6 +3,7 @@ library(magrittr)
 library(RColorBrewer)
 library(dplyr)
 library(optparse)
+source("utils.R")
 
 parser <- OptionParser()
 parser <- add_option(parser, c("--all_cells"), action="store_true", default=T)
@@ -45,15 +46,14 @@ get_relevant_backwards_elim_dirs <- function(args) {
     }
 }
 
-get_n_colors <- function(n) {
-  qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
-  n <- 20
-  col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, 
-                             rownames(qual_col_pals)))
-  set.seed(1)
-  cols <- sample(col_vector, n)
-  return(cols)
-}
+# get_n_colors <- function(n) {
+#   qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
+#   col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, 
+#                              rownames(qual_col_pals)))
+#   set.seed(1)
+#   cols <- sample(col_vector, n)
+#   return(cols)
+# }
 
 construct_pie_charts <- function(args) {
   dirs = get_relevant_backwards_elim_dirs(args)
@@ -61,7 +61,7 @@ construct_pie_charts <- function(args) {
     pie_chart_file = paste(dir, "df_for_pie_charts.csv", sep="/")
     df = read.csv(pie_chart_file)
     df$num_features_f = factor(df$num_features, levels=unique(df$num_features))
-    colors = get_n_colors(20)
+    colors = get_n_colors(20, 1)
     from = as.character(unique(df$num_features))
     to = paste(paste(levels(df$num_features_f), "features"),
                paste("(R^2=", as.character(round(unique(df$score*100), 1)), 
