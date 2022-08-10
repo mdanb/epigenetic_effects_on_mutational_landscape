@@ -602,12 +602,12 @@ bing_ren_lung_files = setdiff(list.files("raw_dir/bed_files/",
                               list.dirs("raw_dir/bed_files", recursive = FALSE,
                                         full.names = FALSE))
 
-mclapply(files, create_count_overlaps_file,
-                cell_number_filter=CELL_NUMBER_FILTER,
-                metadata=metadata,
-                interval_ranges=interval.ranges,
-                chain=ch, 
-		mc.cores=8)
+#mclapply(files, create_count_overlaps_file,
+#                cell_number_filter=CELL_NUMBER_FILTER,
+#                metadata=metadata,
+#                interval_ranges=interval.ranges,
+#                chain=ch, 
+#		mc.cores=8)
 
 #                mc.cores = 1)
 # lapply(files, create_count_overlaps_file,
