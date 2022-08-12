@@ -622,11 +622,11 @@ bing_ren_lung_files = setdiff(list.files("raw_dir/bed_files/",
 #         interval_ranges=interval.ranges)
 #         mc.cores = 1)
 
-#lapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
-#        cell_number_filter=CELL_NUMBER_FILTER,
-#        metadata=metadata_tsankov_proximal,
-#        interval_ranges=interval.ranges)
-#        # mc.cores = 1)
+# mclapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
+#         cell_number_filter=CELL_NUMBER_FILTER,
+#         metadata=metadata_tsankov_proximal,
+#         interval_ranges=interval.ranges,
+#         mc.cores = 4)
 
 # lapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
 #        cell_number_filter=CELL_NUMBER_FILTER,
@@ -637,20 +637,35 @@ bing_ren_lung_files = setdiff(list.files("raw_dir/bed_files/",
 #                                                      220520))
 
 # mclapply(files_Tsankov_distal,
-#          create_count_overlaps_file_tsankov,
-#          cell_number_filter=CELL_NUMBER_FILTER,
-#          metadata=metadata_tsankov_distal,
-#          interval_ranges=interval.ranges,
-#          mc.cores=8)
+#           create_count_overlaps_file_tsankov,
+#           cell_number_filter=CELL_NUMBER_FILTER,
+#           metadata=metadata_tsankov_distal,
+#           interval_ranges=interval.ranges,
+#           mc.cores=4)
 
-top_tsse_fragment_count_range = c(1000, 3853, 14849, 57225,
-                                              220520, 849788, 3274710,
-                                              12619294)
+#top_tsse_fragment_count_range = c(1000, 3853, 14849, 57225,
+#                                              220520, 849788, 3274710,
+#                                              12619294)
 
+#create_tsse_filtered_count_overlaps_per_tissue(bing_ren_lung_files,
+#                                               CELL_NUMBER_FILTER,
+#                                               metadata,
+#                                               interval.ranges,
+#                                               ch,
+#                                               top_tsse_fragment_count_range,
+#                                               "Alveolar Type 2 (AT2) Cell")
+
+bing_ren_lung_files = setdiff(list.files("raw_dir/bed_files/",
+                                         pattern=".*skin_SM*"),
+                              list.dirs("raw_dir/bed_files", recursive = FALSE,
+                                        full.names = FALSE))
+
+skin_cell_types = c("Skin Sun Exposed Melanocyte", 
+                    "Skin Fibroblast (Epithelial)")
 create_tsse_filtered_count_overlaps_per_tissue(bing_ren_lung_files,
-                                               CELL_NUMBER_FILTER,
-                                               metadata,
-                                               interval.ranges,
-                                               ch,
-                                               top_tsse_fragment_count_range,
-                                               "Alveolar Type 2 (AT2) Cell")
+                                              CELL_NUMBER_FILTER,
+                                              metadata,
+                                              interval.ranges,
+                                              ch,
+                                              top_tsse_fragment_count_range,
+                                              skin_cell_types)
