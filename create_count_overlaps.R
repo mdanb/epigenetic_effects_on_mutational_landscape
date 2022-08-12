@@ -294,7 +294,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   
   filtered_metadatas = mclapply(sample_names, filter_metadata_by_sample_name, 
                                 metadata, mc.cores=8) 
-  print("Counting fragments per cell...")
+  print("Counting fragments per sample...")
   fragment_counts_per_sample = mclapply(fragments, count_fragments_per_cell,
                                         mc.cores=8)
   sample_barcodes_in_metadatas = mclapply(filtered_metadatas, 
@@ -664,7 +664,7 @@ top_tsse_fragment_count_range = c(1000, 2983, 8901, 26558, 79237, 236409,
                                   705340, 2104417)
 skin_cell_types = c("Skin Sun Exposed Melanocyte", 
                     "Skin Fibroblast (Epithelial)")
-create_tsse_filtered_count_overlaps_per_tissue(bing_ren_lung_files,
+create_tsse_filtered_count_overlaps_per_tissue(skin_cell_types,
                                               CELL_NUMBER_FILTER,
                                               metadata,
                                               interval.ranges,

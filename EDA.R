@@ -609,13 +609,11 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
     saveRDS(correlations_long, correlations_filepath)
   }
   else {
-    # TODO: READ IN CORRELATIONS PER CELL TYPE FILE
     correlations_long = readRDS(correlations_filepath)
   }
 
-  # plot_and_save_boxplots(correlations_long, colnames(cell_types_count_overlaps), 
-  #                        correlations_for_tsse_filtered_cells, plot_filename)
-  
+  plot_and_save_boxplots(correlations_long, colnames(cell_types_count_overlaps),
+                         correlations_for_tsse_filtered_cells, plot_filename)
 }
 
 # prep_boxplots <- function(cancer_types) {
