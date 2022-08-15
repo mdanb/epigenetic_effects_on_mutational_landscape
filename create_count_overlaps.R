@@ -643,31 +643,33 @@ bing_ren_lung_files = setdiff(list.files("raw_dir/bed_files/",
 #           interval_ranges=interval.ranges,
 #           mc.cores=4)
 
-#top_tsse_fragment_count_range = c(1000, 3853, 14849, 57225,
-#                                              220520, 849788, 3274710,
-#                                              12619294)
+top_tsse_fragment_count_range = c(1000, 3853, 14849, 57225,
+                                             220520, 849788, 3274710,
+                                             12619294)
 
-#create_tsse_filtered_count_overlaps_per_tissue(bing_ren_lung_files,
-#                                               CELL_NUMBER_FILTER,
-#                                               metadata,
-#                                               interval.ranges,
-#                                               ch,
-#                                               top_tsse_fragment_count_range,
-#                                               "Alveolar Type 2 (AT2) Cell")
-
-bing_ren_skin_files = setdiff(list.files("raw_dir/bed_files/",
-                                         pattern=".*skin_SM*"),
-                              list.dirs("raw_dir/bed_files", recursive = FALSE,
-                                        full.names = FALSE))
-
-top_tsse_fragment_count_range = c(1000, 2983, 8901, 26558, 79237, 236409,
-                                  705340, 2104417)
-skin_cell_types = c("Melanocyte", 
-                    "Fibroblast (Epithelial)")
-create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_files,
+create_tsse_filtered_count_overlaps_per_tissue(bing_ren_lung_files,
                                               CELL_NUMBER_FILTER,
                                               metadata,
                                               interval.ranges,
                                               ch,
                                               top_tsse_fragment_count_range,
-                                              skin_cell_types)
+                                              c("Alveolar Type 2 (AT2) Cell", 
+                                                "Lung Bronchiolar and alveolar epithelial cells",
+                                                "Distal Lung AT2"))
+
+# bing_ren_skin_files = setdiff(list.files("raw_dir/bed_files/",
+#                                          pattern=".*skin_SM*"),
+#                               list.dirs("raw_dir/bed_files", recursive = FALSE,
+#                                         full.names = FALSE))
+# 
+# top_tsse_fragment_count_range = c(1000, 2983, 8901, 26558, 79237, 236409,
+#                                   705340, 2104417)
+# skin_cell_types = c("Melanocyte", 
+#                     "Fibroblast (Epithelial)")
+# create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_files,
+#                                               CELL_NUMBER_FILTER,
+#                                               metadata,
+#                                               interval.ranges,
+#                                               ch,
+#                                               top_tsse_fragment_count_range,
+#                                               skin_cell_types)
