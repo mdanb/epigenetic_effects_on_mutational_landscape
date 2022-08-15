@@ -482,13 +482,21 @@ plot_and_save_boxplots <- function(correlations_long, cell_types,
                                    plot_filename, 
                                    correlations_for_tsse_filtered_cells) {
   # colors = get_n_colors(length(cell_types), 4)
-  ggplot(correlations_long) +
-    geom_boxplot(aes(x=factor(num_fragments, levels=unique(num_fragments)), 
+  x_for_filtered_correlations = unique(correlations_long %>% 
+                                         pull("num_fragments"))
+  x_for_filtered_correlations = x_for_filtered_correlations[1:length(correlations_for_tsse_filtered_cells)]
+  levels_for_filtered_correlations = x_for_filtered_correlations
+  ggplot() +
+    geom_point(aes(x=factor(x_for_filtered_correlations,
+                            levels=x_for_filtered_correlations),
+                   y=correlations_for_tsse_filtered_cells, color="tss filtered"),
+               size=3) +
+    geom_boxplot(data=correlations_long,
+                 aes(x=factor(num_fragments, levels=unique(num_fragments)), 
                      y=correlation, color=cell_type)) +
-    geom_point(aes(x=factor(num_fragments, levels=unique(num_fragments)), 
-                   y=correlations_for_tsse_filtered_cells)) +
     theme(axis.text.x=element_text(size=10, angle = 90)) +
     xlab("Num Fragments") +
+    ylab("Correlation") +
     labs(color="Cell type") + 
     scale_x_discrete(limits = as.factor(sort(as.integer(
                      unique(correlations_long["num_fragments"]) %>% pull)))) #+
@@ -613,7 +621,7 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
   }
 
   plot_and_save_boxplots(correlations_long, colnames(cell_types_count_overlaps),
-                         correlations_for_tsse_filtered_cells, plot_filename)
+                         plot_filename, correlations_for_tsse_filtered_cells)
 }
 
 # prep_boxplots <- function(cancer_types) {
@@ -709,7 +717,27 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               "test_lung_log_num_frags_vs_correlation.png",
                               tsse_filtered_correlations)
 
+skin_cell_types = c("Skin Sun Exposed Melanocyte", 
+                    "Skin Fibroblast (Epithelial)")
+skin_tsse_filtered_count_overlaps = c()
+tsse_filtered_correlations = c()
+for (file in mixedsort(list.files("processed_data/count_overlap_data/tsse_filtered/skin",
+                                  full.names = TRUE))) {
+  count_overlaps = readRDS(file)
+  tsse_filtered_correlations = append(tsse_filtered_correlations,
+                                      cor(count_overlaps, 
+                                          mut_count_data[, "Skin.Melanoma"], 
+                                          use="complete"))
+}
 
+prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
+                              mut_count_data,
+                              "Skin.Melanoma",
+                              skin_cell_types,
+                              1000,
+                              T,
+                              "test_skin_log_num_frags_vs_correlation.png",
+                              tsse_filtered_correlations)
 # # TSS
 # get_filtered_metadata <- function(metadata, life_stage, tis, cell_types) {
 #   cell_types = paste(cell_types, collapse="|")
