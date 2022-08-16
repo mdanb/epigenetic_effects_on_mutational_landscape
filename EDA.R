@@ -581,7 +581,6 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
                                           cell_types, lower, log, 
                                           plot_filename, 
                                           correlations_for_tsse_filtered_cells) {
-  correlations_long = tibble()
   cell_type_for_grep = lapply(cell_types, add_escape_if_necessary)
   cell_type_col_idx = lapply(cell_type_for_grep, grep,
                              colnames(combined_count_overlaps), ignore.case=T)
@@ -589,9 +588,6 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
   cell_types_total_fragments = apply(cell_types_count_overlaps, 2, sum)
   # num_fragments_per_cell_type = apply(combined_count_overlaps, 2, sum)
   # mutations = mut_count_data[cancer_type]
-  fragments_subsampling_range <- create_fragments_subsampling_range(lower, 
-                                                                    max(cell_types_total_fragments), 
-                                                                    log)
   mutations <- mut_count_data[cancer_type]
   cell_types_underscore_sep = gsub(" ", "_", cell_types)
   cell_types_being_considered_combined = paste(cell_types_underscore_sep, 
@@ -600,10 +596,13 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
                                 cell_types_being_considered_combined,
                                 sep = "_")
   correlations_filename = paste0(correlations_filename, ".rds")
-  correlations_filepath = paste("processed_data", "tsse_filtered_correlations",
+  correlations_filepath = paste("processed_data", "subsampled_correlations",
                                 correlations_filename, sep="/")
   # correlations_filepath = ""
   if (!file.exists(correlations_filepath)) {
+    fragments_subsampling_range <- create_fragments_subsampling_range(lower, 
+                                                max(cell_types_total_fragments), 
+                                                log)
     correlations_long = mclapply(seq_along(cell_types),
                                  get_long_correlations_per_cell_type,
                                  colnames(cell_types_count_overlaps),
@@ -689,37 +688,60 @@ combined_counts_overlaps_all_scATAC_data = cbind(combined_count_overlaps,
 # colnames(tsankov_combined_count_overlaps)[grep("Lung", 
 #                                      colnames(tsankov_combined_count_overlaps))]
 
-lung_cell_types = c("Lung Alveolar Type 2 (AT2) Cell",
-                    "Lung Bronchiolar and alveolar epithelial cells",
-                    "Distal Lung AT2")
-
-# sum(combined_counts_overlaps_all_scATAC_data[grep("Lung Bronchiolar and alveolar epithelial cells",
-#                          colnames(combined_counts_overlaps_all_scATAC_data)), ])
-lung_tsse_filtered_count_overlaps = c()
-tsse_filtered_correlations = c()
-for (file in mixedsort(list.files("processed_data/count_overlap_data/tsse_filtered/lung",
-                        full.names = TRUE))) {
-  count_overlaps = readRDS(file)
-  tsse_filtered_correlations = append(tsse_filtered_correlations,
-                                      cor(count_overlaps, 
-                                      mut_count_data[, "Lung.AdenoCA"], 
-                                      use="complete"))
-}
+# lung_cell_types = c("Lung Alveolar Type 2 (AT2) Cell",
+#                     "Lung Bronchiolar and alveolar epithelial cells",
+#                     "Distal Lung AT2")
+# 
+# lung_tsse_filtered_count_overlaps = c()
+# tsse_filtered_correlations = c()
+# for (file in mixedsort(list.files("processed_data/count_overlap_data/tsse_filtered/lung",
+#                         full.names = TRUE))) {
+#   count_overlaps = readRDS(file)
+#   tsse_filtered_correlations = append(tsse_filtered_correlations,
+#                                       cor(count_overlaps, 
+#                                       mut_count_data[, "Lung.AdenoCA"], 
+#                                       use="complete"))
+# }
 
 
 
-prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
-                              mut_count_data,
-                              "Lung.AdenoCA",
-                              lung_cell_types,
-                              1000,
-                              T,
-                              "test_lung_log_num_frags_vs_correlation.png",
-                              tsse_filtered_correlations)
+# prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
+#                               mut_count_data,
+#                               "Lung.AdenoCA",
+#                               lung_cell_types,
+#                               1000,
+#                               T,
+#                               "test_lung_log_num_frags_vs_correlation.png",
+#                               tsse_filtered_correlations)
 
-skin_cell_types = c("Skin Sun Exposed Melanocyte", 
-                    "Skin Fibroblast (Epithelial)")
-skin_tsse_filtered_count_overlaps = c()
+skin_cell_types = c("Skin Sun Exposed Melanocyte",
+                    "Skin Melanocyte",
+                    "Skin Sun Exposed Fibroblast (Epithelial)",
+                    "Skin Fibroblast (Epithelial)",
+                    "Skin Keratinocyte 1",
+                    "Skin Sun Exposed Keratinocyte 1",
+                   "Skin T Lymphocyte 1 (CD8+)",
+                   "Skin Sun Exposed T Lymphocyte 1 (CD8+)",
+                   "Skin T lymphocyte 2 (CD4+)",
+                   "Skin Sun Exposed T lymphocyte 2 (CD4+)",
+                   "Skin Macrophage (General,Alveolar)",
+                   "Skin Sun Exposed Macrophage (General,Alveolar)"
+                    )
+
+# cell_types = c("Skin Sun Exposed Melanocyte", 
+#                "Skin Melanocyte",
+#                "Skin Sun Exposed Fibroblast (Epithelial)",
+#                "Skin Fibroblast (Epithelial)",
+#                "Skin Keratinocyte 1", 
+#                "Skin Sun Exposed Keratinocyte 1",
+#                "Skin T Lymphocyte 1 (CD8+)", 
+#                "Skin Sun Exposed T Lymphocyte 1 (CD8+)",
+#                "Skin T lymphocyte 2 (CD4+)",
+#                "Skin Sun Exposed T lymphocyte 2 (CD4+)",
+#                "Skin Macrophage (General,Alveolar)",
+#                "Skin Sun Exposed Macrophage (General,Alveolar)")
+
+# skin_tsse_filtered_count_overlaps = c()
 tsse_filtered_correlations = c()
 for (file in mixedsort(list.files("processed_data/count_overlap_data/tsse_filtered/skin",
                                   full.names = TRUE))) {
@@ -738,6 +760,82 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               T,
                               "test_skin_log_num_frags_vs_correlation.png",
                               tsse_filtered_correlations)
+
+# #### Distribution of normalized counts over bins ####
+# combined_counts_overlaps_all_scATAC_data = combined_counts_overlaps_all_scATAC_data[complete.cases(mut_count_data), ]
+# plot_subsampled_normalized_counts <- function(combined_counts_overlaps,
+#                                               num_plots, figname, binwidth = NULL,
+#                                               xlim = NULL, ylim = NULL, log = F) {
+#   count_overlaps_sums = apply(combined_counts_overlaps, 2, sum)
+#   normalized_counts = combined_counts_overlaps / count_overlaps_sums
+#   set.seed(42)
+#   normalized_counts_subsampled = normalized_counts[sample(nrow(normalized_counts), 
+#                                                           num_plots), ]
+#   bins = rownames(normalized_counts_subsampled)
+#   normalized_counts_subsampled = as_tibble(normalized_counts_subsampled) %>%
+#                                  add_column(bins, .before=1)
+#   normalized_counts_subsampled = normalized_counts_subsampled %>% 
+#                                  pivot_longer(-bins)
+#   if (log) {
+#     normalized_counts_subsampled["value"] = 
+#       log2(normalized_counts_subsampled["value"] + 1)
+#     # normalized_counts_subsampled[which(!is.finite(
+#     #   normalized_counts_subsampled[["value"]])),]["value"] = 0
+#   }
+#   switch1 = all(!is.null(xlim))
+#   switch2 = all(!is.null(ylim))
+#   ggplot(normalized_counts_subsampled, aes(value)) +
+#     geom_histogram(binwidth = binwidth) +
+#     {if (switch1) xlim(xlim)} +
+#     {if (switch2) ylim(ylim)} +
+#     facet_wrap(~bins, sqrt(num_plots))
+#   
+#   figpath = paste("figures", figname, sep="/")
+#   ggsave(figpath, width=20, height=12)
+# }
+# 
+# # filter_out_zero_count_overlaps <- function(combined_counts_overlaps) {
+# #   non_zero_count_overlaps_idx = rowSums(combined_counts_overlaps) != 0
+# #   combined_counts_overlaps = combined_counts_overlaps[non_zero_count_overlaps_idx, ]
+# #   return(combined_counts_overlaps)
+# # }
+# 
+# plot_subsampled_normalized_counts(combined_counts_overlaps_all_scATAC_data,
+#                                   100, "normalized_counts_histograms.png")
+# 
+# plot_subsampled_normalized_counts(combined_counts_overlaps_all_scATAC_data,
+#                                   100, "normalized_counts_with_lims_histograms.png",
+#                                   xlim=c(0,1), ylim=c(0, 100))
+
+# plot_subsampled_normalized_counts(combined_counts_overlaps_all_scATAC_data,
+#                                   100, "log2_normalized_counts_histograms.png",
+#                                   log=T)
+# plot_subsampled_normalized_counts(combined_counts_overlaps_all_scATAC_data,
+#                                   100, "log2_normalized_counts_with_lims_histograms.png",
+#                                   xlim=c(0,10), ylim=c(0, 100),
+#                                   log=T)
+
+# no_zeros_combined_counts_overlaps_all_scATAC_data = filter_out_zero_count_overlaps(
+#                                         combined_counts_overlaps_all_scATAC_data)
+
+# plot_subsampled_normalized_counts(no_zeros_combined_counts_overlaps_all_scATAC_data,
+#                                   100, xlim=c(0,1), ylim=c(0,100),
+#                                   "no_zeros_normalized_counts_histograms.png")
+
+# plot_subsampled_normalized_counts(no_zeros_combined_counts_overlaps_all_scATAC_data,
+#                                   100, "no_zeros_log2_normalized_counts_histograms.png",
+#                                   log=T)
+
+# plot_subsampled_normalized_counts(combined_counts_overlaps_all_scATAC_data,
+#                                   100, c(0, 1), c(0, 200), 
+#                                   "log2_normalized_counts_histograms.png")
+
+# plot_subsampled_normalized_counts()
+# ggplot(normalized_counts_subsampled, aes(value)) +
+#   geom_histogram() +
+#   xlim(0, 1) +
+#   # ylim(0, 12000) +
+#   facet_wrap(~bins, 10)
 # # TSS
 # get_filtered_metadata <- function(metadata, life_stage, tis, cell_types) {
 #   cell_types = paste(cell_types, collapse="|")
