@@ -670,16 +670,16 @@ create_tsse_filtered_count_overlaps_per_tissue(bing_ren_lung_files,
                                               top_tsse_fragment_count_range,
                                               c("Alveolar Type 2 (AT2) Cell"))
 
-shendure_lung_files  = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/", 
-                                          pattern=".*lung.*"))
-create_tsse_filtered_count_overlaps_per_tissue(shendure_lung_files,
-                                               CELL_NUMBER_FILTER,
-                                               metadata_Shendure,
-                                               interval.ranges,
-                                               ch,
-                                               top_tsse_fragment_count_range,
-                                               c("Lung Bronchiolar and alveolar epithelial cells",
-                                                 ))
+# shendure_lung_files  = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/", 
+#                                           pattern=".*lung.*"))
+# create_tsse_filtered_count_overlaps_per_tissue(shendure_lung_files,
+#                                                CELL_NUMBER_FILTER,
+#                                                metadata_Shendure,
+#                                                interval.ranges,
+#                                                ch,
+#                                                top_tsse_fragment_count_range,
+#                                                c("Lung Bronchiolar and alveolar epithelial cells",
+#                                                  ))
 # 
 # create_tsse_filtered_count_overlaps_per_tissue(files_Tsankov_distal,
 #                                                CELL_NUMBER_FILTER,
