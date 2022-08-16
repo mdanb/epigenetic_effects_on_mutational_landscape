@@ -472,6 +472,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
 #   sample_name = unlist(strsplit(sample_name, split="[.]"))[1]
 #   return(sample_name)
 # }
+
 filter_metadata_by_fragment_count <- function(metadata, min_frag_counts) {
   metadata_cut_index_minus_one = sum(metadata["frag_counts_cumsum"] < 
                                        min_frag_counts)
@@ -643,17 +644,17 @@ ch = import.chain(hg38_path)
 
 metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv", sep="\t", 
                       header=TRUE)
-metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-                               sep="\t",
-                               header=TRUE)
-metadata_tsankov_proximal = read.table("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv",
-                                       sep=",",
-                                       header=TRUE)
-metadata_tsankov_distal = read.table("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv",
-                                       sep=",",
-                                       header=TRUE)
-colnames(metadata_tsankov_proximal)[2] <- "celltypes"
-colnames(metadata_tsankov_distal)[2] <- "celltypes"
+# metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+#                                sep="\t",
+#                                header=TRUE)
+# metadata_tsankov_proximal = read.table("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv",
+#                                        sep=",",
+#                                        header=TRUE)
+# metadata_tsankov_distal = read.table("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv",
+#                                        sep=",",
+#                                        header=TRUE)
+# colnames(metadata_tsankov_proximal)[2] <- "celltypes"
+# colnames(metadata_tsankov_distal)[2] <- "celltypes"
 
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 interval.ranges
@@ -715,57 +716,58 @@ files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/",
 #           interval_ranges=interval.ranges,
 #           mc.cores=4)
 
-top_tsse_fragment_count_range = c(1000, 3853, 14849, 57225,
-                                             220520, 849788, 3274710,
-                                             12619294)
-
-bing_ren_lung_files = setdiff(list.files("raw_dir/bed_files/",
-                                         pattern=".*lung.*"),
-                              list.dirs("raw_dir/bed_files", recursive = FALSE,
-                                        full.names = FALSE))
-
-create_tsse_filtered_count_overlaps_per_tissue(bing_ren_lung_files,
-                                              CELL_NUMBER_FILTER,
-                                              metadata,
-                                              interval.ranges,
-                                              ch,
-                                              top_tsse_fragment_count_range,
-                                              c("Alveolar Type 2 (AT2) Cell"))
-
-shendure_lung_files  = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/",
-                                          pattern=".*lung.*"), 
-                               list.dirs("raw_dir/bed_files/JShendure_scATAC", 
-                                         recursive = FALSE,
-                                         full.names = FALSE))
-create_tsse_filtered_count_overlaps_per_tissue(shendure_lung_files,
-                                               CELL_NUMBER_FILTER,
-                                               metadata_Shendure,
-                                               interval.ranges,
-                                               ch,
-                                               top_tsse_fragment_count_range,
-                                               c("Lung Bronchiolar and alveolar epithelial cells",
-                                                 ))
-
-create_tsse_filtered_count_overlaps_per_tissue(files_Tsankov_distal,
-                                               CELL_NUMBER_FILTER,
-                                               metadata_tsankov_distal,
-                                               interval.ranges,
-                                               ch,
-                                               top_tsse_fragment_count_range,
-                                               c("Distal Lung AT2"))
-# bing_ren_skin_files = setdiff(list.files("raw_dir/bed_files/",
-#                                          pattern=".*skin_SM*"),
+# top_tsse_fragment_count_range = c(1000, 3853, 14849, 57225,
+#                                              220520, 849788, 3274710,
+#                                              12619294)
+# 
+# bing_ren_lung_files = setdiff(list.files("raw_dir/bed_files/",
+#                                          pattern=".*lung.*"),
 #                               list.dirs("raw_dir/bed_files", recursive = FALSE,
 #                                         full.names = FALSE))
 # 
-# top_tsse_fragment_count_range = c(1000, 2983, 8901, 26558, 79237, 236409,
-#                                   705340, 2104417)
-# skin_cell_types = c("Melanocyte", 
-#                     "Fibroblast (Epithelial)")
-# create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_files,
+# create_tsse_filtered_count_overlaps_per_tissue(bing_ren_lung_files,
 #                                               CELL_NUMBER_FILTER,
 #                                               metadata,
 #                                               interval.ranges,
 #                                               ch,
 #                                               top_tsse_fragment_count_range,
-#                                               skin_cell_types)
+#                                               c("Alveolar Type 2 (AT2) Cell"))
+
+# shendure_lung_files  = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/",
+#                                           pattern=".*lung.*"), 
+#                                list.dirs("raw_dir/bed_files/JShendure_scATAC", 
+#                                          recursive = FALSE,
+#                                          full.names = FALSE))
+# create_tsse_filtered_count_overlaps_per_tissue(shendure_lung_files,
+#                                                CELL_NUMBER_FILTER,
+#                                                metadata_Shendure,
+#                                                interval.ranges,
+#                                                ch,
+#                                                top_tsse_fragment_count_range,
+#                                                c("Lung Bronchiolar and alveolar epithelial cells",
+#                                                  ))
+
+# create_tsse_filtered_count_overlaps_per_tissue(files_Tsankov_distal,
+#                                                CELL_NUMBER_FILTER,
+#                                                metadata_tsankov_distal,
+#                                                interval.ranges,
+#                                                ch,
+#                                                top_tsse_fragment_count_range,
+#                                                c("Distal Lung AT2"))
+
+bing_ren_skin_files = setdiff(list.files("raw_dir/bed_files/",
+                                         pattern=".*skin_SM*"),
+                              list.dirs("raw_dir/bed_files", recursive = FALSE,
+                                        full.names = FALSE))
+
+top_tsse_fragment_count_range = c(1000, 2983, 8901, 26558, 79237, 236409,
+                                  705340, 2104417)
+skin_cell_types = c("Melanocyte",
+                    "Fibroblast (Epithelial)")
+create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_files,
+                                              CELL_NUMBER_FILTER,
+                                              metadata,
+                                              interval.ranges,
+                                              ch,
+                                              top_tsse_fragment_count_range,
+                                              skin_cell_types)
