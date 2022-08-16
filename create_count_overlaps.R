@@ -348,7 +348,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   # sample_names = c("lung_SM-ACCPU_1", "lung_SM-A8WNH_1")
   # # ##################
   
-  if (dataset == "bing_ren") {
+  if (dataset == "bing_ren" || dataset == "shendure") {
     filtered_metadatas = mclapply(sample_names, filter_metadata_by_sample_name, 
                                   metadata, mc.cores=8) 
   }
@@ -407,36 +407,38 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   #          mc.cores=8)
   
   for (count in top_tsse_fragment_count_range) {
-    debug_message = paste0("Creating count overlaps for num fragments = ",
-                           count)
-    print(debug_message)
-    count_filtered_metadata_with_fragment_counts_per_cell_type =
-                              mclapply(metadata_with_fragment_counts_per_cell_type,
-                                     filter_metadata_by_fragment_count, count,
-                                     mc.cores=8)
-    # top_barcodes = lapply(count_filtered_metadata_with_fragment_counts_per_cell_type,
-    #                       function(x) x[["cell_barcode"]])
-    fragments_from_top_cells = mclapply(seq_along(count_filtered_metadata_with_fragment_counts_per_cell_type),
-                                      get_fragments_from_top_cells,
-                                      count_filtered_metadata_with_fragment_counts_per_cell_type,
-                                      migrated_fragments,
-                                      sample_names, mc.cores=8)
-    fragments_from_top_cells = mclapply(fragments_from_top_cells, sample, count,
-                                        mc.cores=8)
-    count_overlaps = mclapply(fragments_from_top_cells,
-                              function(x) countOverlaps(interval_ranges, x),
-                              mc.cores=8)
-    count_overlaps = as_tibble(count_overlaps, .name_repair="universal")
-    colnames(count_overlaps) = cell_types_to_consider
     filename = paste("count_filter", cell_number_filter,
                      "count_overlaps", "frag_count_filter", count, sep="_")
     filename = paste(filename, "rds", sep=".")
     tissue_name = get_tissue_name(files[1])
     filepath = paste("processed_data/count_overlap_data/tsse_filtered",
-                      tissue_name, sep="/")
+                     tissue_name, sep="/")
     dir.create(filepath)
     filepath = paste(filepath, filename, sep="/")
-    saveRDS(count_overlaps, filepath)
+    if (!file.exists(filepath)) {
+      debug_message = paste0("Creating count overlaps for num fragments = ",
+                             count)
+      print(debug_message)
+      count_filtered_metadata_with_fragment_counts_per_cell_type =
+                                mclapply(metadata_with_fragment_counts_per_cell_type,
+                                       filter_metadata_by_fragment_count, count,
+                                       mc.cores=8)
+      # top_barcodes = lapply(count_filtered_metadata_with_fragment_counts_per_cell_type,
+      #                       function(x) x[["cell_barcode"]])
+      fragments_from_top_cells = mclapply(seq_along(count_filtered_metadata_with_fragment_counts_per_cell_type),
+                                        get_fragments_from_top_cells,
+                                        count_filtered_metadata_with_fragment_counts_per_cell_type,
+                                        migrated_fragments,
+                                        sample_names, mc.cores=8)
+      fragments_from_top_cells = mclapply(fragments_from_top_cells, sample, count,
+                                          mc.cores=8)
+      count_overlaps = mclapply(fragments_from_top_cells,
+                                function(x) countOverlaps(interval_ranges, x),
+                                mc.cores=8)
+      count_overlaps = as_tibble(count_overlaps, .name_repair="universal")
+      colnames(count_overlaps) = cell_types_to_consider
+      saveRDS(count_overlaps, filepath)
+    }
   }
 }
 
@@ -466,12 +468,10 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   #             groupby(cell.type) %>%
   #             arrange(desc())
 
-# TODO: CHANGE TO REFLECT SAMPLE RATHER THAN TISSUE
-# get_sample_name_shendure <- function(file) {
-#   sample_name = unlist(strsplit(file, split="_"))[3]
-#   sample_name = unlist(strsplit(sample_name, split="[.]"))[1]
-#   return(sample_name)
-# }
+get_sample_name_shendure <- function(file) {
+  sample_name = unlist(strsplit(file, split="\\."))[1]
+  return(sample_name)
+}
 
 filter_metadata_by_fragment_count <- function(metadata, min_frag_counts) {
   metadata_cut_index_minus_one = sum(metadata["frag_counts_cumsum"] < 
@@ -644,9 +644,11 @@ ch = import.chain(hg38_path)
 
 metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv", sep="\t", 
                       header=TRUE)
-# metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-#                                sep="\t",
-#                                header=TRUE)
+metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+                               sep="\t",
+                               header=TRUE)
+colnames(metadata_Shendure)[2] = "sample"
+
 # metadata_tsankov_proximal = read.table("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv",
 #                                        sep=",",
 #                                        header=TRUE)
@@ -716,9 +718,9 @@ files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/",
 #           interval_ranges=interval.ranges,
 #           mc.cores=4)
 
-# top_tsse_fragment_count_range = c(1000, 3853, 14849, 57225,
-#                                              220520, 849788, 3274710,
-#                                              12619294)
+top_tsse_fragment_count_range = c(1000, 3853, 14849, 57225,
+                                             220520, 849788, 3274710,
+                                             12619294)
 # 
 # bing_ren_lung_files = setdiff(list.files("raw_dir/bed_files/",
 #                                          pattern=".*lung.*"),
@@ -733,11 +735,11 @@ files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/",
 #                                               top_tsse_fragment_count_range,
 #                                               c("Alveolar Type 2 (AT2) Cell"))
 
-# shendure_lung_files  = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/",
-#                                           pattern=".*lung.*"), 
-#                                list.dirs("raw_dir/bed_files/JShendure_scATAC", 
-#                                          recursive = FALSE,
-#                                          full.names = FALSE))
+shendure_lung_files  = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/",
+                                          pattern=".*lung.*"),
+                               list.dirs("raw_dir/bed_files/JShendure_scATAC",
+                                         recursive = FALSE,
+                                         full.names = FALSE))
 # create_tsse_filtered_count_overlaps_per_tissue(shendure_lung_files,
 #                                                CELL_NUMBER_FILTER,
 #                                                metadata_Shendure,
