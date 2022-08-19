@@ -836,6 +836,7 @@ shendure_lung_files  = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/",
 #                                                top_tsse_fragment_count_range,
 #                                                c("Distal Lung AT2"))
 
+#### Melanoma ####
 bing_ren_skin_files = setdiff(list.files("raw_dir/bed_files/",
                                          pattern=".*skin_SM*"),
                               list.dirs("raw_dir/bed_files", recursive = FALSE,
@@ -855,6 +856,21 @@ create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_files,
                                               "bing_ren")
 
 
+bing_ren_skin_sun_exposed_files = setdiff(list.files("raw_dir/bed_files/",
+                                              pattern=".*skin_sun_exposed.*"),
+                              list.dirs("raw_dir/bed_files", recursive = FALSE,
+                                        full.names = FALSE))
+
+create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_sun_exposed_files,
+                                               CELL_NUMBER_FILTER,
+                                               metadata,
+                                               interval.ranges,
+                                               ch,
+                                               top_tsse_fragment_count_range,
+                                               skin_cell_types,
+                                               "bing_ren")
+
+#### ColoRect.AdenoCA ####
 bing_ren_colon_files = setdiff(list.files("raw_dir/bed_files/",
                                          pattern=".*colon_transverse.*"),
                               list.dirs("raw_dir/bed_files", recursive = FALSE,
@@ -863,9 +879,8 @@ bing_ren_colon_files = setdiff(list.files("raw_dir/bed_files/",
 top_tsse_fragment_count_range = c(1000, 3005, 9035, 26558, 27162, 81648,
                                   245435, 737778, 2217754, 6666549)
 
-colon_cell_types = c("Colon Transverse Colon Epithelial Cell 2",
-                     "Colon Transverse Colonic Goblet Cell",
-                     "Mammary Tissue Basal Epithelial (Mammary)")
+colon_cell_types = c("Colon Epithelial Cell 2",
+                     "Colonic Goblet Cell")
 
 create_tsse_filtered_count_overlaps_per_tissue(bing_ren_colon_files,
                                                CELL_NUMBER_FILTER,
@@ -875,3 +890,5 @@ create_tsse_filtered_count_overlaps_per_tissue(bing_ren_colon_files,
                                                top_tsse_fragment_count_range,
                                                colon_cell_types,
                                                "bing_ren")
+
+mammary_tissue_cell_types = c("Basal Epithelial (Mammary)")
