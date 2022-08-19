@@ -480,21 +480,34 @@ add_escape_if_necessary <- function(cell_type) {
 
 plot_and_save_boxplots <- function(correlations_long, cell_types, 
                                    plot_filename, 
-                                   correlations_for_tsse_filtered_cells) {
+                                   correlations_for_tsse_filtered_cells=NULL) {
   # colors = get_n_colors(length(cell_types), 4)
-  x_for_filtered_correlations = unique(correlations_long %>% 
-                                         pull("num_fragments"))
-  x_for_filtered_correlations = x_for_filtered_correlations[1:length(correlations_for_tsse_filtered_cells)]
-  levels_for_filtered_correlations = x_for_filtered_correlations
-  ggplot() +
-    geom_point(aes(x=factor(x_for_filtered_correlations,
-                            levels=x_for_filtered_correlations),
-                   y=correlations_for_tsse_filtered_cells, color="tss filtered"),
-               size=3) +
+  switch = F
+  if (!is.null(correlations_for_tsse_filtered_cells)) {
+    x_for_filtered_correlations = unique(correlations_long %>% 
+                                           pull("num_fragments"))
+    x_for_filtered_correlations = x_for_filtered_correlations[1:ncol(correlations_for_tsse_filtered_cells)]
+    levels_for_filtered_correlations = x_for_filtered_correlations
+    df = as_tibble(correlations_for_tsse_filtered_cells)
+    cell_type_for_tsse_filtered = rownames(correlations_for_tsse_filtered_cells)
+    cell_type_for_tsse_filtered = rep(cell_type_for_tsse_filtered, 
+                                      each=length(x_for_filtered_correlations))
+    colnames(df) = x_for_filtered_correlations
+    df = pivot_longer(df, everything())
+    df["cell_type"] = cell_type_for_tsse_filtered
+    df["cell_type"] = lapply(df["cell_type"], paste, "TSS filtered", sep=" ")
+    switch = T
+  }
+  ggplot() +    # geom_point(aes(x=factor(x_for_filtered_correlations,
+    #                         levels=x_for_filtered_correlations),
+    #                y=correlations_for_tsse_filtered_cells, color="tss filtered"),
+    #            size=3) +
+    {if (switch) geom_point(data=df, aes(x=factor(name, levels=unique(name)), 
+                   y=value, color=cell_type), size=3)} +
     geom_boxplot(data=correlations_long,
                  aes(x=factor(num_fragments, levels=unique(num_fragments)), 
                      y=correlation, color=cell_type)) +
-    theme(axis.text.x=element_text(size=10, angle = 90)) +
+    theme(axis.text.x=element_text(size=10, angle=90)) +
     xlab("Num Fragments") +
     ylab("Correlation") +
     labs(color="Cell type") + 
@@ -742,42 +755,66 @@ skin_cell_types = c("Skin Sun Exposed Melanocyte",
 #                "Skin Sun Exposed Macrophage (General,Alveolar)")
 
 # skin_tsse_filtered_count_overlaps = c()
-tsse_filtered_correlations = c()
-for (file in mixedsort(list.files("processed_data/count_overlap_data/tsse_filtered/skin",
-                                  full.names = TRUE))) {
-  count_overlaps = readRDS(file)
-  tsse_filtered_correlations = append(tsse_filtered_correlations,
-                                      cor(count_overlaps, 
-                                          mut_count_data[, "Skin.Melanoma"], 
-                                          use="complete"))
-}
 
+
+# count = 1
+# for (file in mixedsort(list.files("processed_data/count_overlap_data/tsse_filtered/skin",
+#                                   full.names = TRUE))) {
+#   count_overlaps = readRDS(file)
+#   corrs = cor(count_overlaps, 
+#             mut_count_data[, "Skin.Melanoma"], 
+#             use="complete")
+#   if (count == 1) {
+#     tsse_filtered_correlations = corrs
+#   }
+#   else {
+#     tsse_filtered_correlations = cbind(tsse_filtered_correlations, corrs)
+#   }
+#   count = count + 1
+# }
+# 
+# prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
+#                               mut_count_data,
+#                               "Skin.Melanoma",
+#                               skin_cell_types,
+#                               1000,
+#                               T,
+#                               "test_skin_log_num_frags_vs_correlation.png",
+#                               tsse_filtered_correlations)
+# 
+colon_cell_types = c("Colon Transverse Colon Epithelial Cell 2",
+                    "Colon Transverse T Lymphocyte 1 (CD8+)",
+                    "Mammary Tissue Basal Epithelial (Mammary)",
+                    "Mammary Tissue Mammary Luminal Epithelial Cell 1",
+                    "Colon Transverse Colonic Goblet Cell")
+# 
+# 
 prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               mut_count_data,
-                              "Skin.Melanoma",
-                              skin_cell_types,
+                              "ColoRect-AdenoCA",
+                              colon_cell_types,
                               1000,
                               T,
-                              "test_skin_log_num_frags_vs_correlation.png",
-                              tsse_filtered_correlations)
+                              "colon_log_num_frags_vs_correlation.png")
 
 # #### Distribution of normalized counts over bins ####
-# combined_counts_overlaps_all_scATAC_data = combined_counts_overlaps_all_scATAC_data[complete.cases(mut_count_data), ]
+# combined_counts_overlaps_all_scATAC_data = 
+#   combined_counts_overlaps_all_scATAC_data[complete.cases(mut_count_data), ]
 # plot_subsampled_normalized_counts <- function(combined_counts_overlaps,
 #                                               num_plots, figname, binwidth = NULL,
 #                                               xlim = NULL, ylim = NULL, log = F) {
 #   count_overlaps_sums = apply(combined_counts_overlaps, 2, sum)
 #   normalized_counts = combined_counts_overlaps / count_overlaps_sums
 #   set.seed(42)
-#   normalized_counts_subsampled = normalized_counts[sample(nrow(normalized_counts), 
+#   normalized_counts_subsampled = normalized_counts[sample(nrow(normalized_counts),
 #                                                           num_plots), ]
 #   bins = rownames(normalized_counts_subsampled)
 #   normalized_counts_subsampled = as_tibble(normalized_counts_subsampled) %>%
 #                                  add_column(bins, .before=1)
-#   normalized_counts_subsampled = normalized_counts_subsampled %>% 
+#   normalized_counts_subsampled = normalized_counts_subsampled %>%
 #                                  pivot_longer(-bins)
 #   if (log) {
-#     normalized_counts_subsampled["value"] = 
+#     normalized_counts_subsampled["value"] =
 #       log2(normalized_counts_subsampled["value"] + 1)
 #     # normalized_counts_subsampled[which(!is.finite(
 #     #   normalized_counts_subsampled[["value"]])),]["value"] = 0
@@ -789,7 +826,7 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
 #     {if (switch1) xlim(xlim)} +
 #     {if (switch2) ylim(ylim)} +
 #     facet_wrap(~bins, sqrt(num_plots))
-#   
+# 
 #   figpath = paste("figures", figname, sep="/")
 #   ggsave(figpath, width=20, height=12)
 # }
@@ -800,12 +837,21 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
 # #   return(combined_counts_overlaps)
 # # }
 # 
+# 
 # plot_subsampled_normalized_counts(combined_counts_overlaps_all_scATAC_data,
 #                                   100, "normalized_counts_histograms.png")
 # 
 # plot_subsampled_normalized_counts(combined_counts_overlaps_all_scATAC_data,
 #                                   100, "normalized_counts_with_lims_histograms.png",
 #                                   xlim=c(0,1), ylim=c(0, 100))
+
+
+
+
+
+
+
+
 
 # plot_subsampled_normalized_counts(combined_counts_overlaps_all_scATAC_data,
 #                                   100, "log2_normalized_counts_histograms.png",
@@ -836,68 +882,3 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
 #   xlim(0, 1) +
 #   # ylim(0, 12000) +
 #   facet_wrap(~bins, 10)
-# # TSS
-# get_filtered_metadata <- function(metadata, life_stage, tis, cell_types) {
-#   cell_types = paste(cell_types, collapse="|")
-#   filtered_metadata = metadata %>% 
-#                       filter(grepl(life_stage, Life.stage)) %>%
-#                       filter(grepl(tis, tissue, ignore.case=T)) %>%
-#                       filter(grepl(cell_types, 
-#                                    cell.type, 
-#                                    ignore.case=T)) 
-#   return(filtered_metadata)
-# }
-# 
-# add_fragment_counts_to_metadata <- function(metadata, combined_count_overlaps) {
-#   where_to_substr = unlist(lapply("_SM", regexpr, metadata[["tissue"]]))
-#   tissue_name = unname(unlist(
-#            lapply(metadata["tissue"], substr, 1, where_to_substr - 1)))
-#   tissue_name = str_to_title(gsub("\\_", " ", tissue_name))
-#   metadata = metadata %>% mutate(full_cell_type_name = paste(tissue_name, 
-#                                                              cell.type))
-#   count_overlaps_idx_per_cell_type = match(metadata[["full_cell_type_name"]], 
-#                                            colnames(combined_count_overlaps))
-#   uniq_count_overlap_idxs = unique(count_overlaps_idx_per_cell_type)
-#   uniq_counts = apply(combined_count_overlaps[, uniq_count_overlap_idxs], 2, 
-#                       sum)
-#   names(uniq_counts) = uniq_count_overlap_idxs
-#   count_overlap_idx_per_cell_type = match(count_overlaps_idx_per_cell_type, 
-#                                           names(uniq_counts))
-#   count_overlaps = unname(uniq_counts[count_overlap_idx_per_cell_type])
-#   metadata["total_count_overlaps"] = count_overlaps
-#   return(metadata)
-# }
-# 
-# plot_num_frag_vs_tss_boxplot <- function(metadata, save_filename) {
-#   ggplot(metadata) +
-#     geom_boxplot(aes(x=factor(total_count_overlaps, levels=unique(total_count_overlaps)), 
-#                      y=tsse, color=full_cell_type_name)) +
-#     xlab("Num Fragments") +
-#     theme(axis.text.x=element_text(size=10, angle = 90)) +
-#     scale_x_discrete(limits = as.factor(sort(as.integer(
-#       unique(metadata["total_count_overlaps"]) %>% pull))))
-#   ggsave(paste("figures", save_filename, sep="/"), width = 20, height = 12)
-# }
-# 
-# metadata = as_tibble(read.table("raw_dir/metadata/GSE184462_metadata.tsv", 
-#                                 sep="\t",
-#                       header=T))
-# 
-# filtered_metadata = get_filtered_metadata(metadata, "Adult", "skin", 
-#                                           c("melanocyte",
-#                                             "keratinocyte",
-#                                             "fibroblast"))
-# filtered_metadata = add_fragment_counts_to_metadata(filtered_metadata, 
-#                                                     combined_count_overlaps)
-# 
-# plot_num_frag_vs_tss_boxplot(filtered_metadata, 
-#                              "skin_num_frag_vs_tss.png")
-
-
-# metadata = readRDS("processed_data/count_overlap_data/combined_count_overlaps/count_filter_1_combined_count_overlaps_metadata.rds")
-
-
-# Num Cells
-# melanocyte_n_cells = metadata[metadata["tissue_name"] == 
-#                              "Skin" & metadata["cell_type"] == 
-#                              "Melanocyte", "num_cells"]
