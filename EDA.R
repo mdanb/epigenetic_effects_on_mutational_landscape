@@ -593,7 +593,7 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
                                           mut_count_data, cancer_type, 
                                           cell_types, lower, log, 
                                           plot_filename, 
-                                          correlations_for_tsse_filtered_cells) {
+                                          correlations_for_tsse_filtered_cells=NULL) {
   cell_type_for_grep = lapply(cell_types, add_escape_if_necessary)
   cell_type_col_idx = lapply(cell_type_for_grep, grep,
                              colnames(combined_count_overlaps), ignore.case=T)
