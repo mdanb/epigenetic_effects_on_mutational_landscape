@@ -791,7 +791,7 @@ colon_cell_types = c("Colon Transverse Colon Epithelial Cell 2",
 # 
 prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               mut_count_data,
-                              "ColoRect-AdenoCA",
+                              "ColoRect.AdenoCA",
                               colon_cell_types,
                               1000,
                               T,
