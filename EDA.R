@@ -889,8 +889,7 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               cell_types,
                               1000,
                               T,
-                              "breast_adenoca_log_num_frags_vs_correlation.png"
-                              )
+                              "breast_adenoca_log_num_frags_vs_correlation.png")
 
 #### Distribution of normalized counts over bins ####
 combined_counts_overlaps_all_scATAC_data =
