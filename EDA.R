@@ -648,7 +648,7 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
   correlations_filename = paste0(correlations_filename, ".rds")
   correlations_filepath = paste("processed_data", "subsampled_correlations",
                                 correlations_filename, sep="/")
-  correlations_filepath = "stuff.rds"
+  # correlations_filepath = "stuff.rds"
   if (!file.exists(correlations_filepath)) {
     fragments_subsampling_range <- create_fragments_subsampling_range(lower, 
                                                 max(cell_types_total_fragments), 
@@ -889,8 +889,7 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               cell_types,
                               1000,
                               T,
-                              "breast_adenoca_log_num_frags_vs_correlation.png"
-                              )
+                              "breast_adenoca_log_num_frags_vs_correlation.png")
 
 #### Distribution of normalized counts over bins ####
 combined_counts_overlaps_all_scATAC_data =
