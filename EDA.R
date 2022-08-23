@@ -112,14 +112,14 @@ combined_subdivided_filepath = paste(combined_data_path,
 #                   clustering_distance_rows = "pearson",
 #                   clustering_distance_columns = "pearson")
 # 
-# #### One heatmap, all tissues ####
+#### One heatmap, all tissues ####
 # correlations = cor(combined_count_overlaps, mut_count_data, use="complete.obs")
 # correlations = t(scale(t(correlations)))
 # correlations = scale(correlations)
 # save_heatmap_file("figures/all_cells_corr_double_normalized.pdf",
 #                   30, 30, correlations, row_names_gp = gpar(fontsize = 6),
 #                   column_names_gp = gpar(fontsize = 6))
-# 
+
 # #### Tissue specific heatmaps ####
 # combine_count_overlaps_per_tissue <- function(f, tissue_specific_counts) {
 #   count_overlaps = readRDS(f)
@@ -648,7 +648,10 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
   correlations_filename = paste0(correlations_filename, ".rds")
   correlations_filepath = paste("processed_data", "subsampled_correlations",
                                 correlations_filename, sep="/")
-  # correlations_filepath = "stuff.rds"
+  if (cancer_type == "Skin.Melanoma") {
+    correlations_filepath = paste("processed_data", "subsampled_correlations",
+                                  "skin.rds", sep="/")
+  }
   if (!file.exists(correlations_filepath)) {
     fragments_subsampling_range <- create_fragments_subsampling_range(lower, 
                                                 max(cell_types_total_fragments), 
@@ -762,39 +765,46 @@ combined_counts_overlaps_all_scATAC_data = cbind(combined_count_overlaps,
                                                  shendure_combined_count_overlaps,
                                                  tsankov_combined_count_overlaps)
 
-# # RECALL that Shendure and Tsankov do NOT have Melanocytes
-# colnames(combined_count_overlaps)[grep("Lung", 
-#                                        colnames(combined_count_overlaps))]
-# colnames(shendure_combined_count_overlaps)[grep("Lung", 
-#                                     colnames(shendure_combined_count_overlaps))]
-# colnames(tsankov_combined_count_overlaps)[grep("Lung", 
-#                                      colnames(tsankov_combined_count_overlaps))]
+# RECALL that Shendure and Tsankov do NOT have Melanocytes
+colnames(combined_count_overlaps)[grep("Lung",
+                                        colnames(combined_count_overlaps))]
+colnames(shendure_combined_count_overlaps)[grep("Lung",
+                                     colnames(shendure_combined_count_overlaps))]
+colnames(tsankov_combined_count_overlaps)[grep("Lung",
+                                      colnames(tsankov_combined_count_overlaps))]
 
 # lung_cell_types = c("Lung Alveolar Type 2 (AT2) Cell",
-#                     "Lung Bronchiolar and alveolar epithelial cells",
-#                     "Distal Lung AT2")
+#                      "Lung Bronchiolar and alveolar epithelial cells",
+#                      "Distal Lung AT2")
 # 
-# lung_tsse_filtered_count_overlaps = c()
-# tsse_filtered_correlations = c()
-# for (file in mixedsort(list.files("processed_data/count_overlap_data/tsse_filtered/lung",
-#                         full.names = TRUE))) {
-#   count_overlaps = readRDS(file)
-#   tsse_filtered_correlations = append(tsse_filtered_correlations,
-#                                       cor(count_overlaps, 
-#                                       mut_count_data[, "Lung.AdenoCA"], 
-#                                       use="complete"))
-# }
-
-
-
+# # lung_tsse_filtered_count_overlaps = c()
+# # tsse_filtered_correlations = c()
+# # for (file in mixedsort(list.files("processed_data/count_overlap_data/tsse_filtered/lung",
+# #                          full.names = TRUE))) {
+# #    count_overlaps = readRDS(file)
+# #    tsse_filtered_correlations = append(tsse_filtered_correlations,
+# #                                        cor(count_overlaps,
+# #                                        mut_count_data[, "Lung.AdenoCA"],
+# #                                        use="complete"))
+# # }
+# lung_tsse_filtered_correlations =
+#   combine_tsse_filtered_count_overlaps_into_correlation_df(
+#     "processed_data/count_overlap_data/tsse_filtered/lung",
+#     "Lung.AdenoCA")
+# 
+# rownames(lung_tsse_filtered_correlations) =
+#   paste("Lung", rownames(lung_tsse_filtered_correlations))
+# 
+# 
+# tsse_filtered_correlations = list(lung_tsse_filtered_correlations)
 # prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
-#                               mut_count_data,
-#                               "Lung.AdenoCA",
-#                               lung_cell_types,
-#                               1000,
-#                               T,
-#                               "test_lung_log_num_frags_vs_correlation.png",
-#                               tsse_filtered_correlations)
+#                                mut_count_data,
+#                                "Lung.AdenoCA",
+#                                lung_cell_types,
+#                                1000,
+#                                T,
+#                                "lung_adenoca_log_num_frags_vs_correlation.png",
+#                                tsse_filtered_correlations)
 
 # #### Melanoma ####
 # cell_types = c("Skin Sun Exposed Melanocyte",
@@ -811,20 +821,20 @@ combined_counts_overlaps_all_scATAC_data = cbind(combined_count_overlaps,
 #                    "Skin Sun Exposed Macrophage (General,Alveolar)"
 #                     )
 # 
-# skin_tsse_filtered_correlations = 
+# skin_tsse_filtered_correlations =
 #   combine_tsse_filtered_count_overlaps_into_correlation_df(
 #     "processed_data/count_overlap_data/tsse_filtered/skin",
 #     "Skin.Melanoma")
 # 
-# rownames(skin_tsse_filtered_correlations) = 
+# rownames(skin_tsse_filtered_correlations) =
 #   paste("Skin", rownames(skin_tsse_filtered_correlations))
 # 
-# skin_sun_exposed_tsse_filtered_correlations = 
+# skin_sun_exposed_tsse_filtered_correlations =
 #   combine_tsse_filtered_count_overlaps_into_correlation_df(
 #     "processed_data/count_overlap_data/tsse_filtered/skin_sun_exposed",
 #     "Skin.Melanoma")
 # 
-# rownames(skin_sun_exposed_tsse_filtered_correlations) = 
+# rownames(skin_sun_exposed_tsse_filtered_correlations) =
 #   paste("Skin Sun Exposed", rownames(skin_sun_exposed_tsse_filtered_correlations))
 # 
 # tsse_filtered_correlations = list(skin_tsse_filtered_correlations,
@@ -839,57 +849,57 @@ combined_counts_overlaps_all_scATAC_data = cbind(combined_count_overlaps,
 #                               "melanoma_log_num_frags_vs_correlation.png",
 #                               tsse_filtered_correlations)
 # 
-# 
-# #### ColoRect.AdenoCA ####
-# cell_types = c("Colon Transverse Colon Epithelial Cell 2",
-#                 "Colon Transverse T Lymphocyte 1 (CD8+)",
-#                 "Mammary Tissue Basal Epithelial (Mammary)",
-#                 "Mammary Tissue Mammary Luminal Epithelial Cell 1",
-#                 "Colon Transverse Colonic Goblet Cell")
-# 
-# colon_transverse_tsse_filtered_correlations = 
+
+#### ColoRect.AdenoCA ####
+cell_types = c("Colon Transverse Colon Epithelial Cell 2",
+                "Colon Transverse T Lymphocyte 1 (CD8+)",
+                "Mammary Tissue Basal Epithelial (Mammary)",
+                "Mammary Tissue Mammary Luminal Epithelial Cell 1",
+                "Colon Transverse Colonic Goblet Cell")
+
+# colon_transverse_tsse_filtered_correlations =
 #   combine_tsse_filtered_count_overlaps_into_correlation_df(
 #     "processed_data/count_overlap_data/tsse_filtered/colon_transverse",
 #     "ColoRect.AdenoCA")
 # 
-# rownames(colon_transverse_tsse_filtered_correlations) = 
-#   paste("Colon Transverse", 
+# rownames(colon_transverse_tsse_filtered_correlations) =
+#   paste("Colon Transverse",
 #         rownames(colon_transverse_tsse_filtered_correlations))
 # 
-# mammary_tissue_tsse_filtered_correlations = 
+# mammary_tissue_tsse_filtered_correlations =
 #   combine_tsse_filtered_count_overlaps_into_correlation_df(
 #     "processed_data/count_overlap_data/tsse_filtered/mammary_tissue",
 #     "ColoRect.AdenoCA")
 # 
-# rownames(mammary_tissue_tsse_filtered_correlations) = 
+# rownames(mammary_tissue_tsse_filtered_correlations) =
 #   paste("Mammary Tissue", rownames(mammary_tissue_tsse_filtered_correlations))
 # 
-# tsse_filtered_correlations = list(colon_tsse_filtered_correlations,
+# tsse_filtered_correlations = list(colon_transverse_tsse_filtered_correlations,
 #                                   mammary_tissue_tsse_filtered_correlations)
-# 
-# prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
-#                               mut_count_data,
-#                               "ColoRect.AdenoCA",
-#                               cell_types,
-#                               1000,
-#                               T,
-#                               "colorect_adenoca_log_num_frags_vs_correlation.png",
-#                               tsse_filtered_correlations)
-
-#### Breast AdenoCA ####
-cell_types = c("Mammary Tissue Mammary Luminal Epithelial Cell 1",
-               "Mammary Tissue Basal Epithelial (Mammary)",
-               "Esophagus Mucosa Airway Goblet Cell",
-               "Mammary Tissue Mammary Luminal Epithelial Cell 2",
-               "Heart Atrial Appendage Cardiac Pericyte 1")
 
 prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               mut_count_data,
-                              "Breast.AdenoCA",
+                              "ColoRect.AdenoCA",
                               cell_types,
                               1000,
                               T,
-                              "breast_adenoca_log_num_frags_vs_correlation.png")
+                              "colorect_adenoca_log_num_frags_vs_correlation.png"
+                              )
+
+# #### Breast AdenoCA ####
+# cell_types = c("Mammary Tissue Mammary Luminal Epithelial Cell 1",
+#                "Mammary Tissue Basal Epithelial (Mammary)",
+#                "Esophagus Mucosa Airway Goblet Cell",
+#                "Mammary Tissue Mammary Luminal Epithelial Cell 2",
+#                "Heart Atrial Appendage Cardiac Pericyte 1")
+# 
+# prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
+#                               mut_count_data,
+#                               "Breast.AdenoCA",
+#                               cell_types,
+#                               1000,
+#                               T,
+#                               "breast_adenoca_log_num_frags_vs_correlation.png")
 
 #### Distribution of normalized counts over bins ####
 combined_counts_overlaps_all_scATAC_data =
@@ -959,7 +969,8 @@ plot_subsampled_normalized_counts <- function(combined_counts_overlaps,
 #                                   100, "normalized_counts_histograms.png")
 
 plot_subsampled_normalized_counts(combined_counts_overlaps_all_scATAC_data,
-                                  100, "normalized_counts_with_lims_histograms.png",
+                                  100, 
+                                  "normalized_counts_with_lims_histograms.png",
                                   xlim=c(0,0.1))
 
 
