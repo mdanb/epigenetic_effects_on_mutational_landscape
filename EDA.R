@@ -860,8 +860,7 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               cell_types,
                               fragments_subsampling_range,
                               T,
-                              "melanoma_num_frags_vs_correlation.png",
-                              tsse_filtered_correlations)
+                              "melanoma_num_frags_vs_correlation.png")
 
 
 # #### ColoRect.AdenoCA ####
