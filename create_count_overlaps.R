@@ -721,12 +721,13 @@ metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv", sep="\t",
                       header=TRUE)
 colnames(metadata)[grep("cell.type", colnames(metadata))] = "cell_type"
 
-metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-                               sep="\t",
-                               header=TRUE)
-colnames(metadata_Shendure)[2] = "sample"
-colnames(metadata_Shendure)[1] = "cell_barcode"
-colnames(metadata_Shendure)[grep("tss", colnames(metadata_Shendure))] = "tsse"
+# metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+#                                sep="\t",
+#                                header=TRUE)
+
+# colnames(metadata_Shendure)[2] = "sample"
+# colnames(metadata_Shendure)[1] = "cell_barcode"
+# colnames(metadata_Shendure)[grep("tss", colnames(metadata_Shendure))] = "tsse"
 
 # metadata_tsankov_proximal = read.table("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv",
 #                                        sep=",",
@@ -838,40 +839,40 @@ shendure_lung_files  = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/",
 
 
 
-# #### Melanoma ####
-# bing_ren_skin_files = setdiff(list.files("raw_dir/bed_files/",
-#                                          pattern=".*skin_SM*"),
-#                               list.dirs("raw_dir/bed_files", recursive = FALSE,
-#                                         full.names = FALSE))
-# 
-# top_tsse_fragment_count_range = c(1000, 2983, 8901, 26558, 79237, 236409,
-#                                   705340, 2104417)
-# skin_cell_types = c("Melanocyte",
-#                     "Fibroblast (Epithelial)")
-# create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_files,
-#                                               CELL_NUMBER_FILTER,
-#                                               metadata,
-#                                               interval.ranges,
-#                                               ch,
-#                                               top_tsse_fragment_count_range,
-#                                               skin_cell_types,
-#                                               "bing_ren")
-# 
-# 
-# bing_ren_skin_sun_exposed_files = setdiff(list.files("raw_dir/bed_files/",
-#                                               pattern=".*skin_sun_exposed.*"),
-#                               list.dirs("raw_dir/bed_files", recursive = FALSE,
-#                                         full.names = FALSE))
-# 
-# create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_sun_exposed_files,
-#                                                CELL_NUMBER_FILTER,
-#                                                metadata,
-#                                                interval.ranges,
-#                                                ch,
-#                                                top_tsse_fragment_count_range,
-#                                                skin_cell_types,
-#                                                "bing_ren")
-# 
+#### Melanoma ####
+bing_ren_skin_files = setdiff(list.files("raw_dir/bed_files/",
+                                         pattern=".*skin_SM*"),
+                              list.dirs("raw_dir/bed_files", recursive = FALSE,
+                                        full.names = FALSE))
+
+top_tsse_fragment_count_range =  c(1000, 10000, 50000, 100000, 150000, 250000,
+                                   300000, 400000, 500000, 600000)
+skin_cell_types = c("Melanocyte",
+                    "Fibroblast (Epithelial)")
+create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_files,
+                                              CELL_NUMBER_FILTER,
+                                              metadata,
+                                              interval.ranges,
+                                              ch,
+                                              top_tsse_fragment_count_range,
+                                              skin_cell_types,
+                                              "bing_ren")
+
+
+bing_ren_skin_sun_exposed_files = setdiff(list.files("raw_dir/bed_files/",
+                                              pattern=".*skin_sun_exposed.*"),
+                              list.dirs("raw_dir/bed_files", recursive = FALSE,
+                                        full.names = FALSE))
+
+create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_sun_exposed_files,
+                                               CELL_NUMBER_FILTER,
+                                               metadata,
+                                               interval.ranges,
+                                               ch,
+                                               top_tsse_fragment_count_range,
+                                               skin_cell_types,
+                                               "bing_ren")
+
 # #### ColoRect.AdenoCA ####
 # bing_ren_colon_files = setdiff(list.files("raw_dir/bed_files/",
 #                                          pattern=".*colon_transverse.*"),
