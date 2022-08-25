@@ -479,12 +479,12 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
     if (file.exists(filepath)) {
       count_overlaps = readRDS(filepath)
       already_existing_cell_types = colnames(count_overlaps)
-      cell_types_to_consider = cell_types_to_consider[!(cell_types_to_consider %in% 
+      cell_types_to_consider_temp = cell_types_to_consider[!(cell_types_to_consider %in% 
                                                       already_existing_cell_types)]
-      if (length(cell_types_to_consider != 0)) {
+      if (length(cell_types_to_consider_temp != 0)) {
         count_overlaps_from_missing_cells = 
           create_tsse_filtered_count_overlaps_helper(metadata_with_fragment_counts,
-                                                     cell_types_to_consider,
+                                                     cell_types_to_consider_temp,
                                                      migrated_fragments,
                                                      sample_names, 
                                                      interval_ranges,
