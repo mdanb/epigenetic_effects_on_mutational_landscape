@@ -425,8 +425,7 @@ run_simulations_per_num_fragments <- function(num_fragments) {
 
 run_subsampling_simulations <- function(num_fragments_to_subsample, 
                                         cell_type_count_overlaps, 
-                                        sampling_vec, mutations) {
-  ptm <- proc.time()
+                                        sampling_vec, mutations, cell_type) {
   subsampling_simulations <- list()
   list_idx = 1
   set.seed(42)
@@ -435,15 +434,21 @@ run_subsampling_simulations <- function(num_fragments_to_subsample,
   #                                    run_simulations_per_num_fragments,
   #                                    log, mc.cores=8)
   for (i in num_fragments_to_subsample) {
+    ptm <- proc.time()
     # if (log) {
     #   i = as.integer(2^i)
     # }
+    print(paste("subsampling", i, 
+                "fragments for", paste0(cell_type), sep=" "))
     samples_10 = mclapply(rep(i, 10), run_one_simulation, 
                            cell_type_count_overlaps,
                            sampling_vec, mutations,
                            mc.cores=8)
     subsampling_simulations[[list_idx]] = unlist(samples_10)
     list_idx = list_idx + 1
+    print(paste("time to subsample", i, 
+                "for", paste0(cell_type, ":"), round((proc.time() - ptm)[["elapsed"]]),
+                "seconds"), sep=" ")
   }
   names(subsampling_simulations) = num_fragments_to_subsample
   
@@ -452,8 +457,6 @@ run_subsampling_simulations <- function(num_fragments_to_subsample,
   #                                               num_fragments_to_subsample)))
   # }
   subsampling_simulations = as_tibble(subsampling_simulations)
-  print(paste0("time to subsample: ", round((proc.time() - ptm)[["elapsed"]]),
-               " seconds"))
   return(subsampling_simulations)
 }
 
@@ -487,15 +490,19 @@ plot_and_save_boxplots <- function(correlations_long, cell_types,
   if (!is.null(correlations_for_tsse_filtered_cells)) {
     x_for_filtered_correlations = unique(correlations_long %>% 
                                            pull("num_fragments"))
-    x_for_filtered_correlations = lapply(correlations_for_tsse_filtered_cells,
-                                         function(x) x_for_filtered_correlations[1:ncol(x)])
+    correlations_tsse_filtered = 
+      as.list(as.data.frame(t(correlations_for_tsse_filtered_cells)))
+    
+    correlations_tsse_filtered = lapply(correlations_tsse_filtered,
+                                                  function(x) x[!is.na(x)])
+    x_for_filtered_correlations = lapply(correlations_tsse_filtered,
+                            function(x) x_for_filtered_correlations[1:length(x)])
       
     # x_for_filtered_correlations[1:ncol(correlations_for_tsse_filtered_cells)]
     levels_for_filtered_correlations = x_for_filtered_correlations
-    dfs = lapply(correlations_for_tsse_filtered_cells, as_tibble)
+    dfs = lapply(correlations_tsse_filtered, as_tibble)
     # df = as_tibble(correlations_for_tsse_filtered_cells)
-    cell_type_for_tsse_filtered = lapply(correlations_for_tsse_filtered_cells,
-                                         rownames)
+    cell_type_for_tsse_filtered = names(correlations_tsse_filtered)
     # rownames(correlations_for_tsse_filtered_cells)
     
     lengths = lapply(x_for_filtered_correlations, length)
@@ -511,6 +518,18 @@ plot_and_save_boxplots <- function(correlations_long, cell_types,
     
     # cell_type_for_tsse_filtered = rep(cell_type_for_tsse_filtered, 
     #                                   each=length(x_for_filtered_correlations))
+    create_cell_type_and_frag_counts_columns <- function(i, df, 
+                                                  cell_type_for_tsse_filtered,
+                                                  x_for_filtered_correlations) {
+      df[[i]]["frag_counts"] = x_for_filtered_correlations[[i]]
+      df[[i]]["cell_type"] = cell_type_for_tsse_filtered[[i]]
+      # df[[i]]["cell_type"] = lapply(df[[i]]["cell_type"], paste,
+      #                               "TSS filtered", sep=" ")
+      return(df[[i]])
+    }
+    
+    dfs = lapply(seq_along(dfs), create_cell_type_and_frag_counts_columns, 
+                 dfs, cell_type_for_tsse_filtered, x_for_filtered_correlations)
     
     # set_colnames <- function(i, df, x_for_filtered_correlations) {
     #   colnames(df[i]) = x_for_filtered_correlations[[i]]
@@ -518,35 +537,30 @@ plot_and_save_boxplots <- function(correlations_long, cell_types,
     
     # dfs = lapply(seq_along(dfs), set_colnames, dfs, x_for_filtered_correlations)
     # colnames(df) = x_for_filtered_correlations
-    dfs = lapply(dfs, pivot_longer, everything())
+    
+    # dfs = lapply(dfs, pivot_longer, everything())
+    
     # df = pivot_longer(df, everything())
-    
-    create_cell_type_column <- function(i, df, cell_type_for_tsse_filtered) {
-      df[[i]]["cell_type"] = cell_type_for_tsse_filtered[[i]]
-      df[[i]]["cell_type"] = lapply(df[[i]]["cell_type"], paste,
-                                  "TSS filtered", sep=" ")
-      return(df[[i]])
-    }
-    
-    dfs = lapply(seq_along(dfs), create_cell_type_column, 
-                 dfs, cell_type_for_tsse_filtered)
     df = rbindlist(dfs)
     # df["cell_type"] = cell_type_for_tsse_filtered
     # df["cell_type"] = lapply(df["cell_type"], paste, "TSS filtered", sep=" ")
     switch = T
   }
   ggplot() +
-    {if (switch) geom_point(data=df, aes(x=factor(name, levels=unique(name)), 
-                   y=value, color=cell_type), size=3)} +
+    {if (switch) geom_point(data=df, aes(x=factor(frag_counts, 
+                                                  levels=unique(frag_counts)),
+                                                  y=value,
+                                                  fill=cell_type), shape=21,
+                                                  size=3)} +
     geom_boxplot(data=correlations_long,
                  aes(x=factor(num_fragments, levels=unique(num_fragments)), 
                      y=correlation, color=cell_type)) +
     theme(axis.text.x=element_text(size=10, angle=90)) +
     xlab("Num Fragments") +
     ylab("Correlation") +
-    labs(color="Cell type") + 
-    scale_x_discrete(limits = as.factor(sort(as.integer(
-                     unique(correlations_long["num_fragments"]) %>% pull)))) #+
+    labs(color="Cell type", fill = "Cell type (TSS filtered)") #+ 
+    # scale_x_discrete(limits = as.factor(sort(as.integer(
+    #                  unique(correlations_long["num_fragments"]) %>% pull)))) #+
     #scale_color_manual(values=colors)
   # ggplot() +
   #   geom_boxplot(data = subset(correlations_long, cell_type == cell_types[1]), 
@@ -594,8 +608,12 @@ get_long_correlations_per_cell_type <- function(i,
   #                          ignore.case=T)
   cell_type_count_overlaps = combined_count_overlaps[, i]
   # cell_type_total_fragments = sum(cell_type_count_overlaps)
-  cell_type_fragments_subsampling_range = remove_bigger_than_curr_fragments(fragments_subsampling_range,
-                                                                  cell_type_total_fragments)
+  cell_type_fragments_subsampling_range = remove_bigger_than_curr_fragments(
+                                                  fragments_subsampling_range[[i]],
+                                                  cell_type_total_fragments)
+  if (is.null(cell_type_fragments_subsampling_range)) {
+    return(tibble())
+  }
   # upper = cell_type_total_fragments
   sampling_vec = rep(names(cell_type_count_overlaps), 
                      cell_type_count_overlaps)
@@ -605,7 +623,8 @@ get_long_correlations_per_cell_type <- function(i,
   subsampling_simulations <- run_subsampling_simulations(cell_type_fragments_subsampling_range, 
                                                          cell_type_count_overlaps, 
                                                          sampling_vec, 
-                                                         mutations)
+                                                         mutations,
+                                                         cell_types[[i]])
   curr_correlations_long = pivot_longer(subsampling_simulations, 
                                         cols = everything(),
                                         names_to = "num_fragments", 
@@ -617,6 +636,38 @@ get_long_correlations_per_cell_type <- function(i,
   return(curr_correlations_long)
 }
 
+get_missing_fragment_counts_per_cell_type <- function(type, correlations_long,
+                                                      fragments_subsampling_range) {
+  existing_frag_counts = unique(correlations_long %>% 
+                         filter(cell_type == type) %>%
+                         pull(num_fragments))
+  missing_fragment_counts = fragments_subsampling_range[!(fragments_subsampling_range
+                                                        %in% existing_frag_counts)]
+  return(missing_fragment_counts)
+}
+
+get_correlations_from_missing_fragment_counts <- function(correlations_long,
+                                                          fragments_subsampling_range,
+                                                          cell_types,
+                                                          cell_type_count_overlaps,
+                                                          total_fragments_per_cell_type,
+                                                          mutations) {
+  missing_fragment_counts_per_cell_type = mclapply(cell_types, 
+                                                   get_missing_fragment_counts_per_cell_type,
+                                                   correlations_long,
+                                                   fragments_subsampling_range,
+                                                   mc.cores=8)
+  correlations_long = mclapply(seq_along(cell_types),
+                               get_long_correlations_per_cell_type,
+                               cell_types,
+                               total_fragments_per_cell_type,
+                               missing_fragment_counts_per_cell_type,
+                               mutations,
+                               cell_type_count_overlaps,
+                               mc.cores=8)
+  return(correlations_long)
+}
+
 prep_boxplots_per_cancer_type <- function(combined_count_overlaps, 
                                           mut_count_data, 
                                           cancer_type, 
@@ -626,8 +677,7 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
                                           correlations_for_tsse_filtered_cells=NULL) {
   cell_type_for_grep = lapply(cell_types, add_escape_if_necessary)
   cell_type_col_idx = lapply(cell_type_for_grep, grep,
-                             colnames(combined_count_overlaps), 
-                             ignore.case=T)
+                             colnames(combined_count_overlaps), ignore.case=T)
   cell_types_count_overlaps = combined_count_overlaps[, 
                                                       unlist(cell_type_col_idx)]
   cell_types_total_fragments = apply(cell_types_count_overlaps, 2, sum)
@@ -652,35 +702,26 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
                                  get_long_correlations_per_cell_type,
                                  colnames(cell_types_count_overlaps),
                                  cell_types_total_fragments,
-                                 fragments_subsampling_range,
+                                 rep(list(fragments_subsampling_range), 
+                                     length(cell_types)),
                                  mutations,
                                  cell_types_count_overlaps,
                                  mc.cores=8)
     correlations_long = bind_rows(correlations_long)
-    saveRDS(correlations_long, correlations_filepath)
   }
   else {
     correlations_long = readRDS(correlations_filepath)
-    already_existing_cell_types = colnames(correlations_long)
-    cell_types_to_consider = cell_types_to_consider[!(cell_types_to_consider %in% 
-                                                        already_existing_cell_types)]
-    
-    if (length(cell_types_to_consider != 0)) {
-      subsampled_correlations_from_missing_cells = mclapply(seq_along(cell_types),
-                                                            get_long_correlations_per_cell_type,
-                                                            colnames(cell_types_count_overlaps),
-                                                            cell_types_total_fragments,
-                                                            fragments_subsampling_range,
-                                                            mutations,
-                                                            cell_types_count_overlaps,
-                                                            mc.cores=8)
-      subsampled_correlations_from_missing_cells = 
-        bind_rows(subsampled_correlations_from_missing_cells)
-      correlations_long = cbind(correlations_long, 
-                                subsampled_correlations_from_missing_cells)
-      saveRDS(correlations_long, correlations_filepath)
-    }
+    correlations_long_missing = get_correlations_from_missing_fragment_counts(
+                                                 correlations_long, 
+                                                 fragments_subsampling_range,
+                                                 cell_types,
+                                                 cell_types_count_overlaps,
+                                                 cell_types_total_fragments,
+                                                 mutations)
+    correlations_long_missing = bind_rows(correlations_long_missing)
+    correlations_long = rbind(correlations_long, correlations_long_missing)
   }
+  saveRDS(correlations_long, correlations_filepath)
   plot_and_save_boxplots(correlations_long, colnames(cell_types_count_overlaps),
                          plot_filename, correlations_for_tsse_filtered_cells)
 }
@@ -824,43 +865,42 @@ cell_types = c("Skin Sun Exposed Melanocyte",
                 "Skin Sun Exposed Keratinocyte 1",
                "Skin T Lymphocyte 1 (CD8+)",
                "Skin Sun Exposed T Lymphocyte 1 (CD8+)",
-               "Skin T lymphocyte 2 (CD4+)"
-               # "Skin Sun Exposed T lymphocyte 2 (CD4+)",
-               # "Skin Macrophage (General,Alveolar)",
-               # "Skin Sun Exposed Macrophage (General,Alveolar)"
-                )
+               "Skin T lymphocyte 2 (CD4+)",
+               "Skin Sun Exposed T lymphocyte 2 (CD4+)",
+               "Skin Macrophage (General,Alveolar)",
+               "Skin Sun Exposed Macrophage (General,Alveolar)")
 
-# skin_tsse_filtered_correlations =
-#   combine_tsse_filtered_count_overlaps_into_correlation_df(
-#     "processed_data/count_overlap_data/tsse_filtered/skin",
-#     "Skin.Melanoma")
-# 
-# rownames(skin_tsse_filtered_correlations) =
-#   paste("Skin", rownames(skin_tsse_filtered_correlations))
-# 
-# skin_sun_exposed_tsse_filtered_correlations =
-#   combine_tsse_filtered_count_overlaps_into_correlation_df(
-#     "processed_data/count_overlap_data/tsse_filtered/skin_sun_exposed",
-#     "Skin.Melanoma")
-# 
-# rownames(skin_sun_exposed_tsse_filtered_correlations) =
-#   paste("Skin Sun Exposed", 
-#         rownames(skin_sun_exposed_tsse_filtered_correlations))
-# 
-# tsse_filtered_correlations = list(skin_tsse_filtered_correlations,
-#                                   skin_sun_exposed_tsse_filtered_correlations)
+skin_tsse_filtered_correlations =
+  combine_tsse_filtered_count_overlaps_into_correlation_df(
+    "processed_data/count_overlap_data/tsse_filtered/skin",
+    "Skin.Melanoma")
+
+rownames(skin_tsse_filtered_correlations) =
+  paste("Skin", rownames(skin_tsse_filtered_correlations))
+
+skin_sun_exposed_tsse_filtered_correlations =
+  combine_tsse_filtered_count_overlaps_into_correlation_df(
+    "processed_data/count_overlap_data/tsse_filtered/skin_sun_exposed",
+    "Skin.Melanoma")
+
+rownames(skin_sun_exposed_tsse_filtered_correlations) =
+  paste("Skin Sun Exposed",
+        rownames(skin_sun_exposed_tsse_filtered_correlations))
+
+tsse_filtered_correlations = list(skin_tsse_filtered_correlations,
+                                  skin_sun_exposed_tsse_filtered_correlations)
 
 
-fragments_subsampling_range <- c(1000, 10000, 50000, 100000, 150000, 
-                                 200000, 300000, 400000, 500000, 600000)
+fragments_subsampling_range <- c(1000, 10000, 50000, 100000, 150000, 250000,
+                                 300000, 400000, 500000, 600000)
 
 prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               mut_count_data,
                               "Skin.Melanoma",
                               cell_types,
                               fragments_subsampling_range,
-                              T,
-                              "melanoma_num_frags_vs_correlation.png")
+                              "melanoma_num_frags_vs_correlation.png",
+                              skin_tsse_filtered_correlations)
 
 
 # #### ColoRect.AdenoCA ####
@@ -922,13 +962,16 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
 #### Distribution of normalized counts over bins ####
 combined_counts_overlaps_all_scATAC_data =
   combined_counts_overlaps_all_scATAC_data[complete.cases(mut_count_data), ]
+
 plot_subsampled_normalized_counts <- function(combined_counts_overlaps,
                                               num_plots, figname, binwidth = NULL,
-                                              xlim = NULL, ylim = NULL, log = F) {
+                                              xlim = NULL,
+                                              ylim = NULL, log = F) {
   count_overlaps_sums = apply(combined_counts_overlaps, 2, sum)
   # total_count_overlaps_per_bin = apply(combined_counts_overlaps, 1, sum)
   
   normalized_counts = t(t(combined_counts_overlaps) / count_overlaps_sums)
+  normalized_counts = normalized_counts * 10000
   set.seed(42)
   bins_to_consider_idx = sample(nrow(normalized_counts),
                                 num_plots)
@@ -956,26 +999,51 @@ plot_subsampled_normalized_counts <- function(combined_counts_overlaps,
                          ")"))
   num_zeros_text["bins"] = list(bins)
   colnames(num_zeros_text) = c("zeros", "bins")
-  # num_zeros_text = num_zeros_text %>%
-  #                  transmute(paste("num zeros =", zeros))
+  num_zeros_text = num_zeros_text %>%
+                   mutate(paste("num zeros =", zeros))
+  num_zeros_text = num_zeros_text[, 2:3]
+  colnames(num_zeros_text) = c("bins", "zeros")
+  
+  # xlim=c(0,max(normalized_counts_subsampled["value"]))
+  # xlim=c(0,1000)
+  # ylim=c(0, 100)
   switch1 = all(!is.null(xlim))
   switch2 = all(!is.null(ylim))
   ggplot() +
     geom_histogram(data=normalized_counts_subsampled,
                    aes(value),
-                   binwidth = binwidth) +
+                   binwidth = 1) +
     {if (switch1) xlim(xlim)} +
     {if (switch2) ylim(ylim)} +
-    facet_wrap(~bins, sqrt(num_plots)) #+
-    # geom_text(data = num_zeros_text,
-    #           aes(x = 0.65, y=75, label=zeros)) +
-    # geom_text(data = prop_zeros,
-    #           aes(x = 0.65, y=50, label=prop_zeros))
+    facet_wrap(~bins, sqrt(num_plots)) +
+    geom_text(data = num_zeros_text,
+              aes(x = 12.5, y=400, label=zeros)) +
+    geom_text(data = prop_zeros,
+              aes(x = 20, y=300, label=prop_zeros))
 
   figpath = paste("figures", figname, sep="/")
   ggsave(figpath, width=20, height=12)
 }
 
+plot_dispersion_distribution_for_normalized_counts <- function(combined_counts_overlaps,
+                                                               figname) {
+  count_overlaps_sums = apply(combined_counts_overlaps, 2, sum)
+  # total_count_overlaps_per_bin = apply(combined_counts_overlaps, 1, sum)
+  
+  normalized_counts = t(t(combined_counts_overlaps) / count_overlaps_sums)
+  normalized_counts = normalized_counts * 10000
+  normalized_count_overlaps_means_sq = apply(normalized_counts, 1, mean) ^ 2
+  normalized_count_overlaps_variance = apply(normalized_counts, 1, var)
+  disp = as_tibble(normalized_count_overlaps_variance / 
+                     normalized_count_overlaps_means_sq)
+  ggplot() +
+    geom_histogram(data=disp,
+                   aes(value)) +
+    xlab("dispersion") +
+    xlim(c(0,3))
+  figpath = paste("figures", figname, sep="/")
+  ggsave(figpath, width=20, height=12)
+}
 # filter_out_zero_count_overlaps <- function(combined_counts_overlaps) {
 #   non_zero_count_overlaps_idx = rowSums(combined_counts_overlaps) != 0
 #   combined_counts_overlaps = combined_counts_overlaps[non_zero_count_overlaps_idx, ]
@@ -989,8 +1057,10 @@ plot_subsampled_normalized_counts <- function(combined_counts_overlaps,
 plot_subsampled_normalized_counts(combined_counts_overlaps_all_scATAC_data,
                                   100, 
                                   "normalized_counts_with_lims_histograms.png",
-                                  xlim=c(0,0.1))
-
+                                  xlim=c(0, 25))
+                            
+plot_dispersion_distribution(combined_counts_overlaps_all_scATAC_data,
+                             "dispersion_dist.png")
 
 
 # plot_subsampled_normalized_counts(combined_counts_overlaps_all_scATAC_data,
