@@ -913,57 +913,57 @@ create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_sun_exposed_files,
 #                                                mammary_tissue_cell_types,
 #                                                "bing_ren")
 
-#### Breast.AdenoCA ####
-bing_ren_mammary_tissue_files = setdiff(list.files("raw_dir/bed_files/",
-                                          pattern=".*mammary_tissue.*"),
-                               list.dirs("raw_dir/bed_files", recursive = FALSE,
-                                         full.names = FALSE))
-
-top_tsse_fragment_count_range = c(1000, 3005, 9035, 26558, 27162, 81648,
-                                  245435, 737778, 2217754, 6666549, 20039584)
-
-mammary_tissue_cell_types = c("Basal Epithelial (Mammary)",
-                              "Mammary Luminal Epithelial Cell 1",
-                              "Mammary Luminal Epithelial Cell 2")
-
-create_tsse_filtered_count_overlaps_per_tissue(bing_ren_mammary_tissue_files,
-                                               CELL_NUMBER_FILTER,
-                                               metadata,
-                                               interval.ranges,
-                                               ch,
-                                               top_tsse_fragment_count_range,
-                                               mammary_tissue_cell_types,
-                                               "bing_ren")
-
-bing_ren_heart_atrial_appendage_tissue_files = setdiff(list.files("raw_dir/bed_files/",
-                                                   pattern=".*heart_atrial_appendage.*"),
-                                        list.dirs("raw_dir/bed_files", recursive = FALSE,
-                                                  full.names = FALSE))
-
-heart_atrial_appendage_cell_types = c("Cardiac Pericyte 1")
-
-
-create_tsse_filtered_count_overlaps_per_tissue(bing_ren_heart_atrial_appendage_tissue_files,
-                                               CELL_NUMBER_FILTER,
-                                               metadata,
-                                               interval.ranges,
-                                               ch,
-                                               top_tsse_fragment_count_range,
-                                               heart_atrial_appendage_cell_types,
-                                               "bing_ren")
-bing_ren_esophagus_mucosa_tissue_files = setdiff(list.files("raw_dir/bed_files/",
-                                                                  pattern=".*esophagus_mucosa.*"),
-                                                       list.dirs("raw_dir/bed_files", recursive = FALSE,
-                                                                 full.names = FALSE))
-
-esophagus_mucosa_cell_types = c("Airway Goblet Cell")
-
-
-create_tsse_filtered_count_overlaps_per_tissue(bing_ren_esophagus_mucosa_tissue_files,
-                                               CELL_NUMBER_FILTER,
-                                               metadata,
-                                               interval.ranges,
-                                               ch,
-                                               top_tsse_fragment_count_range,
-                                               esophagus_mucosa_cell_types,
-                                               "bing_ren")
+# #### Breast.AdenoCA ####
+# bing_ren_mammary_tissue_files = setdiff(list.files("raw_dir/bed_files/",
+#                                           pattern=".*mammary_tissue.*"),
+#                                list.dirs("raw_dir/bed_files", recursive = FALSE,
+#                                          full.names = FALSE))
+# 
+# top_tsse_fragment_count_range = c(1000, 3005, 9035, 26558, 27162, 81648,
+#                                   245435, 737778, 2217754, 6666549, 20039584)
+# 
+# mammary_tissue_cell_types = c("Basal Epithelial (Mammary)",
+#                               "Mammary Luminal Epithelial Cell 1",
+#                               "Mammary Luminal Epithelial Cell 2")
+# 
+# create_tsse_filtered_count_overlaps_per_tissue(bing_ren_mammary_tissue_files,
+#                                                CELL_NUMBER_FILTER,
+#                                                metadata,
+#                                                interval.ranges,
+#                                                ch,
+#                                                top_tsse_fragment_count_range,
+#                                                mammary_tissue_cell_types,
+#                                                "bing_ren")
+# 
+# bing_ren_heart_atrial_appendage_tissue_files = setdiff(list.files("raw_dir/bed_files/",
+#                                                    pattern=".*heart_atrial_appendage.*"),
+#                                         list.dirs("raw_dir/bed_files", recursive = FALSE,
+#                                                   full.names = FALSE))
+# 
+# heart_atrial_appendage_cell_types = c("Cardiac Pericyte 1")
+# 
+# 
+# create_tsse_filtered_count_overlaps_per_tissue(bing_ren_heart_atrial_appendage_tissue_files,
+#                                                CELL_NUMBER_FILTER,
+#                                                metadata,
+#                                                interval.ranges,
+#                                                ch,
+#                                                top_tsse_fragment_count_range,
+#                                                heart_atrial_appendage_cell_types,
+#                                                "bing_ren")
+# bing_ren_esophagus_mucosa_tissue_files = setdiff(list.files("raw_dir/bed_files/",
+#                                                                   pattern=".*esophagus_mucosa.*"),
+#                                                        list.dirs("raw_dir/bed_files", recursive = FALSE,
+#                                                                  full.names = FALSE))
+# 
+# esophagus_mucosa_cell_types = c("Airway Goblet Cell")
+# 
+# 
+# create_tsse_filtered_count_overlaps_per_tissue(bing_ren_esophagus_mucosa_tissue_files,
+#                                                CELL_NUMBER_FILTER,
+#                                                metadata,
+#                                                interval.ranges,
+#                                                ch,
+#                                                top_tsse_fragment_count_range,
+#                                                esophagus_mucosa_cell_types,
+#                                                "bing_ren")
