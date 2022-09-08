@@ -1,5 +1,30 @@
 library(RColorBrewer)
 
+get_per_cancer_mut_data <- function(all_mutations, interval_ranges) {
+  cancer_types_mut_data <- list()
+  for (cancer_type in colnames(all_mutations)) {
+    idx_cancer_type = match(rownames(as.data.frame(interval_ranges)), 
+                            rownames(all_mutations[cancer_type]))
+    cancer_types_mut_data = append(cancer_types_mut_data,
+                                   list(mut[cancer_type][idx_cancer_type, ]))
+  }
+  return(cancer_types_mut_data)
+}
+
+get_mutation_df_all_cancers <- function() {
+  if (!file.exists("processed_data/mut_count_data.csv")) {
+    cancer_types_mut_data = get_per_cancer_mut_data(mut, interval.ranges)
+    mut_count_data = as.data.frame(do.call(cbind, cancer_types_mut_data))
+    colnames(mut_count_data) = colnames(mut)
+    rownames(mut_count_data) = names(interval.ranges)
+    write.csv(mut_count_data, "processed_data/mut_count_data.csv")
+  }
+  else {
+    mut_count_data = read.csv("processed_data/mut_count_data.csv")
+  }
+  return(mut_count_data)
+}
+
 get_tissue_name <- function(filename) {
   if (grepl("frontal_cortex", filename)) {
     tissue_name = "frontal_cortex"
@@ -39,4 +64,11 @@ get_n_colors <- function(n, seed) {
   set.seed(seed)
   cols <- sample(col_vector, n)
   return(cols)
+}
+
+load_mutation_data <- function() {
+  mut = readRDS('raw_dir/mutation_data/mutations.aggregated.PCAWG.RK.20181215.Rds')
+  # get all mutations, without distinctions e.g clonal vs subclonal 
+  mut = mut[, 1:37]
+  return(mut)
 }
