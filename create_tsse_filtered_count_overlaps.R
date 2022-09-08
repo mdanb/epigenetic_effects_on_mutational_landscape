@@ -219,8 +219,8 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
 }
 
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
-hg38_path = system.file(package="liftOver", "extdata", "hg38ToHg19.over.chain")
-ch = import.chain(hg38_path)
+# hg38_path = system.file(package="liftOver", "extdata", "hg38ToHg19.over.chain")
+ch = import.chain("raw_dir/hg38ToHg19.over.chain")
 
 if (dataset == "bing_ren") {
   metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv", sep="\t", 
