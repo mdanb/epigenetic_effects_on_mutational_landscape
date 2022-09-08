@@ -1,5 +1,4 @@
 library(exomeCopy)
-library(liftOver)
 
 add_cell_barcodes_to_metadata <- function(i, metadatas, barcodes) {
   metadatas[[i]]["cell_barcode"] = barcodes[i]
