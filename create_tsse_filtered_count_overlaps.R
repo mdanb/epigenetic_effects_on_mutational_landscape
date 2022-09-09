@@ -2,7 +2,9 @@ library(parallel)
 library(tidyverse)
 library(rtracklayer)
 library(optparse)
-setwd(getwd())
+library(rprojroot)
+
+setwd((find_rstudio_root_file()))
 source("create_count_overlaps_utils.R")
 
 option_list <- list( 
@@ -12,6 +14,7 @@ option_list <- list(
   make_option(c("--files_pattern", type="str"))
 )
 
+args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args=
 #       c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000",
 #         "--dataset=bing_ren",

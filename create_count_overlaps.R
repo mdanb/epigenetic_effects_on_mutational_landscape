@@ -214,7 +214,9 @@ create_count_overlaps_file_shendure <- function(file, cell_number_filter,
     sample = import(paste("raw_dir", "bed_files", "JShendure_scATAC", file, 
                           sep="/"), format="bed")
     sample_name = get_sample_name_shendure(file)
-    sample <- get_sample_cell_types_shendure(sample, sample_name, metadata)
+    filtered_metadata = metadata[metadata$sample %like% sample_name, ]
+    sample <- get_sample_cell_types_shendure(sample, sample_name, 
+                                             filtered_metadata)
     counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
     sample <- filter_sample_by_cell_number(sample,
                                            counts_per_cell_type, 
@@ -322,12 +324,6 @@ filter_sample_to_contain_only_cells_in_metadata <- function(sample,
   return(sample)
 }
 
-get_fragments_by_cell_barcode <- function(i, sample_idx, fragments, 
-                                          top_barcodes) {
-  return(fragments[[sample_idx[i]]][fragments[[sample_idx[i]]]$name %in% 
-                                    top_barcodes[i]])
-}
-
 get_num_cells_per_sample <- function(sample) {
   counts_per_cell_type = sample %>%                               
                          group_by(cell_type) %>%                 
@@ -344,8 +340,8 @@ get_sample_cell_types <- function(i, fragments, sample_barcodes_in_metadatas,
   return(fragments)
 }
 
-get_sample_cell_types_shendure <- function(sample, sample_name, metadata) {
-  filtered_metadata = metadata[metadata$sample %like% sample_name, ]
+get_sample_cell_types_shendure <- function(sample, sample_name, 
+                                           filtered_metadata) {
   sample_barcodes_in_metadata = filtered_metadata[["cell"]]                  
   sample = sample[sample$name %in% sample_barcodes_in_metadata]   
   sample_idx_in_metadata = match(sample$name, sample_barcodes_in_metadata)
