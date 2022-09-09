@@ -11,11 +11,11 @@ option_list <- list(
   make_option(c("--files_pattern", type="str"))
 )
 
-args = parse_args(OptionParser(option_list=option_list), args=
-      c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000",
-        "--dataset=bing_ren",
-        "--cell_types=Melanocyte,Fibroblast (Epithelial)",
-        "--files_pattern=skin_SM"))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#       c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000",
+#         "--dataset=bing_ren",
+#         "--cell_types=Melanocyte,Fibroblast (Epithelial)",
+#         "--files_pattern=skin_SM"))
 
 top_tsse_fragment_count_range = unlist(strsplit(
                                        args$top_tsse_fragment_count_range, 
@@ -172,7 +172,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   #          mc.cores=8)
   
   metadata_with_fragment_counts = metadata_with_fragment_counts %>% 
-    filter(cell_type %in% cell_types_to_consider)
+                                  filter(cell_type %in% cell_types_to_consider)
   
   for (count in top_tsse_fragment_count_range) {
     if (dataset == "bing_ren") {
