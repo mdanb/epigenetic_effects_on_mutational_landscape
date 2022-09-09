@@ -2,6 +2,7 @@ library(parallel)
 library(tidyverse)
 library(rtracklayer)
 library(optparse)
+setwd(getwd())
 source("create_count_overlaps_utils.R")
 
 option_list <- list( 
