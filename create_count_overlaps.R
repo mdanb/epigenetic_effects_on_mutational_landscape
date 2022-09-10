@@ -14,27 +14,11 @@ if (length(args) != 1) {
   CELL_NUMBER_FILTER = as.integer(args[1])
 } 
 
-# add_cumulative_num_fragments_per_cell_to_metadata <- function(filtered_metadata,
-#                                                               sample) {
-#   sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(
-#                                             filtered_metadata, "cellID", "\\+")
-#   filtered_metadata["cell_barcode"] = sample_barcodes_in_metadata
-#   frag_counts_per_cell = table(sample$name)
-#   match(filtered_metadata[["cell_barcode"]], names(frag_counts_per_cell))
-# }
-
-# match_barcodes_to_fragment_counts <- function(i, barcodes, fragment_counts) {
-#   fragment_counts[match(barcodes[i], names(fragment_counts))]
-# }
-
 add_fragment_counts_per_cell_to_metadata <- function(metadata, barcodes,
                                                      fragment_counts_per_sample) {
   metadata["counts"] = fragment_counts_per_sample[match(barcodes, 
                                              names(fragment_counts_per_sample))]
   return(metadata)
-  # metadatas[[i]]["counts"] = 
-  #   fragment_counts_per_sample[[i]][match(barcodes[[i]], 
-  #                                         names(fragment_counts_per_sample[[i]]))]
 }
 
 compute_count_overlaps <- function(sample, interval_ranges) {
@@ -58,7 +42,7 @@ create_count_overlaps_file <- function(file, cell_number_filter, metadata,
     print(paste("Processing", file, sep= " "))
     sample = import(paste("raw_dir", "bed_files", file, sep="/"), format="bed")
     sample_name = get_sample_name(file)
-    filtered_metadata = metadata[metadata$sample %like% sample_name, ]
+    filtered_metadata = filter_metadata_by_sample_name(sample_name, metadata)
     sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(filtered_metadata,
                                                                   "cellID",
                                                                   "\\+")
@@ -214,7 +198,7 @@ create_count_overlaps_file_shendure <- function(file, cell_number_filter,
     sample = import(paste("raw_dir", "bed_files", "JShendure_scATAC", file, 
                           sep="/"), format="bed")
     sample_name = get_sample_name_shendure(file)
-    filtered_metadata = metadata[metadata$sample %like% sample_name, ]
+    filtered_metadata = filter_metadata_by_sample_name(sample_name, metadata)
     sample <- get_sample_cell_types_shendure(sample, sample_name, 
                                              filtered_metadata)
     counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
@@ -306,18 +290,6 @@ filter_sample_by_cell_number <- function(sample,
   return(sample)
 }
 
-# filter_sample_by_tss <- function(sample, subsampling_frag_count, metadata) {
-#   relevant_cell_types = unique(sample[["cell_type"]])
-#   filtered_metadata = metadata %>% 
-#                       filter(cell.type %in% relevant_cell_types)
-#   filtered_metadata = filtered_metadata %>% 
-#                       group_by(cell.type) %>%
-#                       arrange(desc(tsse))
-#   filtered_metadata = 
-#             add_cumulative_num_fragments_per_cell_to_metadata(filtered_metadata,
-#                                                               sample)
-# }
-
 filter_sample_to_contain_only_cells_in_metadata <- function(sample,
                                                             sample_barcodes_in_metadata) {
   sample = sample[sample$name %in% sample_barcodes_in_metadata]
@@ -351,9 +323,6 @@ get_sample_cell_types_shendure <- function(sample, sample_name,
 }
 
 get_sample_cell_types_tsankov <- function(sample, metadata) {
-  # sample_barcodes_in_metadata = unlist(lapply(metadata[["X"]],
-  #                                             function(x) unlist(strsplit(x,
-  #                                                                   '#'))[2]))
   sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(metadata, 
                                                                 "X",
                                                                 "#")
@@ -363,11 +332,6 @@ get_sample_cell_types_tsankov <- function(sample, metadata) {
                               "celltypes"]
   return(as.tibble(sample))
 }
-
-# match_barcodes_to_fragment_counts <- function(i, barcodes, fragment_counts) {
-#   fragment_counts[match(barcodes[i], names(fragment_counts))]
-# }
-
 
 # metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
 #                                sep="\t",
@@ -405,12 +369,12 @@ files_Tsankov_distal = list.files("raw_dir/bed_files/Tsankov_scATAC/",
 files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
                                     pattern=".*proximal*")
 
-#mclapply(files, create_count_overlaps_file,
-#                cell_number_filter=CELL_NUMBER_FILTER,
-#                metadata=metadata,
-#                interval_ranges=interval.ranges,
-#                chain=ch, 
-#		mc.cores=8)
+mclapply(files, create_count_overlaps_file,
+               cell_number_filter=CELL_NUMBER_FILTER,
+               metadata=metadata,
+               interval_ranges=interval.ranges,
+               chain=ch,
+	             mc.cores=8)
 
 #                mc.cores = 1)
 # lapply(files, create_count_overlaps_file,
