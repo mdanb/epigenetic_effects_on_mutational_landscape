@@ -6,9 +6,9 @@ load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 dir.create("processed_data/cell_counts_per_sample/combined_cell_counts") 
 
 option_list <- list( 
-  make_option("--bing_ren", action="store_true"),
-  make_option("--shendure", action="store_true"),
-  make_option("--tsankov", action="store_true"),
+  make_option("--bing_ren", action="store_true", default = FALSE),
+  make_option("--shendure", action="store_true", default = FALSE),
+  make_option("--tsankov", action="store_true", default = FALSE),
   make_option("--cell_number_filter", type="integer")
 )
 
