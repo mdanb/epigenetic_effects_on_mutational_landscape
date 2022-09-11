@@ -1,9 +1,22 @@
 library(tidyverse)
+library(optparse)
 source("utils.R")
 
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
-CELL_NUMBER_FILTER = 1
 dir.create("processed_data/cell_counts_per_sample/combined_cell_counts") 
+
+option_list <- list( 
+  make_option("--bing_ren", action="store_true"),
+  make_option("--shendure", action="store_true"),
+  make_option("--tsankov", action="store_true"),
+  make_option("--cell_number_filter", type="integer"),
+)
+
+args = parse_args(OptionParser(option_list=option_list))
+cell_number_filter = args$cell_number_filter
+bing_ren = args$bing_ren
+shendure = args$shendure
+tsankov = args$tsankov
 
 get_cell_counts_df <- function(count_overlaps_filename) {
   cell_counts_filename = unlist(strsplit(unlist(
@@ -160,60 +173,64 @@ dir.create(combined_data_path)
 
 combined_filepath = paste(combined_data_path, 
                           "count_filter_",
-                          CELL_NUMBER_FILTER, 
+                          cell_number_filter, 
                           "_combined_count_overlaps.rds", sep="")
 
 combined_filepath_shendure = paste(combined_data_path, 
                                    "shendure_count_filter_",
-                                   CELL_NUMBER_FILTER, 
+                                   cell_number_filter, 
                                    "_combined_count_overlaps.rds", sep="")
 
 combined_filepath_tsankov = paste(combined_data_path, 
                                   "tsankov_count_filter_",
-                                  CELL_NUMBER_FILTER, 
+                                  cell_number_filter, 
                                   "_combined_count_overlaps.rds", sep="")
 
 unsquashed_overlaps_filepath = paste(combined_data_path, 
                                      "count_filter_",
-                                     CELL_NUMBER_FILTER, 
+                                     cell_number_filter, 
                                      "_unsquashed_count_overlaps.rds", sep="")
 
 unsquashed_tissue_names_filepath = paste(combined_data_path, 
                                          "count_filter_",
-                                         CELL_NUMBER_FILTER, 
+                                         cell_number_filter, 
                                          "_unsquashed_tissue_names.rds", sep="")
 
 combined_subdivided_filepath = paste(combined_data_path, 
                                      "count_filter_",
-                                     CELL_NUMBER_FILTER, 
+                                     cell_number_filter, 
                                      "_subdivided_combined_count_overlaps.rds", 
                                      sep="")
 
-if (!file.exists(combined_filepath) || 
+if (bing_ren) {
+  if (!file.exists(combined_filepath) || 
     !file.exists(unsquashed_overlaps_filepath)) {
-  pattern = paste("^count_filter_", CELL_NUMBER_FILTER, "_count_overlaps", 
+  pattern = paste("^count_filter_", cell_number_filter, "_count_overlaps", 
                   sep="")
   filepaths = list.files("processed_data/count_overlap_data", pattern = pattern, 
                          full.names = TRUE)
-  save_combined_overlaps(filepaths, combined_filepath,
-                         unsquashed_overlaps_filepath,
-                         unsquashed_tissue_names_filepath)
+  save_combined_overlaps(filepaths, combined_filepath)
+  }
 }
 
-if (!file.exists(combined_filepath_shendure)) {
-  pattern = paste("Shendure_count_filter_", CELL_NUMBER_FILTER, 
-                  "_count_overlaps", sep="")
-  filepaths = list.files("processed_data/count_overlap_data", pattern = pattern, 
-                         full.names = TRUE)
-  save_combined_overlaps_shendure_tsankov(filepaths, combined_filepath_shendure)
+if (shendure) {
+  if (!file.exists(combined_filepath_shendure)) {
+    pattern = paste("Shendure_count_filter_", cell_number_filter, 
+                    "_count_overlaps", sep="")
+    filepaths = list.files("processed_data/count_overlap_data", pattern = pattern, 
+                           full.names = TRUE)
+    save_combined_overlaps_shendure_tsankov(filepaths, combined_filepath_shendure)
+  }
 }
 
-if (!file.exists(combined_filepath_tsankov)) {
-  pattern = paste("Tsankov_count_filter_", CELL_NUMBER_FILTER, 
-                  "_count_overlaps", sep="")
-  filepaths = list.files("processed_data/count_overlap_data", pattern = pattern, 
-                         full.names = TRUE)
-  save_combined_overlaps_shendure_tsankov(filepaths, combined_filepath_tsankov)
+if (tsankov) {
+  if (!file.exists(combined_filepath_tsankov)) {
+    pattern = paste("Tsankov_count_filter_", cell_number_filter, 
+                    "_count_overlaps", sep="")
+    filepaths = list.files("processed_data/count_overlap_data", pattern = pattern, 
+                           full.names = TRUE)
+    save_combined_overlaps_shendure_tsankov(filepaths, combined_filepath_tsankov)
+  }
 }
 
 # if (!file.exists(combined_subdivided_filepath)) {
