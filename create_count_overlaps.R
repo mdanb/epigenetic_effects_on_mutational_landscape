@@ -75,8 +75,8 @@ create_count_overlaps_file <- function(file, cell_number_filter, metadata,
     #   counts_per_cell_type <- readRDS(sample_cell_counts_file_path)
     # }
     # else {
-    #   counts_per_cell_type <- get_num_cells_per_sample(sample)
-    #   saveRDS(counts_per_cell_type, sample_cell_counts_file_path)
+    counts_per_cell_type <- get_num_cells_per_sample(sample)
+    saveRDS(counts_per_cell_type, sample_cell_counts_file_path)
     # }
     sample <- filter_sample_by_cell_number(sample,
                                            counts_per_cell_type, 
@@ -378,7 +378,8 @@ if (dataset == "bing_ren") {
   lapply(files_Shendure, create_count_overlaps_file_shendure,
          cell_number_filter=cell_number_filter,
          metadata=metadata_Shendure,
-         interval_ranges=interval.ranges)
+         interval_ranges=interval.ranges,
+         chain=ch)
 } else if (dataset == "tsankov") {
   metadata_tsankov_proximal = 
     read.csv("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv")
@@ -394,7 +395,6 @@ if (dataset == "bing_ren") {
            cell_number_filter=cell_number_filter,
            metadata=metadata_tsankov_proximal,
            interval_ranges=interval.ranges,
-           chain=ch,
            mc.cores = 4)
   
   mclapply(files_Tsankov_distal,
@@ -402,7 +402,6 @@ if (dataset == "bing_ren") {
             cell_number_filter=cell_number_filter,
             metadata=metadata_tsankov_distal,
             interval_ranges=interval.ranges,
-            chain=ch,
             mc.cores=4)
 }
 
