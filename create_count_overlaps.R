@@ -13,9 +13,7 @@ option_list <- list(
   make_option("--cell_number_filter", type="integer")
 )
 
-args = parse_args(OptionParser(option_list=option_list), 
-                  args = c("--cell_number_filter=1", 
-                           "--dataset=bing_ren"))
+args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list))
 cell_number_filter = args$cell_number_filter
 dataset = args$dataset
