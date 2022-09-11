@@ -10,11 +10,13 @@ source("create_count_overlaps_utils.R")
 
 option_list <- list( 
   make_option("--dataset", type="character"),
-  make_option("--cell_number_filter", type="integer")
+  make_option("--cell_number_filter", type="integer"),
+  make_option("--cores", type="integer")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
 cell_number_filter = args$cell_number_filter
+cores = args$cores
 dataset = args$dataset
 # args = commandArgs(trailingOnly=TRUE)
 # if (length(args) != 1) {
@@ -387,7 +389,7 @@ if (dataset == "bing_ren") {
            metadata=metadata,
            interval_ranges=interval.ranges,
            chain=ch,
-           mc.cores=8)
+           mc.cores=cores)
 } else if (dataset == "shendure") {
   metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
                                   sep="\t",
@@ -399,10 +401,11 @@ if (dataset == "bing_ren") {
                            list.dirs("raw_dir/bed_files/JShendure_scATAC/", 
                                      recursive = FALSE, 
                                      full.names = FALSE))
-  lapply(files_Shendure, create_count_overlaps_file_shendure,
+  mclapply(files_Shendure, create_count_overlaps_file_shendure,
          cell_number_filter=cell_number_filter,
          metadata=metadata_Shendure,
-         interval_ranges=interval.ranges)
+         interval_ranges=interval.ranges,
+         mc.cores=cores)
 } else if (dataset == "tsankov") {
   metadata_tsankov_proximal = 
     read.csv("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv")
@@ -419,7 +422,7 @@ if (dataset == "bing_ren") {
            metadata=metadata_tsankov_proximal,
            interval_ranges=interval.ranges,
            chain=ch,
-           mc.cores = 4)
+           mc.cores = cores)
   
   mclapply(files_Tsankov_distal,
             create_count_overlaps_file_tsankov,
@@ -427,7 +430,7 @@ if (dataset == "bing_ren") {
             metadata=metadata_tsankov_distal,
             interval_ranges=interval.ranges,
             chain=ch,
-            mc.cores=4)
+            mc.cores= cores)
 }
 
 
