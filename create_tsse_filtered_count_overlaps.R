@@ -8,10 +8,10 @@ setwd((find_rstudio_root_file()))
 source("create_count_overlaps_utils.R")
 
 option_list <- list( 
-  make_option(c("--cell_types", type="str")),
-  make_option(c("--dataset", type="str")),
-  make_option(c("--top_tsse_fragment_count_range", type="str")),
-  make_option(c("--files_pattern", type="str"))
+  make_option("--cell_types", type="character"),
+  make_option("--dataset", type="character"),
+  make_option("--top_tsse_fragment_count_range", type="character"),
+  make_option("--files_pattern", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
