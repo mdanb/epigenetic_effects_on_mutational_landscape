@@ -16,24 +16,6 @@ load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 dir.create("figures") 
 CELL_NUMBER_FILTER = 1
 
-load_mutation_data <- function() {
-  mut = readRDS('raw_dir/mutation_data/mutations.aggregated.PCAWG.RK.20181215.Rds')
-  # get all mutations, without distinctions e.g clonal vs subclonal 
-  mut = mut[, 1:37]
-  return(mut)
-}
-
-get_per_cancer_mut_data <- function(all_mutations, interval_ranges) {
-  cancer_types_mut_data <- list()
-  for (cancer_type in colnames(all_mutations)) {
-    idx_cancer_type = match(rownames(as.data.frame(interval_ranges)), 
-                            rownames(all_mutations[cancer_type]))
-    cancer_types_mut_data = append(cancer_types_mut_data,
-                                   list(mut[cancer_type][idx_cancer_type, ]))
-  }
-  return(cancer_types_mut_data)
-}
-
 save_heatmap_file <- function(path, width, height, df, ...) {
   pdf(path, width=width, height=height)
   h = Heatmap(df, show_column_dend = FALSE, show_row_dend = FALSE, ...)
@@ -41,22 +23,8 @@ save_heatmap_file <- function(path, width, height, df, ...) {
   dev.off()
 }
 
-create_and_save_mutation_df_all_cancers <- function() {
-  if (!file.exists("processed_data/mut_count_data.csv")) {
-    cancer_types_mut_data = get_per_cancer_mut_data(mut, interval.ranges)
-    mut_count_data = as.data.frame(do.call(cbind, cancer_types_mut_data))
-    colnames(mut_count_data) = colnames(mut)
-    rownames(mut_count_data) = names(interval.ranges)
-    write.csv(mut_count_data, "processed_data/mut_count_data.csv")
-  }
-  else {
-    mut_count_data = read.csv("processed_data/mut_count_data.csv")
-  }
-  return(mut_count_data)
-}
-
 mut = load_mutation_data()
-mut_count_data = create_and_save_mutation_df_all_cancers()
+mut_count_data = get_mutation_df_all_cancers()
 rownames(mut_count_data) = mut_count_data[, 1]
 mut_count_data = mut_count_data[, 2:length(colnames(mut_count_data))]
   
@@ -485,7 +453,6 @@ add_escape_if_necessary <- function(cell_type) {
 plot_and_save_boxplots <- function(correlations_long, cell_types, 
                                    plot_filename, 
                                    correlations_for_tsse_filtered_cells=NULL) {
-  # colors = get_n_colors(length(cell_types), 4)
   switch = F
   if (!is.null(correlations_for_tsse_filtered_cells)) {
     x_for_filtered_correlations = unique(correlations_long %>% 
@@ -498,13 +465,9 @@ plot_and_save_boxplots <- function(correlations_long, cell_types,
     x_for_filtered_correlations = lapply(correlations_tsse_filtered,
                             function(x) x_for_filtered_correlations[1:length(x)])
       
-    # x_for_filtered_correlations[1:ncol(correlations_for_tsse_filtered_cells)]
     levels_for_filtered_correlations = x_for_filtered_correlations
     dfs = lapply(correlations_tsse_filtered, as_tibble)
-    # df = as_tibble(correlations_for_tsse_filtered_cells)
     cell_type_for_tsse_filtered = names(correlations_tsse_filtered)
-    # rownames(correlations_for_tsse_filtered_cells)
-    
     lengths = lapply(x_for_filtered_correlations, length)
     
     repeat_cell_types <- function(i, cell_type_for_tsse_filtered, lengths) {
@@ -516,34 +479,18 @@ plot_and_save_boxplots <- function(correlations_long, cell_types,
                                          cell_type_for_tsse_filtered,
                                          lengths)
     
-    # cell_type_for_tsse_filtered = rep(cell_type_for_tsse_filtered, 
-    #                                   each=length(x_for_filtered_correlations))
     create_cell_type_and_frag_counts_columns <- function(i, df, 
                                                   cell_type_for_tsse_filtered,
                                                   x_for_filtered_correlations) {
       df[[i]]["frag_counts"] = x_for_filtered_correlations[[i]]
       df[[i]]["cell_type"] = cell_type_for_tsse_filtered[[i]]
-      # df[[i]]["cell_type"] = lapply(df[[i]]["cell_type"], paste,
-      #                               "TSS filtered", sep=" ")
+
       return(df[[i]])
     }
     
     dfs = lapply(seq_along(dfs), create_cell_type_and_frag_counts_columns, 
                  dfs, cell_type_for_tsse_filtered, x_for_filtered_correlations)
-    
-    # set_colnames <- function(i, df, x_for_filtered_correlations) {
-    #   colnames(df[i]) = x_for_filtered_correlations[[i]]
-    # }
-    
-    # dfs = lapply(seq_along(dfs), set_colnames, dfs, x_for_filtered_correlations)
-    # colnames(df) = x_for_filtered_correlations
-    
-    # dfs = lapply(dfs, pivot_longer, everything())
-    
-    # df = pivot_longer(df, everything())
     df = rbindlist(dfs)
-    # df["cell_type"] = cell_type_for_tsse_filtered
-    # df["cell_type"] = lapply(df["cell_type"], paste, "TSS filtered", sep=" ")
     switch = T
   }
   ggplot() +
@@ -559,20 +506,6 @@ plot_and_save_boxplots <- function(correlations_long, cell_types,
     xlab("Num Fragments") +
     ylab("Correlation") +
     labs(color="Cell type", fill = "Cell type (TSS filtered)") #+ 
-    # scale_x_discrete(limits = as.factor(sort(as.integer(
-    #                  unique(correlations_long["num_fragments"]) %>% pull)))) #+
-    #scale_color_manual(values=colors)
-  # ggplot() +
-  #   geom_boxplot(data = subset(correlations_long, cell_type == cell_types[1]), 
-  #                aes(x=factor(num_fragments, levels=unique(num_fragments)), 
-  #                    y=correlation, color=cell_types[1])) +
-  #   geom_boxplot(data = subset(correlations_long, cell_type == cell_types[2]),
-  #                aes(x=factor(num_fragments, levels=unique(num_fragments)),
-  #                    y=correlation, color=cell_types[2])) +
-    
-    # geom_boxplot(data = subset(correlations_long, cell_type == cell_types[3]),
-    #              aes(x=factor(num_fragments, levels=unique(num_fragments)),
-    #                  y=correlation, color=cell_types[3])) +
   ggsave(paste("figures", plot_filename, sep="/"), width = 20, height = 12)
 }
 
@@ -601,13 +534,7 @@ get_long_correlations_per_cell_type <- function(i,
                                                 mutations, 
                                                 combined_count_overlaps) {
   cell_type_total_fragments = cell_types_total_fragments[[i]]
-  # cell_type_for_grep = add_escape_if_necessary(cell_types[i])
-  # mutations = mut_count_data[cancer_type]
-  # cell_type_col_idx = grep(cell_type_for_grep, 
-  #                          colnames(combined_count_overlaps), 
-  #                          ignore.case=T)
   cell_type_count_overlaps = combined_count_overlaps[, i]
-  # cell_type_total_fragments = sum(cell_type_count_overlaps)
   cell_type_fragments_subsampling_range = remove_bigger_than_curr_fragments(
                                                   fragments_subsampling_range[[i]],
                                                   cell_type_total_fragments)
@@ -681,14 +608,7 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
   cell_types_count_overlaps = combined_count_overlaps[, 
                                                       unlist(cell_type_col_idx)]
   cell_types_total_fragments = apply(cell_types_count_overlaps, 2, sum)
-  # num_fragments_per_cell_type = apply(combined_count_overlaps, 2, sum)
-  # mutations = mut_count_data[cancer_type]
   mutations <- mut_count_data[cancer_type]
-  
-  # cell_types_underscore_sep = gsub(" ", "_", cell_types)
-  # cell_types_being_considered_combined = paste(cell_types_underscore_sep, 
-  #                                              collapse="_and_")
-  
   correlations_filename = paste0(cancer_type, ".rds")
   correlations_filepath = paste("processed_data", "subsampled_correlations",
                                 correlations_filename, sep="/")
@@ -758,10 +678,6 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
   }
   return(tsse_filtered_correlations)
 }
-# prep_boxplots <- function(cancer_types) {
-#   mclapply(cancer_types, 
-#            )
-# }
 
 # combine_scATAC <- function(combined_filepath, combined_filepath_shendure,
 #                            combined_filepath_tsankov) {
@@ -772,42 +688,7 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
 #                tsankov_combined_count_overlaps))
 # }
 
-# colnames(combined_count_overlaps)[grep("Skin", colnames(combined_count_overlaps))]
-# sum(combined_count_overlaps[grep("Skin T lymphocyte 2 \\(CD4\\+\\)", 
-#                              colnames(combined_count_overlaps)), ])
-# sum(combined_count_overlaps[grep("Skin Sun Exposed Macrophage \\(General,Alveolar\\)", 
-#                                  colnames(combined_count_overlaps)), ])
-# grep("Skin Fibroblast \\(Epithelial\\)", colnames(combined_count_overlaps))
-# colnames(combined_count_overlaps)[grep("Skin", 
-#                                        colnames(combined_count_overlaps))]
 
-# cell_types = c("Skin Sun Exposed Melanocyte", 
-#                "Skin Melanocyte",
-#                "Skin Sun Exposed Fibroblast (Epithelial)",
-#                "Skin Fibroblast (Epithelial)",
-#                "Skin Keratinocyte 1", 
-#                "Skin Sun Exposed Keratinocyte 1",
-#                "Skin T Lymphocyte 1 (CD8+)", 
-#                "Skin Sun Exposed T Lymphocyte 1 (CD8+)",
-#                "Skin T lymphocyte 2 (CD4+)",
-#                "Skin Sun Exposed T lymphocyte 2 (CD4+)",
-#                "Skin Macrophage (General,Alveolar)",
-#                "Skin Sun Exposed Macrophage (General,Alveolar)")
-# 
-# prep_boxplots_per_cancer_type(combined_count_overlaps,
-#                               mut_count_data,
-#                               "Skin.Melanoma",
-#                               cell_types,
-#                               1000,
-#                               T,
-#                               "skin_log_num_frags_vs_correlation.png")
-
-# prep_boxplots(combined_count_overlaps, "Skin.Melanoma", cell_types, 200000, F,
-#               "num_frags_vs_correlation.png")
-
-# combined_counts_overlaps_all_scATAC_data = combine_scATAC(combined_filepath,
-#                                                           combined_filepath_shendure,
-#                                                           combined_filepath_tsankov)
 combined_count_overlaps = t(readRDS(combined_filepath))
 shendure_combined_count_overlaps = t(readRDS(combined_filepath_shendure))
 tsankov_combined_count_overlaps = t(readRDS(combined_filepath_tsankov))
