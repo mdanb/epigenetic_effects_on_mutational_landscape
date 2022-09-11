@@ -9,19 +9,16 @@ library(optparse)
 source("create_count_overlaps_utils.R")
 
 option_list <- list( 
-  make_option("--cell_number_filter", type="integer"),
-  make_option("--bing_ren", action="store_true", default = FALSE),
-  make_option("--shendure", action="store_true", default = FALSE),
-  make_option("--tsankov", action="store_true", default = FALSE)
+  make_option("--dataset", type="character"),
+  make_option("--cell_number_filter", type="integer")
 )
 
-args = parse_args(OptionParser(option_list=option_list), args = 
-                    c("--cell_number_filter=1", "--bing_ren"))
-
+args = parse_args(OptionParser(option_list=option_list), 
+                  args = c("--cell_number_filter=1", 
+                           "--dataset=bing_ren"))
+# args = parse_args(OptionParser(option_list=option_list))
 cell_number_filter = args$cell_number_filter
-bing_ren = args$bing_ren
-shendure = args$shendure
-tsankov = args$tsankov
+dataset = args$dataset
 # args = commandArgs(trailingOnly=TRUE)
 # if (length(args) != 1) {
 #   stop("One argument must be supplied", call.=FALSE)
@@ -351,13 +348,13 @@ get_sample_cell_types_tsankov <- function(sample, metadata) {
 # colnames(metadata_tsankov_distal)[2] <- "celltypes"
 
 load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
-interval.ranges
 
 dir.create("processed_data/count_overlap_data", recursive=TRUE)                                       
 dir.create("processed_data/cell_counts_per_sample")                                       
 
-if (bing_ren) {
-  metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv")
+if (dataset == "bing_ren") {
+  metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv", sep="\t",
+                        header=T)
   files = setdiff(list.files("raw_dir/bed_files/"), 
                   list.dirs("raw_dir/bed_files", recursive = FALSE, 
                             full.names = FALSE))
@@ -367,14 +364,12 @@ if (bing_ren) {
            interval_ranges=interval.ranges,
            chain=ch,
            mc.cores=8)
-}
-
-if (shendure) {
+} else if (dataset == "shendure") {
   metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
                                   sep="\t",
                                   header=TRUE)
-  colnames(metadata_Shendure)[1] = "cell_barcode"
-  colnames(metadata_Shendure)[2] = "sample"
+  # colnames(metadata_Shendure)[1] = "cell_barcode"
+  # colnames(metadata_Shendure)[2] = "sample"
   # colnames(metadata_Shendure)[grep("tss", colnames(metadata_Shendure))] = "tsse"
   files_Shendure = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/"), 
                            list.dirs("raw_dir/bed_files/JShendure_scATAC/", 
@@ -385,18 +380,22 @@ if (shendure) {
          metadata=metadata_Shendure,
          interval_ranges=interval.ranges,
          chain=ch)
-}
-
-if (tsankov) {
+} else if (dataset == "tsankov") {
+  metadata_tsankov_proximal = 
+    read.csv("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv")
+  metadata_tsankov_distal = 
+    read.csv("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv")
+  
   files_Tsankov_distal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
                                     pattern=".*distal.*")
   files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
                                       pattern=".*proximal*")
-  mclapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
-          cell_number_filter=cell_number_filter,
-          metadata=metadata_tsankov_proximal,
-          interval_ranges=interval.ranges,
-          mc.cores = 4)
+  mclapply(files_Tsankov_proximal, 
+           create_count_overlaps_file_tsankov,
+           cell_number_filter=cell_number_filter,
+           metadata=metadata_tsankov_proximal,
+           interval_ranges=interval.ranges,
+           mc.cores = 4)
   
   mclapply(files_Tsankov_distal,
             create_count_overlaps_file_tsankov,
