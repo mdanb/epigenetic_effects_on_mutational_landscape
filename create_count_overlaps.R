@@ -378,8 +378,7 @@ if (dataset == "bing_ren") {
   lapply(files_Shendure, create_count_overlaps_file_shendure,
          cell_number_filter=cell_number_filter,
          metadata=metadata_Shendure,
-         interval_ranges=interval.ranges,
-         chain=ch)
+         interval_ranges=interval.ranges)
 } else if (dataset == "tsankov") {
   metadata_tsankov_proximal = 
     read.csv("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv")
@@ -395,6 +394,7 @@ if (dataset == "bing_ren") {
            cell_number_filter=cell_number_filter,
            metadata=metadata_tsankov_proximal,
            interval_ranges=interval.ranges,
+           chain=ch,
            mc.cores = 4)
   
   mclapply(files_Tsankov_distal,
@@ -402,6 +402,7 @@ if (dataset == "bing_ren") {
             cell_number_filter=cell_number_filter,
             metadata=metadata_tsankov_distal,
             interval_ranges=interval.ranges,
+            chain=ch,
             mc.cores=4)
 }
 
