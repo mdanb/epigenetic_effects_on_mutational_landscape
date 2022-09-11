@@ -27,8 +27,8 @@ get_and_save_num_cells_per_sample <- function(sample, sample_file_name) {
   sample_file_name = paste0("cell_counts_", file_path_sans_ext(sample_file_name, 
                                                                TRUE), ".rds")
   counts_per_cell_type = sample %>%                               
-    group_by(cell_type) %>%                 
-    summarize(n_cells = n_distinct(name))
+                         group_by(cell_type) %>%                 
+                         summarize(n_cells = n_distinct(name))
   path = "processed_data/cell_counts_per_sample"
   file_path = paste(path, sample_file_name, sep="/")
   saveRDS(counts_per_cell_type, file_path)
@@ -57,9 +57,14 @@ create_count_overlaps_file <- function(file, cell_number_filter, metadata,
     sample = import(paste("raw_dir", "bed_files", file, sep="/"), format="bed")
     sample_name = get_sample_name(file)
     filtered_metadata = filter_metadata_by_sample_name(sample_name, metadata)
+    if (nrow(filtered_metadata) == 0) {
+      print(paste(file, "has no high quality fragments", sep=" "))
+      return()
+    }
     sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(filtered_metadata,
                                                                   "cellID",
                                                                   "\\+")
+    
     sample <- filter_sample_to_contain_only_cells_in_metadata(sample,
                                                     sample_barcodes_in_metadata)
     sample <- get_sample_cell_types(sample, sample_barcodes_in_metadata, 
