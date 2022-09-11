@@ -5,21 +5,29 @@ library(data.table)
 library(dplyr)                                                                  
 library(tibble)                                                                 
 library(parallel)
+library(optparse)
 source("create_count_overlaps_utils.R")
 
-args = commandArgs(trailingOnly=TRUE)
-if (length(args) != 1) {
-  stop("One argument must be supplied", call.=FALSE)
-} else {
-  CELL_NUMBER_FILTER = as.integer(args[1])
-} 
+option_list <- list( 
+  make_option("--cell_number_filter", type="integer"),
+  make_option("--bing_ren", action="store_true", default = FALSE),
+  make_option("--shendure", action="store_true", default = FALSE),
+  make_option("--tsankov", action="store_true", default = FALSE)
+)
 
-add_fragment_counts_per_cell_to_metadata <- function(metadata, barcodes,
-                                                     fragment_counts_per_sample) {
-  metadata["counts"] = fragment_counts_per_sample[match(barcodes, 
-                                             names(fragment_counts_per_sample))]
-  return(metadata)
-}
+args = parse_args(OptionParser(option_list=option_list), args = 
+                    c("--cell_number_filter=1", "--bing_ren"))
+
+cell_number_filter = args$cell_number_filter
+bing_ren = args$bing_ren
+shendure = args$shendure
+tsankov = args$tsankov
+# args = commandArgs(trailingOnly=TRUE)
+# if (length(args) != 1) {
+#   stop("One argument must be supplied", call.=FALSE)
+# } else {
+#   CELL_NUMBER_FILTER = as.integer(args[1])
+# } 
 
 compute_count_overlaps <- function(sample, interval_ranges) {
   grl_in = sample %>%                                             
@@ -333,14 +341,6 @@ get_sample_cell_types_tsankov <- function(sample, metadata) {
   return(as.tibble(sample))
 }
 
-# metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-#                                sep="\t",
-#                                header=TRUE)
-
-# colnames(metadata_Shendure)[2] = "sample"
-# colnames(metadata_Shendure)[1] = "cell_barcode"
-# colnames(metadata_Shendure)[grep("tss", colnames(metadata_Shendure))] = "tsse"
-
 # metadata_tsankov_proximal = read.table("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv",
 #                                        sep=",",
 #                                        header=TRUE)
@@ -356,25 +356,56 @@ interval.ranges
 dir.create("processed_data/count_overlap_data", recursive=TRUE)                                       
 dir.create("processed_data/cell_counts_per_sample")                                       
 
-files = setdiff(list.files("raw_dir/bed_files/"), 
-                list.dirs("raw_dir/bed_files", recursive = FALSE, 
-                          full.names = FALSE))
-files_Shendure = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/"), 
-                         list.dirs("raw_dir/bed_files/JShendure_scATAC/", 
-                                   recursive = FALSE, 
-                                   full.names = FALSE))
+if (bing_ren) {
+  metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv")
+  files = setdiff(list.files("raw_dir/bed_files/"), 
+                  list.dirs("raw_dir/bed_files", recursive = FALSE, 
+                            full.names = FALSE))
+  mclapply(files, create_count_overlaps_file,
+           cell_number_filter=cell_number_filter,
+           metadata=metadata,
+           interval_ranges=interval.ranges,
+           chain=ch,
+           mc.cores=8)
+}
 
-files_Tsankov_distal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
-                                  pattern=".*distal.*")
-files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
-                                    pattern=".*proximal*")
+if (shendure) {
+  metadata_Shendure = read.table("raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+                                  sep="\t",
+                                  header=TRUE)
+  colnames(metadata_Shendure)[1] = "cell_barcode"
+  colnames(metadata_Shendure)[2] = "sample"
+  # colnames(metadata_Shendure)[grep("tss", colnames(metadata_Shendure))] = "tsse"
+  files_Shendure = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/"), 
+                           list.dirs("raw_dir/bed_files/JShendure_scATAC/", 
+                                     recursive = FALSE, 
+                                     full.names = FALSE))
+  lapply(files_Shendure, create_count_overlaps_file_shendure,
+         cell_number_filter=cell_number_filter,
+         metadata=metadata_Shendure,
+         interval_ranges=interval.ranges,
+         chain=ch)
+}
 
-mclapply(files, create_count_overlaps_file,
-               cell_number_filter=CELL_NUMBER_FILTER,
-               metadata=metadata,
-               interval_ranges=interval.ranges,
-               chain=ch,
-	             mc.cores=8)
+if (tsankov) {
+  files_Tsankov_distal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
+                                    pattern=".*distal.*")
+  files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
+                                      pattern=".*proximal*")
+  mclapply(files_Tsankov_proximal, create_count_overlaps_file_tsankov,
+          cell_number_filter=cell_number_filter,
+          metadata=metadata_tsankov_proximal,
+          interval_ranges=interval.ranges,
+          mc.cores = 4)
+  
+  mclapply(files_Tsankov_distal,
+            create_count_overlaps_file_tsankov,
+            cell_number_filter=cell_number_filter,
+            metadata=metadata_tsankov_distal,
+            interval_ranges=interval.ranges,
+            mc.cores=4)
+}
+
 
 #                mc.cores = 1)
 # lapply(files, create_count_overlaps_file,
@@ -410,9 +441,9 @@ mclapply(files, create_count_overlaps_file,
 #           interval_ranges=interval.ranges,
 #           mc.cores=4)
 
-top_tsse_fragment_count_range = c(1000, 3853, 14849, 57225,
-                                             220520, 849788, 3274710,
-                                             12619294)
+# top_tsse_fragment_count_range = c(1000, 3853, 14849, 57225,
+#                                              220520, 849788, 3274710,
+#                                              12619294)
 # 
 # bing_ren_lung_files = setdiff(list.files("raw_dir/bed_files/",
 #                                          pattern=".*lung.*"),
@@ -427,11 +458,11 @@ top_tsse_fragment_count_range = c(1000, 3853, 14849, 57225,
 #                                               top_tsse_fragment_count_range,
 #                                               c("Alveolar Type 2 (AT2) Cell"))
 
-shendure_lung_files  = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/",
-                                          pattern=".*lung.*"),
-                               list.dirs("raw_dir/bed_files/JShendure_scATAC",
-                                         recursive = FALSE,
-                                         full.names = FALSE))
+# shendure_lung_files  = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/",
+#                                           pattern=".*lung.*"),
+#                                list.dirs("raw_dir/bed_files/JShendure_scATAC",
+#                                          recursive = FALSE,
+#                                          full.names = FALSE))
 # create_tsse_filtered_count_overlaps_per_tissue(shendure_lung_files,
 #                                                CELL_NUMBER_FILTER,
 #                                                metadata_Shendure,
@@ -451,39 +482,39 @@ shendure_lung_files  = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/",
 
 
 
-#### Melanoma ####
-bing_ren_skin_files = setdiff(list.files("raw_dir/bed_files/",
-                                         pattern=".*skin_SM*"),
-                              list.dirs("raw_dir/bed_files", recursive = FALSE,
-                                        full.names = FALSE))
-
-top_tsse_fragment_count_range =  c(1000, 10000, 50000, 100000, 150000, 250000,
-                                   300000, 400000, 500000, 600000)
-skin_cell_types = c("Melanocyte",
-                    "Fibroblast (Epithelial)")
-create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_files,
-                                              CELL_NUMBER_FILTER,
-                                              metadata,
-                                              interval.ranges,
-                                              ch,
-                                              top_tsse_fragment_count_range,
-                                              skin_cell_types,
-                                              "bing_ren")
-
-
-bing_ren_skin_sun_exposed_files = setdiff(list.files("raw_dir/bed_files/",
-                                              pattern=".*skin_sun_exposed.*"),
-                              list.dirs("raw_dir/bed_files", recursive = FALSE,
-                                        full.names = FALSE))
-
-create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_sun_exposed_files,
-                                               CELL_NUMBER_FILTER,
-                                               metadata,
-                                               interval.ranges,
-                                               ch,
-                                               top_tsse_fragment_count_range,
-                                               skin_cell_types,
-                                               "bing_ren")
+# #### Melanoma ####
+# bing_ren_skin_files = setdiff(list.files("raw_dir/bed_files/",
+#                                          pattern=".*skin_SM*"),
+#                               list.dirs("raw_dir/bed_files", recursive = FALSE,
+#                                         full.names = FALSE))
+# 
+# top_tsse_fragment_count_range =  c(1000, 10000, 50000, 100000, 150000, 250000,
+#                                    300000, 400000, 500000, 600000)
+# skin_cell_types = c("Melanocyte",
+#                     "Fibroblast (Epithelial)")
+# create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_files,
+#                                               CELL_NUMBER_FILTER,
+#                                               metadata,
+#                                               interval.ranges,
+#                                               ch,
+#                                               top_tsse_fragment_count_range,
+#                                               skin_cell_types,
+#                                               "bing_ren")
+# 
+# 
+# bing_ren_skin_sun_exposed_files = setdiff(list.files("raw_dir/bed_files/",
+#                                               pattern=".*skin_sun_exposed.*"),
+#                               list.dirs("raw_dir/bed_files", recursive = FALSE,
+#                                         full.names = FALSE))
+# 
+# create_tsse_filtered_count_overlaps_per_tissue(bing_ren_skin_sun_exposed_files,
+#                                                CELL_NUMBER_FILTER,
+#                                                metadata,
+#                                                interval.ranges,
+#                                                ch,
+#                                                top_tsse_fragment_count_range,
+#                                                skin_cell_types,
+#                                                "bing_ren")
 
 # #### ColoRect.AdenoCA ####
 # bing_ren_colon_files = setdiff(list.files("raw_dir/bed_files/",
