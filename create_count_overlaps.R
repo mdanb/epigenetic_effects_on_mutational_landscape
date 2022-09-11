@@ -23,6 +23,18 @@ dataset = args$dataset
 #   CELL_NUMBER_FILTER = as.integer(args[1])
 # } 
 
+get_and_save_num_cells_per_sample <- function(sample, sample_file_name) {
+  sample_file_name = paste0("cell_counts_", file_path_sans_ext(sample_file_name, 
+                                                               TRUE), ".rds")
+  counts_per_cell_type = sample %>%                               
+    group_by(cell_type) %>%                 
+    summarize(n_cells = n_distinct(name))
+  path = "processed_data/cell_counts_per_sample"
+  file_path = paste(path, sample_file_name, sep="/")
+  saveRDS(counts_per_cell_type, file_path)
+  return(counts_per_cell_type)
+}
+
 compute_count_overlaps <- function(sample, interval_ranges) {
   grl_in = sample %>%                                             
     group_split(cell_type) %>%                             
@@ -205,7 +217,9 @@ create_count_overlaps_file_shendure <- function(file, cell_number_filter,
     sample_barcodes_in_metadata = filtered_metadata[["cell"]]
     sample <- filter_sample_to_contain_only_cells_in_metadata(sample,
                                                               sample_barcodes_in_metadata)
-    sample <- get_sample_cell_types_shendure(sample, filtered_metadata)
+    sample <- get_sample_cell_types_shendure(sample, 
+                                             sample_barcodes_in_metadata,
+                                             filtered_metadata)
     counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
     sample <- filter_sample_by_cell_number(sample,
                                            counts_per_cell_type, 
@@ -238,7 +252,8 @@ create_count_overlaps_file_tsankov <- function(file, cell_number_filter,
                                                                   "#")
     sample <- filter_sample_to_contain_only_cells_in_metadata(sample,
                                                               sample_barcodes_in_metadata)
-    sample <- get_sample_cell_types_tsankov(sample, metadata)
+    sample <- get_sample_cell_types_tsankov(sample, sample_barcodes_in_metadata,
+                                            metadata)
     counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
     sample <- filter_sample_by_cell_number(sample,
                                            counts_per_cell_type, 
@@ -313,7 +328,8 @@ get_num_cells_per_sample <- function(sample) {
   return(counts_per_cell_type)
 }
 
-get_sample_cell_types <- function(fragments, sample_barcodes_in_metadata,
+get_sample_cell_types <- function(fragments, 
+                                  sample_barcodes_in_metadata,
                                   filtered_metadata) {
   sample_idx_in_metadata = match(fragments$name, 
                                  sample_barcodes_in_metadata)
@@ -322,7 +338,8 @@ get_sample_cell_types <- function(fragments, sample_barcodes_in_metadata,
   return(fragments)
 }
 
-get_sample_cell_types_shendure <- function(sample, sample_name, 
+get_sample_cell_types_shendure <- function(sample, 
+                                           sample_barcodes_in_metadata,
                                            filtered_metadata) {
   sample_idx_in_metadata = match(sample$name, sample_barcodes_in_metadata)
   sample$cell_type = filtered_metadata[unlist(sample_idx_in_metadata), 
@@ -330,7 +347,9 @@ get_sample_cell_types_shendure <- function(sample, sample_name,
   return(as.tibble(sample))
 }
 
-get_sample_cell_types_tsankov <- function(sample, metadata) {
+get_sample_cell_types_tsankov <- function(sample,
+                                          sample_barcodes_in_metadata,
+                                          metadata) {
   sample_idx_in_metadata = match(sample$name, sample_barcodes_in_metadata)
   sample$cell_type = metadata[unlist(sample_idx_in_metadata),
                               "celltypes"]
@@ -378,8 +397,7 @@ if (dataset == "bing_ren") {
   lapply(files_Shendure, create_count_overlaps_file_shendure,
          cell_number_filter=cell_number_filter,
          metadata=metadata_Shendure,
-         interval_ranges=interval.ranges,
-         chain=ch)
+         interval_ranges=interval.ranges)
 } else if (dataset == "tsankov") {
   metadata_tsankov_proximal = 
     read.csv("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv")
@@ -395,6 +413,7 @@ if (dataset == "bing_ren") {
            cell_number_filter=cell_number_filter,
            metadata=metadata_tsankov_proximal,
            interval_ranges=interval.ranges,
+           chain=ch,
            mc.cores = 4)
   
   mclapply(files_Tsankov_distal,
@@ -402,6 +421,7 @@ if (dataset == "bing_ren") {
             cell_number_filter=cell_number_filter,
             metadata=metadata_tsankov_distal,
             interval_ranges=interval.ranges,
+            chain=ch,
             mc.cores=4)
 }
 
