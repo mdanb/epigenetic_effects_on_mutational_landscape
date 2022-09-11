@@ -14,8 +14,6 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-args = parse_args(OptionParser(option_list=option_list), args=c("--dataset=bing_ren",
-                                                                "--cell_number_filter=1"))
 cell_number_filter = args$cell_number_filter
 dataset = args$dataset
 # args = commandArgs(trailingOnly=TRUE)
@@ -352,6 +350,7 @@ load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 
 dir.create("processed_data/count_overlap_data", recursive=TRUE)                                       
 dir.create("processed_data/cell_counts_per_sample")                                       
+ch = import.chain("raw_dir/hg38ToHg19.over.chain")
 
 if (dataset == "bing_ren") {
   metadata = read.table("raw_dir/metadata/GSE184462_metadata.tsv", sep="\t",
