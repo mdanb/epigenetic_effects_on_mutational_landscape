@@ -14,8 +14,6 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-args = parse_args(OptionParser(option_list=option_list), args=c("--dataset=bing_ren",
-                                                                "--cell_number_filter=1"))
 cell_number_filter = args$cell_number_filter
 dataset = args$dataset
 # args = commandArgs(trailingOnly=TRUE)
