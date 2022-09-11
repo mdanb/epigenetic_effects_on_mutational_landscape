@@ -13,10 +13,9 @@ option_list <- list(
   make_option("--cell_number_filter", type="integer")
 )
 
-args = parse_args(OptionParser(option_list=option_list), 
-                  args = c("--cell_number_filter=1", 
-                           "--dataset=bing_ren"))
-# args = parse_args(OptionParser(option_list=option_list))
+args = parse_args(OptionParser(option_list=option_list))
+args = parse_args(OptionParser(option_list=option_list), args=c("--dataset=bing_ren",
+                                                                "--cell_number_filter=1"))
 cell_number_filter = args$cell_number_filter
 dataset = args$dataset
 # args = commandArgs(trailingOnly=TRUE)
@@ -53,7 +52,8 @@ create_count_overlaps_file <- function(file, cell_number_filter, metadata,
                                                                   "\\+")
     sample <- filter_sample_to_contain_only_cells_in_metadata(sample,
                                                     sample_barcodes_in_metadata)
-    sample <- get_sample_cell_types(sample, filtered_metadata)
+    sample <- get_sample_cell_types(sample, sample_barcodes_in_metadata, 
+                                    filtered_metadata)
     
     # if (!is.na(cell_types_for_tsse_subsampling)) {
     #   search_name = paste(str_to_title(sample_name), sample$cell_type)
@@ -204,8 +204,10 @@ create_count_overlaps_file_shendure <- function(file, cell_number_filter,
                           sep="/"), format="bed")
     sample_name = get_sample_name_shendure(file)
     filtered_metadata = filter_metadata_by_sample_name(sample_name, metadata)
-    sample <- get_sample_cell_types_shendure(sample, sample_name, 
-                                             filtered_metadata)
+    sample_barcodes_in_metadata = filtered_metadata[["cell"]]
+    sample <- filter_sample_to_contain_only_cells_in_metadata(sample,
+                                                              sample_barcodes_in_metadata)
+    sample <- get_sample_cell_types_shendure(sample, filtered_metadata)
     counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
     sample <- filter_sample_by_cell_number(sample,
                                            counts_per_cell_type, 
@@ -233,6 +235,11 @@ create_count_overlaps_file_tsankov <- function(file, cell_number_filter,
                            "tsv"),
                     format="bed")
     sample = migrate_bed_file_to_hg37(sample, chain)
+    sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(metadata, 
+                                                                  "X",
+                                                                  "#")
+    sample <- filter_sample_to_contain_only_cells_in_metadata(sample,
+                                                              sample_barcodes_in_metadata)
     sample <- get_sample_cell_types_tsankov(sample, metadata)
     counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
     sample <- filter_sample_by_cell_number(sample,
@@ -308,19 +315,17 @@ get_num_cells_per_sample <- function(sample) {
   return(counts_per_cell_type)
 }
 
-get_sample_cell_types <- function(i, fragments, sample_barcodes_in_metadatas,
-                                  filtered_metadatas) {
-  sample_idx_in_metadata = match(fragments[[i]]$name, 
-                                 sample_barcodes_in_metadatas[[i]])
-  fragments[[i]]$cell_type = filtered_metadatas[[i]][unlist(sample_idx_in_metadata), 
+get_sample_cell_types <- function(fragments, sample_barcodes_in_metadata,
+                                  filtered_metadata) {
+  sample_idx_in_metadata = match(fragments$name, 
+                                 sample_barcodes_in_metadata)
+  fragments$cell_type = filtered_metadata[unlist(sample_idx_in_metadata), 
                                            "cell.type"]
   return(fragments)
 }
 
 get_sample_cell_types_shendure <- function(sample, sample_name, 
                                            filtered_metadata) {
-  sample_barcodes_in_metadata = filtered_metadata[["cell"]]                  
-  sample = sample[sample$name %in% sample_barcodes_in_metadata]   
   sample_idx_in_metadata = match(sample$name, sample_barcodes_in_metadata)
   sample$cell_type = filtered_metadata[unlist(sample_idx_in_metadata), 
                                        "cell_type"]
@@ -328,10 +333,6 @@ get_sample_cell_types_shendure <- function(sample, sample_name,
 }
 
 get_sample_cell_types_tsankov <- function(sample, metadata) {
-  sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(metadata, 
-                                                                "X",
-                                                                "#")
-  sample = sample[sample$name %in% sample_barcodes_in_metadata]
   sample_idx_in_metadata = match(sample$name, sample_barcodes_in_metadata)
   sample$cell_type = metadata[unlist(sample_idx_in_metadata),
                               "celltypes"]
