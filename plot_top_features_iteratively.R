@@ -15,8 +15,8 @@ parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 
 args = parse_args(parser)
-# args = parse_args(parser, args = c("--cancer_types=Breast-AdenoCA",
-#                                    "--all_cells", "--bing_ren"))
+args = parse_args(parser, args = c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,CNS-GBM,Eso-AdenoCA,Lung-AdenoCA,Lung-SCC",
+                                   "--all_cells", "--bing_ren", "--cell_number_filter=100"))
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter) {
@@ -49,7 +49,8 @@ get_relevant_backwards_elim_dirs <- function(args) {
         # }
         if (combined_datasets) {
           backward_elim_dirs = append(backward_elim_dirs,
-                 construct_backwards_elim_dir(cancer_type, "combined_datasets"))
+                 construct_backwards_elim_dir(cancer_type, "combined_datasets",
+                                              cell_number_filter))
         }
       }
     return(unlist(backward_elim_dirs))
