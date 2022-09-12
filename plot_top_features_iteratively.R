@@ -14,8 +14,9 @@ parser <- add_option(parser, c("--bing_ren"), action="store_true",
 parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 
-args = parse_args(parser, args = c("--cancer_types=Breast-AdenoCA",
-                                   "--all_cells", "--bing_ren"))
+args = parse_args(parser)
+# args = parse_args(parser, args = c("--cancer_types=Breast-AdenoCA",
+#                                    "--all_cells", "--bing_ren"))
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter) {
