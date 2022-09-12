@@ -97,9 +97,9 @@ construct_pie_charts <- function(args) {
                   ggtitle(unlist(strsplit(dir, split ="/"))[3]) +
                   # geom_text(aes(y = ypos, label = features), color = "white", size=1) +
                   theme(plot.title = element_text(hjust = 0.5))
+    ggsave(paste(dir, "pie_chart.png", sep="/"), width = 20,
+           height = 6, plot)
   }
-  ggsave(paste(dir, "pie_chart.png", sep="/"), width = 20,
-         height = 6, plot)
 }
 
 # labeller = as_labeller(c("20" = "A",
