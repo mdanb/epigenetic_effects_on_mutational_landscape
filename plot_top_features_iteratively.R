@@ -12,12 +12,16 @@ parser <- add_option(parser, c("--combined_datasets"), action="store_true",
 parser <- add_option(parser, c("--bing_ren"), action="store_true",
                                default=F)
 parser <- add_option(parser, c("--cancer_types"), type="character")
+parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 
-args = parse_args(parser, args = c("--cancer_types=Breast-AdenoCA",
-                                   "--all_cells", "--bing_ren"))
+args = parse_args(parser)
+# args = parse_args(parser, args = c("--cancer_types=Breast-AdenoCA",
+#                                    "--all_cells", "--bing_ren"))
 
-construct_backwards_elim_dir <- function(cancer_type, scATAC_source) {
-  scATAC_source = paste("scATAC_source", scATAC_source, sep="_")
+construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
+                                         cell_number_filter) {
+  scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
+                        cell_number_filter, sep="_")
   dir = paste("figures", "models", cancer_type, scATAC_source,
               "backwards_elimination_results", sep="/")
   return(dir)
@@ -29,13 +33,15 @@ get_relevant_backwards_elim_dirs <- function(args) {
     all_cells = args$all_cells
     combined_datasets = args$combined_datasets
     bing_ren = args$bing_ren
+    cell_number_filter = args$cell_number_filter
     
     backward_elim_dirs = list()
     for (cancer_type in cancer_types) {
       if (all_cells) {
         if (bing_ren) {
           backward_elim_dirs = append(backward_elim_dirs,
-                        construct_backwards_elim_dir(cancer_type, "bing_ren"))
+                        construct_backwards_elim_dir(cancer_type, "bing_ren", 
+                                                     cell_number_filter))
         }
         # if (shendure) {
         #   backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, 
