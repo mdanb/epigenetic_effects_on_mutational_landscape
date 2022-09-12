@@ -22,10 +22,12 @@ parser.add_argument('--shendure', action="store_true",
                     help='obtain model which used Shendure ATACseq', default=False)
 parser.add_argument('--combined_datasets', action="store_true",
                     help='obtain model which combined all scATACseq', default=False)
+parser.add_argument('--cell_number_filter', type=int)
 
-def construct_backwards_elim_dir(cancer_type, scATAC_source):
+
+def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter):
     return f"models/{cancer_type}/scATAC_source_" \
-           f"{scATAC_source}/backwards_elimination_results"
+           f"{scATAC_source}_cell_number_filter_{cell_number_filter}/backwards_elimination_results"
 
 def get_relevant_backwards_elim_dirs(config):
     cancer_types = config.cancer_types
@@ -35,15 +37,17 @@ def get_relevant_backwards_elim_dirs(config):
     bing_ren = config.bing_ren
     shendure = config.shendure
     combined_datasets = config.combined_datasets
+    cell_number_filter = config.cell_number_filter
     backward_elim_dirs = []
     for cancer_type in cancer_types:
         if (all_cells):
             if (bing_ren):
-                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "bing_ren"))
+                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "bing_ren", cell_number_filter))
             if (shendure):
-                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "shendure"))
+                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "shendure", cell_number_filter))
             if (combined_datasets):
-                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "combined_datasets"))
+                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "combined_datasets",
+                                                                       cell_number_filter))
     return backward_elim_dirs
         # if (run_tissue_spec):
         #     backwards_elim_dir=f"models/{cancer_type}/scATAC_source_{scATAC_source}/" \
