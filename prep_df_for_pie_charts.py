@@ -64,8 +64,8 @@ def get_relevant_backwards_elim_dirs(config):
         #                                    threshold_dir)
 
 def prep_df_for_pie_charts(backwards_elim_dirs, num_iter_skips=5):
-    df = pd.DataFrame(columns = ["features", "importance", "num_features", "score"])
     for backwards_elim_dir in backwards_elim_dirs:
+        df = pd.DataFrame(columns = ["features", "importance", "num_features", "score"])
         figure_path = os.path.join("figures", backwards_elim_dir)
         os.makedirs(figure_path, exist_ok=True)
         files = natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))
