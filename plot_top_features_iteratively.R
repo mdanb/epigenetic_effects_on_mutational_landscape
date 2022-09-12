@@ -15,8 +15,8 @@ parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 
 args = parse_args(parser)
-args = parse_args(parser, args = c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,CNS-GBM,Eso-AdenoCA,Lung-AdenoCA,Lung-SCC",
-                                   "--all_cells", "--bing_ren", "--cell_number_filter=100"))
+# args = parse_args(parser, args = c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,CNS-GBM,Eso-AdenoCA,Lung-AdenoCA,Lung-SCC",
+#                                    "--all_cells", "--bing_ren", "--cell_number_filter=100"))
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter) {
