@@ -213,6 +213,7 @@ def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, clus
 #### Load scATAC ####
 scATAC_df = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                         f"/count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+scATAC_df.columns = [c + " BR" for c in scATAC_df.columns]
 if ((run_all_cells or run_tissue_spec_cells) and bing_ren):
     run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells, cancer_types)
 if (run_clustered_mutations and bing_ren):
@@ -220,12 +221,14 @@ if (run_clustered_mutations and bing_ren):
 
 scATAC_df_shendure = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                                  f"/shendure_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+scATAC_df_shendure.columns = [c + " SH" for c in scATAC_df_shendure.columns]
 
 if (run_all_cells and shendure):
     run_unclustered_data_analysis(scATAC_df_shendure, run_all_cells, run_tissue_spec_cells, cancer_types, "shendure")
 
 scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                                  f"/tsankov_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+scATAC_df_tsankov.columns = [c + " TS" for c in scATAC_df_tsankov.columns]
 
 combined_scATAC_df = pd.concat((scATAC_df, scATAC_df_shendure, scATAC_df_tsankov), axis=1)
 if (run_all_cells and combined_datasets):
