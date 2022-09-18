@@ -21,9 +21,9 @@ args = parse_args(OptionParser(option_list=option_list))
 #         "--cell_types=Melanocyte,Fibroblast (Epithelial)",
 #         "--files_pattern=skin_SM"))
 
-top_tsse_fragment_count_range = unlist(strsplit(
-                                       args$top_tsse_fragment_count_range, 
-                                       split = ","))
+top_tsse_fragment_count_range = as.integer(unlist(strsplit(
+                                           args$top_tsse_fragment_count_range, 
+                                           split = ",")))
 dataset = args$dataset
 cell_types = unlist(strsplit(args$cell_types, 
                              split = ","))
