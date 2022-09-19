@@ -265,7 +265,7 @@ if (dataset == "bing_ren") {
                                                  dataset)
 } else if (dataset == "tsankov") {
   metadata_tsankov_proximal = 
-    read.csv("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv")
+    read.csv("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv")
   metadata_tsankov_distal = 
     read.csv("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv")
   
