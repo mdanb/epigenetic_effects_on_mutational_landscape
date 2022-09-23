@@ -16,6 +16,13 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--cancer_type=Skin.Melanoma",
+#                       "--boxplot_cell_types=Skin Sun Exposed Melanocyte (BR)-Skin Melanocyte (BR)-Skin Sun Exposed Fibroblast (Epithelial) (BR)-Skin Fibroblast (Epithelial) (BR)-Skin Keratinocyte 1 (BR)-Skin Sun Exposed Keratinocyte 1 (BR)-Skin T Lymphocyte 1 (CD8+) (BR)-Skin Sun Exposed T Lymphocyte 1 (CD8+) (BR)-Skin T lymphocyte 2 (CD4+) (BR)-Skin Sun Exposed T lymphocyte 2 (CD4+) (BR)-Skin Macrophage (General,Alveolar) (BR)-Skin Sun Exposed Macrophage (General,Alveolar) (BR)",
+#                       "--tissues_for_tsse_filtered_cells=Bing Ren-Skin,Bing Ren-Skin Sun Exposed",
+#                       "--plot_filename=melanoma_num_frags_vs_correlation.png",
+#                       "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000"))
+
 cancer_type = args$cancer_type
 boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = "-"))
 dataset_tissues_for_tsse_filtered_cells = unlist(strsplit(args$tissues_for_tsse_filtered_cells, 
@@ -106,11 +113,16 @@ run_subsampling_simulations <- function(num_fragments_to_subsample,
 
 add_escape_helper <- function(char_to_escape, cell_type) {
   escaped = paste0("\\", char_to_escape)
-  left_idx = unlist(gregexpr(escaped, cell_type))[1]
-  left_substr = substr(cell_type, 1, left_idx - 1)
-  right_substr = substr(cell_type, left_idx, nchar(cell_type))
-  cell_type_for_grep = paste0(left_substr, "\\", right_substr)
-  return(cell_type_for_grep)
+  left_idx = unlist(gregexpr(escaped, cell_type))
+  add = 0:(length(left_idx) - 1)
+  left_idx = left_idx + add
+  cell_type_to_grep = cell_type
+  for (idx in left_idx) {
+    left_substr = substr(cell_type_to_grep, 1, idx - 1)
+    right_substr = substr(cell_type_to_grep, idx, nchar(cell_type_to_grep))
+    cell_type_to_grep = paste0(left_substr, "\\", right_substr)
+  }
+  return(cell_type_to_grep)
 }
 
 add_escape_if_necessary <- function(cell_type) {
@@ -448,8 +460,14 @@ combined_filepath_tsankov = paste(combined_data_path,
                                   "_combined_count_overlaps.rds", sep="")
 
 combined_count_overlaps = t(readRDS(combined_filepath))
+colnames(combined_count_overlaps) = paste(colnames(combined_count_overlaps), 
+                                          "(BR)")
 shendure_combined_count_overlaps = t(readRDS(combined_filepath_shendure))
+colnames(shendure_combined_count_overlaps) = paste(colnames(shendure_combined_count_overlaps), 
+                                          "(SH)")
 tsankov_combined_count_overlaps = t(readRDS(combined_filepath_tsankov))
+colnames(tsankov_combined_count_overlaps) = paste(colnames(tsankov_combined_count_overlaps), 
+                                                  "(TS)")
 combined_counts_overlaps_all_scATAC_data = cbind(combined_count_overlaps, 
                                                  shendure_combined_count_overlaps,
                                                  tsankov_combined_count_overlaps)
@@ -468,8 +486,18 @@ for (dataset_tissue in dataset_tissues_for_tsse_filtered_cells) {
       path,
       cancer_type, 
       plot_x_ticks)
+  if (dataset == "Bing Ren") {
+    dataset_extension = "(BR)"
+  }
+  else if (dataset == "Shendure") {
+    dataset_extension = "(SH)"
+  }
+  else {
+    dataset_extension = "(TS)"
+  }
+  
   rownames(correlations) =
-    paste(dataset, tissue, rownames(correlations))
+    paste(tissue, rownames(correlations), dataset_extension)
   
   tsse_filtered_correlations = append(tsse_filtered_correlations,
                                       list(correlations))
