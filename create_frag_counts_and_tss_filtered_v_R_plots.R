@@ -7,19 +7,25 @@ source("utils.R")
 options(scipen=999)
 
 option_list <- list( 
-  make_option(c("--cancer_type", type="str")),
-  make_option(c("--boxplot_cell_types", type="str", 
-                help="Must be separated by -")),
-  make_option(c("--tissues_for_tsse_filtered_cells", type="str")),
-  make_option(c("--plot_filename", type="str")),
-  make_option(c("--plot_x_ticks", type="str"))
+  make_option("--cancer_type", type="character"),
+  make_option("--boxplot_cell_types", type="character"),
+  make_option("--tissues_for_tsse_filtered_cells", type="character",
+              help="format: comma separated [Dataset]-[Tissue]"),
+  make_option("--plot_filename", type="character"),
+  make_option("--plot_x_ticks", type="character")
 )
 
-args = parse_args(OptionParser(option_list=option_list))
-#args = parse_args(OptionParser(option_list=option_list))
+# args = parse_args(OptionParser(option_list=option_list))
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--cancer_type=Skin.Melanoma",
+                      "--boxplot_cell_types=Skin Sun Exposed Melanocyte-Skin Melanocyte-Skin Sun Exposed Fibroblast (Epithelial)-Skin Fibroblast (Epithelial)-Skin Keratinocyte 1-Skin Sun Exposed Keratinocyte 1-Skin T Lymphocyte 1 (CD8+)-Skin Sun Exposed T Lymphocyte 1 (CD8+)-Skin T lymphocyte 2 (CD4+)-Skin Sun Exposed T lymphocyte 2 (CD4+)-Skin Macrophage (General,Alveolar)-Skin Sun Exposed Macrophage (General,Alveolar)",
+                      "--tissues_for_tsse_filtered_cells=Bing Ren-Skin,Bing Ren-Skin Sun Exposed",
+                      "--plot_filename=melanoma_num_frags_vs_correlation.png",
+                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000"))
+
 cancer_type = args$cancer_type
 boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = "-"))
-tissues_for_tsse_filtered_cells = unlist(strsplit(args$tissues_for_tsse_filtered_cells, 
+dataset_tissues_for_tsse_filtered_cells = unlist(strsplit(args$tissues_for_tsse_filtered_cells, 
                                                   split = ","))
 plot_filename = args$plot_filename
 plot_x_ticks = as.integer(unlist(strsplit(args$plot_x_ticks, split = ",")))
@@ -255,8 +261,8 @@ get_missing_fragment_counts_per_cell_type <- function(type, correlations_long,
   existing_frag_counts = as.integer(unique(correlations_long %>% 
                                   filter(cell_type == type) %>%
                                   pull(num_fragments)))
-  missing_fragment_counts = plot_x_ticks[!(plot_x_ticks
-                                                          %in% existing_frag_counts)]
+  missing_fragment_counts = plot_x_ticks[!(plot_x_ticks %in%
+                                           existing_frag_counts)]
   return(missing_fragment_counts)
 }
 
@@ -455,18 +461,22 @@ combined_counts_overlaps_all_scATAC_data = cbind(combined_count_overlaps,
                                                  shendure_combined_count_overlaps,
                                                  tsankov_combined_count_overlaps)
 tsse_filtered_correlations = list()
-for (tissue in tissues_for_tsse_filtered_cells) {
-  dir = tolower(tissue)
-  dir = gsub(" ", "_", dir)
+for (dataset_tissue in dataset_tissues_for_tsse_filtered_cells) {
+  dataset = unlist(strsplit(dataset_tissue, split = "-"))[1]
+  tissue = unlist(strsplit(dataset_tissue, split = "-"))[2]
+  dataset_dir = tolower(dataset)
+  dataset_dir = gsub(" ", "_", dataset_dir)
+  tissue_dir = tolower(tissue)
+  tissue_dir = gsub(" ", "_", tissue_dir)
   path = paste("processed_data/count_overlap_data/tsse_filtered",
-               dir, sep="/")
+               dataset_dir, tissue_dir, sep="/")
   correlations =
     combine_tsse_filtered_count_overlaps_into_correlation_df(
       path,
       cancer_type, 
       plot_x_ticks)
   rownames(correlations) =
-    paste(tissue, rownames(correlations))
+    paste(dataset, tissue, rownames(correlations))
   
   tsse_filtered_correlations = append(tsse_filtered_correlations,
                                       list(correlations))
