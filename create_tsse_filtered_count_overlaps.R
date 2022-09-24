@@ -14,12 +14,12 @@ option_list <- list(
   make_option("--files_pattern", type="character")
 )
 
-args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args=
-#       c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000",
-#         "--dataset=bing_ren",
-#         "--cell_types=Melanocyte,Fibroblast (Epithelial)",
-#         "--files_pattern=skin_SM"))
+# args = parse_args(OptionParser(option_list=option_list))
+args = parse_args(OptionParser(option_list=option_list), args=
+      c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000",
+        "--dataset=shendure",
+        "--cell_types=Intestinal epithelial cells",
+        "--files_pattern=intestine"))
 
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
@@ -134,7 +134,14 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
                                   metadata, mc.cores=8)
   }
   else if (dataset == "tsankov") {
-    filtered_metadatas = metadata
+    # No need to filter anything out because metadata for Tsankov is per
+    # tissue/sample type
+    if (length(files) == 4) {
+      filtered_metadatas = list(metadata, metadata, metadata, metadata)
+    }
+    else if (length(files) == 3) {
+      filtered_metadatas = list(metadata, metadata, metadata)
+    }
   }
   
   print("Counting fragments per cell")
@@ -150,7 +157,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
                                 filtered_metadatas,
                                 sample_barcodes_in_metadatas) 
   }
-  else if (dataset == "shendure") {
+  else if (dataset == "shendure" || dataset == "tsankov") {
     sample_barcodes_in_metadatas = mclapply(filtered_metadatas, 
                                             function(x) x[["cell_barcode"]])
   }
@@ -159,7 +166,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   metadata_with_fragment_counts = tibble()
   for (metadata in filtered_metadatas) {
     metadata["frag_counts"] = fragment_counts_per_sample[[idx]][match(sample_barcodes_in_metadatas[[idx]], 
-                                                                      names(fragment_counts_per_sample[[idx]]))]
+                                                                names(fragment_counts_per_sample[[idx]]))]
     metadata_with_fragment_counts = bind_rows(metadata_with_fragment_counts, 
                                               as_tibble(metadata))
     # filtered_metadatas[idx] = metadata
@@ -184,18 +191,16 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   else if (dataset == "shendure") {
     tissue_name = get_tissue_name_shendure(files[1])
   }
+  else {
+    tissue_name = "lung"
+  }
   
   for (count in top_tsse_fragment_count_range) {
-    if (dataset == "bing_ren") {
-      filename = paste("count_overlaps", "frag_count_filter", count, sep="_")
-    }
-    else if (dataset == "shendure") {
-      filename = paste("count_overlaps", "frag_count_filter", count, sep="_")
-    }
+    filename = paste("count_overlaps", "frag_count_filter", count, sep="_")
     filename = paste(filename, "rds", sep=".")
     filepath = paste("processed_data/count_overlap_data/tsse_filtered",
                      dataset, tissue_name, sep="/")
-    dir.create(filepath)
+    dir.create(filepath, recursive = T)
     filepath = paste(filepath, filename, sep="/")
     if (file.exists(filepath)) {
       count_overlaps = readRDS(filepath)
@@ -253,9 +258,10 @@ if (dataset == "bing_ren") {
   colnames(metadata)[2] = "sample"
   colnames(metadata)[grep("tss", colnames(metadata))] = "tsse"
   
-  files = setdiff(list.files("raw_dir/bed_files/", pattern=files_pattern),
-                  list.dirs("raw_dir/bed_files", recursive = FALSE, full.names = 
-                              FALSE))
+  files = setdiff(list.files("raw_dir/bed_files/JShendure_scATAC/", 
+                             pattern=files_pattern),
+                  list.dirs("raw_dir/bed_files/JShendure_scATAC/", 
+                            recursive = FALSE, full.names = FALSE))
   create_tsse_filtered_count_overlaps_per_tissue(files,
                                                  metadata,
                                                  interval.ranges,
@@ -273,28 +279,36 @@ if (dataset == "bing_ren") {
   colnames(metadata_tsankov_proximal)[2] = "sample"
   colnames(metadata_tsankov_proximal)[grep("TSSEnrichment", 
                                  colnames(metadata_tsankov_proximal))] = "tsse"
+  colnames(metadata_tsankov_proximal)[grep("celltypes", 
+                            colnames(metadata_tsankov_proximal))] = "cell_type"
   
   colnames(metadata_tsankov_distal)[1] = "cell_barcode"
   colnames(metadata_tsankov_distal)[2] = "sample"
   colnames(metadata_tsankov_distal)[grep("TSSEnrichment", 
                                   colnames(metadata_tsankov_distal))] = "tsse"
+  colnames(metadata_tsankov_distal)[grep("celltypes", 
+                              colnames(metadata_tsankov_distal))] = "cell_type"
   
   files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
                                       pattern=".*proximal*")
   files_Tsankov_distal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
                                     pattern=".*distal.*")
-  create_tsse_filtered_count_overlaps_per_tissue(files_Tsankov_proximal,
-                                                 metadata_tsankov_proximal,
-                                                 interval.ranges,
-                                                 ch,
-                                                 top_tsse_fragment_count_range,
-                                                 cell_types,
-                                                 dataset)
-  create_tsse_filtered_count_overlaps_per_tissue(files_Tsankov_distal,
-                                                 metadata_tsankov_distal,
-                                                 interval.ranges,
-                                                 ch,
-                                                 top_tsse_fragment_count_range,
-                                                 cell_types,
-                                                 dataset)
+  if ("distal_lung" %in% files_pattern) {
+    create_tsse_filtered_count_overlaps_per_tissue(files_Tsankov_distal,
+                                                   metadata_tsankov_distal,
+                                                   interval.ranges,
+                                                   ch,
+                                                   top_tsse_fragment_count_range,
+                                                   cell_types,
+                                                   dataset)
+  }
+  else {
+    create_tsse_filtered_count_overlaps_per_tissue(files_Tsankov_proximal,
+                                                   metadata_tsankov_proximal,
+                                                   interval.ranges,
+                                                   ch,
+                                                   top_tsse_fragment_count_range,
+                                                   cell_types,
+                                                   dataset)
+  }
 }
