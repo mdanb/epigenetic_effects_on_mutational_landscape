@@ -9,8 +9,11 @@ options(scipen=999)
 option_list <- list( 
   make_option("--cancer_type", type="character"),
   make_option("--boxplot_cell_types", type="character"),
-  make_option("--tissues_for_tsse_filtered_cells", type="character",
+  make_option("--tissue_for_tsse_filtered_cell_types", type="character",
               help="format: comma separated [Dataset]-[Tissue]"),
+  make_option("--tsse_filtered_cell_types", type="character", 
+              help="format: comma separated [CellType1]-[CellType2]-etc..., 
+              order must correspond to tissue_for_tsse_filtered_cell_types"),
   make_option("--plot_filename", type="character"),
   make_option("--plot_x_ticks", type="character")
 )
@@ -19,14 +22,17 @@ args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args =
 #                     c("--cancer_type=Skin.Melanoma",
 #                       "--boxplot_cell_types=Skin Sun Exposed Melanocyte (BR)-Skin Melanocyte (BR)-Skin Sun Exposed Fibroblast (Epithelial) (BR)-Skin Fibroblast (Epithelial) (BR)-Skin Keratinocyte 1 (BR)-Skin Sun Exposed Keratinocyte 1 (BR)-Skin T Lymphocyte 1 (CD8+) (BR)-Skin Sun Exposed T Lymphocyte 1 (CD8+) (BR)-Skin T lymphocyte 2 (CD4+) (BR)-Skin Sun Exposed T lymphocyte 2 (CD4+) (BR)-Skin Macrophage (General,Alveolar) (BR)-Skin Sun Exposed Macrophage (General,Alveolar) (BR)",
-#                       "--tissues_for_tsse_filtered_cells=Bing Ren-Skin,Bing Ren-Skin Sun Exposed",
+#                       "--tissue_for_tsse_filtered_cell_types=Bing Ren-Skin,Bing Ren-Skin Sun Exposed",
+#                       "--tsse_filtered_cell_types=Fibroblast (Epithelial)-Melanocyte,Fibroblast (Epithelial)-Melanocyte",
 #                       "--plot_filename=melanoma_num_frags_vs_correlation.png",
 #                       "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000"))
 
 cancer_type = args$cancer_type
 boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = "-"))
-dataset_tissues_for_tsse_filtered_cells = unlist(strsplit(args$tissues_for_tsse_filtered_cells, 
-                                                  split = ","))
+tissue_dataset_for_tsse_filtered_cell_types = unlist(strsplit(args$tissue_for_tsse_filtered_cell_types, 
+                                              split = ","))
+tsse_filtered_cell_types = unlist(strsplit(args$tsse_filtered_cell_types, 
+                                           split = ","))
 plot_filename = args$plot_filename
 plot_x_ticks = as.integer(unlist(strsplit(args$plot_x_ticks, split = ",")))
 
@@ -349,7 +355,9 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
 
 combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path,
                                                                      cancer_type,
-                                                                     plot_x_ticks) {
+                                                                     plot_x_ticks,
+                                                                     current_tsse_cell_types) {
+  cell_type_for_grep = lapply(current_tsse_cell_types, add_escape_if_necessary)
   count = 1
   tsse_filtered_correlations = c()
   for (file in mixedsort(list.files(folder_path,
@@ -362,6 +370,9 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
       num_fragments = head(unlist(strsplit(num_fragments, split="[.]")), 1)
       
       count_overlaps = readRDS(file)
+      cell_type_col_idx = lapply(cell_type_for_grep, grep,
+                                 colnames(count_overlaps), ignore.case=T)
+      count_overlaps = count_overlaps[, unlist(cell_type_col_idx)]
       corrs = data.frame(cor(count_overlaps,
                              mut_count_data[, cancer_type],
                              use="complete"))
@@ -472,7 +483,8 @@ combined_counts_overlaps_all_scATAC_data = cbind(combined_count_overlaps,
                                                  shendure_combined_count_overlaps,
                                                  tsankov_combined_count_overlaps)
 tsse_filtered_correlations = list()
-for (dataset_tissue in dataset_tissues_for_tsse_filtered_cells) {
+idx = 1
+for (dataset_tissue in tissue_dataset_for_tsse_filtered_cell_types) {
   dataset = unlist(strsplit(dataset_tissue, split = "-"))[1]
   tissue = unlist(strsplit(dataset_tissue, split = "-"))[2]
   dataset_dir = tolower(dataset)
@@ -481,11 +493,15 @@ for (dataset_tissue in dataset_tissues_for_tsse_filtered_cells) {
   tissue_dir = gsub(" ", "_", tissue_dir)
   path = paste("processed_data/count_overlap_data/tsse_filtered",
                dataset_dir, tissue_dir, sep="/")
+  current_tsse_cell_types = tsse_filtered_cell_types[idx]
+  current_tsse_cell_types = unlist(strsplit(current_tsse_cell_types, 
+                                            split = "-"))
   correlations =
     combine_tsse_filtered_count_overlaps_into_correlation_df(
       path,
       cancer_type, 
-      plot_x_ticks)
+      plot_x_ticks,
+      current_tsse_cell_types)
   if (dataset == "Bing Ren") {
     dataset_extension = "(BR)"
   }
@@ -501,6 +517,7 @@ for (dataset_tissue in dataset_tissues_for_tsse_filtered_cells) {
   
   tsse_filtered_correlations = append(tsse_filtered_correlations,
                                       list(correlations))
+  idx = idx + 1
 }
 
 prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
