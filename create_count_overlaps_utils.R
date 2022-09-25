@@ -1,5 +1,6 @@
 library(exomeCopy)
 library(data.table)
+library(stringr)
 
 add_cell_barcodes_to_metadata <- function(i, metadatas, barcodes) {
   metadatas[[i]]["cell_barcode"] = barcodes[i]
@@ -49,6 +50,11 @@ get_sample_name <- function(file) {
 
 get_sample_name_shendure <- function(file) {
   sample_name = unlist(strsplit(file, split="\\."))[1]
+  return(sample_name)
+}
+
+get_sample_name_tsankov <- function(file) {
+  sample_name = str_remove(file, "_fragments.tsv")
   return(sample_name)
 }
 

@@ -15,6 +15,11 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
+# args = parse_args(OptionParser(option_list=option_list), args = 
+#                   c("--dataset=tsankov",
+#                     "--cell_number_filter=100",
+#                     "--cores=8"))
+
 cell_number_filter = args$cell_number_filter
 cores = args$cores
 dataset = args$dataset
@@ -231,44 +236,51 @@ create_count_overlaps_file_shendure <- function(file, cell_number_filter,
     sample <- filter_sample_by_cell_number(sample,
                                            counts_per_cell_type, 
                                            cell_number_filter)
-    if (!file.exists(filename)) {
-      count_overlaps <- compute_count_overlaps(sample, interval_ranges)
-      saveRDS(count_overlaps, filepath)
-    }
+    # if (!file.exists(filename)) {
+    count_overlaps <- compute_count_overlaps(sample, interval_ranges)
+    saveRDS(count_overlaps, filepath)
+    # }
   }
 }
 
 create_count_overlaps_file_tsankov <- function(file, cell_number_filter, 
                                                metadata, interval_ranges, 
                                                chain) {
-  filename = paste(file_path_sans_ext(file, TRUE), "rds", sep=".")
+  filename = paste(file_path_sans_ext(file, TRUE))
   filename = unlist(strsplit(filename, split = "_"))
-  filename = paste(filename[2:length(filename)], collapse="_")
+  filename = paste(filename[1:length(filename) - 1], collapse="_")
   filename = paste("Tsankov_count_filter", cell_number_filter,  
                    "count_overlaps", filename, sep="_")
+  filename = paste(filename, "rds", sep=".")
   filepath = paste("processed_data/count_overlap_data", filename, sep="/")
+  
   if (!file.exists(filepath)) {
     print(paste("Processing", file, sep= " "))
     sample = import(paste0(paste("raw_dir", "bed_files", "Tsankov_scATAC", 
                                  substr(file, 1, nchar(file) - 3), sep="/"), 
                            "tsv"),
                     format="bed")
+    sample_name = get_sample_name_tsankov(file)
+    filtered_metadata = filter_metadata_by_sample_name(sample_name, metadata)
     sample = migrate_bed_file_to_hg37(sample, chain)
-    sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(metadata, 
+    sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(filtered_metadata, 
                                                                   "X",
                                                                   "#")
+    sample_barcodes_in_metadata = substr(sample_barcodes_in_metadata, 1, 16)
+    sample$name = substr(sample$name, 1, 16)
     sample <- filter_sample_to_contain_only_cells_in_metadata(sample,
                                                               sample_barcodes_in_metadata)
+    
     sample <- get_sample_cell_types_tsankov(sample, sample_barcodes_in_metadata,
-                                            metadata)
+                                            filtered_metadata)
     counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
     sample <- filter_sample_by_cell_number(sample,
                                            counts_per_cell_type, 
                                            cell_number_filter)
-    if (!file.exists(filename)) {
-      count_overlaps = compute_count_overlaps(sample, interval_ranges)
-      saveRDS(count_overlaps, filepath)
-    }
+    # if (!file.exists(filename)) {
+    count_overlaps = compute_count_overlaps(sample, interval_ranges)
+    saveRDS(count_overlaps, filepath)
+    # }
   }
 }
 
@@ -401,6 +413,7 @@ if (dataset == "bing_ren") {
                            list.dirs("raw_dir/bed_files/JShendure_scATAC/", 
                                      recursive = FALSE, 
                                      full.names = FALSE))
+  
   mclapply(files_Shendure, create_count_overlaps_file_shendure,
          cell_number_filter=cell_number_filter,
          metadata=metadata_Shendure,
@@ -411,11 +424,12 @@ if (dataset == "bing_ren") {
     read.csv("raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv")
   metadata_tsankov_distal = 
     read.csv("raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv")
-  
+  colnames(metadata_tsankov_proximal)[2] <- "sample"
+  colnames(metadata_tsankov_distal)[2] <- "sample"
   files_Tsankov_distal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
-                                    pattern=".*distal.*")
+                                    pattern="RPL")
   files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
-                                      pattern=".*proximal*")
+                                      pattern="IC")
   mclapply(files_Tsankov_proximal, 
            create_count_overlaps_file_tsankov,
            cell_number_filter=cell_number_filter,
