@@ -27,9 +27,11 @@ get_cell_counts_df <- function(count_overlaps_filename) {
   cell_counts_filename = 
     cell_counts_filename[start_index:length(cell_counts_filename)]
   cell_counts_filename = paste(cell_counts_filename, collapse="_")
-  if (grepl("proximal", cell_counts_filename) || grepl("distal", 
+  if (grepl("IC", cell_counts_filename) || grepl("RPL", 
                                                        cell_counts_filename)) {
-    cell_counts_filename = paste("fragments", cell_counts_filename, sep="_")
+    cell_counts_filename = paste(unlist(strsplit(cell_counts_filename, "[.]"))[1], 
+                                 "fragments.rds", sep = "_")
+    # cell_counts_filename = paste("fragments", cell_counts_filename, sep="_")
   }
   cell_counts_filename = paste("cell_counts", cell_counts_filename, sep="_")
   cell_counts_path = paste("processed_data", "cell_counts_per_sample", 
@@ -142,7 +144,8 @@ save_combined_overlaps_shendure_tsankov <- function(filepaths,
   for (f in filepaths) {
     print(paste("Processing count overlaps for file: ", f, sep=""))
     if (grepl("Tsankov", f)) {
-      tissue_name <- get_tissue_name_tsankov(f)
+      # tissue_name <- get_tissue_name_tsankov(f)
+      tissue_name = "lung"
     }
     else {
       tissue_name <- get_tissue_name_shendure(f)
