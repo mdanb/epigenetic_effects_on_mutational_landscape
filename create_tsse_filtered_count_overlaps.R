@@ -16,10 +16,10 @@ option_list <- list(
 
 args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args=
-#       c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000",
-#         "--dataset=shendure",
-#         "--cell_types=Intestinal epithelial cells",
-#         "--files_pattern=intestine"))
+#         c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000",
+#           "--dataset=tsankov",
+#           "--cell_types=AT2",
+#           "--files_pattern=RPL"))
 
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
@@ -128,21 +128,23 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   else if (dataset == "shendure") {
     sample_names = unlist(lapply(files, get_sample_name_shendure))
   }
-  
-  if (dataset == "bing_ren" || dataset == "shendure") {
-    filtered_metadatas = mclapply(sample_names, filter_metadata_by_sample_name, 
-                                  metadata, mc.cores=8)
+  else {
+    sample_names = unlist(lapply(files, get_sample_name_tsankov))
   }
-  else if (dataset == "tsankov") {
-    # No need to filter anything out because metadata for Tsankov is per
-    # tissue/sample type
-    if (length(files) == 4) {
-      filtered_metadatas = list(metadata, metadata, metadata, metadata)
-    }
-    else if (length(files) == 3) {
-      filtered_metadatas = list(metadata, metadata, metadata)
-    }
-  }
+  # if (dataset == "bing_ren" || dataset == "shendure") {
+  filtered_metadatas = mclapply(sample_names, filter_metadata_by_sample_name, 
+                                metadata, mc.cores=8)
+  # }
+  # else if (dataset == "tsankov") {
+  #   # No need to filter anything out because metadata for Tsankov is per
+  #   # tissue/sample type
+  #   if (length(files) == 4) {
+  #     filtered_metadatas = list(metadata, metadata, metadata, metadata)
+  #   }
+  #   else if (length(files) == 3) {
+  #     filtered_metadatas = list(metadata, metadata, metadata)
+  #   }
+  # }
   
   print("Counting fragments per cell")
   fragment_counts_per_sample = mclapply(migrated_fragments, count_fragments_per_cell,
@@ -290,10 +292,10 @@ if (dataset == "bing_ren") {
                               colnames(metadata_tsankov_distal))] = "cell_type"
   
   files_Tsankov_proximal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
-                                      pattern=".*proximal*")
+                                      pattern="IC")
   files_Tsankov_distal = list.files("raw_dir/bed_files/Tsankov_scATAC/", 
-                                    pattern=".*distal.*")
-  if ("distal_lung" %in% files_pattern) {
+                                    pattern="RPL")
+  if ("RPL" %in% files_pattern) {
     create_tsse_filtered_count_overlaps_per_tissue(files_Tsankov_distal,
                                                    metadata_tsankov_distal,
                                                    interval.ranges,
