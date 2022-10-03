@@ -145,7 +145,12 @@ save_combined_overlaps_shendure_tsankov <- function(filepaths,
     print(paste("Processing count overlaps for file: ", f, sep=""))
     if (grepl("Tsankov", f)) {
       # tissue_name <- get_tissue_name_tsankov(f)
-      tissue_name = "lung"
+      if (grepl("RPL", f)) {
+        tissue_name = "Distal Lung"
+      }
+      else {
+        tissue_name = "Proximal Lung"
+      }
     }
     else {
       tissue_name <- get_tissue_name_shendure(f)
