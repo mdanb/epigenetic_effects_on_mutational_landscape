@@ -19,13 +19,13 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                     c("--cancer_type=Skin.Melanoma",
-#                       "--boxplot_cell_types=Skin Sun Exposed Melanocyte (BR)-Skin Melanocyte (BR)-Skin Sun Exposed Fibroblast (Epithelial) (BR)-Skin Fibroblast (Epithelial) (BR)-Skin Keratinocyte 1 (BR)-Skin Sun Exposed Keratinocyte 1 (BR)-Skin T Lymphocyte 1 (CD8+) (BR)-Skin Sun Exposed T Lymphocyte 1 (CD8+) (BR)-Skin T lymphocyte 2 (CD4+) (BR)-Skin Sun Exposed T lymphocyte 2 (CD4+) (BR)-Skin Macrophage (General,Alveolar) (BR)-Skin Sun Exposed Macrophage (General,Alveolar) (BR)",
-#                       "--tissue_for_tsse_filtered_cell_types=Bing Ren-Skin,Bing Ren-Skin Sun Exposed",
-#                       "--tsse_filtered_cell_types=Fibroblast (Epithelial)-Melanocyte,Fibroblast (Epithelial)-Melanocyte",
-#                       "--plot_filename=melanoma_num_frags_vs_correlation.png",
-#                       "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--cancer_type=Eso.AdenoCA",
+                      "--boxplot_cell_types=Stomach Goblet cells (SH)-Stomach Foveolar Cell (BR)-Colon Transverse Colon Epithelial Cell 2 (BR)-Esophagus Muscularis Foveolar Cell (BR)-Small Intestine Small Intestinal Enterocyte (BR)",
+                      "--tissue_for_tsse_filtered_cell_types=Shendure-Stomach,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Small Intestine",
+                      "--tsse_filtered_cell_types=Goblet cells,Foveolar Cell,Colon Epithelial Cell 2,Small Intestinal Enterocyte",
+                      "--plot_filename=esophagus_adenoca_num_frags_vs_correlation.png",
+                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000"))
 
 cancer_type = args$cancer_type
 boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = "-"))
