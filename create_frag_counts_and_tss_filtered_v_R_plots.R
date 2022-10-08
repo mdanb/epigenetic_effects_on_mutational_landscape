@@ -19,13 +19,21 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--cancer_type=Eso.AdenoCA",
+#                       "--boxplot_cell_types=Stomach Goblet cells (SH)-Stomach Foveolar Cell (BR)-Colon Transverse Colon Epithelial Cell 2 (BR)-Esophagus Muscularis Foveolar Cell (BR)-Small Intestine Small Intestinal Enterocyte (BR)",
+#                       "--tissue_for_tsse_filtered_cell_types=Shendure-Stomach,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Small Intestine",
+#                       "--tsse_filtered_cell_types=Goblet cells,Foveolar Cell,Colon Epithelial Cell 2,Small Intestinal Enterocyte",
+#                       "--plot_filename=esophagus_adenoca_num_frags_vs_correlation.png",
+#                       "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000"))
+
 args = parse_args(OptionParser(option_list=option_list), args =
-                    c("--cancer_type=Eso.AdenoCA",
-                      "--boxplot_cell_types=Stomach Goblet cells (SH)-Stomach Foveolar Cell (BR)-Colon Transverse Colon Epithelial Cell 2 (BR)-Esophagus Muscularis Foveolar Cell (BR)-Small Intestine Small Intestinal Enterocyte (BR)",
-                      "--tissue_for_tsse_filtered_cell_types=Shendure-Stomach,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Small Intestine",
-                      "--tsse_filtered_cell_types=Goblet cells,Foveolar Cell,Colon Epithelial Cell 2,Small Intestinal Enterocyte",
-                      "--plot_filename=esophagus_adenoca_num_frags_vs_correlation.png",
-                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000"))
+                    c("--cancer_type=Lung.AdenoCA",
+                      "--boxplot_cell_types=Distal Lung AT2 (TS)-Lung Alveolar Type 2 (AT2) Cell (BR)-Lung Bronchiolar and alveolar epithelial cells (SH)",
+                      "--tissue_for_tsse_filtered_cell_types=Tsankov-Lung,Bing Ren-Lung,Shendure-Lung",
+                      "--tsse_filtered_cell_types=AT2,Alveolar Type 2 (AT2) Cell,Bronchiolar and alveolar epithelial cells",
+                      "--plot_filename=lung_adenoca_at2_only_frags_vs_correlation.png",
+                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000,700000,800000,900000,1000000,2000000,3000000,4000000,5000000,6000000,8000000,10000000,15000000,20000000"))
 
 cancer_type = args$cancer_type
 boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = "-"))
@@ -373,15 +381,20 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
       cell_type_col_idx = lapply(cell_type_for_grep, grep,
                                  colnames(count_overlaps), ignore.case=T)
       count_overlaps = count_overlaps[, unlist(cell_type_col_idx)]
+      if (nrow(count_overlaps) == 0) {
+        corrs = data.frame()
+      }
+      else {
       corrs = data.frame(cor(count_overlaps,
                              mut_count_data[, cancer_type],
                              use="complete"))
-      colnames(corrs) = "correlation"
+      }
       for (cell_type in rownames(tsse_filtered_correlations)) {
         if (!(cell_type %in% rownames(corrs))) {
           corrs[cell_type, 1] = c(NA)
         }
       }
+      colnames(corrs) = "correlation"
       if (count == 1) {
         tsse_filtered_correlations = corrs
       }
