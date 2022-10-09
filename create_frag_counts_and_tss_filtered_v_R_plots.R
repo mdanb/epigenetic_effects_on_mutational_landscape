@@ -33,7 +33,7 @@ args = parse_args(OptionParser(option_list=option_list), args =
                       "--tissue_for_tsse_filtered_cell_types=Tsankov-Lung,Bing Ren-Lung,Shendure-Lung",
                       "--tsse_filtered_cell_types=AT2,Alveolar Type 2 (AT2) Cell,Bronchiolar and alveolar epithelial cells",
                       "--plot_filename=lung_adenoca_at2_only_frags_vs_correlation.png",
-                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000,700000,800000,900000,1000000,2000000,3000000,4000000,5000000,6000000,8000000,10000000,15000000,20000000"))
+                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000,700000,800000,900000,1000000,2000000,3000000,4000000,5000000,6000000,8000000,10000000,15000000,20000000,30000000,40000000,50000000"))
 
 cancer_type = args$cancer_type
 boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = "-"))
@@ -45,7 +45,7 @@ plot_filename = args$plot_filename
 plot_x_ticks = as.integer(unlist(strsplit(args$plot_x_ticks, split = ",")))
 
 CELL_NUMBER_FILTER = 1
-load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 
 run_one_simulation <- function(n_samples, count_overlaps, 
                                sampling_vec, mutations) {
@@ -307,6 +307,16 @@ get_correlations_from_missing_fragment_counts <- function(correlations_long,
   return(correlations_long)
 }
 
+add_na_correlations <- function(correlations, plot_x_ticks) {
+  for (frag_counts in plot_x_ticks) {
+    if (!(frag_counts %in% colnames(correlations))) {
+      correlations = correlations %>% add_column(frag_counts = NA)
+      colnames(correlations)[length(colnames(correlations))] = frag_counts
+    }
+  }
+  return(correlations)
+}
+
 prep_boxplots_per_cancer_type <- function(combined_count_overlaps, 
                                           mut_count_data, 
                                           cancer_type, 
@@ -357,6 +367,9 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
   correlations_long["num_fragments"] = as.integer(correlations_long[["num_fragments"]])
   correlations_long = correlations_long %>% 
                       filter(num_fragments %in% plot_x_ticks)
+  correlations_for_tsse_filtered_cells = lapply(correlations_for_tsse_filtered_cells,
+                                                add_na_correlations, 
+                                                plot_x_ticks)
   plot_and_save_boxplots(correlations_long, colnames(cell_types_count_overlaps),
                          plot_filename, correlations_for_tsse_filtered_cells)
 }
