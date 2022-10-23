@@ -22,6 +22,18 @@ args = parse_args(OptionParser(option_list=option_list))
 #          "--cell_types=Bronchiolar and alveolar epithelial cells",
 #           "--files_pattern=lung",
 #          "--cores=2"))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#        c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000",
+#          "--dataset=shendure",
+#          "--cell_types=Astrocytes/Oligodendrocytes,Astrocytes",
+#           "--files_pattern=brain",
+#          "--cores=2"))
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000,1000000,5000000,10000000,14388810",
+                      "--dataset=shendure",
+                      "--cell_types=Goblet cells",
+                      "--files_pattern=stomach",
+                      "--cores=1"))
 
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
@@ -111,14 +123,17 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
                                                            cores) {
   
   if (dataset == "bing_ren") {
-    filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", "raw_dir", "bed_files", files, sep="/")
+    filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
+                      "raw_dir", "bed_files", files, sep="/")
   }
   else if (dataset == "shendure") {
-    filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", "raw_dir", "bed_files", "JShendure_scATAC", 
+    filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
+                      "raw_dir", "bed_files", "JShendure_scATAC", 
                       files, sep="/")
   }
   else {
-    filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", "raw_dir", "bed_files", "Tsankov_scATAC", 
+    filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
+                      "raw_dir", "bed_files", "Tsankov_scATAC", 
                       files, sep="/")
   }
 
@@ -198,7 +213,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   
   idx = 1
   metadata_with_fragment_counts = tibble()
-  for (metadata in filtered_metadatas) {
+    for (metadata in filtered_metadatas) {
     metadata["frag_counts"] = as.integer(fragment_counts_per_sample[[idx]][match(sample_barcodes_in_metadatas[[idx]], 
                                                                 names(fragment_counts_per_sample[[idx]]))])
     metadata_with_fragment_counts = bind_rows(metadata_with_fragment_counts, 
@@ -288,12 +303,14 @@ if (dataset == "bing_ren") {
                                                  dataset,
                                                  cores)
 } else if (dataset == "shendure") {
+  print("Creating TSS filtered overlaps for Shendure")
   metadata = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
                         sep="\t",
                         header=TRUE)
   colnames(metadata)[1] = "cell_barcode"
   colnames(metadata)[2] = "sample"
   colnames(metadata)[grep("tss", colnames(metadata))] = "tsse"
+  # metadata["bruno_tsse"] =  metadata["tsse"] / metadata["total_deduplicated"]
   
   files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC/", 
                              pattern=files_pattern),
