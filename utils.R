@@ -72,3 +72,12 @@ load_mutation_data <- function() {
   mut = mut[, 1:37]
   return(mut)
 }
+
+run_one_simulation <- function(n_samples, count_overlaps, sampling_vec) {
+  subsampled_count_overlaps <- rep(0, length(count_overlaps))
+  names(subsampled_count_overlaps) <- names(count_overlaps)
+  samples <- sample(sampling_vec, n_samples)
+  idx = match(names(table(samples)), names(subsampled_count_overlaps))
+  subsampled_count_overlaps[idx] = table(samples)
+  return(subsampled_count_overlaps)
+}
