@@ -28,12 +28,12 @@ args = parse_args(OptionParser(option_list=option_list))
 #          "--cell_types=Astrocytes/Oligodendrocytes,Astrocytes",
 #           "--files_pattern=brain",
 #          "--cores=2"))
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000,1000000,5000000,10000000,14388810",
-                      "--dataset=shendure",
-                      "--cell_types=Goblet cells",
-                      "--files_pattern=stomach",
-                      "--cores=1"))
+#args = parse_args(OptionParser(option_list=option_list), args=
+#                    c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000,1000000,5000000,10000000,14388810",
+#                      "--dataset=shendure",
+#                      "--cell_types=Goblet cells",
+#                      "--files_pattern=stomach",
+#                      "--cores=1"))
 
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
