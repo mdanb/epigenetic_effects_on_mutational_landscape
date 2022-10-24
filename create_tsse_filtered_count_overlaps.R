@@ -22,13 +22,18 @@ args = parse_args(OptionParser(option_list=option_list))
 #          "--cell_types=Bronchiolar and alveolar epithelial cells",
 #           "--files_pattern=lung",
 #          "--cores=2"))
+args = parse_args(OptionParser(option_list=option_list), args=
+       c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000",
+         "--dataset=shendure",
+         "--cell_types=Goblet cells",
+         "--files_pattern=stomach",
+         "--cores=1"))
 
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
                                            split = ",")))
 dataset = args$dataset
-cell_types = unlist(strsplit(args$cell_types, 
-                             split = ","))
+cell_types = unlist(strsplit(args$cell_types, split = ","))
 files_pattern = args$files_pattern
 cores = args$cores
 
@@ -111,30 +116,36 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
                                                            cores) {
   
   if (dataset == "bing_ren") {
-    filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", "raw_dir", "bed_files", files, sep="/")
+    filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
+                      "raw_dir", "bed_files", files, sep="/")
   }
   else if (dataset == "shendure") {
-    filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", "raw_dir", "bed_files", "JShendure_scATAC", 
+    filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
+                      "raw_dir", "bed_files", "JShendure_scATAC", 
                       files, sep="/")
   }
   else {
-    filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", "raw_dir", "bed_files", "Tsankov_scATAC", 
+    filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
+                      "raw_dir", "bed_files", "Tsankov_scATAC", 
                       files, sep="/")
   }
 
   print("Importing BED files...")
   fragments = mclapply(filepaths, import, format="bed", mc.cores=cores)
   print("Migrating BED files...")
-  migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
-                                mc.cores=cores)
   
   if (dataset == "bing_ren") {
+    migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
+                                  mc.cores=cores)
     sample_names = unlist(lapply(files, get_sample_name))
   }
   else if (dataset == "shendure") {
+    migrated_fragments = fragments
     sample_names = unlist(lapply(files, get_sample_name_shendure))
   }
   else {
+    migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
+                                  mc.cores=cores)
     sample_names = unlist(lapply(files, get_sample_name_tsankov))
   }
   # if (dataset == "bing_ren" || dataset == "shendure") {
@@ -293,7 +304,7 @@ if (dataset == "bing_ren") {
                         header=TRUE)
   colnames(metadata)[1] = "cell_barcode"
   colnames(metadata)[2] = "sample"
-  colnames(metadata)[grep("tss", colnames(metadata))] = "tsse"
+  colnames(metadata)[grep("frit", colnames(metadata))] = "tsse"
   
   files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC/", 
                              pattern=files_pattern),
