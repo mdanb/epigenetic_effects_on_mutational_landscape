@@ -29,11 +29,12 @@ args = parse_args(OptionParser(option_list=option_list))
 #          "--cell_types=Astrocytes/Oligodendrocytes,Astrocytes",
 #           "--files_pattern=brain",
 #          "--cores=2"))
-#args = parse_args(OptionParser(option_list=option_list), args=
+# args = parse_args(OptionParser(option_list=option_list), args=
 #                    c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000,1000000,5000000,10000000,14388810",
 #                      "--dataset=shendure",
 #                      "--cell_types=Goblet cells",
 #                      "--files_pattern=stomach",
+#                      "--cores=1"))
 
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
@@ -209,6 +210,15 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
     # sample_barcodes_in_metadatas = mclapply(filtered_metadatas, 
     #                                         function(x) x[["cell_barcode"]])
   }
+  migrated_fragments <- mclapply(seq_along(migrated_fragments),
+                                 filter_samples_to_contain_only_cells_in_metadata,
+                                 migrated_fragments,
+                                 sample_barcodes_in_metadatas,
+                                 mc.cores=cores)
+  migrated_fragments <- mclapply(migrated_fragments,
+                                 function(x) x[!is.na(findOverlaps(x, interval_ranges,
+                                                          select = "arbitrary"))],
+                                 mc.cores=cores)
   print("Counting fragments per cell")
   fragment_counts_per_sample = mclapply(migrated_fragments, count_fragments_per_cell,
                                         mc.cores=cores)
