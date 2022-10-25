@@ -29,9 +29,9 @@ filter_metadata_by_sample_name <- function(sample_name, metadata) {
 filter_samples_to_contain_only_cells_in_metadata <- function(i,
                                                              samples,
                                                              sample_barcodes_in_metadatas) {
-  samples[i] = samples[[i]][samples[[i]]$name %in% 
+  samples[[i]] = samples[[i]][samples[[i]]$name %in% 
                               sample_barcodes_in_metadatas[[i]]]
-  return(samples[i])
+  return(samples[[i]])
 }
 
 get_fragments_by_cell_barcode <- function(i, sample_idx, fragments, 
