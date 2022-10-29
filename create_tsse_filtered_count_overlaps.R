@@ -23,6 +23,20 @@ args = parse_args(OptionParser(option_list=option_list))
 #           "--files_pattern=lung",
 #          "--cores=2"))
 
+args = parse_args(OptionParser(option_list=option_list), args=
+       c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000",
+         "--dataset=tsankov",
+         "--cell_types=AT2",
+          "--files_pattern=RPL",
+         "--cores=1"))
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#        c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000",
+#          "--dataset=bing_ren",
+#          "--cell_types=Airway Goblet Cell,Esophageal Epithelial Cell",
+#           "--files_pattern=esophagus_mucosa",
+#          "--cores=1"))
+
 # args = parse_args(OptionParser(option_list=option_list), args=
 #        c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000",
 #          "--dataset=shendure",
@@ -139,9 +153,9 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
 
   print("Importing BED files...")
   fragments = mclapply(filepaths, import, format="bed", mc.cores=cores)
-  print("Migrating BED files...")
-  
+
   if (dataset == "bing_ren") {
+    print("Migrating BED files...")
     migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
                                   mc.cores=cores)
     sample_names = unlist(lapply(files, get_sample_name))
@@ -151,6 +165,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
     sample_names = unlist(lapply(files, get_sample_name_shendure))
   }
   else {
+    print("Migrating BED files...")
     migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
                                   mc.cores=cores)
     sample_names = unlist(lapply(files, get_sample_name_tsankov))
@@ -277,9 +292,13 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
                                                      interval_ranges,
                                                      count,
                                                      cores)
-        count_overlaps = cbind(count_overlaps, 
-                               count_overlaps_from_missing_cells)
-        saveRDS(count_overlaps, filepath)
+        for (co in count_overlaps_from_missing_cells) {
+          if (length(co) > 0) {
+            count_overlaps = cbind(count_overlaps, 
+                                   co)
+            saveRDS(count_overlaps, filepath)
+          }
+        }
       }
     }
     else {
