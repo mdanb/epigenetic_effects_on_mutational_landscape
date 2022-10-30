@@ -23,12 +23,19 @@ args = parse_args(OptionParser(option_list=option_list))
 #           "--files_pattern=lung",
 #          "--cores=2"))
 
-args = parse_args(OptionParser(option_list=option_list), args=
-       c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000",
-         "--dataset=tsankov",
-         "--cell_types=AT2",
-          "--files_pattern=RPL",
-         "--cores=1"))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#        c("--top_tsse_fragment_count_range=1000",
+#          "--dataset=bing_ren",
+#          "--cell_types=Colon Epithelial Cell 2,Colon Epithelial Cell 1",
+#           "--files_pattern=colon_transverse",
+#          "--cores=1"))
+
+#args = parse_args(OptionParser(option_list=option_list), args=
+#       c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000",
+#         "--dataset=tsankov",
+#         "--cell_types=AT2",
+#          "--files_pattern=RPL",
+#         "--cores=1"))
 
 # args = parse_args(OptionParser(option_list=option_list), args=
 #        c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000",
@@ -299,13 +306,12 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
                                                      interval_ranges,
                                                      count,
                                                      cores)
-        for (co in count_overlaps_from_missing_cells) {
-          if (length(co) > 0) {
-            count_overlaps = cbind(count_overlaps, 
-                                   co)
-            saveRDS(count_overlaps, filepath)
-          }
-        }
+        # for (co in count_overlaps_from_missing_cells) {
+          # if (length(co) > 0) {
+        count_overlaps = cbind(count_overlaps, count_overlaps_from_missing_cells)
+            # saveRDS(count_overlaps, filepath)
+          # }
+        # }
       }
     }
     else {

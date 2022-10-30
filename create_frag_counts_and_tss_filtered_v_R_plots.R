@@ -36,13 +36,13 @@ args = parse_args(OptionParser(option_list=option_list))
 #                      "--plot_filename=lung_adenoca_at2_only_frags_vs_correlation.png",
 #                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000,700000,800000,900000,1000000,2000000,3000000,4000000,5000000,6000000,8000000,10000000,15000000,20000000"))
 
-args = parse_args(OptionParser(option_list=option_list), args =
-                   c("--cancer_type=Eso.AdenoCA",
-                     "--boxplot_cell_types=Stomach Goblet cells (SH)-Stomach Foveolar Cell (BR)-Colon Transverse Colon Epithelial Cell 2 (BR)-Esophagus Muscularis Foveolar Cell (BR)-Small Intestine Small Intestinal Enterocyte (BR)",
-                     "--tissue_for_tsse_filtered_cell_types=Shendure-Stomach,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Esophagus Muscularis,Bing Ren-Small Intestine",
-                     "--tsse_filtered_cell_types=Goblet cells-Stromal cells,Foveolar Cell,Colon Epithelial Cell 2,Foveolar Cell,Small Intestinal Enterocyte",
-                     "--plot_filename=esophagus_adenoca_num_frags_vs_correlation.png",
-                     "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                    c("--cancer_type=Eso.AdenoCA",
+#                      "--boxplot_cell_types=Stomach Goblet cells (SH)-Stomach Foveolar Cell (BR)-Colon Transverse Colon Epithelial Cell 2 (BR)-Esophagus Muscularis Foveolar Cell (BR)-Small Intestine Small Intestinal Enterocyte (BR)",
+#                      "--tissue_for_tsse_filtered_cell_types=Shendure-Stomach,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Small Intestine",
+#                      "--tsse_filtered_cell_types=Goblet cells,Foveolar Cell,Colon Epithelial Cell 2,Small Intestinal Enterocyte",
+#                      "--plot_filename=esophagus_adenoca_num_frags_vs_correlation.png",
+#                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
 
 # args = parse_args(OptionParser(option_list=option_list), args =
 #                    c("--cancer_type=Breast.AdenoCA",
@@ -51,6 +51,14 @@ args = parse_args(OptionParser(option_list=option_list), args =
 #                      "--tsse_filtered_cell_types=Basal Epithelial (Mammary),Goblet cells,Mammary Luminal Epithelial Cell 1,Mammary Luminal Epithelial Cell 2,Airway Goblet Cell",
 #                      "--plot_filename=breast_adenoca_num_frags_vs_correlation.png",
 #                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"))
+
+#args = parse_args(OptionParser(option_list=option_list), args =
+#                    c("--cancer_type=Breast.AdenoCA",
+#                      "--boxplot_cell_types=Mammary Tissue Basal Epithelial (Mammary) (BR)-Stomach Goblet cells (SH)-Mammary Tissue Mammary Luminal Epithelial Cell 1 (BR)-Mammary Tissue Mammary Luminal Epithelial Cell 2 (BR)-Esophagus Mucosa Airway Goblet Cell (BR)",
+#                      "--tissue_for_tsse_filtered_cell_types=Bing Ren-Mammary Tissue,Shendure-Stomach,Bing Ren-Mammary Tissue,Bing Ren-Mammary Tissue,Bing Ren-Esophagus Mucosa",
+#                      "--tsse_filtered_cell_types=Basal Epithelial (Mammary),Goblet cells,Mammary Luminal Epithelial Cell 1,Mammary Luminal Epithelial Cell 2,Airway Goblet Cell",
+#                      "--plot_filename=breast_adenoca_frags_vs_correlation.png",
+#                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
 
 
 cancer_type = args$cancer_type
@@ -411,6 +419,7 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
       count_overlaps = readRDS(file)
       cell_type_col_idx = lapply(cell_type_for_grep, grep,
                                  colnames(count_overlaps), ignore.case=T)
+
       count_overlaps = count_overlaps[, unlist(cell_type_col_idx), drop=FALSE]
       if (length(count_overlaps) == 0) {
         corrs = data.frame()
