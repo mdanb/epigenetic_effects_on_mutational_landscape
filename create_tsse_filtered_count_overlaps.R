@@ -309,7 +309,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
         # for (co in count_overlaps_from_missing_cells) {
           # if (length(co) > 0) {
         count_overlaps = cbind(count_overlaps, count_overlaps_from_missing_cells)
-            # saveRDS(count_overlaps, filepath)
+        saveRDS(count_overlaps, filepath)
           # }
         # }
       }
