@@ -27,6 +27,14 @@ args = parse_args(OptionParser(option_list=option_list))
 #                       "--plot_filename=esophagus_adenoca_num_frags_vs_correlation.png",
 #                       "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000"))
 
+# Melanoma
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--cancer_type=Skin.Melanoma",
+                      "--boxplot_cell_types=Skin Sun Exposed Melanocyte (BR)-Heart Schwann cells (SH)-Muscle Type II Skeletal Myocyte (BR)-Stomach Stromal cells (SH)-Lung Ciliated epithelial cells (SH)",
+                      "--tissue_for_tsse_filtered_cell_types=Bing Ren-Skin,Shendure-Heart,Bing Ren-Muscle,Shendure-Stomach,Shendure-Lung",
+                      "--tsse_filtered_cell_types=Melanocyte,Schwann cells,Type II Skeletal Myocyte,Stromal cells,Ciliated epithelial cells",
+                      "--plot_filename=melanoma_num_frags_vs_correlation.png",
+                      "--plot_x_ticks=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"))
 
 #args = parse_args(OptionParser(option_list=option_list), args =
 #                    c("--cancer_type=Lung.AdenoCA",
@@ -52,13 +60,13 @@ args = parse_args(OptionParser(option_list=option_list))
 #                      "--plot_filename=breast_adenoca_num_frags_vs_correlation.png",
 #                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"))
 
-#args = parse_args(OptionParser(option_list=option_list), args =
-#                    c("--cancer_type=Breast.AdenoCA",
-#                      "--boxplot_cell_types=Mammary Tissue Basal Epithelial (Mammary) (BR)-Stomach Goblet cells (SH)-Mammary Tissue Mammary Luminal Epithelial Cell 1 (BR)-Mammary Tissue Mammary Luminal Epithelial Cell 2 (BR)-Esophagus Mucosa Airway Goblet Cell (BR)",
-#                      "--tissue_for_tsse_filtered_cell_types=Bing Ren-Mammary Tissue,Shendure-Stomach,Bing Ren-Mammary Tissue,Bing Ren-Mammary Tissue,Bing Ren-Esophagus Mucosa",
-#                      "--tsse_filtered_cell_types=Basal Epithelial (Mammary),Goblet cells,Mammary Luminal Epithelial Cell 1,Mammary Luminal Epithelial Cell 2,Airway Goblet Cell",
-#                      "--plot_filename=breast_adenoca_frags_vs_correlation.png",
-#                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                   c("--cancer_type=ColoRect.AdenoCA",
+                     "--boxplot_cell_types=Mammary Tissue Basal Epithelial (Mammary) (BR)-Stomach Goblet cells (SH)-Mammary Tissue Mammary Luminal Epithelial Cell 1 (BR)-Mammary Tissue Mammary Luminal Epithelial Cell 2 (BR)-Esophagus Mucosa Airway Goblet Cell (BR)",
+                     "--tissue_for_tsse_filtered_cell_types=Bing Ren-Mammary Tissue,Shendure-Stomach,Bing Ren-Mammary Tissue,Bing Ren-Mammary Tissue,Bing Ren-Esophagus Mucosa",
+                     "--tsse_filtered_cell_types=Basal Epithelial (Mammary),Goblet cells,Mammary Luminal Epithelial Cell 1,Mammary Luminal Epithelial Cell 2,Airway Goblet Cell",
+                     "--plot_filename=breast_adenoca_num_frags_vs_correlation.png",
+                     "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"))
 
 
 cancer_type = args$cancer_type
@@ -392,7 +400,8 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
   saveRDS(correlations_long, correlations_filepath)
   correlations_long["num_fragments"] = as.integer(correlations_long[["num_fragments"]])
   correlations_long = correlations_long %>% 
-                      filter(num_fragments %in% plot_x_ticks)
+                      filter(num_fragments %in% plot_x_ticks) %>%
+                      filter(cell_type %in% cell_types)
   correlations_for_tsse_filtered_cells = lapply(correlations_for_tsse_filtered_cells,
                                                 add_na_correlations, 
                                                 plot_x_ticks)
