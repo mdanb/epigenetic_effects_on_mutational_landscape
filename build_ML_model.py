@@ -13,7 +13,7 @@ from sklearn.model_selection import KFold
 from sklearn.metrics import explained_variance_score
 import argparse
 import glob
-from utils import load_scATAC, load_agg_mutations, filter_agg_data, filter_mutations_by_cancer
+from utils import load_scATAC, load_agg_mutations, filter_agg_data, filter_mutations_by_cancer, load_meso_mutations
 
 parser = argparse.ArgumentParser()
 
@@ -33,6 +33,8 @@ parser.add_argument('--scATAC_cell_number_filter', type=int,
                     help='minimum number of cells per cell type in scATAC', default=100)
 parser.add_argument('--combined_datasets', action="store_true",
                     help='combine all scATACseq', default=False)
+parser.add_argument('--meso', action="store_true",
+                    help='meso data', default=False)
 
 config = parser.parse_args()
 cancer_types = config.cancer_types
@@ -43,6 +45,8 @@ bing_ren = config.bing_ren
 shendure = config.shendure
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
 combined_datasets = config.combined_datasets
+meso = config.meso
+
 #### Helpers ####
 # Filter Data helpers
 def filter_clustered_data(scATAC_df, mutations_df):
@@ -143,12 +147,15 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
     #### Test Set Performance ####
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filename)
 
-def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types,
+def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types, meso,
                                   scATAC_source="bing_ren"):
-    mutations_df = load_agg_mutations()
+    if (meso):
+        mutations_df = load_meso_mutations()
+    else:
+        mutations_df = load_agg_mutations()
 
     #### Filter data ####
-    scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
+    scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df, meso)
 
 
     for cancer_type in cancer_types:
@@ -215,7 +222,7 @@ scATAC_df = load_scATAC("processed_data/count_overlap_data/combined_count_overla
                         f"/count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
 scATAC_df.columns = [c + " BR" for c in scATAC_df.columns]
 if ((run_all_cells or run_tissue_spec_cells) and bing_ren):
-    run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells, cancer_types)
+    run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells, cancer_types, meso)
 if (run_clustered_mutations and bing_ren):
     run_clustered_data_analysis(scATAC_df, cancer_types)
 
@@ -224,7 +231,8 @@ scATAC_df_shendure = load_scATAC("processed_data/count_overlap_data/combined_cou
 scATAC_df_shendure.columns = [c + " SH" for c in scATAC_df_shendure.columns]
 
 if (run_all_cells and shendure):
-    run_unclustered_data_analysis(scATAC_df_shendure, run_all_cells, run_tissue_spec_cells, cancer_types, "shendure")
+    run_unclustered_data_analysis(scATAC_df_shendure, run_all_cells, run_tissue_spec_cells, cancer_types, meso,
+                                  "shendure")
 
 scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                                  f"/tsankov_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
@@ -233,4 +241,4 @@ scATAC_df_tsankov.columns = [c + " TS" for c in scATAC_df_tsankov.columns]
 combined_scATAC_df = pd.concat((scATAC_df, scATAC_df_shendure, scATAC_df_tsankov), axis=1)
 if (run_all_cells and combined_datasets):
     run_unclustered_data_analysis(combined_scATAC_df, run_all_cells, run_tissue_spec_cells,
-                                  cancer_types, "combined_datasets")
+                                  cancer_types, meso, "combined_datasets")
