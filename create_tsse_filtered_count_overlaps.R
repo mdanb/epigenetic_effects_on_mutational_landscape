@@ -69,7 +69,18 @@ args = parse_args(OptionParser(option_list=option_list))
 #                      "--cell_types=Cardiac Pericyte 1,Cardiac Pericyte 2",
 #                      "--files_pattern=heart_lv_SM",
 #                      "--cores=1"))
-
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                    c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000",
+#                      "--dataset=bing_ren",
+#                      "--cell_types=Small Intestinal Enterocyte",
+#                      "--files_pattern=intestine",
+#                      "--cores=1"))
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000",
+                      "--dataset=bing_ren",
+                      "--cell_types=Cardiac Pericyte 1,Cardiac Pericyte 2,Endothelial Cell (Myocardial)",
+                      "--files_pattern=heart_lv_SM",
+                      "--cores=1"))
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
                                            split = ",")))
@@ -314,9 +325,14 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
                                                      cores)
         # for (co in count_overlaps_from_missing_cells) {
         if (length(count_overlaps_from_missing_cells) > 0) {
+          if (length(count_overlaps) > 0) {
             count_overlaps = cbind(count_overlaps, 
                                    count_overlaps_from_missing_cells)
-            saveRDS(count_overlaps, filepath)
+          }
+          else {
+            count_overlaps = count_overlaps_from_missing_cells
+          }
+          saveRDS(count_overlaps, filepath)
         }
         # }
       }
