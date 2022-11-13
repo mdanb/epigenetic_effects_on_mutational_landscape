@@ -65,15 +65,25 @@ fi
 #fi
 
 # Lung AdenoCA
-#if ! [ -f "figures/lung_adenoca_frags_vs_correlation.png" ]; then
-#	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
-#	--cancer_type "Lung.AdenoCA" \
-#	--boxplot_cell_types "Distal Lung AT2 (TS)-Lung Ciliated epithelial cells (SH)-Lung Club Cell (BR)-Muscle Type II Skeletal Myocyte (BR)-Lung Bronchiolar and alveolar epithelial cells (SH)" \
-#	--tissue_for_tsse_filtered_cell_types "Tsankov-Lung,Shendure-Lung,Bing Ren-Lung,Bing Ren-Muscle,Shendure-Lung" \
-#	--tsse_filtered_cell_types "AT2,Ciliated epithelial cells,Club Cell,Type II Skeletal Myocyte,Bronchiolar and alveolar epithelial cells" \
-#	--plot_filename "lung_adenoca_frags_vs_correlation.png" \
-#	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
-#fi
+if ! [ -f "figures/lung_adenoca_frags_vs_correlation.png" ]; then
+	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+	--cancer_type "Lung.AdenoCA" \
+	--boxplot_cell_types "Distal Lung AT2 (TS)-Lung Ciliated epithelial cells (SH)-Lung Club Cell (BR)-Muscle Type II Skeletal Myocyte (BR)-Lung Bronchiolar and alveolar epithelial cells (SH)" \
+	--tissue_for_tsse_filtered_cell_types "Tsankov-Lung,Shendure-Lung,Bing Ren-Lung,Bing Ren-Muscle,Shendure-Lung" \
+	--tsse_filtered_cell_types "AT2,Ciliated epithelial cells,Club Cell,Type II Skeletal Myocyte,Bronchiolar and alveolar epithelial cells" \
+	--plot_filename "lung_adenoca_frags_vs_correlation.png" \
+	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+fi
+
+if ! [ -f "figures/lung_adenoca_BR_only_num_frags_vs_correlation.png" ]; then               
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+    --cancer_type "Lung.AdenoCA" \                                       
+    --boxplot_cell_types "Lung Club Cell (BR),Muscle Type II Skeletal Myocyte (BR),Heart Lv Endothelial Cell (Myocardial) (BR),Small Intestine Smooth Muscle (General) (BR),Artery Tibial Vascular Smooth Muscle 1 (BR)" \
+    --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Muscle,Bing Ren-Heart Lv,Bing Ren-Small Intestine,Bing Ren-Artery Tibial" \
+    --tsse_filtered_cell_types "Club Cell,Type II Skeletal Myocyte,Endothelial Cell (Myocardial),Smooth Muscle (General),Vascular Smooth Muscle 1" \
+    --plot_filename "lung_adenoca_BR_only_frags_vs_correlation.png" \   
+    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+fi
 
 # Breast AdenoCA
 if ! [ -f "figures/breast_adenoca_num_frags_vs_correlation.png" ]; then
