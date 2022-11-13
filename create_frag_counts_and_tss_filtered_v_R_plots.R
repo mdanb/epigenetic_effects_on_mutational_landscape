@@ -68,17 +68,17 @@ args = parse_args(OptionParser(option_list=option_list))
 #                      "--plot_filename=colorect_adenoca_num_frags_vs_correlation.png",
 #                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000"))
 
-args = parse_args(OptionParser(option_list=option_list), args =
-                   c("--cancer_type=Liver.HCC",
-                     "--boxplot_cell_types=Liver Hepatoblasts (SH)-Liver Hepatocyte (BR)-Artery Aorta Smooth Muscle (General) (BR)-Eye Horizontal cells/Amacrine cells? (SH)-Nerve Tibial Endothelial Cell (General) 1 (BR)",
-                     "--tissue_for_tsse_filtered_cell_types=Shendure-Liver,Bing Ren-Liver,Bing Ren-Artery Aorta,Shendure-Eye,Bing Ren-Nerve Tibial",
-                     "--tsse_filtered_cell_types=Hepatoblasts,Hepatocyte,Smooth Muscle (General),Horizontal cells/Amacrine cells?,Endothelial Cell (General) 1",
-                     "--plot_filename=liver_hcc_num_frags_vs_correlation.png",
-                     "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                    c("--cancer_type=Liver.HCC",
+#                      "--boxplot_cell_types=Liver Hepatoblasts (SH)-Liver Hepatocyte (BR)-Artery Aorta Smooth Muscle (General) (BR)-Eye Horizontal cells/Amacrine cells? (SH)-Nerve Tibial Endothelial Cell (General) 1 (BR)",
+#                      "--tissue_for_tsse_filtered_cell_types=Shendure-Liver,Bing Ren-Liver,Bing Ren-Artery Aorta,Shendure-Eye,Bing Ren-Nerve Tibial",
+#                      "--tsse_filtered_cell_types=Hepatoblasts,Hepatocyte,Smooth Muscle (General),Horizontal cells/Amacrine cells?,Endothelial Cell (General) 1",
+#                      "--plot_filename=liver_hcc_num_frags_vs_correlation.png",
+#                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000"))
 
 
 cancer_type = args$cancer_type
-boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = "-"))
+boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = ","))
 tissue_dataset_for_tsse_filtered_cell_types = unlist(strsplit(args$tissue_for_tsse_filtered_cell_types, 
                                               split = ","))
 tsse_filtered_cell_types = unlist(strsplit(args$tsse_filtered_cell_types, 
