@@ -43,12 +43,12 @@ fi
 
 # Eso.AdenoCA                                                                   
 if ! [ -f "figures/esophagus_adenoca_BR_only_num_frags_vs_correlation.png" ]; then     
-   Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                   
-   --cancer_type "Eso.AdenoCA" \                                               
+   Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+   --cancer_type "Eso.AdenoCA" \
    --boxplot_cell_types "Lung Club Cell (BR),Stomach Foveolar Cell (BR),Colon Transverse Colon Epithelial Cell 2 (BR),Esophagus Muscularis Foveolar Cell (BR),Small Intestine Small Intestinal Enterocyte (BR)" \
-   --tsse_filtered_cell_types "Club Cell,Goblet cells,Foveolar Cell,Colon Epithelial Cell 2,Foveolar Cell,Small Intestinal Enterocyte" \
+   --tsse_filtered_cell_types "Club Cell,Foveolar Cell,Colon Epithelial Cell 2,Foveolar Cell,Small Intestinal Enterocyte" \
    --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Esophagus Muscularis,Bing Ren-Small Intestine" \
-   --plot_filename "esophagus_adenoca_BR_only_num_frags_vs_correlation.png" \          
+   --plot_filename "esophagus_adenoca_BR_only_num_frags_vs_correlation.png" \
    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
 fi                                                                             
 
@@ -128,15 +128,15 @@ if ! [ -f "figures/colorect_adenoca_num_frags_vs_correlation.png" ]; then
 	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000"
 fi
 
-if ! [ -f "figures/colorect_adenoca_BR_only_num_frags_vs_correlation.png" ]; then       
-    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \ 
-    --cancer_type "ColoRect.AdenoCA" \                                          
-    --boxplot_cell_types "Colon Transverse Colon Epithelial Cell 2 (BR),Colon Transverse Colonic Goblet Cell (BR),Colon Transverse Colon Epithelial Cell 1 (BR)" \
-    --tsse_filtered_cell_types "Colon Epithelial Cell 2;Colonic Goblet Cell;Colon Epithelial Cell 1" \
-    --tissue_for_tsse_filtered_cell_types "Bing Ren-Colon Transverse" \
-    --plot_filename "colorect_adenoca_BR_only_num_frags_vs_correlation.png" \           
-    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
-fi
+#if ! [ -f "figures/colorect_adenoca_BR_only_num_frags_vs_correlation.png" ]; then       
+#    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \ 
+#    --cancer_type "ColoRect.AdenoCA" \                                          
+#    --boxplot_cell_types "Colon Transverse Colon Epithelial Cell 2 (BR),Colon Transverse Colonic Goblet Cell (BR),Colon Transverse Colon Epithelial Cell 1 (BR)" \
+#    --tsse_filtered_cell_types "Colon Epithelial Cell 2;Colonic Goblet Cell;Colon Epithelial Cell 1" \
+#    --tissue_for_tsse_filtered_cell_types "Bing Ren-Colon Transverse" \
+#    --plot_filename "colorect_adenoca_BR_only_num_frags_vs_correlation.png" \           
+#    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+#fi
 
 # Lung SCC
 #if ! [ -f "figures/lung_scc_num_frags_vs_correlation.png" ]; then
