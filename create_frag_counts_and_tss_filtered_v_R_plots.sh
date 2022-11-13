@@ -150,12 +150,22 @@ fi
 #fi
 
 # Liver HCC
-#if ! [ -f "figures/liver_hcc_num_frags_vs_correlation.png" ]; then
-#	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
-#	--cancer_type "Liver.HCC" \
-#	--boxplot_cell_types "Liver Hepatoblasts (SH)-Liver Hepatocyte (BR)-Artery Aorta Smooth Muscle (General) (BR)-Eye Horizontal cells/Amacrine cells? (SH)-Nerve Tibial Endothelial Cell (General) 1 (BR)" \
-#	--tsse_filtered_cell_types "Hepatoblasts,Hepatocyte,Smooth Muscle (General),Horizontal cells/Amacrine cells?,Endothelial Cell (General) 1" \
-#	--tissue_for_tsse_filtered_cell_types "Shendure-Liver,Bing Ren-Liver,Bing Ren-Artery Aorta,Shendure-Eye,Bing Ren-Nerve Tibial" \
-#	--plot_filename "liver_hcc_num_frags_vs_correlation.png" \
-#	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000"
-#fi
+if ! [ -f "figures/liver_hcc_num_frags_vs_correlation.png" ]; then
+	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+	--cancer_type "Liver.HCC" \
+	--boxplot_cell_types "Liver Hepatoblasts (SH),Liver Hepatocyte (BR),Artery Aorta Smooth Muscle (General) (BR),Eye Horizontal cells/Amacrine cells? (SH),Nerve Tibial Endothelial Cell (General) 1 (BR)" \
+	--tsse_filtered_cell_types "Hepatoblasts,Hepatocyte,Smooth Muscle (General),Horizontal cells/Amacrine cells?,Endothelial Cell (General) 1" \
+	--tissue_for_tsse_filtered_cell_types "Shendure-Liver,Bing Ren-Liver,Bing Ren-Artery Aorta,Shendure-Eye,Bing Ren-Nerve Tibial" \
+	--plot_filename "liver_hcc_num_frags_vs_correlation.png" \
+	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000"
+fi
+
+if ! [ -f "figures/liver_hcc_BR_only_num_frags_vs_correlation.png" ]; then              
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                   
+    --cancer_type "Liver.HCC" \                                                 
+    --boxplot_cell_types "Liver Hepatocyte (BR),Artery Aorta Smooth Muscle (General) (BR),Nerve Tibial Endothelial Cell (General) 1 (BR),Small Intestine Small Intestinal Goblet Cell (BR),Muscle Type II Skeletal Myocyte (BR)" \
+    --tsse_filtered_cell_types "Hepatocyte,Smooth Muscle (General),Endothelial Cell (General) 1,Small Intestinal Goblet Cell,Type II Skeletal Myocyte" \
+    --tissue_for_tsse_filtered_cell_types "Bing Ren-Liver,Bing Ren-Artery Aorta,Bing Ren-Nerve Tibial,Bing Ren-Small Intestine,Bing Ren-Muscle" \
+    --plot_filename "liver_hcc_BR_only_num_frags_vs_correlation.png" \                  
+    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+fi 
