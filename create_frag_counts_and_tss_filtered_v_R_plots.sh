@@ -13,7 +13,7 @@
 if ! [ -f "figures/melanoma_num_frags_vs_correlation.png" ]; then
 	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
 	--cancer_type "Skin.Melanoma" \
-	--boxplot_cell_types "Skin Sun Exposed Melanocyte (BR)-Heart Schwann cells (SH)-Muscle Type II Skeletal Myocyte (BR)-Stomach Stromal cells (SH)-Lung Ciliated epithelial cells (SH)" \
+	--boxplot_cell_types "Skin Sun Exposed Melanocyte (BR),Heart Schwann cells (SH),Muscle Type II Skeletal Myocyte (BR),Stomach Stromal cells (SH),Lung Ciliated epithelial cells (SH)" \
 	--tissue_for_tsse_filtered_cell_types "Bing Ren-Skin Sun Exposed,Shendure-Heart,Bing Ren-Muscle,Shendure-Stomach,Shendure-Lung" \
 	--tsse_filtered_cell_types "Melanocyte,Schwann cells,Type II Skeletal Myocyte,Stromal cells,Ciliated epithelial cells" \
 	--plot_filename "melanoma_num_frags_vs_correlation.png" \
@@ -21,13 +21,13 @@ if ! [ -f "figures/melanoma_num_frags_vs_correlation.png" ]; then
 fi
 
 if ! [ -f "figures/melanoma_BR_only_num_frags_vs_correlation.png" ]; then               
-    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                   
-    --cancer_type "Skin.Melanoma" \                                             
-    --boxplot_cell_types "Skin Sun Exposed Melanocyte (BR)-Muscle Type II Skeletal Myocyte (BR)-Artery Aorta Smooth Muscle (General) (BR)-Small Intestine Smooth Muscle (General) (BR)-Adrenal Gland Cortical Epithelial-like (BR)" \
-    --tissue_for_tsse_filtered_cell_types "Bing Ren-Skin Sun Exposed,Bing Ren-Muscle,Bing Ren-Artery Aorta,Bing Ren-Small Intestine,Bing Ren-Adrenal Gland" \
-    --tsse_filtered_cell_types "Melanocyte,Type II Skeletal Myocyte,Smooth Muscle (General),Smooth Muscle (General),Cortical Epithelial-like" \
-    --plot_filename "melanoma_BR_only_num_frags_vs_correlation.png" \                   
-    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+    	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+    	--cancer_type "Skin.Melanoma" \
+    	--boxplot_cell_types "Skin Sun Exposed Melanocyte (BR),Muscle Type II Skeletal Myocyte (BR),Artery Aorta Smooth Muscle (General) (BR),Small Intestine Smooth Muscle (General) (BR),Adrenal Gland Cortical Epithelial-like (BR)" \
+    	--tissue_for_tsse_filtered_cell_types "Bing Ren-Skin Sun Exposed,Bing Ren-Muscle,Bing Ren-Artery Aorta,Bing Ren-Small Intestine,Bing Ren-Adrenal Gland" \
+    	--tsse_filtered_cell_types "Melanocyte,Type II Skeletal Myocyte,Smooth Muscle (General),Smooth Muscle (General),Cortical Epithelial-like" \
+    	--plot_filename "melanoma_BR_only_num_frags_vs_correlation.png" \
+    	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
 fi                                                                              
 
 # Eso.AdenoCA
@@ -67,7 +67,7 @@ fi
 if ! [ -f "figures/breast_adenoca_num_frags_vs_correlation.png" ]; then
 	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
 	--cancer_type "Breast.AdenoCA" \
-	--boxplot_cell_types "Mammary Tissue Basal Epithelial (Mammary) (BR)-Stomach Goblet cells (SH)-Mammary Tissue Mammary Luminal Epithelial Cell 1 (BR)-Mammary Tissue Mammary Luminal Epithelial Cell 2 (BR)-Esophagus Mucosa Airway Goblet Cell (BR)" \
+	--boxplot_cell_types "Mammary Tissue Basal Epithelial (Mammary) (BR),Stomach Goblet cells (SH),Mammary Tissue Mammary Luminal Epithelial Cell 1 (BR),Mammary Tissue Mammary Luminal Epithelial Cell 2 (BR),Esophagus Mucosa Airway Goblet Cell (BR)" \
 	--tissue_for_tsse_filtered_cell_types "Bing Ren-Mammary Tissue,Shendure-Stomach,Bing Ren-Mammary Tissue,Bing Ren-Mammary Tissue,Bing Ren-Esophagus Mucosa" \
 	--tsse_filtered_cell_types "Basal Epithelial (Mammary),Goblet cells,Mammary Luminal Epithelial Cell 1,Mammary Luminal Epithelial Cell 2,Airway Goblet Cell" \
 	--plot_filename "breast_adenoca_num_frags_vs_correlation.png" \
@@ -75,12 +75,12 @@ if ! [ -f "figures/breast_adenoca_num_frags_vs_correlation.png" ]; then
 fi
 
 if ! [ -f "figures/breast_adenoca_BR_only_num_frags_vs_correlation.png" ]; then         
-    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                   
-    --cancer_type "Breast.AdenoCA" \                                            
-    --boxplot_cell_types "Mammary Tissue Basal Epithelial (Mammary) (BR)-Mammary Tissue Mammary Luminal Epithelial Cell 1 (BR)-Mammary Tissue Mammary Luminal Epithelial Cell 2 (BR)-Esophagus Mucosa Airway Goblet Cell (BR)-Heart Atrial Appendage Cardiac Pericyte 1 (BR)" \
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+    --cancer_type "Breast.AdenoCA" \
+    --boxplot_cell_types "Mammary Tissue Basal Epithelial (Mammary) (BR),Mammary Tissue Mammary Luminal Epithelial Cell 1 (BR),Mammary Tissue Mammary Luminal Epithelial Cell 2 (BR),Esophagus Mucosa Airway Goblet Cell (BR),Heart Atrial Appendage Cardiac Pericyte 1 (BR)" \
     --tissue_for_tsse_filtered_cell_types "Bing Ren-Mammary Tissue,Bing Ren-Mammary Tissue,Bing Ren-Mammary Tissue,Bing Ren-Esophagus Mucosa,Bing Ren-Heart Atrial Appendage" \
     --tsse_filtered_cell_types "Basal Epithelial (Mammary),Mammary Luminal Epithelial Cell 1,Mammary Luminal Epithelial Cell 2,Airway Goblet Cell,Cardiac Pericyte 1" \
-    --plot_filename "breast_adenoca_BR_only_num_frags_vs_correlation.png" \             
+    --plot_filename "breast_adenoca_BR_only_num_frags_vs_correlation.png" \
     --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
 fi
 
@@ -96,12 +96,12 @@ if ! [ -f "figures/cns_gbm_frags_vs_correlation.png" ]; then
 fi
 
 if ! [ -f "figures/cns_gbm_BR_only_num_frags_vs_correlation.png" ]; then                    
-    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                   
-    --cancer_type "CNS.GBM" \                                                   
-    --boxplot_cell_types "Nerve Tibial Schwann Cell (General) (BR)-Heart Lv Cardiac Pericyte 1 (BR)-Muscle Type I Skeletal Myocyte (BR)-Lung Club Cell (BR)-Heart Lv Cardiac Pericyte 2 (BR)" \
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+    --cancer_type "CNS.GBM" \
+    --boxplot_cell_types "Nerve Tibial Schwann Cell (General) (BR),Heart Lv Cardiac Pericyte 1 (BR),Muscle Type I Skeletal Myocyte (BR),Lung Club Cell (BR),Heart Lv Cardiac Pericyte 2 (BR)" \
     --tsse_filtered_cell_types "Schwann Cell (General),Cardiac Pericyte 1,Type I Skeletal Myocyte,Club Cell,Cardiac Pericyte 2" \
     --tissue_for_tsse_filtered_cell_types "Bing Ren-Nerve Tibial,Bing Ren-Heart Lv,Bing Ren-Muscle,Bing Ren-Lung,Bing Ren-Heart Lv" \
-    --plot_filename "cns_gbm_BR_only_num_frags_vs_correlation.png" \                        
+    --plot_filename "cns_gbm_BR_only_num_frags_vs_correlation.png" \
     --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
 fi
 
