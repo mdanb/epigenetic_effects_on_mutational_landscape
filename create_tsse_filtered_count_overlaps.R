@@ -16,7 +16,7 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-#args = parse_args(OptionParser(option_list=option_list), args=
+# args = parse_args(OptionParser(option_list=option_list), args=
 #        c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000",
 #          "--dataset=shendure",
 #          "--cell_types=Bronchiolar and alveolar epithelial cells",
@@ -63,7 +63,12 @@ args = parse_args(OptionParser(option_list=option_list))
 #                      "--cell_types=Goblet cells",
 #                      "--files_pattern=stomach",
 #                      "--cores=1"))
-
+args = parse_args(OptionParser(option_list=option_list), args=
+                   c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000",
+                     "--dataset=bing_ren",
+                     "--cell_types=Cardiac Pericyte 1,Cardiac Pericyte 2",
+                     "--files_pattern=heart_lv_SM",
+                     "--cores=1"))
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
                                            split = ",")))
@@ -307,10 +312,11 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
                                                      count,
                                                      cores)
         # for (co in count_overlaps_from_missing_cells) {
-          # if (length(co) > 0) {
-        count_overlaps = cbind(count_overlaps, count_overlaps_from_missing_cells)
-        saveRDS(count_overlaps, filepath)
-          # }
+        if (length(count_overlaps_from_missing_cells) > 0) {
+            count_overlaps = cbind(count_overlaps, 
+                                   count_overlaps_from_missing_cells)
+            saveRDS(count_overlaps, filepath)
+        }
         # }
       }
     }
