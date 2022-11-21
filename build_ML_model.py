@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import KFold
-from sklearn.metrics import explained_variance_score
+from sklearn.metrics import r2_score
 import argparse
 import glob
 from utils import load_scATAC, load_agg_mutations, filter_agg_data, filter_mutations_by_cancer, load_meso_mutations
@@ -60,7 +60,7 @@ def get_train_test_split(X, y, test_size):
 # Cross Validation helpers
 def grid_search(X_train, y_train, pipe, params, num_k_folds):
     start_time = time.time()
-    grid_search_object = GridSearchCV(pipe, params, scoring="explained_variance",
+    grid_search_object = GridSearchCV(pipe, params, scoring="r2",
                                       cv=KFold(num_k_folds), n_jobs=-1, verbose=100)
     grid_search_object.fit(X_train, y_train)
     print(f"--- {time.time() - start_time} seconds ---")
@@ -109,7 +109,7 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n,
 # Test set performance helpers
 def print_and_save_test_set_perf(X_test, y_test, model, filename):
     test_preds = model.predict(X_test)
-    test_set_performance = explained_variance_score(y_test, test_preds)
+    test_set_performance = r2_score(y_test, test_preds)
     with open(filename, "w") as f:
         f.write(str(test_set_performance))
     print(f"Test set performance: {test_set_performance}")
