@@ -86,6 +86,9 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n,
     os.makedirs(backwards_elim_dir, exist_ok=True)
     top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values)
     X_train = X_train.loc[:, top_n_feats]
+    all_feature_rankings = top_n_feats(starting_clf, X_train.columns.size, X_train.columns.values)
+    print_and_save_top_features(all_feature_rankings,
+                                filepath=f"{backwards_elim_dir}/all_features_rankings.txt")
     print_and_save_top_features(top_n_feats,
                                 filepath=f"{backwards_elim_dir}/starter_model_top_features.txt")
     for idx in range(1, len(top_n_feats)):
