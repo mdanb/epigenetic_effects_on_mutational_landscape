@@ -178,6 +178,16 @@ if ! [ -f "figures/colorect_adenoca_BR_only_num_frags_vs_correlation.png" ]; the
     --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
 fi
 
+if ! [ -f "figures/colorect_adenoca_BR_only_with_bottom_feats_num_frags_vs_correlation.png" ]; then
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                   
+    --cancer_type "ColoRect.AdenoCA" \                                          
+    --boxplot_cell_types "Colon Transverse Colon Epithelial Cell 2 (BR),Colon Transverse Colonic Goblet Cell (BR),Colon Transverse Colon Epithelial Cell 1 (BR),Colon Sigmoid Fibroblast (Gastrointestinal) (BR),Artery Aorta Fibroblast (General) (BR),Esophagus Muscularis Smooth Muscle (Esophageal Muscularis) 3 (BR),Adipose Omentum Fibroblast (General) (BR),Skin Sun Exposed Fibroblast (Epithelial) (BR)" \
+    --tsse_filtered_cell_types "Colon Epithelial Cell 2;Colonic Goblet Cell;Colon Epithelial Cell 1,Fibroblast (Gastrointestinal),Fibroblast (General),Smooth Muscle (Esophageal Muscularis) 3,Fibroblast (General),Fibroblast (Epithelial)" \
+    --tissue_for_tsse_filtered_cell_types "Bing Ren-Colon Transverse,Bing Ren-Colon Sigmoid,Bing Ren-Artery Aorta,Bing Ren-Esophagus Muscularis,Bing Ren-Adipose Omentum,Bing Ren-Skin Sun Exposed" \      
+    --plot_filename "colorect_adenoca_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \   
+    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+fi                                                                              
+
 # Lung SCC
 if ! [ -f "figures/lung_scc_num_frags_vs_correlation.png" ]; then
 	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
