@@ -20,15 +20,25 @@ if ! [ -f "figures/melanoma_num_frags_vs_correlation.png" ]; then
 	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
 fi
 
-if ! [ -f "figures/melanoma_BR_only_num_frags_vs_correlation.png" ]; then               
-    	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
-    	--cancer_type "Skin.Melanoma" \
-    	--boxplot_cell_types "Skin Sun Exposed Melanocyte (BR),Muscle Type II Skeletal Myocyte (BR),Artery Aorta Smooth Muscle (General) (BR),Small Intestine Smooth Muscle (General) (BR),Adrenal Gland Cortical Epithelial-like (BR),Esophagus Ge Junction Macrophage (General) (BR),Thyroid Fibroblast (General) (BR),Artery Aorta Fibroblast (General) (BR),Adipose Omentum Fibroblast (General) (BR),Artery Aorta Vascular Smooth Muscle 1 (BR)" \
-    	--tissue_for_tsse_filtered_cell_types "Bing Ren-Skin Sun Exposed,Bing Ren-Muscle,Bing Ren-Artery Aorta,Bing Ren-Small Intestine,Bing Ren-Adrenal Gland,Bing Ren-Esophagus Ge Junction,Bing Ren-Thyroid,Bing Ren-Artery Aorta,Bing Ren-Adipose Omentum,Bing Ren-Artery Aorta" \
-    	--tsse_filtered_cell_types "Melanocyte,Type II Skeletal Myocyte,Smooth Muscle (General),Smooth Muscle (General),Cortical Epithelial-like,Macrophage (General),Fibroblast (General),Fibroblast (General),Fibroblast (General),Vascular Smooth Muscle 1" \
-    	--plot_filename "melanoma_BR_only_num_frags_vs_correlation.png" \
-    	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
-fi                                                                              
+#if ! [ -f "figures/melanoma_BR_only_num_frags_vs_correlation.png" ]; then               
+#    	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+#    	--cancer_type "Skin.Melanoma" \
+#    	--boxplot_cell_types "Skin Sun Exposed Melanocyte (BR),Muscle Type II Skeletal Myocyte (BR),Artery Aorta Smooth Muscle (General) (BR),Small Intestine Smooth Muscle (General) (BR),Adrenal Gland Cortical Epithelial-like (BR),Esophagus Ge Junction Macrophage (General) (BR),Thyroid Fibroblast (General) (BR),Artery Aorta Fibroblast (General) (BR),Adipose Omentum Fibroblast (General) (BR),Artery Aorta Vascular Smooth Muscle 1 (BR)" \
+#    	--tissue_for_tsse_filtered_cell_types "Bing Ren-Skin Sun Exposed,Bing Ren-Muscle,Bing Ren-Artery Aorta,Bing Ren-Small Intestine,Bing Ren-Adrenal Gland,Bing Ren-Esophagus Ge Junction,Bing Ren-Thyroid,Bing Ren-Artery Aorta,Bing Ren-Adipose Omentum,Bing Ren-Artery Aorta" \
+#    	--tsse_filtered_cell_types "Melanocyte,Type II Skeletal Myocyte,Smooth Muscle (General),Smooth Muscle (General),Cortical Epithelial-like,Macrophage (General),Fibroblast (General),Fibroblast (General),Fibroblast (General),Vascular Smooth Muscle 1" \
+#    	--plot_filename "melanoma_BR_only_num_frags_vs_correlation.png" \
+#    	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+#fi                                                                              
+
+if ! [ -f "figures/melanoma_BR_only_with_bottom_feats_num_frags_vs_correlation.png" ]; then       
+        Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \               
+        --cancer_type "Skin.Melanoma" \                                         
+        --boxplot_cell_types "Skin Sun Exposed Melanocyte (BR),Muscle Type II Skeletal Myocyte (BR),Artery Aorta Smooth Muscle (General) (BR),Small Intestine Smooth Muscle (General) (BR),Adrenal Gland Cortical Epithelial-like (BR),Esophagus Ge Junction Macrophage (General) (BR),Thyroid Fibroblast (General) (BR),Artery Aorta Fibroblast (General) (BR),Adipose Omentum Fibroblast (General) (BR),Artery Aorta Vascular Smooth Muscle 1 (BR)" \
+        --tissue_for_tsse_filtered_cell_types "Bing Ren-Skin Sun Exposed,Bing Ren-Muscle,Bing Ren-Artery Aorta,Bing Ren-Small Intestine,Bing Ren-Adrenal Gland,Bing Ren-Esophagus Ge Junction,Bing Ren-Thyroid,Bing Ren-Artery Aorta,Bing Ren-Adipose Omentum,Bing Ren-Artery Aorta" \
+        --tsse_filtered_cell_types "Melanocyte,Type II Skeletal Myocyte,Smooth Muscle (General),Smooth Muscle (General),Cortical Epithelial-like,Macrophage (General),Fibroblast (General),Fibroblast (General),Fibroblast (General),Vascular Smooth Muscle 1" \
+        --plot_filename "melanoma_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \       
+        --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+fi
 
 # Eso.AdenoCA
 if ! [ -f "figures/esophagus_adenoca_num_frags_vs_correlation.png" ]; then
