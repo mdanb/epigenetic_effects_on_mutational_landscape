@@ -2,7 +2,7 @@ library(tidyverse)
 library(optparse)
 source("utils.R")
 
-load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 dir.create("processed_data/cell_counts_per_sample/combined_cell_counts") 
 
 option_list <- list( 
@@ -13,6 +13,11 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--shendure",
+#                       "--cell_number_filter=100"))
+
+
 cell_number_filter = args$cell_number_filter
 bing_ren = args$bing_ren
 shendure = args$shendure
@@ -146,10 +151,10 @@ save_combined_overlaps_shendure_tsankov <- function(filepaths,
     if (grepl("Tsankov", f)) {
       # tissue_name <- get_tissue_name_tsankov(f)
       if (grepl("RPL", f)) {
-        tissue_name = "Distal Lung"
+        tissue_name = "distal_lung"
       }
       else {
-        tissue_name = "Proximal Lung"
+        tissue_name = "proximal_lung"
       }
     }
     else {
@@ -235,7 +240,8 @@ if (tsankov) {
   if (!file.exists(combined_filepath_tsankov)) {
     pattern = paste("Tsankov_count_filter_", cell_number_filter, 
                     "_count_overlaps", sep="")
-    filepaths = list.files("processed_data/count_overlap_data", pattern = pattern, 
+    filepaths = list.files("processed_data/count_overlap_data", 
+                           pattern = pattern, 
                            full.names = TRUE)
     save_combined_overlaps_shendure_tsankov(filepaths, combined_filepath_tsankov)
   }
