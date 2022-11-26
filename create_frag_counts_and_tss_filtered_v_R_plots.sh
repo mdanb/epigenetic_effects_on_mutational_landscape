@@ -61,6 +61,15 @@ if ! [ -f "figures/esophagus_adenoca_BR_only_num_frags_vs_correlation.png" ]; th
    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
 fi                                                                             
 
+if ! [ -f "figures/esophagus_adenoca_BR_only_with_bottom_feats_num_frags_vs_correlation.png" ]; then
+   Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                    
+   --cancer_type "Eso.AdenoCA" \                                                
+   --boxplot_cell_types "Lung Club Cell (BR),Stomach Foveolar Cell (BR),Colon Transverse Colon Epithelial Cell 2 (BR),Esophagus Muscularis Foveolar Cell (BR),Small Intestine Small Intestinal Enterocyte (BR),Esophagus Ge Junction Smooth Muscle (GE Junction) (BR),Vagina Fibroblast (General) (BR),Pancreas T Lymphocyte 1 (CD8+) (BR),Artery Aorta Fibroblast (General) (BR),Artery Aorta Endothelial Cell (General) 1 (BR)" \
+   --tsse_filtered_cell_types "Club Cell,Foveolar Cell,Colon Epithelial Cell 2,Foveolar Cell,Small Intestinal Enterocyte,Smooth Muscle (GE Junction),Fibroblast (General),T Lymphocyte 1 (CD8+),Fibroblast (General),Endothelial Cell (General) 1" \
+   --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Esophagus Muscularis,Bing Ren-Small Intestine,Bing Ren-Esophagus Ge Junction,Bing Ren-Vagina,Bing Ren-Pancreas,Bing Ren-Artery Aorta,Bing Ren-Artery Aorta" \
+   --plot_filename "esophagus_adenoca_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \   
+   --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+fi
 
 ## Lung AdenoCA AT2 only
 #if ! [ -f "figures/lung_adenoca_at2_only_frags_vs_correlation.png" ]; then
