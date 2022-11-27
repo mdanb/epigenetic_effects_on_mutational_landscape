@@ -70,18 +70,18 @@ args = parse_args(OptionParser(option_list=option_list))
 
 args = parse_args(OptionParser(option_list=option_list), args =
                    c("--cancer_type=CNS.GBM",
-                     "--boxplot_cell_types=nerve_tibial Schwann Cell (General) (BR),heart_lv Cardiac Pericyte 1 (BR),muscle Type I Skeletal Myocyte (BR),lung Club Cell (BR),heart_lv Cardiac Pericyte 2 (BR),heart_atrial_appendage Cardiac Pericyte 1 (BR),heart_lv Endothelial Cell (General) 1 (BR),lung Macrophage (General) (BR),adipose_omentum Macrophage (General,Alveolar) (BR),colon_transverse Smooth Muscle (General) (BR)",
+                     "--boxplot_cell_types=nerve_tibial Schwann Cell (General) (BR)/heart_lv Cardiac Pericyte 1 (BR)/muscle Type I Skeletal Myocyte (BR)/lung Club Cell (BR)/heart_lv Cardiac Pericyte 2 (BR)/heart_atrial_appendage Cardiac Pericyte 1 (BR)/heart_lv Endothelial Cell (General) 1 (BR)/lung Macrophage (General) (BR)/adipose_omentum Macrophage (General,Alveolar) (BR)/colon_transverse Smooth Muscle (General) (BR)",
                      "--tissue_for_tsse_filtered_cell_types=Bing Ren-Nerve Tibial,Bing Ren-Heart Lv,Bing Ren-Muscle,Bing Ren-Lung,Bing Ren-Heart Lv,Bing Ren-Heart Atrial Appendage,Bing Ren-Heart Lv,Bing Ren-Lung,Bing Ren-Adipose Omentum,Bing Ren-Colon Transverse",
-                     "--tsse_filtered_cell_types=Schwann Cell (General),Cardiac Pericyte 1,Type I Skeletal Myocyte,Club Cell,Cardiac Pericyte 2,Cardiac Pericyte 1,Endothelial Cell (General) 1,Macrophage (General),Macrophage (General,Alveolar),Smooth Muscle (General)",
+                     "--tsse_filtered_cell_types=Schwann Cell (General)/Cardiac Pericyte 1/Type I Skeletal Myocyte/Club Cell/Cardiac Pericyte 2/Cardiac Pericyte 1/Endothelial Cell (General) 1/Macrophage (General)/Macrophage (General,Alveolar)/Smooth Muscle (General)",
                      "--plot_filename=cns_gbm_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png",
                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"))
 
 cancer_type = args$cancer_type
-boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = ";"))
+boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = "/"))
 tissue_dataset_for_tsse_filtered_cell_types = unlist(strsplit(args$tissue_for_tsse_filtered_cell_types, 
                                               split = ","))
 tsse_filtered_cell_types = unlist(strsplit(args$tsse_filtered_cell_types, 
-                                           split = ","))
+                                           split = "/"))
 plot_filename = args$plot_filename
 plot_x_ticks = as.integer(unlist(strsplit(args$plot_x_ticks, split = ",")))
 
