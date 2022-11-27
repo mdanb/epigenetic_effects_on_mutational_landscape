@@ -10,35 +10,35 @@
 #fi
 
 # Melanoma
-if ! [ -f "figures/melanoma_num_frags_vs_correlation.png" ]; then
-	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
-	--cancer_type "Skin.Melanoma" \
-	--boxplot_cell_types "Skin Sun Exposed Melanocyte (BR),Heart Schwann cells (SH),Muscle Type II Skeletal Myocyte (BR),Stomach Stromal cells (SH),Lung Ciliated epithelial cells (SH)" \
-	--tissue_for_tsse_filtered_cell_types "Bing Ren-Skin Sun Exposed,Shendure-Heart,Bing Ren-Muscle,Shendure-Stomach,Shendure-Lung" \
-	--tsse_filtered_cell_types "Melanocyte,Schwann cells,Type II Skeletal Myocyte,Stromal cells,Ciliated epithelial cells" \
-	--plot_filename "melanoma_num_frags_vs_correlation.png" \
-	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
-fi
+#if ! [ -f "figures/melanoma_num_frags_vs_correlation.png" ]; then
+#	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+#	--cancer_type "Skin.Melanoma" \
+#	--boxplot_cell_types "Skin Sun Exposed Melanocyte (BR),Heart Schwann cells (SH),Muscle Type II Skeletal Myocyte (BR),Stomach Stromal cells (SH),Lung Ciliated epithelial cells (SH)" \
+#	--tissue_for_tsse_filtered_cell_types "Bing Ren-Skin Sun Exposed,Shendure-Heart,Bing Ren-Muscle,Shendure-Stomach,Shendure-Lung" \
+#	--tsse_filtered_cell_types "Melanocyte,Schwann cells,Type II Skeletal Myocyte,Stromal cells,Ciliated epithelial cells" \
+#	--plot_filename "melanoma_num_frags_vs_correlation.png" \
+#	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
+#fi
 
-if ! [ -f "figures/melanoma_BR_only_num_frags_vs_correlation.png" ]; then               
-    	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
-    	--cancer_type "Skin.Melanoma" \
-    	--boxplot_cell_types "Skin Sun Exposed Melanocyte (BR),Muscle Type II Skeletal Myocyte (BR),Artery Aorta Smooth Muscle (General) (BR),Small Intestine Smooth Muscle (General) (BR),Adrenal Gland Cortical Epithelial-like (BR),Esophagus Ge Junction Macrophage (General) (BR),Thyroid Fibroblast (General) (BR),Artery Aorta Fibroblast (General) (BR),Adipose Omentum Fibroblast (General) (BR),Artery Aorta Vascular Smooth Muscle 1 (BR)" \
-    	--tissue_for_tsse_filtered_cell_types "Bing Ren-Skin Sun Exposed,Bing Ren-Muscle,Bing Ren-Artery Aorta,Bing Ren-Small Intestine,Bing Ren-Adrenal Gland,Bing Ren-Esophagus Ge Junction,Bing Ren-Thyroid,Bing Ren-Artery Aorta,Bing Ren-Adipose Omentum,Bing Ren-Artery Aorta" \
-    	--tsse_filtered_cell_types "Melanocyte,Type II Skeletal Myocyte,Smooth Muscle (General),Smooth Muscle (General),Cortical Epithelial-like,Macrophage (General),Fibroblast (General),Fibroblast (General),Fibroblast (General),Vascular Smooth Muscle 1" \
-    	--plot_filename "melanoma_BR_only_num_frags_vs_correlation.png" \
-    	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
-fi                                                                              
+#if ! [ -f "figures/melanoma_BR_only_num_frags_vs_correlation.png" ]; then               
+#    	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+#    	--cancer_type "Skin.Melanoma" \
+#    	--boxplot_cell_types "Skin Sun Exposed Melanocyte (BR),Muscle Type II Skeletal Myocyte (BR),Artery Aorta Smooth Muscle (General) (BR),Small Intestine Smooth Muscle (General) (BR),Adrenal Gland Cortical Epithelial-like (BR),Esophagus Ge Junction Macrophage (General) (BR),Thyroid Fibroblast (General) (BR),Artery Aorta Fibroblast (General) (BR),Adipose Omentum Fibroblast (General) (BR),Artery Aorta Vascular Smooth Muscle 1 (BR)" \
+#    	--tissue_for_tsse_filtered_cell_types "Bing Ren-Skin Sun Exposed,Bing Ren-Muscle,Bing Ren-Artery Aorta,Bing Ren-Small Intestine,Bing Ren-Adrenal Gland,Bing Ren-Esophagus Ge Junction,Bing Ren-Thyroid,Bing Ren-Artery Aorta,Bing Ren-Adipose Omentum,Bing Ren-Artery Aorta" \
+#    	--tsse_filtered_cell_types "Melanocyte,Type II Skeletal Myocyte,Smooth Muscle (General),Smooth Muscle (General),Cortical Epithelial-like,Macrophage (General),Fibroblast (General),Fibroblast (General),Fibroblast (General),Vascular Smooth Muscle 1" \
+#    	--plot_filename "melanoma_BR_only_num_frags_vs_correlation.png" \
+#    	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
+#fi                                                                              
 
-if ! [ -f "figures/melanoma_BR_only_with_bottom_feats_num_frags_vs_correlation.png" ]; then       
-        Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
-        --cancer_type "Skin.Melanoma" \
-        --boxplot_cell_types "Skin Sun Exposed Melanocyte (BR),Muscle Type II Skeletal Myocyte (BR),Artery Aorta Smooth Muscle (General) (BR),Small Intestine Smooth Muscle (General) (BR),Adrenal Gland Cortical Epithelial-like (BR),Esophagus Ge Junction Macrophage (General) (BR),Thyroid Fibroblast (General) (BR),Artery Aorta Fibroblast (General) (BR),Adipose Omentum Fibroblast (General) (BR),Artery Aorta Vascular Smooth Muscle 1 (BR)" \
-        --tissue_for_tsse_filtered_cell_types "Bing Ren-Skin Sun Exposed,Bing Ren-Muscle,Bing Ren-Artery Aorta,Bing Ren-Small Intestine,Bing Ren-Adrenal Gland,Bing Ren-Esophagus Ge Junction,Bing Ren-Thyroid,Bing Ren-Artery Aorta,Bing Ren-Adipose Omentum,Bing Ren-Artery Aorta" \
-        --tsse_filtered_cell_types "Melanocyte,Type II Skeletal Myocyte,Smooth Muscle (General),Smooth Muscle (General),Cortical Epithelial-like,Macrophage (General),Fibroblast (General),Fibroblast (General),Fibroblast (General),Vascular Smooth Muscle 1" \
-        --plot_filename "melanoma_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \
-        --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
-fi
+#if ! [ -f "figures/melanoma_BR_only_with_bottom_feats_num_frags_vs_correlation.png" ]; then       
+#       Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+#        --cancer_type "Skin.Melanoma" \
+#        --boxplot_cell_types "Skin Sun Exposed Melanocyte (BR),Muscle Type II Skeletal Myocyte (BR),Artery Aorta Smooth Muscle (General) (BR),Small Intestine Smooth Muscle (General) (BR),Adrenal Gland Cortical Epithelial-like (BR),Esophagus Ge Junction Macrophage (General) (BR),Thyroid Fibroblast (General) (BR),Artery Aorta Fibroblast (General) (BR),Adipose Omentum Fibroblast (General) (BR),Artery Aorta Vascular Smooth Muscle 1 (BR)" \
+#        --tissue_for_tsse_filtered_cell_types "Bing Ren-Skin Sun Exposed,Bing Ren-Muscle,Bing Ren-Artery Aorta,Bing Ren-Small Intestine,Bing Ren-Adrenal Gland,Bing Ren-Esophagus Ge Junction,Bing Ren-Thyroid,Bing Ren-Artery Aorta,Bing Ren-Adipose Omentum,Bing Ren-Artery Aorta" \
+#        --tsse_filtered_cell_types "Melanocyte,Type II Skeletal Myocyte,Smooth Muscle (General),Smooth Muscle (General),Cortical Epithelial-like,Macrophage (General),Fibroblast (General),Fibroblast (General),Fibroblast (General),Vascular Smooth Muscle 1" \
+#        --plot_filename "melanoma_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \
+#        --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
+#fi
 
 # Eso.AdenoCA
 if ! [ -f "figures/esophagus_adenoca_num_frags_vs_correlation.png" ]; then
@@ -48,7 +48,7 @@ if ! [ -f "figures/esophagus_adenoca_num_frags_vs_correlation.png" ]; then
 	--tsse_filtered_cell_types "Goblet cells,Foveolar Cell,Colon Epithelial Cell 2,Foveolar Cell,Small Intestinal Enterocyte" \
 	--tissue_for_tsse_filtered_cell_types "Shendure-Stomach,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Esophagus Muscularis,Bing Ren-Small Intestine" \
 	--plot_filename "esophagus_adenoca_num_frags_vs_correlation.png" \
-	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 fi
 
 if ! [ -f "figures/esophagus_adenoca_BR_only_num_frags_vs_correlation.png" ]; then     
@@ -58,17 +58,17 @@ if ! [ -f "figures/esophagus_adenoca_BR_only_num_frags_vs_correlation.png" ]; th
    --tsse_filtered_cell_types "Club Cell,Foveolar Cell,Colon Epithelial Cell 2,Foveolar Cell,Small Intestinal Enterocyte" \
    --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Esophagus Muscularis,Bing Ren-Small Intestine" \
    --plot_filename "esophagus_adenoca_BR_only_num_frags_vs_correlation.png" \
-   --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+   --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 fi                                                                             
 
 if ! [ -f "figures/esophagus_adenoca_BR_only_with_bottom_feats_num_frags_vs_correlation.png" ]; then
-   Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                    
-   --cancer_type "Eso.AdenoCA" \                                                
-   --boxplot_cell_types "Lung Club Cell (BR),Stomach Foveolar Cell (BR),Colon Transverse Colon Epithelial Cell 2 (BR),Esophagus Muscularis Foveolar Cell (BR),Small Intestine Small Intestinal Enterocyte (BR),Esophagus Ge Junction Smooth Muscle (GE Junction) (BR),Vagina Fibroblast (General) (BR),Pancreas T Lymphocyte 1 (CD8+) (BR),Artery Aorta Fibroblast (General) (BR),Artery Aorta Endothelial Cell (General) 1 (BR)" \
+   Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+   --cancer_type "Eso.AdenoCA" \
+   --boxplot_cell_types "lung Club Cell (BR),stomach Foveolar Cell (BR),colon_transverse Colon Epithelial Cell 2 (BR),esophagus_muscularis Foveolar Cell (BR),small_intestine Small Intestinal Enterocyte (BR),esophagus_ge_junction Smooth Muscle (GE Junction) (BR),vagina Fibroblast (General) (BR),pancreas T Lymphocyte 1 (CD8+) (BR),artery_aorta Fibroblast (General) (BR),artery_aorta Endothelial Cell (General) 1 (BR)" \
    --tsse_filtered_cell_types "Club Cell,Foveolar Cell,Colon Epithelial Cell 2,Foveolar Cell,Small Intestinal Enterocyte,Smooth Muscle (GE Junction),Fibroblast (General),T Lymphocyte 1 (CD8+),Fibroblast (General),Endothelial Cell (General) 1" \
    --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Esophagus Muscularis,Bing Ren-Small Intestine,Bing Ren-Esophagus Ge Junction,Bing Ren-Vagina,Bing Ren-Pancreas,Bing Ren-Artery Aorta,Bing Ren-Artery Aorta" \
-   --plot_filename "esophagus_adenoca_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \   
-   --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+   --plot_filename "esophagus_adenoca_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \
+   --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 fi
 
 ## Lung AdenoCA AT2 only
