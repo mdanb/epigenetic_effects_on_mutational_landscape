@@ -155,14 +155,14 @@ fi
 #    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
 #fi
 #
-#if ! [ -f "figures/cns_gbm_BR_only_with_bottom_feats_num_frags_vs_correlation.png" ]; then        
-#    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                   
-#    --cancer_type "CNS.GBM" \                                                   
-#    --boxplot_cell_types "Nerve Tibial Schwann Cell (General) (BR),Heart Lv Cardiac Pericyte 1 (BR),Muscle Type I Skeletal Myocyte (BR),Lung Club Cell (BR),Heart Lv Cardiac Pericyte 2 (BR),Artery Aorta Fibroblast (General) (BR),Colon Sigmoid Fibroblast (General) (BR),Adipose Omentum Endothelial Cell (General) 1 (BR),Adipose Omentum Fibroblast (General) (BR),Fibroblast (Epithelial) (BR)" \
-#    --tsse_filtered_cell_types "Schwann Cell (General),Cardiac Pericyte 1,Type I Skeletal Myocyte,Club Cell,Cardiac Pericyte 2,Artery Aorta Fibroblast (General),Colon Sigmoid Fibroblast (General),Adipose Omentum Endothelial Cell (General) 1,Adipose Omentum Fibroblast (General),Fibroblast (Epithelial)" \
-#    --tissue_for_tsse_filtered_cell_types "Bing Ren-Nerve Tibial,Bing Ren-Heart Lv,Bing Ren-Muscle,Bing Ren-Lung,Bing Ren-Heart Lv,Bing Ren-Artery Aorta,Bing Ren-Colon Sigmoid,Bing Ren-Adipose Omentum,Bing Ren-Adipose Omentum,Bing Ren-Skin Sun Exposed" \
-#    --plot_filename "cns_gbm_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \            
-#    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
+if ! [ -f "figures/cns_gbm_BR_only_with_bottom_feats_num_frags_vs_correlation.png" ]; then        
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                   
+    --cancer_type "CNS.GBM" \                                                   
+    --boxplot_cell_types "Nerve Tibial Schwann Cell (General) (BR),Heart Lv Cardiac Pericyte 1 (BR),Muscle Type I Skeletal Myocyte (BR),Lung Club Cell (BR),Heart Lv Cardiac Pericyte 2 (BR),Artery Aorta Fibroblast (General) (BR),Colon Sigmoid Fibroblast (General) (BR),Adipose Omentum Endothelial Cell (General) 1 (BR),Adipose Omentum Fibroblast (General) (BR),Fibroblast (Epithelial) (BR)" \
+    --tsse_filtered_cell_types "Schwann Cell (General),Cardiac Pericyte 1,Type I Skeletal Myocyte,Club Cell,Cardiac Pericyte 2,Artery Aorta Fibroblast (General),Colon Sigmoid Fibroblast (General),Adipose Omentum Endothelial Cell (General) 1,Adipose Omentum Fibroblast (General),Fibroblast (Epithelial)" \
+    --tissue_for_tsse_filtered_cell_types "Bing Ren-Nerve Tibial,Bing Ren-Heart Lv,Bing Ren-Muscle,Bing Ren-Lung,Bing Ren-Heart Lv,Bing Ren-Artery Aorta,Bing Ren-Colon Sigmoid,Bing Ren-Adipose Omentum,Bing Ren-Adipose Omentum,Bing Ren-Skin Sun Exposed" \
+    --plot_filename "cns_gbm_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \            
+    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 #fi
 #
 ## ColoRect AdenoCA
