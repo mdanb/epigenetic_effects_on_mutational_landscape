@@ -157,12 +157,12 @@ fi
 #
 
 if ! [ -f "figures/cns_gbm_BR_only_with_bottom_feats_num_frags_vs_correlation.png" ]; then        
-    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                   
-    --cancer_type "CNS.GBM" \                                                   
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+    --cancer_type "CNS.GBM" \
     --boxplot_cell_types "nerve_tibial Schwann Cell (General) (BR),heart_lv Cardiac Pericyte 1 (BR),muscle Type I Skeletal Myocyte (BR),lung Club Cell (BR),heart_lv Cardiac Pericyte 2 (BR),artery_aorta Fibroblast (General) (BR),colon_sigmoid Fibroblast (General) (BR),adipose_omentum Endothelial Cell (General) 1 (BR),adipose_omentum Fibroblast (General) (BR),skin_sun_exposed Fibroblast (Epithelial) (BR)" \
     --tsse_filtered_cell_types "Schwann Cell (General),Cardiac Pericyte 1,Type I Skeletal Myocyte,Club Cell,Cardiac Pericyte 2,Artery Aorta Fibroblast (General),Colon Sigmoid Fibroblast (General),Adipose Omentum Endothelial Cell (General) 1,Adipose Omentum Fibroblast (General),Fibroblast (Epithelial)" \
     --tissue_for_tsse_filtered_cell_types "Bing Ren-Nerve Tibial,Bing Ren-Heart Lv,Bing Ren-Muscle,Bing Ren-Lung,Bing Ren-Heart Lv,Bing Ren-Artery Aorta,Bing Ren-Colon Sigmoid,Bing Ren-Adipose Omentum,Bing Ren-Adipose Omentum,Bing Ren-Skin Sun Exposed" \
-    --plot_filename "cns_gbm_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \            
+    --plot_filename "cns_gbm_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \
     --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 fi
 
@@ -222,12 +222,12 @@ fi
 #
 
 if ! [ -f "figures/lung_scc_BR_only_with_bottom_feats_num_frags_vs_correlation.png" ]; then               
-    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                  
-    --cancer_type "Lung.SCC" \                                                 
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+    --cancer_type "Lung.SCC" \
     --boxplot_cell_types "Esophagus Mucosa Esophageal Epithelial Cell (BR),Artery Aorta Smooth Muscle (General) (BR),Lung Club Cell (BR),Small Intestine T Lymphocyte 1 (CD8+) (BR),Vagina Smooth Muscle (General) (BR),Colon Sigmoid Fibroblast (Gastrointestinal) (BR),Esophagus Ge Junction Smooth Muscle (GE Junction) (BR),Artery Aorta Fibroblast (General) (BR),Colon Transverse Macrophage (General) (BR),Adipose Omentum Fibroblast (General) (BR)" \
     --tsse_filtered_cell_types "Esophageal Epithelial Cell,Smooth Muscle (General),Club Cell,T Lymphocyte 1 (CD8+),Smooth Muscle (General),Fibroblast (Gastrointestinal),Smooth Muscle (GE Junction),Fibroblast (General),Macrophage (General),Fibroblast (General)" \
     --tissue_for_tsse_filtered_cell_types "Bing Ren-Esophagus Mucosa,Bing Ren-Artery Aorta,Bing Ren-Lung,Bing Ren-Small Intestine,Bing Ren-Vagina,Bing Ren-Colon Sigmoid,Bing Ren-Esophagus Ge Junction,Bing Ren-Artery Aorta,Bing Ren-Colon Transverse,Bing Ren-Adipose Omentum" \
-    --plot_filename "lung_scc_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \          
+    --plot_filename "lung_scc_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \
     --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 fi                                                                             
 
