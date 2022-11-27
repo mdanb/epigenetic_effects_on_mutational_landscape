@@ -86,7 +86,7 @@ top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
                                            split = ",")))
 dataset = args$dataset
-cell_types = unlist(strsplit(args$cell_types, split = ","))
+cell_types = unlist(strsplit(args$cell_types, split = ";"))
 files_pattern = args$files_pattern
 cores = args$cores
 
