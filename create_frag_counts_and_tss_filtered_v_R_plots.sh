@@ -96,7 +96,7 @@ fi
 if ! [ -f "figures/lung_adenoca_BR_only_with_bottom_feats_num_frags_vs_correlation.png" ]; then               
     Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
     --cancer_type "Lung.AdenoCA" \
-    --boxplot_cell_types "Lung Club Cell (BR),Muscle Type II Skeletal Myocyte (BR),Heart Lv Endothelial Cell (Myocardial) (BR),Small Intestine Smooth Muscle (General) (BR),Artery Tibial Vascular Smooth Muscle 1 (BR),Fibroblast (Gastrointestinal) (BR),Fibroblast (General) (BR),T Lymphocyte 1 (CD8+) (BR),Endothelial Cell (General) 1 (BR),T Lymphocyte 1 (CD8+) (BR)" \
+    --boxplot_cell_types "Lung Club Cell (BR),Muscle Type II Skeletal Myocyte (BR),Heart Lv Endothelial Cell (Myocardial) (BR),Small Intestine Smooth Muscle (General) (BR),Artery Tibial Vascular Smooth Muscle 1 (BR),colon_sigmoid Fibroblast (Gastrointestinal) (BR),adipose_omentum Fibroblast (General) (BR),esophagus_mucosa T Lymphocyte 1 (CD8+) (BR),skin_sun_exposed Endothelial Cell (General) 1 (BR),lung T Lymphocyte 1 (CD8+) (BR)" \
     --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Muscle,Bing Ren-Heart Lv,Bing Ren-Small Intestine,Bing Ren-Artery Tibial,Bing Ren-Colon Sigmoid,Bing Ren-Adipose Omentum,Bing Ren-Esophagus Mucosa,Bing Ren-Skin Sun Exposed,Bing Ren-Lung" \
     --tsse_filtered_cell_types "Club Cell,Type II Skeletal Myocyte,Endothelial Cell (Myocardial),Smooth Muscle (General),Vascular Smooth Muscle 1,Fibroblast (Gastrointestinal),Fibroblast (General),T Lymphocyte 1 (CD8+),Endothelial Cell (General) 1,T Lymphocyte 1 (CD8+)" \
     --plot_filename "lung_adenoca_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \
