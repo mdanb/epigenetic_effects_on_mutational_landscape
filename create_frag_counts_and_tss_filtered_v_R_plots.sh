@@ -72,11 +72,11 @@
 #fi
 
 if ! [ -f "figures/esophagus_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then
-   Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                   
-   --cancer_type "Eso.AdenoCA" \                                               
+   Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+   --cancer_type "Eso.AdenoCA" \
    --boxplot_cell_types "lung Club Cell (BR)/stomach Foveolar Cell (BR)/colon_transverse Colon Epithelial Cell 2 (BR)/esophagus_muscularis Foveolar Cell (BR)/small_intestine Small Intestinal Enterocyte (BR)/ovary Smooth Muscle (General) (BR)/esophagus_mucosa Airway Goblet Cell (BR)/pancreas Pancreatic Acinar Cell (BR)/artery_aorta Smooth Muscle (General) (BR)/small_intestine Endothelial Cell (General) 1 (BR)" \
    --tsse_filtered_cell_types "Club Cell/Foveolar Cell/Colon Epithelial Cell 2/Foveolar Cell/Small Intestinal Enterocyte/Smooth Muscle (General)/Airway Goblet Cell/Pancreatic Acinar Cell/Smooth Muscle (General)/Endothelial Cell (General) 1" \
-   --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Esophagus Muscularis,Bing Ren-Small Intestine,Bing Ren-Smooth Muscle (General),Bing Ren-Airway Goblet Cell,Bing Ren-Pancreatic Acinar Cell,Bing Ren-Smooth Muscle (General),Bing Ren-Endothelial Cell (General) 1" \
+   --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Esophagus Muscularis,Bing Ren-Small Intestine,Bing Ren-Ovary,Bing Ren-Esophagus Mucosa,Bing Ren-Pancreas,Bing Ren-Artery Aorta,Bing Ren-Small Intestine" \
    --plot_filename "esophagus_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 fi 
