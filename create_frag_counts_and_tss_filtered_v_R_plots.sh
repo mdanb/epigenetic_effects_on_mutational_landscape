@@ -123,6 +123,18 @@ fi
 #    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"
 #fi
 #
+
+if ! [ -f "figures/lung_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then               
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                  
+    --cancer_type "Lung.AdenoCA" \                                             
+    --boxplot_cell_types "lung Club Cell (BR)/small_intestine Smooth Muscle (General) (BR)/muscle Type II Skeletal Myocyte (BR)/heart_lv Endothelial Cell (Myocardial) (BR)/artery_tibial Vascular Smooth Muscle 1 (BR)/artery_aorta Vascular Smooth Muscle 2 (BR)/esophagus_mucosa Esophageal Epithelial Cell (BR)/ovary Smooth Muscle (General) (BR)/artery_aorta Endothelial Cell (General) 2 (BR)/nerve_tibial Fibroblast (Peripheral Nerve) (BR)" \
+    --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Small Intestine,Bing Ren-Muscle,Bing Ren-Heart Lv,Bing Ren-Artery Tibial,Bing Ren-Artery Aorta,Bing Ren-Esophagus Mucosa,Bing Ren-Ovary,Bing Ren-Artery Aorta,Bing Ren-Nerve Tibial" \
+    --tsse_filtered_cell_types "Club Cell,Smooth Muscle (General),Type II Skeletal Myocyte,Endothelial Cell (Myocardial),Vascular Smooth Muscle 1,Vascular Smooth Muscle 2,Esophageal Epithelial Cell,Smooth Muscle (General),Endothelial Cell (General) 2,ibroblast (Peripheral Nerve)" \
+    --plot_filename "lung_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
+    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
+fi                        
+
+
 ## Breast AdenoCA
 #if ! [ -f "figures/breast_adenoca_num_frags_vs_correlation.png" ]; then
 #	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
