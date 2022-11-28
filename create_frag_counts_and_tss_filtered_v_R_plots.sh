@@ -166,15 +166,15 @@
 #    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 #fi
 
-if ! [ -f "figures/cns_gbm_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then
-    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                   
-    --cancer_type "CNS.GBM" \                                                   
-    --boxplot_cell_types "nerve_tibial Schwann Cell (General) (BR),heart_lv Cardiac Pericyte 1 (BR),muscle Type I Skeletal Myocyte (BR),lung Club Cell (BR),heart_lv Cardiac Pericyte 2 (BR),heart_atrial_appendage Cardiac Pericyte 1 (BR),heart_lv Endothelial Cell (General) 1 (BR),lung Macrophage (General) (BR),adipose_omentum Macrophage (General,Alveolar) (BR),colon_transverse Smooth Muscle (General) (BR)" \
-    --tsse_filtered_cell_types "Schwann Cell (General),Cardiac Pericyte 1,Type I Skeletal Myocyte,Club Cell,Cardiac Pericyte 2,Cardiac Pericyte 1,Endothelial Cell (General) 1,Macrophage (General),Macrophage (General,Alveolar),Smooth Muscle (General)" \
-    --tissue_for_tsse_filtered_cell_types "Bing Ren-Nerve Tibial,Bing Ren-Heart Lv,Bing Ren-Muscle,Bing Ren-Lung,Bing Ren-Heart Lv,Bing Ren-Heart Atrial Appendage,Bing Ren-Heart Lv,Bing Ren-Lung,Bing Ren-Adipose Omentum,Bing Ren-Colon Transverse" \
-    --plot_filename "cns_gbm_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \ 
-    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
-fi                                                                              
+#if ! [ -f "figures/cns_gbm_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then
+#    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+#    --cancer_type "CNS.GBM" \
+#    --boxplot_cell_types "nerve_tibial Schwann Cell (General) (BR)/heart_lv Cardiac Pericyte 1 (BR)/muscle Type I Skeletal Myocyte (BR)/lung Club Cell (BR)/heart_lv Cardiac Pericyte 2 (BR)/heart_atrial_appendage Cardiac Pericyte 1 (BR)/heart_lv Endothelial Cell (General) 1 (BR)/lung Macrophage (General) (BR)/adipose_omentum Macrophage (General,Alveolar) (BR)/colon_transverse Smooth Muscle (General) (BR)" \
+#    --tsse_filtered_cell_types "Schwann Cell (General)/Cardiac Pericyte 1/Type I Skeletal Myocyte/Club Cell/Cardiac Pericyte 2/Cardiac Pericyte 1/Endothelial Cell (General) 1/Macrophage (General)/Macrophage (General,Alveolar)/Smooth Muscle (General)" \
+#    --tissue_for_tsse_filtered_cell_types "Bing Ren-Nerve Tibial,Bing Ren-Heart Lv,Bing Ren-Muscle,Bing Ren-Lung,Bing Ren-Heart Lv,Bing Ren-Heart Atrial Appendage,Bing Ren-Heart Lv,Bing Ren-Lung,Bing Ren-Adipose Omentum,Bing Ren-Colon Transverse" \
+#    --plot_filename "cns_gbm_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
+#    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
+#fi                                                                              
 
 
 ## ColoRect AdenoCA
@@ -188,6 +188,7 @@ fi
 #	--plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000"
 #fi
 #
+
 #if ! [ -f "figures/colorect_adenoca_BR_only_num_frags_vs_correlation.png" ]; then       
 #    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
 #    --cancer_type "ColoRect.AdenoCA" \
@@ -210,11 +211,11 @@ fi
 #fi                                                                              
 
 if ! [ -f "figures/colorect_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then
-    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                  
-    --cancer_type "ColoRect.AdenoCA" \                                         
-    --boxplot_cell_types "colon_transverse Colon Epithelial Cell 2 (BR),colon_transverse Colonic Goblet Cell (BR),colon_transverse Colon Epithelial Cell 1 (BR),colon_sigmoid Fibroblast (Gastrointestinal) (BR),artery_aorta Fibroblast (General) (BR),stomach Foveolar Cell (BR),heart_lv Fibroblast (General) (BR),adipose_omentum T Lymphocyte 1 (CD8+) (BR),colon_transverse Smooth Muscle (General) (BR),nerve_tibial Smooth Muscle (General) (BR)" \
-    --tsse_filtered_cell_types "Colon Epithelial Cell 2;Colonic Goblet Cell;Colon Epithelial Cell 1,Fibroblast (Gastrointestinal),Fibroblast (General),Foveolar Cell,Fibroblast (General),T Lymphocyte 1 (CD8+),Smooth Muscle (General),Smooth Muscle (General)" \
-    --tissue_for_tsse_filtered_cell_types "Bing Ren-Colon Transverse,Bing Ren-Colon Sigmoid,Bing Ren-Artery Aorta,Bing Ren-Stomach,Bing Ren-Heart Lv,Bing Ren-Adipose Omentum,Bing Ren-Colon Transverse,Bing-Ren Nerve Tibial" \
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+    --cancer_type "ColoRect.AdenoCA" \
+    --boxplot_cell_types "colon_transverse Colon Epithelial Cell 2 (BR)/colon_transverse Colonic Goblet Cell (BR)/colon_transverse Colon Epithelial Cell 1 (BR)/colon_sigmoid Fibroblast (Gastrointestinal) (BR)/artery_aorta Fibroblast (General) (BR)/stomach Foveolar Cell (BR)/heart_lv Fibroblast (General) (BR)/adipose_omentum T Lymphocyte 1 (CD8+) (BR)/colon_transverse Smooth Muscle (General) (BR)/nerve_tibial Smooth Muscle (General) (BR)" \
+    --tsse_filtered_cell_types "Colon Epithelial Cell 2;Colonic Goblet Cell;Colon Epithelial Cell 1/Fibroblast (Gastrointestinal)/Fibroblast (General)/Foveolar Cell/Fibroblast (General)/T Lymphocyte 1 (CD8+)/Smooth Muscle (General)/Smooth Muscle (General)" \
+    --tissue_for_tsse_filtered_cell_types "Bing Ren-Colon Transverse,Bing Ren-Colon Sigmoid,Bing Ren-Artery Aorta,Bing Ren-Stomach,Bing Ren-Heart Lv,Bing Ren-Adipose Omentum,Bing Ren-Colon Transverse,Bing Ren-Nerve Tibial" \
     --plot_filename "colorect_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
     --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 fi                                                                              
