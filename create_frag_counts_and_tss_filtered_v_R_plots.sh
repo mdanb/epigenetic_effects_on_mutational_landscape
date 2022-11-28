@@ -295,11 +295,11 @@ fi
 #fi 
 
 if ! [ -f "figures/liver_hcc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then              
-    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                  
-    --cancer_type "Liver.HCC" \                                                
-    --boxplot_cell_types "Liver Hepatocyte (BR)/Small Intestine Smooth Muscle (General) (BR)/Artery Aorta Smooth Muscle (General) (BR)/Muscle Type II Skeletal Myocyte (BR)/Small Intestine T Lymphocyte 1 (CD8+) (BR)/Skin Fibroblast (Epithelial) (BR)/Esophagus Ge Junction Fibroblast (General) (BR)/Artery Aorta Fibroblast (General) (BR)/Colon Sigmoid Fibroblast (Gastrointestinal) (BR)/Colon Sigmoid Fibroblast (General) (BR)" \
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+    --cancer_type "Liver.HCC" \
+    --boxplot_cell_types "liver Hepatocyte (BR)/small_intestine Smooth Muscle (General) (BR)/artery_aorta Smooth Muscle (General) (BR)/muscle Type II Skeletal Myocyte (BR)/small_intestine T Lymphocyte 1 (CD8+) (BR)/skin Fibroblast (Epithelial) (BR)/esophagus_ge_junction Fibroblast (General) (BR)/artery_aorta Fibroblast (General) (BR)/colon_sigmoid Fibroblast (Gastrointestinal) (BR)/colon_sigmoid Fibroblast (General) (BR)" \
     --tsse_filtered_cell_types "Hepatocyte/Smooth Muscle (General)/Smooth Muscle (General)/Type II Skeletal Myocyte/T Lymphocyte 1 (CD8+)/Fibroblast (Epithelial)/Fibroblast (General)/Fibroblast (General)/Fibroblast (Gastrointestinal)/Fibroblast (General)" \
     --tissue_for_tsse_filtered_cell_types "Bing Ren-Liver,Bing Ren-Small Intestine,Bing Ren-Artery Aorta,Bing Ren-Muscle,Bing Ren-Small Intestine,Bing Ren-Skin,Bing Ren-Esophagus Ge Junction,Bing Ren-Artery Aorta,Bing Ren-Colon Sigmoid,Bing Ren-Colon Sigmoid" \
-    --plot_filename "liver_hcc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \         
+    --plot_filename "liver_hcc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
     --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 fi 
