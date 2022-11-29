@@ -13,10 +13,13 @@ parser <- add_option(parser, c("--bing_ren"), action="store_true",
                                default=F)
 parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
+parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
+parser <- add_option(parser, c("--bar_plot_num_features"), type="integer")
 
 args = parse_args(parser)
-# args = parse_args(parser, args = c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,CNS-GBM,Eso-AdenoCA,Lung-AdenoCA,Lung-SCC",
-#                                    "--all_cells", "--bing_ren", "--cell_number_filter=100"))
+args = parse_args(parser, args = c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,CNS-GBM,Eso-AdenoCA,Lung-AdenoCA,Lung-SCC",
+                                   "--all_cells", "--cell_number_filter=100",
+                                   "--bar_plot_num_features=20", "--bing_ren"))
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter) {
@@ -69,8 +72,8 @@ get_relevant_backwards_elim_dirs <- function(args) {
 construct_pie_charts <- function(args) {
   dirs = get_relevant_backwards_elim_dirs(args)
   for (dir in dirs) {
-    pie_chart_file = paste(dir, "df_for_pie_charts.csv", sep="/")
-    df = read.csv(pie_chart_file)
+    file = paste(dir, "df_for_pie_charts.csv", sep="/")
+    df = read.csv(file)
     df$num_features_f = factor(df$num_features, levels=unique(df$num_features))
     colors = get_n_colors(20, 1)
     from = as.character(unique(df$num_features))
@@ -102,12 +105,40 @@ construct_pie_charts <- function(args) {
   }
 }
 
+construct_bar_plots <- function(args) {
+  dirs = get_relevant_backwards_elim_dirs(args)
+  for (dir in dirs) {
+    file = paste(dir, "df_for_pie_charts.csv", sep="/")
+    df = as_tibble(read.csv(file))
+    df = df %>% filter(num_features == args$bar_plot_num_features)
+    df$num_features_f = factor(df$num_features, levels=unique(df$num_features))
+    colors = get_n_colors(20, 1)
+    plot = ggplot(df, aes(x=reorder(features, -importance), 
+                          y=importance, fill=features)) +
+           geom_bar(stat="identity", width=1, color="white") +
+           xlab("Cell type") +
+           ylab("Percent importance (%)") +
+           # theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1),
+           #       aspect.ratio = 1.1/1) +
+           theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1)) +
+           guides(fill="none") +
+           scale_fill_manual(values=colors) +
+           ggtitle(paste0(unlist(strsplit(dir, split ="/"))[3], " (R^2=",
+                         as.character(round(unique(df$score*100), 1)), ")")) +
+           theme(plot.title = element_text(hjust = 0.5))
+    ggsave(paste(dir, "bar_plot.png", sep="/"), width = 6, height = 8, plot)
+  }
+}
 # labeller = as_labeller(c("20" = "A",
 #                          "15" = "B",
 #                          "10" = "C",
 #                          "5" = "D",
 #                          "2" = "E"))) +
-construct_pie_charts(args)
+if (args$pie_chart) {
+  construct_pie_charts(args)
+} else {
+  construct_bar_plots(args)
+}
 
 # df_temp <- df %>%
 #             filter(num_features == 5) %>%
