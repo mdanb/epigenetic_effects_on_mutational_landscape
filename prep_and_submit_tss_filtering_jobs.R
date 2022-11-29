@@ -25,7 +25,7 @@ shendure = args$shendure
 tsankov = args$tsankov
 fragment_count_range = args$fragment_count_range
 
-create_and_submit_job_scipts <- function(metadata, bing_ren, shendure, tsankov,
+create_and_submit_job_scipts <- function(bing_ren, shendure, tsankov,
                                          fragment_count_range) {
   metadatas = list()
   raw_data_dirs = c()
@@ -153,3 +153,5 @@ create_and_submit_job_scipts <- function(metadata, bing_ren, shendure, tsankov,
     idx = idx + 1
   }
 }
+
+create_and_submit_job_scipts(bing_ren, shendure, tsankov, fragment_count_range)
