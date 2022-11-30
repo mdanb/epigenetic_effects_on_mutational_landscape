@@ -122,10 +122,10 @@ create_and_submit_job_scipts <- function(bing_ren, shendure, tsankov,
       
       cell_types = paste(as.list(cell_types)$cell_type, collapse=",")
       
-      command_args = paste0("--cell_types=", cell_types, " ",
-                            "--dataset=", dataset, " ",
-                            "--top_tsse_fragment_count_range=", fragment_count_range, " ",
-                            "--files_pattern=", pattern, " ",
+      command_args = paste0("--cell_types='", cell_types, "' ",
+                            "--dataset='", dataset, "' ",
+                            "--top_tsse_fragment_count_range='", fragment_count_range, "' ",
+                            "--files_pattern='", pattern, "' ",
                             "--cores=", 1)
       
       rscript_command = paste("Rscript /ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/create_tsse_filtered_count_overlaps.R",
