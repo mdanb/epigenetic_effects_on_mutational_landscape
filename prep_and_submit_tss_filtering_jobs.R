@@ -81,7 +81,7 @@ create_and_submit_job_scipts <- function(bing_ren, shendure, tsankov,
     raw_data_dir = raw_data_dirs[idx]
     mem = 32
     if (grepl("BingRen", raw_data_dir)) {
-      dataset = "bingren"
+      dataset = "bing_ren"
     } else if ("Shendure" %in% raw_data_dir) {
       dataset = "shendure"
       mem = 64
