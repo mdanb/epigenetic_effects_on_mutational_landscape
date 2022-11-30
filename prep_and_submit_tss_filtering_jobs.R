@@ -89,6 +89,7 @@ create_and_submit_job_scipts <- function(bing_ren, shendure, tsankov,
       dataset = "tsankov"
     }
     for (pattern in unique(metadata[["files_pattern"]])) {
+      print(paste("creating and submitting job for", pattern, sep=" "))
       files = setdiff(list.files(raw_data_dir, pattern=pattern), 
                       list.dirs(raw_data_dir, 
                                 recursive = FALSE, 
