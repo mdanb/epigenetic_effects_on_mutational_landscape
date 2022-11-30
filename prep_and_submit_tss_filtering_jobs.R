@@ -120,7 +120,7 @@ create_and_submit_job_scipts <- function(bing_ren, shendure, tsankov,
                                  paste(pattern_dataset, "err", sep="."), 
                                  sep = "/")
       
-      cell_types = paste(as.list(cell_types)$cell_type, collapse=",")
+      cell_types = paste(as.list(cell_types)$cell_type, collapse=";")
       
       command_args = paste0("--cell_types='", cell_types, "' ",
                             "--dataset='", dataset, "' ",
