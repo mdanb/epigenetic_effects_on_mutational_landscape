@@ -4,14 +4,14 @@ library(tidyverse)
 dir.create("tsse_filtered_run_commands/for_ML_input")
 dir.create("tsse_filtered_run_commands/for_ML_input/log_dir")
 
-args = parse_args(OptionParser(option_list=option_list))
-
 option_list <- list( 
   make_option("--bing_ren", action="store_true", default = FALSE),
   make_option("--shendure", action="store_true", default = FALSE),
   make_option("--tsankov", action="store_true", default = FALSE),
   make_option("--fragment_count_range", type="character")
 )
+
+args = parse_args(OptionParser(option_list=option_list))
 
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                    c("--fragment_count_range=100000,150000,200000",
