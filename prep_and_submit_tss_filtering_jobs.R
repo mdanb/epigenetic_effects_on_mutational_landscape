@@ -13,11 +13,9 @@ option_list <- list(
 
 args = parse_args(OptionParser(option_list=option_list))
 
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                    c("--fragment_count_range=100000,150000,200000",
-#                      "--bing_ren",
-#                      "--shendure",
-#                      "--tsankov"))
+args = parse_args(OptionParser(option_list=option_list), args=
+                   c("--fragment_count_range=100000,150000,200000",
+                     "--shendure"))
 
 
 bing_ren = args$bing_ren
@@ -48,7 +46,7 @@ create_and_submit_job_scipts <- function(bing_ren, shendure, tsankov,
     metadata_shendure = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
                                    sep="\t",
                                    header=TRUE)
-    colnames(metadata_shendure)[grep("tissue", colnames(metadata_shendure))] = "files_pattern"
+    colnames(metadata_shendure)[match("tissue", colnames(metadata_shendure))] = "files_pattern"
     metadatas = c(metadatas, list(metadata_shendure))
     
     shendure_raw_dir = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
