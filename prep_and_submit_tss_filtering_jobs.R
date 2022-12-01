@@ -78,13 +78,13 @@ create_and_submit_job_scipts <- function(bing_ren, shendure, tsankov,
     metadata = as.data.frame(metadata)
     raw_data_dir = raw_data_dirs[idx]
     mem = 32
-    if (grepl("BingRen", raw_data_dir)) {
-      dataset = "bing_ren"
-    } else if ("Shendure" %in% raw_data_dir) {
+    if ("Shendure" %in% raw_data_dir) {
       dataset = "shendure"
       mem = 64
-    } else {
+    } else if ("Tsankov" %in% raw_data_dir) {
       dataset = "tsankov"
+    } else {
+      dataset = "bing_ren"
     }
     for (pattern in unique(metadata[["files_pattern"]])) {
       print(paste("creating and submitting job for", pattern, sep=" "))
