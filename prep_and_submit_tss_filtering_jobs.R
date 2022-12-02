@@ -13,9 +13,9 @@ option_list <- list(
 
 args = parse_args(OptionParser(option_list=option_list))
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                   c("--fragment_count_range=100000,150000,200000",
-                     "--shendure"))
+#args = parse_args(OptionParser(option_list=option_list), args=
+#                   c("--fragment_count_range=100000,150000,200000",
+#                     "--shendure"))
 
 
 bing_ren = args$bing_ren
