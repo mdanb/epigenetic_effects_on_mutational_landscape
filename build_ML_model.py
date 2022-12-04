@@ -172,11 +172,13 @@ def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, can
 
 
     for cancer_type in cancer_types:
-        os.makedirs(f"models/{cancer_type}/scATAC_source_{scATAC_source}_cell_number_filter_{scATAC_cell_number_filter}",
+        scATAC_dir = f"scATAC_source_{scATAC_source}_cell_number_filter_{scATAC_cell_number_filter}_" \
+                     f"tss_filtered_{tss_filtered}_fragment_filter_{tss_filtered_num_fragment_filter}"
+        os.makedirs(f"models/{cancer_type}/{scATAC_dir}",
                     exist_ok=True)
         cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
 
-        scATAC_dir = f"scATAC_source_{scATAC_source}_cell_number_filter_{scATAC_cell_number_filter}"
+
         if (run_all_cells):
             backwards_elim_dir=f"models/{cancer_type}/{scATAC_dir}/backwards_elimination_results"
             grid_search_filename = f"models/{cancer_type}/{scATAC_dir}/grid_search_results.pkl"
@@ -249,7 +251,7 @@ if (tss_filtered):
     chr_ranges = pd.read_csv("processed_data/chr_ranges.csv")
     scATAC_df = load_scATAC(f"processed_data/count_overlap_data/tsse_filtered/bing_ren/combined/" \
                            f"combined_{tss_filtered_num_fragment_filter}_fragments.rds").T
-    scATAC_df.index = chr_ranges
+    scATAC_df.index = chr_ranges["x"].values
 else:
     scATAC_df = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                             f"/count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
