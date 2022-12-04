@@ -13,9 +13,9 @@ option_list <- list(
 
 args = parse_args(OptionParser(option_list=option_list))
 
-#args = parse_args(OptionParser(option_list=option_list), args=
+# args = parse_args(OptionParser(option_list=option_list), args=
 #                   c("--fragment_count_range=100000,150000,200000",
-#                     "--shendure"))
+#                     "--tsankov"))
 
 
 bing_ren = args$bing_ren
@@ -70,6 +70,7 @@ create_and_submit_job_scipts <- function(bing_ren, shendure, tsankov,
     
     tsankov_raw_dir = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
                             "raw_dir", "bed_files", "Tsankov_scATAC", sep="/")
+    raw_data_dirs = append(raw_data_dirs, tsankov_raw_dir)
     raw_data_dirs = append(raw_data_dirs, tsankov_raw_dir)
   }
   
