@@ -3,6 +3,7 @@ library(magrittr)
 library(RColorBrewer)
 library(dplyr)
 library(optparse)
+library(stringr)
 source("utils.R")
 
 parser <- OptionParser()
@@ -28,7 +29,8 @@ construct_backwards_elim_dir <- function(cancer_type, scATAC_source,
                                          cell_number_filter, tss_filtered,
                                          tss_filtered_num_fragment_filter) {
   scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
-                        cell_number_filter, "tss_filtered", tss_filtered,
+                        cell_number_filter, "tss_filtered", 
+                        str_to_title(tss_filtered),
                         "fragment_filter", tss_filtered_num_fragment_filter,
                         sep="_")
   dir = paste("figures", "models", cancer_type, scATAC_source,
