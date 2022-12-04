@@ -13,7 +13,8 @@ from sklearn.model_selection import KFold
 from sklearn.metrics import r2_score
 import argparse
 import glob
-from utils import load_scATAC, load_agg_mutations, filter_agg_data, filter_mutations_by_cancer, load_meso_mutations
+from utils import load_scATAC, load_agg_mutations, filter_agg_data, \
+                  filter_mutations_by_cancer, load_meso_mutations
 
 parser = argparse.ArgumentParser()
 
@@ -35,6 +36,13 @@ parser.add_argument('--combined_datasets', action="store_true",
                     help='combine all scATACseq', default=False)
 parser.add_argument('--meso', action="store_true",
                     help='meso data', default=False)
+parser.add_argument('--tss_filtered', action="store_true",
+                    help='Use TSS filtered data', default=False)
+parser.add_argument('--tss_filtered_num_fragment_filter', type=int, default=100000)
+
+# parser.add_argument('--bioRxiv_method', action="store_true",
+#                     help='Use method from bioRxiv paper. Different from tissue_spec_cells by fact that here ' \
+#                          'dont a priori know which tissue to train on, so trains on all of them', default=False)
 
 config = parser.parse_args()
 cancer_types = config.cancer_types
@@ -46,6 +54,9 @@ shendure = config.shendure
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
 combined_datasets = config.combined_datasets
 meso = config.meso
+tss_filtered = config.tss_filtered
+tss_filtered_num_fragment_filter = config.tss_filtered_num_fragment_filter
+# bioRxiv_method = config.bioRxiv_method
 
 #### Helpers ####
 # Filter Data helpers
@@ -186,10 +197,21 @@ def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, can
             tissue = cancer_type.split("-")[0]
             tissue_specific_cell_types = [cell_type for cell_type in scATAC_df.columns.values if tissue in cell_type]
             per_tissue_df = scATAC_df.loc[:, tissue_specific_cell_types]
-            train_val_test(per_tissue_df, cancer_specific_mutations,
+            train_val_test(per_tissue_df,
+                           cancer_specific_mutations,
                            grid_search_filename,
                            backwards_elim_dir,
                            test_set_perf_filename)
+        # if (bioRxiv_method):
+        #     tissues = set(scATAC_df.columns.str.split().to_series().apply(lambda x: x[0]))
+        #     for tissue in tissues:
+        #         grid_search_filename = f"models/bioRxiv_method/{cancer_type}/{scATAC_dir}/grid_search_results.pkl"
+        #         test_set_perf_filename = f"models/bioRxiv_method/{cancer_type}/{scATAC_dir}/test_set_performance.txt"
+        #
+        #         train_val_test(scATAC_df, cancer_specific_mutations,
+        #                        grid_search_filename,
+        #                        backwards_elim_dir,
+        #                        test_set_perf_filename)
 
 
 def run_clustered_data_analysis(scATAC_df, cancer_types):
@@ -220,27 +242,49 @@ def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, clus
                        test_set_perf_filename)
 
 #### Load scATAC ####
-scATAC_df = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
-                        f"/count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+tss_filtered_root = "processed_data/count_overlap_data/tsse_filtered"
+
+if (tss_filtered):
+        scATAC_df = load_scATAC("processed_data/count_overlap_data/tsse_filtered/combined/" \
+                               f"combined_{tss_filtered_num_fragment_filter}_fragments.rds")
+else:
+    scATAC_df = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
+                            f"/count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+
 scATAC_df.columns = [c + " BR" for c in scATAC_df.columns]
+
 if ((run_all_cells or run_tissue_spec_cells) and bing_ren):
     run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells, cancer_types, meso)
 if (run_clustered_mutations and bing_ren):
     run_clustered_data_analysis(scATAC_df, cancer_types)
 
-scATAC_df_shendure = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
-                                 f"/shendure_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+if (tss_filtered):
+    scATAC_df_shendure = load_scATAC("processed_data/count_overlap_data/tsse_filtered/shendure/combined/" \
+                                    f"combined_{tss_filtered_num_fragment_filter}_fragments.rds")
+else:
+    scATAC_df_shendure = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
+                                     f"/shendure_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+
 scATAC_df_shendure.columns = [c + " SH" for c in scATAC_df_shendure.columns]
 
 if (run_all_cells and shendure):
     run_unclustered_data_analysis(scATAC_df_shendure, run_all_cells, run_tissue_spec_cells, cancer_types, meso,
                                   "shendure")
 
-scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
-                                 f"/tsankov_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+if (tss_filtered):
+    scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/tsse_filtered/tsankov/combined/" \
+                                     f"combined_{tss_filtered_num_fragment_filter}_fragments.rds")
+else:
+    scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
+                                     f"/tsankov_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+
 scATAC_df_tsankov.columns = [c + " TS" for c in scATAC_df_tsankov.columns]
 
 combined_scATAC_df = pd.concat((scATAC_df, scATAC_df_shendure, scATAC_df_tsankov), axis=1)
 if (run_all_cells and combined_datasets):
     run_unclustered_data_analysis(combined_scATAC_df, run_all_cells, run_tissue_spec_cells,
                                   cancer_types, meso, "combined_datasets")
+
+# if (bioRxiv_method):
+#     run_unclustered_data_analysis(combined_scATAC_df, run_all_cells, run_tissue_spec_cells,
+#                                   cancer_types, meso, "combined_datasets")
