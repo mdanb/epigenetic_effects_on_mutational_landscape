@@ -245,8 +245,11 @@ def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, clus
 tss_filtered_root = "processed_data/count_overlap_data/tsse_filtered"
 
 if (tss_filtered):
-        scATAC_df = load_scATAC("processed_data/count_overlap_data/tsse_filtered/combined/" \
-                               f"combined_{tss_filtered_num_fragment_filter}_fragments.rds")
+    #result = pyreadr.read_r("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData") #
+    chr_ranges = pd.read_csv("processed_data/chr_ranges.csv")
+    scATAC_df = load_scATAC(f"processed_data/count_overlap_data/tsse_filtered/bing_ren/combined/" \
+                           f"combined_{tss_filtered_num_fragment_filter}_fragments.rds").T
+    scATAC_df.index = chr_ranges
 else:
     scATAC_df = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                             f"/count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
