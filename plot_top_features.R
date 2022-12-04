@@ -15,16 +15,22 @@ parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
 parser <- add_option(parser, c("--bar_plot_num_features"), type="integer")
+parser <- add_option(parser, c("--tss_filtered"), action="store_true", default=F)
+parser <- add_option(parser, c("--tss_filtered_num_fragment_filter"), 
+                     type="integer", default=-1)
 
 args = parse_args(parser)
-args = parse_args(parser, args = c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,CNS-GBM,Eso-AdenoCA,Lung-AdenoCA,Lung-SCC",
-                                   "--all_cells", "--cell_number_filter=100",
-                                   "--bar_plot_num_features=20", "--bing_ren"))
+# args = parse_args(parser, args = c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,CNS-GBM,Eso-AdenoCA,Lung-AdenoCA,Lung-SCC",
+#                                    "--all_cells", "--cell_number_filter=100",
+#                                    "--bar_plot_num_features=20", "--bing_ren"))
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
-                                         cell_number_filter) {
+                                         cell_number_filter, tss_filtered,
+                                         tss_filtered_num_fragment_filter) {
   scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
-                        cell_number_filter, sep="_")
+                        cell_number_filter, "tss_filtered", tss_filtered,
+                        "fragment_filter", tss_filtered_num_fragment_filter,
+                        sep="_")
   dir = paste("figures", "models", cancer_type, scATAC_source,
               "backwards_elimination_results", sep="/")
   return(dir)
@@ -37,14 +43,18 @@ get_relevant_backwards_elim_dirs <- function(args) {
     combined_datasets = args$combined_datasets
     bing_ren = args$bing_ren
     cell_number_filter = args$cell_number_filter
-    
+    tss_filtered = args$tss_filtered
+    tss_filtered_num_fragment_filter = args$tss_filtered_num_fragment_filter
+
     backward_elim_dirs = list()
     for (cancer_type in cancer_types) {
       if (all_cells) {
         if (bing_ren) {
           backward_elim_dirs = append(backward_elim_dirs,
                         construct_backwards_elim_dir(cancer_type, "bing_ren", 
-                                                     cell_number_filter))
+                                                     cell_number_filter,
+                                                     tss_filtered,
+                                                     tss_filtered_num_fragment_filter))
         }
         # if (shendure) {
         #   backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, 
@@ -53,7 +63,9 @@ get_relevant_backwards_elim_dirs <- function(args) {
         if (combined_datasets) {
           backward_elim_dirs = append(backward_elim_dirs,
                  construct_backwards_elim_dir(cancer_type, "combined_datasets",
-                                              cell_number_filter))
+                                              cell_number_filter,
+                                              tss_filtered,
+                                              tss_filtered_num_fragment_filter))
         }
       }
     }
@@ -72,7 +84,7 @@ get_relevant_backwards_elim_dirs <- function(args) {
 construct_pie_charts <- function(args) {
   dirs = get_relevant_backwards_elim_dirs(args)
   for (dir in dirs) {
-    file = paste(dir, "df_for_pie_charts.csv", sep="/")
+    file = paste(dir, "df_for_feature_importance_plots.csv", sep="/")
     df = read.csv(file)
     df$num_features_f = factor(df$num_features, levels=unique(df$num_features))
     colors = get_n_colors(20, 1)
@@ -108,7 +120,7 @@ construct_pie_charts <- function(args) {
 construct_bar_plots <- function(args) {
   dirs = get_relevant_backwards_elim_dirs(args)
   for (dir in dirs) {
-    file = paste(dir, "df_for_pie_charts.csv", sep="/")
+    file = paste(dir, "df_for_feature_importance_plots.csv", sep="/")
     df = as_tibble(read.csv(file))
     df = df %>% filter(num_features == args$bar_plot_num_features)
     df$num_features_f = factor(df$num_features, levels=unique(df$num_features))

@@ -23,11 +23,15 @@ parser.add_argument('--shendure', action="store_true",
 parser.add_argument('--combined_datasets', action="store_true",
                     help='obtain model which combined all scATACseq', default=False)
 parser.add_argument('--cell_number_filter', type=int)
+parser.add_argument('--tss_filtered', action="store_true", default=False)
+parser.add_argument('--tss_filtered_num_fragment_filter', type=int, default=-1)
 
 
-def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter):
+def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter, tss_filtered,
+                                 tss_filtered_num_fragment_filter):
     return f"models/{cancer_type}/scATAC_source_" \
-           f"{scATAC_source}_cell_number_filter_{cell_number_filter}/backwards_elimination_results"
+           f"{scATAC_source}_cell_number_filter_{cell_number_filter}_tss_filtered_{tss_filtered}_fragment_filter_" \
+           f"{tss_filtered_num_fragment_filter}/backwards_elimination_results"
 
 def get_relevant_backwards_elim_dirs(config):
     cancer_types = config.cancer_types
@@ -38,16 +42,21 @@ def get_relevant_backwards_elim_dirs(config):
     shendure = config.shendure
     combined_datasets = config.combined_datasets
     cell_number_filter = config.cell_number_filter
+    tss_filtered = config.tss_filtered
+    tss_filtered_num_fragment_filter = config.tss_filtered_num_fragment_filter
     backward_elim_dirs = []
     for cancer_type in cancer_types:
         if (all_cells):
             if (bing_ren):
-                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "bing_ren", cell_number_filter))
+                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "bing_ren", cell_number_filter,
+                                                                       tss_filtered, tss_filtered_num_fragment_filter))
             if (shendure):
-                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "shendure", cell_number_filter))
+                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "shendure", cell_number_filter,
+                                                                       tss_filtered, tss_filtered_num_fragment_filter))
             if (combined_datasets):
                 backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "combined_datasets",
-                                                                       cell_number_filter))
+                                                                       cell_number_filter,
+                                                                       tss_filtered, tss_filtered_num_fragment_filter))
     return backward_elim_dirs
         # if (run_tissue_spec):
         #     backwards_elim_dir=f"models/{cancer_type}/scATAC_source_{scATAC_source}/" \
@@ -63,7 +72,7 @@ def get_relevant_backwards_elim_dirs(config):
         #             run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, cluster_method_dir,
         #                                    threshold_dir)
 
-def prep_df_for_pie_charts(backwards_elim_dirs, num_iter_skips=5):
+def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips=5):
     for backwards_elim_dir in backwards_elim_dirs:
         df = pd.DataFrame(columns = ["features", "importance", "num_features", "score"])
         figure_path = os.path.join("figures", backwards_elim_dir)
@@ -80,7 +89,7 @@ def prep_df_for_pie_charts(backwards_elim_dirs, num_iter_skips=5):
                                         [cv_score] * len(features))).T
                 df_curr.columns = df.columns
                 df = pd.concat((df, df_curr))
-        df.to_csv(os.path.join(figure_path, "df_for_pie_charts.csv"), index=False)
+        df.to_csv(os.path.join(figure_path, "df_for_feature_importance_plots.csv"), index=False)
         # import matplotlib.pyplot as plt
         # ax = df.plot.bar(x = "num_features", y = "importance", stacked=True)
         # fig = ax.get_figure()
@@ -110,4 +119,4 @@ def prep_df_for_pie_charts(backwards_elim_dirs, num_iter_skips=5):
 
 config = parser.parse_args()
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
-prep_df_for_pie_charts(backwards_elim_dirs)
+prep_df_for_feat_importance_plots(backwards_elim_dirs)
