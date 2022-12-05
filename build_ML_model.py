@@ -38,7 +38,7 @@ parser.add_argument('--meso', action="store_true",
                     help='meso data', default=False)
 parser.add_argument('--tss_filtered', action="store_true",
                     help='Use TSS filtered data', default=False)
-parser.add_argument('--tss_filtered_num_fragment_filter', type=int, default=100000)
+parser.add_argument('--tss_filtered_num_fragment_filter', type=int, default=-1)
 
 # parser.add_argument('--bioRxiv_method', action="store_true",
 #                     help='Use method from bioRxiv paper. Different from tissue_spec_cells by fact that here ' \
