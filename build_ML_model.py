@@ -30,10 +30,12 @@ parser.add_argument('--bing_ren', action="store_true",
                     help='use Bing Ren ATACseq', default=False)
 parser.add_argument('--shendure', action="store_true",
                     help='use Shendure ATACseq', default=False)
+parser.add_argument('--tsankov', action="store_true",
+                    help='use Tsankov ATACseq', default=False)
 parser.add_argument('--scATAC_cell_number_filter', type=int,
                     help='minimum number of cells per cell type in scATAC', default=100)
-parser.add_argument('--combined_datasets', action="store_true",
-                    help='combine all scATACseq', default=False)
+# parser.add_argument('--combined_datasets', action="store_true",
+#                     help='combine all scATACseq', default=False)
 parser.add_argument('--meso', action="store_true",
                     help='meso data', default=False)
 parser.add_argument('--tss_filtered', action="store_true",
@@ -51,6 +53,7 @@ run_tissue_spec_cells = config.tissue_spec_cells
 run_clustered_mutations = config.clustered_mutations
 bing_ren = config.bing_ren
 shendure = config.shendure
+tsankov = config.tsankov
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
 combined_datasets = config.combined_datasets
 meso = config.meso
@@ -247,48 +250,58 @@ def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, clus
 tss_filtered_root = "processed_data/count_overlap_data/tsse_filtered"
 
 if (tss_filtered):
+    # TODO: Fix for other than Bing Ren
     #result = pyreadr.read_r("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData") #
     chr_ranges = pd.read_csv("processed_data/chr_ranges.csv")
-    scATAC_df = load_scATAC(f"processed_data/count_overlap_data/tsse_filtered/bing_ren/combined/" \
+    scATAC_df = load_scATAC(f"{tss_filtered_root}/bing_ren/combined/" \
                            f"combined_{tss_filtered_num_fragment_filter}_fragments.rds").T
     scATAC_df.index = chr_ranges["x"].values
+
+    scATAC_df_shendure = load_scATAC(f"{tss_filtered_root}/shendure/combined/" \
+                                f"combined_{tss_filtered_num_fragment_filter}_fragments.rds")
+    scATAC_df_tsankov = load_scATAC(f"{tss_filtered_root}/tsankov/combined/" \
+                                 f"combined_{tss_filtered_num_fragment_filter}_fragments.rds")
 else:
-    scATAC_df = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
+    scATAC_df_bingren = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                             f"/count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
-
-scATAC_df.columns = [c + " BR" for c in scATAC_df.columns]
-
-if ((run_all_cells or run_tissue_spec_cells) and bing_ren):
-    run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells, cancer_types, meso)
-if (run_clustered_mutations and bing_ren):
-    run_clustered_data_analysis(scATAC_df, cancer_types)
-
-if (tss_filtered):
-    scATAC_df_shendure = load_scATAC("processed_data/count_overlap_data/tsse_filtered/shendure/combined/" \
-                                    f"combined_{tss_filtered_num_fragment_filter}_fragments.rds")
-else:
     scATAC_df_shendure = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
-                                     f"/shendure_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
-
-scATAC_df_shendure.columns = [c + " SH" for c in scATAC_df_shendure.columns]
-
-if (run_all_cells and shendure):
-    run_unclustered_data_analysis(scATAC_df_shendure, run_all_cells, run_tissue_spec_cells, cancer_types, meso,
-                                  "shendure")
-
-if (tss_filtered):
-    scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/tsse_filtered/tsankov/combined/" \
-                                     f"combined_{tss_filtered_num_fragment_filter}_fragments.rds")
-else:
+                                 f"/shendure_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
     scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
-                                     f"/tsankov_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+                                 f"/tsankov_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
 
+
+scATAC_df_bingren.columns = [c + " BR" for c in scATAC_df_bingren.columns]
+scATAC_df_shendure.columns = [c + " SH" for c in scATAC_df_shendure.columns]
 scATAC_df_tsankov.columns = [c + " TS" for c in scATAC_df_tsankov.columns]
 
-combined_scATAC_df = pd.concat((scATAC_df, scATAC_df_shendure, scATAC_df_tsankov), axis=1)
-if (run_all_cells and combined_datasets):
-    run_unclustered_data_analysis(combined_scATAC_df, run_all_cells, run_tissue_spec_cells,
-                                  cancer_types, meso, "combined_datasets")
+scATAC_df = pd.DataFrame()
+scATAC_sources = ""
+
+if (bing_ren):
+    scATAC_df = pd.concat((scATAC_df, scATAC_df_bingren), axis=1)
+    scATAC_sources = scATAC_sources + "bing_ren"
+if (shendure):
+    scATAC_df = pd.concat((scATAC_df, scATAC_df_shendure), axis=1)
+    scATAC_sources = scATAC_sources + "shendure"
+if (tsankov):
+    scATAC_df = pd.concat((scATAC_df, scATAC_df_tsankov), axis=1)
+    scATAC_sources = scATAC_sources + "tsankov"
+
+if (bing_ren and shendure and tsankov):
+    scATAC_sources = "combined_datasets"
+
+if (run_all_cells or run_tissue_spec_cells):
+    run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells, cancer_types, meso,
+                                  scATAC_sources)
+
+
+# if (run_all_cells and shendure):
+#     run_unclustered_data_analysis(scATAC_df_shendure, run_all_cells, run_tissue_spec_cells, cancer_types, meso,
+#                                   "shendure")
+
+
+# if (run_clustered_mutations and bing_ren):
+#     run_clustered_data_analysis(scATAC_df, cancer_types)
 
 # if (bioRxiv_method):
 #     run_unclustered_data_analysis(combined_scATAC_df, run_all_cells, run_tissue_spec_cells,
