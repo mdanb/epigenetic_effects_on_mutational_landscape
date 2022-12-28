@@ -55,7 +55,6 @@ bing_ren = config.bing_ren
 shendure = config.shendure
 tsankov = config.tsankov
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
-combined_datasets = config.combined_datasets
 meso = config.meso
 tss_filtered = config.tss_filtered
 tss_filtered_num_fragment_filter = config.tss_filtered_num_fragment_filter
@@ -180,7 +179,6 @@ def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, can
         os.makedirs(f"models/{cancer_type}/{scATAC_dir}",
                     exist_ok=True)
         cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
-
 
         if (run_all_cells):
             backwards_elim_dir=f"models/{cancer_type}/{scATAC_dir}/backwards_elimination_results"
