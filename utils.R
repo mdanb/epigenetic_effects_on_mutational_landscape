@@ -11,12 +11,12 @@ get_per_cancer_mut_data <- function(all_mutations, interval_ranges) {
   return(cancer_types_mut_data)
 }
 
-get_mutation_df_all_cancers <- function() {
+get_mutation_df_all_cancers <- function(mut, interval_ranges) {
   if (!file.exists("processed_data/mut_count_data.csv")) {
-    cancer_types_mut_data = get_per_cancer_mut_data(mut, interval.ranges)
+    cancer_types_mut_data = get_per_cancer_mut_data(mut, interval_ranges)
     mut_count_data = as.data.frame(do.call(cbind, cancer_types_mut_data))
     colnames(mut_count_data) = colnames(mut)
-    rownames(mut_count_data) = names(interval.ranges)
+    rownames(mut_count_data) = names(interval_ranges)
     write.csv(mut_count_data, "processed_data/mut_count_data.csv")
   }
   else {
