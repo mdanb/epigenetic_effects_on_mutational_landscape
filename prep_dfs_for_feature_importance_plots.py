@@ -20,8 +20,10 @@ parser.add_argument('--bing_ren', action="store_true",
                     help='obtain model which used Bing Ren ATACseq', default=False)
 parser.add_argument('--shendure', action="store_true",
                     help='obtain model which used Shendure ATACseq', default=False)
-parser.add_argument('--combined_datasets', action="store_true",
-                    help='obtain model which combined all scATACseq', default=False)
+parser.add_argument('--tsankov', action="store_true",
+                    help='obtain model which used tsankov ATACseq', default=False)
+# parser.add_argument('--combined_datasets', action="store_true",
+#                     help='obtain model which combined all scATACseq', default=False)
 parser.add_argument('--cell_number_filter', type=int)
 parser.add_argument('--tss_filtered', action="store_true", default=False)
 parser.add_argument('--tss_filtered_num_fragment_filter', type=int, default=-1)
@@ -40,23 +42,27 @@ def get_relevant_backwards_elim_dirs(config):
     # clustered_mutations = config.clustered_mutations
     bing_ren = config.bing_ren
     shendure = config.shendure
-    combined_datasets = config.combined_datasets
+    tsankov = config.tsankov
+    # combined_datasets = config.combined_datasets
     cell_number_filter = config.cell_number_filter
     tss_filtered = config.tss_filtered
     tss_filtered_num_fragment_filter = config.tss_filtered_num_fragment_filter
     backward_elim_dirs = []
+
+    scATAC_sources = ""
+    if (bing_ren):
+        scATAC_sources = scATAC_sources + "bing_ren"
+    if (shendure):
+        scATAC_sources = scATAC_sources + "shendure"
+    if (tsankov):
+        scATAC_sources = scATAC_sources + "tsankov"
+    if (bing_ren and shendure and tsankov):
+        scATAC_sources = "combined_datasets"
+        
     for cancer_type in cancer_types:
         if (all_cells):
-            if (bing_ren):
-                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "bing_ren", cell_number_filter,
-                                                                       tss_filtered, tss_filtered_num_fragment_filter))
-            if (shendure):
-                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "shendure", cell_number_filter,
-                                                                       tss_filtered, tss_filtered_num_fragment_filter))
-            if (combined_datasets):
-                backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, "combined_datasets",
-                                                                       cell_number_filter,
-                                                                       tss_filtered, tss_filtered_num_fragment_filter))
+            backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, scATAC_sources, cell_number_filter,
+                                                                   tss_filtered, tss_filtered_num_fragment_filter))
     return backward_elim_dirs
         # if (run_tissue_spec):
         #     backwards_elim_dir=f"models/{cancer_type}/scATAC_source_{scATAC_source}/" \
