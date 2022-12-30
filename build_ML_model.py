@@ -175,7 +175,7 @@ def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, can
 
     for cancer_type in cancer_types:
         scATAC_dir = f"scATAC_source_{scATAC_source}_cell_number_filter_{scATAC_cell_number_filter}_" \
-                     f"tss_filtered_{tss_filtered}_fragment_filter_{tss_filtered_num_fragment_filter}"
+                     f"tss_filtered_{tss_filtered}_fragment_filter_{tss_filtered_num_fragment_filter}_meso_{meso}"
         os.makedirs(f"models/{cancer_type}/{scATAC_dir}",
                     exist_ok=True)
         cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
