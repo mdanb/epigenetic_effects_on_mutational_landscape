@@ -14,6 +14,8 @@ parser <- add_option(parser, c("--bing_ren"), action="store_true",
                                default=F)
 parser <- add_option(parser, c("--tsankov"), action="store_true",
                      default=F)
+parser <- add_option(parser, c("--meso"), action="store_true",
+                     default=F)
 parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
@@ -29,12 +31,13 @@ args = parse_args(parser)
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter, tss_filtered,
-                                         tss_filtered_num_fragment_filter) {
+                                         tss_filtered_num_fragment_filter, 
+                                         meso) {
   scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
                         cell_number_filter, "tss_filtered", 
                         str_to_title(tss_filtered),
-                        "fragment_filter", tss_filtered_num_fragment_filter,
-                        sep="_")
+                        "fragment_filter", tss_filtered_num_fragment_filter, 
+                        "meso", meso, sep="_")
   dir = paste("figures", "models", cancer_type, scATAC_source,
               "backwards_elimination_results", sep="/")
   return(dir)
@@ -50,7 +53,8 @@ get_relevant_backwards_elim_dirs <- function(args) {
     cell_number_filter = args$cell_number_filter
     tss_filtered = args$tss_filtered
     tss_filtered_num_fragment_filter = args$tss_filtered_num_fragment_filter
-
+    meso = args$meso
+    
     backward_elim_dirs = list()
     for (cancer_type in cancer_types) {
       if (all_cells) {
@@ -59,14 +63,16 @@ get_relevant_backwards_elim_dirs <- function(args) {
                         construct_backwards_elim_dir(cancer_type, "bing_ren", 
                                                      cell_number_filter,
                                                      tss_filtered,
-                                                     tss_filtered_num_fragment_filter))
+                                                     tss_filtered_num_fragment_filter,
+                                                     str_to_title(meso)))
         }
         if (tsankov) {
           backward_elim_dirs = append(backward_elim_dirs,
                                       construct_backwards_elim_dir(cancer_type, "tsankov", 
                                                                    cell_number_filter,
                                                                    tss_filtered,
-                                                                   tss_filtered_num_fragment_filter))
+                                                                   tss_filtered_num_fragment_filter,
+                                                                   str_to_title(meso)))
         }
         # if (shendure) {
         #   backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, 
@@ -77,7 +83,8 @@ get_relevant_backwards_elim_dirs <- function(args) {
                  construct_backwards_elim_dir(cancer_type, "combined_datasets",
                                               cell_number_filter,
                                               tss_filtered,
-                                              tss_filtered_num_fragment_filter))
+                                              tss_filtered_num_fragment_filter,
+                                              str_to_title(meso)))
         }
       }
     }
