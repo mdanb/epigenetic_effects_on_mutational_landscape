@@ -12,6 +12,8 @@ parser <- add_option(parser, c("--combined_datasets"), action="store_true",
                                default=F)
 parser <- add_option(parser, c("--bing_ren"), action="store_true",
                                default=F)
+parser <- add_option(parser, c("--tsankov"), action="store_true",
+                     default=F)
 parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
@@ -44,6 +46,7 @@ get_relevant_backwards_elim_dirs <- function(args) {
     all_cells = args$all_cells
     combined_datasets = args$combined_datasets
     bing_ren = args$bing_ren
+    tsankov = args$tsankov
     cell_number_filter = args$cell_number_filter
     tss_filtered = args$tss_filtered
     tss_filtered_num_fragment_filter = args$tss_filtered_num_fragment_filter
@@ -57,6 +60,13 @@ get_relevant_backwards_elim_dirs <- function(args) {
                                                      cell_number_filter,
                                                      tss_filtered,
                                                      tss_filtered_num_fragment_filter))
+        }
+        if (tsankov) {
+          backward_elim_dirs = append(backward_elim_dirs,
+                                      construct_backwards_elim_dir(cancer_type, "tsankov", 
+                                                                   cell_number_filter,
+                                                                   tss_filtered,
+                                                                   tss_filtered_num_fragment_filter))
         }
         # if (shendure) {
         #   backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, 
