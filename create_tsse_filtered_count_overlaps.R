@@ -18,8 +18,8 @@ option_list <- list(
 args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args=
 #        c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000",
-#          "--dataset=shendure",
-#          "--cell_types=Bronchiolar and alveolar epithelial cells",
+#          "--dataset=bing_ren",
+#          "--cell_types=*",
 #           "--files_pattern=lung",
 #          "--cores=2"))
 
@@ -80,6 +80,13 @@ args = parse_args(OptionParser(option_list=option_list))
 #                      "--dataset=bing_ren",
 #                      "--cell_types=Cardiac Pericyte 1,Cardiac Pericyte 2,Endothelial Cell (Myocardial)",
 #                      "--files_pattern=heart_lv_SM",
+#                      "--cores=1"))
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                    c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000",
+#                      "--dataset=tsankov",
+#                      "--cell_types=AT1;AT2;B_cells;Ciliated;Endothelial;Fibroblasts;Immune;Mesothelium;Secretory;SmoothMuscle",
+#                      "--files_pattern=RPL",
 #                      "--cores=1"))
 
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
@@ -300,7 +307,12 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
     tissue_name = get_tissue_name_shendure(files[1])
   }
   else {
-    tissue_name = "lung"
+    if ("RPL" %in% files[1]) {
+      tissue_name = "distal_lung"
+    }
+    else {
+      tissue_name = "proximal_lung"
+    }
   }
   
   for (count in top_tsse_fragment_count_range) {
