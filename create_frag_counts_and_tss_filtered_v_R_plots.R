@@ -8,6 +8,7 @@ options(scipen=999)
 
 option_list <- list( 
   make_option("--cancer_type", type="character"),
+  make_option("--meso", type="bool", default=FALSE),
   make_option("--boxplot_cell_types", type="character"),
   make_option("--tissue_for_tsse_filtered_cell_types", type="character",
               help="format: comma separated [Dataset]-[Tissue]"),
@@ -76,7 +77,32 @@ args = parse_args(OptionParser(option_list=option_list))
 #                      "--plot_filename=cns_gbm_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png",
 #                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"))
 
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                    c("--cancer_type=ColoRect.AdenoCA",
+#                      "--boxplot_cell_types=colon_transverse Colon Epithelial Cell 2 (BR)/colon_transverse Colonic Goblet Cell (BR)/colon_transverse Colon Epithelial Cell 1 (BR)/colon_sigmoid Fibroblast (Gastrointestinal) (BR)/artery_aorta Fibroblast (General) (BR)/stomach Foveolar Cell (BR)/heart_lv Fibroblast (General) (BR)/adipose_omentum T Lymphocyte 1 (CD8+) (BR)/colon_transverse Smooth Muscle (General) (BR)/nerve_tibial Smooth Muscle (General) (BR)",
+#                      "--tissue_for_tsse_filtered_cell_types=Bing Ren-Colon Transverse,Bing Ren-Colon Sigmoid,Bing Ren-Artery Aorta,Bing Ren-Stomach,Bing Ren-Heart Lv,Bing Ren-Adipose Omentum,Bing Ren-Colon Transverse,Bing-Ren Nerve Tibial",
+#                      "--tsse_filtered_cell_types=Colon Epithelial Cell 2;Colonic Goblet Cell;Colon Epithelial Cell 1/Fibroblast (Gastrointestinal)/Fibroblast (General)/Foveolar Cell/Fibroblast (General)/T Lymphocyte 1 (CD8+)/Smooth Muscle (General)/Smooth Muscle (General)",
+#                      "--plot_filename=colorect_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png",
+#                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"))
+
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                    c("--cancer_type=Lung.AdenoCA",
+#                      "--boxplot_cell_types=lung Club Cell (BR)/small_intestine Smooth Muscle (General) (BR)/muscle Type II Skeletal Myocyte (BR)/heart_lv Endothelial Cell (Myocardial) (BR)/artery_tibial Vascular Smooth Muscle 1 (BR)/artery_aorta Vascular Smooth Muscle 2 (BR)/esophagus_mucosa Esophageal Epithelial Cell (BR)/ovary Smooth Muscle (General) (BR)/artery_aorta Endothelial Cell (General) 2 (BR)/nerve_tibial Fibroblast (Peripheral Nerve) (BR)",
+#                      "--tissue_for_tsse_filtered_cell_types=Bing Ren-Liver,Bing Ren-Small Intestine,Bing Ren-Artery Aorta,Bing Ren-Muscle,Bing Ren-Small Intestine,Bing Ren-Skin,Bing Ren-Esophagus Ge Junction,Bing Ren-Artery Aorta,Bing Ren-Colon Sigmoid,Bing Ren-Colon Sigmoid",
+#                      "--tsse_filtered_cell_types=Hepatocyte/Smooth Muscle (General)/Smooth Muscle (General)/Type II Skeletal Myocyte/T Lymphocyte 1 (CD8+)/Fibroblast (Epithelial)/Fibroblast (General)/Fibroblast (General)/Fibroblast (Gastrointestinal)/Fibroblast (General)",
+#                      "--plot_filename=liver_hcc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png",
+#                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"))
+
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--cancer_type=Lung.AdenoCA",
+                      "--boxplot_cell_types=lung Club Cell (BR)/small_intestine Smooth Muscle (General) (BR)/muscle Type II Skeletal Myocyte (BR)/heart_lv Endothelial Cell (Myocardial) (BR)/artery_tibial Vascular Smooth Muscle 1 (BR)/artery_aorta Vascular Smooth Muscle 2 (BR)/esophagus_mucosa Esophageal Epithelial Cell (BR)/ovary Smooth Muscle (General) (BR)/artery_aorta Endothelial Cell (General) 2 (BR)/nerve_tibial Fibroblast (Peripheral Nerve) (BR)",
+                      "--tissue_for_tsse_filtered_cell_types=Bing Ren-Lung,Bing Ren-Small Intestine,Bing Ren-Muscle,Bing Ren-Heart Lv,Bing Ren-Artery Tibial,Bing Ren-Artery Aorta,Bing Ren-Esophagus Mucosa,Bing Ren-Ovary,Bing Ren-Artery Aorta,Bing Ren-Nerve Tibial",
+                      "--tsse_filtered_cell_types=Club Cell/Smooth Muscle (General)/Type II Skeletal Myocyte/Endothelial Cell (Myocardial)/Vascular Smooth Muscle 1/Vascular Smooth Muscle 2/Esophageal Epithelial Cell/Smooth Muscle (General)/Endothelial Cell (General) 2/Fibroblast (Peripheral Nerve)",
+                      "--plot_filename=lung_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png",
+                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"))
+
 cancer_type = args$cancer_type
+meso = args$meso
 boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = "/"))
 tissue_dataset_for_tsse_filtered_cell_types = unlist(strsplit(args$tissue_for_tsse_filtered_cell_types, 
                                               split = ","))
@@ -519,10 +545,14 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
 #                                "lung_adenoca_log_num_frags_vs_correlation.png",
 #                                tsse_filtered_correlations)
 
-mut = load_mutation_data()
-mut_count_data = get_mutation_df_all_cancers()
-rownames(mut_count_data) = mut_count_data[, 1]
-mut_count_data = mut_count_data[, 2:length(colnames(mut_count_data))]
+if (meso) {
+  mut = load_mutation_data()
+  mut_count_data = get_mutation_df_all_cancers(mut, interval.ranges)
+  rownames(mut_count_data) = mut_count_data[, 1]
+  mut_count_data = mut_count_data[, 2:length(colnames(mut_count_data))]
+} else {
+  mut_count_data = load_meso_mutation_data()
+}
 
 combined_data_path = "processed_data/count_overlap_data/combined_count_overlaps/"
 
