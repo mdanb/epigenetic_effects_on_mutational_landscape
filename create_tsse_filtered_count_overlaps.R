@@ -307,7 +307,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
     tissue_name = get_tissue_name_shendure(files[1])
   }
   else {
-    if ("RPL" %in% files[1]) {
+    if (grepl("RPL", files[1])) {
       tissue_name = "distal_lung"
     }
     else {
@@ -426,7 +426,7 @@ if (dataset == "bing_ren") {
                                       pattern="IC")
   files_Tsankov_distal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/Tsankov_scATAC/", 
                                     pattern="RPL")
-  if ("RPL" %in% files_pattern) {
+  if (files_pattern == "RPL") {
     create_tsse_filtered_count_overlaps_per_tissue(files_Tsankov_distal,
                                                    metadata_tsankov_distal,
                                                    interval.ranges,
