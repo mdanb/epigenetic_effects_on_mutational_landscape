@@ -20,7 +20,7 @@ get_mutation_df_all_cancers <- function(mut, interval_ranges) {
     write.csv(mut_count_data, "processed_data/mut_count_data.csv")
   }
   else {
-    mut_count_data = read.csv("processed_data/mut_count_data.csv")
+    mut_count_data = read.csv("processed_data/meso_mut_count_data.csv")
   }
   return(mut_count_data)
 }
