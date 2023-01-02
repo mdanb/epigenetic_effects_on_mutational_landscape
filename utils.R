@@ -76,3 +76,8 @@ load_mutation_data <- function() {
   mut = mut[, 1:37]
   return(mut)
 }
+
+load_meso_mutation_data <- function() {
+  mut = readRDS('processed_data/meso_mut_count_data.csv')
+  return(mut)
+}
