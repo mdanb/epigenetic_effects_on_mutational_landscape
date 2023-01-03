@@ -167,8 +167,8 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filename)
 
 def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types, meso, meso_waddell_only,
-                                  scATAC_source="bing_ren"):
-    if (meso or meso_waddell_only):
+                                  meso_waddell_and_broad_only, scATAC_source="bing_ren"):
+    if (meso or meso_waddell_only or meso_waddell_and_broad_only):
         mutations_df = load_meso_mutations(meso, meso_waddell_only)
     else:
         mutations_df = load_agg_mutations()
@@ -295,7 +295,8 @@ if (bing_ren and shendure and tsankov):
 
 if (run_all_cells or run_tissue_spec_cells):
     run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells,
-                                  cancer_types, meso, meso_waddell_only, scATAC_sources)
+                                  cancer_types, meso, meso_waddell_only, meso_waddell_and_broad_only,
+                                  scATAC_sources)
 
 
 # if (run_all_cells and shendure):
