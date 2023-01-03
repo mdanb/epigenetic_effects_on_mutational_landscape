@@ -151,10 +151,10 @@ save_combined_overlaps_shendure_tsankov <- function(filepaths,
     if (grepl("Tsankov", f)) {
       # tissue_name <- get_tissue_name_tsankov(f)
       if (grepl("RPL", f)) {
-        tissue_name = "distal_lung"
+        tissue_name = "distal lung"
       }
       else {
-        tissue_name = "proximal_lung"
+        tissue_name = "proximal lung"
       }
     }
     else {
