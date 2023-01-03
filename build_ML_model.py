@@ -168,7 +168,7 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
 
 def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types, meso, meso_waddell_only,
                                   scATAC_source="bing_ren"):
-    if (meso):
+    if (meso or meso_waddell_only):
         mutations_df = load_meso_mutations(meso, meso_waddell_only)
     else:
         mutations_df = load_agg_mutations()
