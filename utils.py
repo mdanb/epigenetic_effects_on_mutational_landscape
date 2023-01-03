@@ -17,14 +17,14 @@ def load_meso_mutations():
                        index_col=0)
 
 # Filter Data Helpers
-def filter_agg_data(scATAC_df, mutations_df, meso):
-    if (meso):
-        idx_select = scATAC_df.index.isin(mutations_df.index)
-        scATAC_df = scATAC_df[idx_select]
-    else:
-        idx_select = ~pd.isnull(mutations_df).any(axis=1)
-        scATAC_df = scATAC_df[idx_select]
-        mutations_df = mutations_df[idx_select]
+def filter_agg_data(scATAC_df, mutations_df):
+    # if (meso):
+    #     idx_select = scATAC_df.index.isin(mutations_df.index)
+    #     scATAC_df = scATAC_df[idx_select]
+    # else:
+    idx_select = ~pd.isnull(mutations_df).any(axis=1)
+    scATAC_df = scATAC_df.loc[idx_select]
+    mutations_df = mutations_df[idx_select]
     return scATAC_df, mutations_df
 
 def filter_mutations_by_cancer(mutations_df, cancer_type):

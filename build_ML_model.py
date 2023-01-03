@@ -170,7 +170,7 @@ def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, can
         mutations_df = load_agg_mutations()
 
     #### Filter data ####
-    scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df, meso)
+    scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
 
 
     for cancer_type in cancer_types:
