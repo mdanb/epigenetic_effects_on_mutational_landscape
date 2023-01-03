@@ -8,7 +8,7 @@ options(scipen=999)
 
 option_list <- list( 
   make_option("--cancer_type", type="character"),
-  make_option("--meso", type="bool", default=FALSE),
+  make_option("--meso", type="logical", action="store_true", default=FALSE),
   make_option("--boxplot_cell_types", type="character"),
   make_option("--tissue_for_tsse_filtered_cell_types", type="character",
               help="format: comma separated [Dataset]-[Tissue]"),
@@ -37,13 +37,13 @@ args = parse_args(OptionParser(option_list=option_list))
 #                       "--plot_filename=melanoma_num_frags_vs_correlation.png",
 #                       "--plot_x_ticks=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"))
 
-#args = parse_args(OptionParser(option_list=option_list), args =
-#                    c("--cancer_type=Lung.AdenoCA",
-#                      "--boxplot_cell_types=Distal Lung AT2 (TS)-Lung Alveolar Type 2 (AT2) Cell (BR)-Lung Bronchiolar and alveolar epithelial cells (SH)",
-#                      "--tissue_for_tsse_filtered_cell_types=Tsankov-Lung,Bing Ren-Lung,Shendure-Lung",
-#                      "--tsse_filtered_cell_types=AT2,Alveolar Type 2 (AT2) Cell,Bronchiolar and alveolar epithelial cells",
-#                      "--plot_filename=lung_adenoca_at2_only_frags_vs_correlation.png",
-#                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000,700000,800000,900000,1000000,2000000,3000000,4000000,5000000,6000000,8000000,10000000,15000000,20000000"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                   c("--cancer_type=Lung.AdenoCA",
+                     "--boxplot_cell_types=Distal Lung AT2 (TS)/Lung Alveolar Type 2 (AT2) Cell (BR)/Lung Bronchiolar and alveolar epithelial cells (SH)",
+                     "--tissue_for_tsse_filtered_cell_types=Tsankov-Lung,Bing Ren-Lung,Shendure-Lung",
+                     "--tsse_filtered_cell_types=AT2/Alveolar Type 2 (AT2) Cell/Bronchiolar and alveolar epithelial cells",
+                     "--plot_filename=lung_adenoca_at2_only_frags_vs_correlation.png",
+                     "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000,700000,800000,900000,1000000,2000000,3000000,4000000,5000000,6000000,8000000,10000000,15000000,20000000"))
 
 # args = parse_args(OptionParser(option_list=option_list), args =
 #                    c("--cancer_type=Eso.AdenoCA",
@@ -94,12 +94,23 @@ args = parse_args(OptionParser(option_list=option_list))
 #                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"))
 
 args = parse_args(OptionParser(option_list=option_list), args =
-                    c("--cancer_type=Lung.AdenoCA",
-                      "--boxplot_cell_types=lung Club Cell (BR)/small_intestine Smooth Muscle (General) (BR)/muscle Type II Skeletal Myocyte (BR)/heart_lv Endothelial Cell (Myocardial) (BR)/artery_tibial Vascular Smooth Muscle 1 (BR)/artery_aorta Vascular Smooth Muscle 2 (BR)/esophagus_mucosa Esophageal Epithelial Cell (BR)/ovary Smooth Muscle (General) (BR)/artery_aorta Endothelial Cell (General) 2 (BR)/nerve_tibial Fibroblast (Peripheral Nerve) (BR)",
-                      "--tissue_for_tsse_filtered_cell_types=Bing Ren-Lung,Bing Ren-Small Intestine,Bing Ren-Muscle,Bing Ren-Heart Lv,Bing Ren-Artery Tibial,Bing Ren-Artery Aorta,Bing Ren-Esophagus Mucosa,Bing Ren-Ovary,Bing Ren-Artery Aorta,Bing Ren-Nerve Tibial",
-                      "--tsse_filtered_cell_types=Club Cell/Smooth Muscle (General)/Type II Skeletal Myocyte/Endothelial Cell (Myocardial)/Vascular Smooth Muscle 1/Vascular Smooth Muscle 2/Esophageal Epithelial Cell/Smooth Muscle (General)/Endothelial Cell (General) 2/Fibroblast (Peripheral Nerve)",
-                      "--plot_filename=lung_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png",
-                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"))
+                    c("--cancer_type=sarcomatoid",
+                      "--meso",
+                      "--boxplot_cell_types=distal_lung AT1 (TS)/distal_lung AT2 (TS)/distal_lung B_cells (TS)/distal_lung Ciliated (TS)/distal_lung Endothelial (TS)/distal_lung Fibroblasts (TS)/distal_lung Immune (TS)/distal_lung Mesothelium (TS)/distal_lung Secretory (TS)/distal_lung SmoothMuscle (TS)",
+                      "--tissue_for_tsse_filtered_cell_types=Tsankov-Distal Lung",
+                      "--tsse_filtered_cell_types=AT1;AT2;B_cells;Ciliated;Endothelial;Fibroblasts;Immune;Mesothelium;Secretory;SmoothMuscle",
+                      "--plot_filename=sarcomatoid_distal_lung_tsankov_num_frags_vs_correlation.png",
+                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
+
+
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--cancer_type=sarcomatoid",
+#                       "--meso",
+#                       "--boxplot_cell_types=proximal_lung Basal (TS)/proximal_lung Ciliated (TS)/proximal_lung Endothelial (TS)/proximal_lung Ionocytes (TS)/proximal_lung Myeloid (TS)/proximal_lung Neuroendocrine (TS)/proximal_lung Sec-Ciliated (TS)/proximal_lung Secretory (TS)/proximal_lung Stromal (TS)/proximal_lung T.NK.cells (TS)/proximal_lung Tuft.like (TS)/proximal_lung B.cells (TS)",
+#                       "--tissue_for_tsse_filtered_cell_types=Tsankov-Proximal Lung",
+#                       "--tsse_filtered_cell_types=Basal;Ciliated;Endothelial;Ionocytes;Myeloid;Neuroendocrine;Sec-Ciliated;Secretory;Stromal;T.NK.cells;Tuft.like;B.cells",
+#                       "--plot_filename=sarcomatoid_proximal_lung_tsankov_num_frags_vs_correlation.png",
+#                       "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
 
 cancer_type = args$cancer_type
 meso = args$meso
@@ -240,11 +251,11 @@ plot_and_save_boxplots <- function(correlations_long, cell_types,
     
     # levels_for_filtered_correlations = x_for_filtered_correlations
     cell_type_for_tsse_filtered = lapply(correlations_for_tsse_filtered_cells, 
-                                         rownames)
-    dfs = lapply(correlations_for_tsse_filtered_cells, 
-                 as_tibble)
-    df = rbindlist(dfs)
-    df[, "cell_type"] = unlist(cell_type_for_tsse_filtered)
+                                         "[", 1)
+    # dfs = lapply(correlations_for_tsse_filtered_cells, 
+    #              as_tibble)
+    df = rbindlist(correlations_for_tsse_filtered_cells)
+    # df[, "cell_type"] = unlist(cell_type_for_tsse_filtered)
     df = pivot_longer(df, -cell_type)
     colnames(df)[2] = "frag_counts"
     df["frag_counts"] = as.integer(df[["frag_counts"]])
@@ -451,7 +462,7 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
                                                                      current_tsse_cell_types) {
   cell_type_for_grep = lapply(current_tsse_cell_types, add_escape_if_necessary)
   count = 1
-  tsse_filtered_correlations = c()
+  tsse_filtered_correlations = tibble()
   for (file in mixedsort(list.files(folder_path,
                                     full.names = TRUE))) {
     num_frags = as.integer(unlist(strsplit(tail(unlist(strsplit(file, "_")), 1), 
@@ -467,24 +478,31 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
 
       count_overlaps = count_overlaps[, unlist(cell_type_col_idx), drop=FALSE]
       if (length(count_overlaps) == 0) {
-        corrs = data.frame()
+        corrs = tibble(cell_type = character(), correlation = numeric())
       }
       else {
-      corrs = data.frame(cor(count_overlaps,
-                             mut_count_data[, cancer_type],
-                             use="complete"))
+        corrs = tibble(cor(count_overlaps,
+                               mut_count_data[, cancer_type],
+                               use="complete"))
+        corrs = corrs %>% add_column(cell_type = colnames(count_overlaps), 
+                                      .before=1)
+        # corrs["cell_type"] = colnames(count_overlaps)
       }
-      for (cell_type in rownames(tsse_filtered_correlations)) {
-        if (!(cell_type %in% rownames(corrs))) {
-          corrs[cell_type, 1] = c(NA)
+      if (nrow(tsse_filtered_correlations) != 0) {
+        for (cell_type in tsse_filtered_correlations[["cell_type"]]) {
+          if (!(cell_type %in% corrs[["cell_type"]])) {
+            temp = tibble(cell_type, NA)
+            colnames(temp) = colnames(corrs)
+            corrs = rbind(corrs, temp)
+          }
         }
       }
-      colnames(corrs) = "correlation"
+      # colnames(corrs) = c("cell_type", "correlation")
       if (count == 1) {
         tsse_filtered_correlations = corrs
       }
       else {
-        tsse_filtered_correlations = cbind(tsse_filtered_correlations, corrs)
+        tsse_filtered_correlations = inner_join(tsse_filtered_correlations, corrs)
       }
       colnames(tsse_filtered_correlations)[ncol(tsse_filtered_correlations)] = 
         num_fragments
@@ -546,12 +564,12 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
 #                                tsse_filtered_correlations)
 
 if (meso) {
+  mut_count_data = load_meso_mutation_data()
+} else {
   mut = load_mutation_data()
   mut_count_data = get_mutation_df_all_cancers(mut, interval.ranges)
   rownames(mut_count_data) = mut_count_data[, 1]
   mut_count_data = mut_count_data[, 2:length(colnames(mut_count_data))]
-} else {
-  mut_count_data = load_meso_mutation_data()
 }
 
 combined_data_path = "processed_data/count_overlap_data/combined_count_overlaps/"
@@ -614,8 +632,8 @@ for (dataset_tissue in tissue_dataset_for_tsse_filtered_cell_types) {
     dataset_extension = "(TS)"
   }
   
-  rownames(correlations) =
-    paste(tissue, rownames(correlations), dataset_extension)
+  correlations["cell_type"] =
+    paste(tissue, correlations[["cell_type"]], dataset_extension)
   
   tsse_filtered_correlations = append(tsse_filtered_correlations,
                                       list(correlations))
