@@ -256,14 +256,18 @@ if (tss_filtered):
     # TODO: Fix for other than Bing Ren
     #result = pyreadr.read_r("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData") #
     chr_ranges = pd.read_csv("processed_data/chr_ranges.csv")
-    scATAC_df = load_scATAC(f"{tss_filtered_root}/bing_ren/combined/" \
-                           f"combined_{tss_filtered_num_fragment_filter}_fragments.rds").T
-    scATAC_df.index = chr_ranges["x"].values
+    if (bing_ren):
+        scATAC_df = load_scATAC(f"{tss_filtered_root}/bing_ren/combined/" \
+                               f"combined_{tss_filtered_num_fragment_filter}_fragments.rds").T
+        scATAC_df.index = chr_ranges["x"].values
 
-    scATAC_df_shendure = load_scATAC(f"{tss_filtered_root}/shendure/combined/" \
-                                f"combined_{tss_filtered_num_fragment_filter}_fragments.rds")
-    scATAC_df_tsankov = load_scATAC(f"{tss_filtered_root}/tsankov/combined/" \
-                                 f"combined_{tss_filtered_num_fragment_filter}_fragments.rds")
+    if (shendure):
+        scATAC_df_shendure = load_scATAC(f"{tss_filtered_root}/shendure/combined/" \
+                                    f"combined_{tss_filtered_num_fragment_filter}_fragments.rds")
+    if (tsankov):
+        scATAC_df_tsankov = load_scATAC(f"{tss_filtered_root}/tsankov/combined/" \
+                                     f"combined_{tss_filtered_num_fragment_filter}_fragments.rds").T
+        scATAC_df_tsankov.index = chr_ranges["x"].values
 else:
     scATAC_df_bingren = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                             f"/count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
@@ -272,21 +276,18 @@ else:
     scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
                                  f"/tsankov_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
 
-
-scATAC_df_bingren.columns = [c + " BR" for c in scATAC_df_bingren.columns]
-scATAC_df_shendure.columns = [c + " SH" for c in scATAC_df_shendure.columns]
-scATAC_df_tsankov.columns = [c + " TS" for c in scATAC_df_tsankov.columns]
-
 scATAC_df = pd.DataFrame()
 scATAC_sources = ""
-
 if (bing_ren):
+    scATAC_df_bingren.columns = [c + " BR" for c in scATAC_df_bingren.columns]
     scATAC_df = pd.concat((scATAC_df, scATAC_df_bingren), axis=1)
     scATAC_sources = scATAC_sources + "bing_ren"
 if (shendure):
+    scATAC_df_shendure.columns = [c + " SH" for c in scATAC_df_shendure.columns]
     scATAC_df = pd.concat((scATAC_df, scATAC_df_shendure), axis=1)
     scATAC_sources = scATAC_sources + "shendure"
 if (tsankov):
+    scATAC_df_tsankov.columns = [c + " TS" for c in scATAC_df_tsankov.columns]
     scATAC_df = pd.concat((scATAC_df, scATAC_df_tsankov), axis=1)
     scATAC_sources = scATAC_sources + "tsankov"
 
