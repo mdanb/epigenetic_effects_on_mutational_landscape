@@ -38,10 +38,11 @@ parser.add_argument('--scATAC_cell_number_filter', type=int,
 #                     help='combine all scATACseq', default=False)
 parser.add_argument('--meso', action="store_true",
                     help='meso data', default=False)
+parser.add_argument('--meso_waddell_only', action="store_true", default=False)
+parser.add_argument('--meso_waddell_and_broad_only', action="store_true", default=False)
 parser.add_argument('--tss_filtered', action="store_true",
                     help='Use TSS filtered data', default=False)
 parser.add_argument('--tss_filtered_num_fragment_filter', type=int, default=-1)
-
 # parser.add_argument('--bioRxiv_method', action="store_true",
 #                     help='Use method from bioRxiv paper. Different from tissue_spec_cells by fact that here ' \
 #                          'dont a priori know which tissue to train on, so trains on all of them', default=False)
@@ -56,6 +57,9 @@ shendure = config.shendure
 tsankov = config.tsankov
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
 meso = config.meso
+meso_waddell_only = config.meso_waddell_only
+meso_waddell_and_broad_only = config.meso_waddell_and_broad_only
+
 tss_filtered = config.tss_filtered
 tss_filtered_num_fragment_filter = config.tss_filtered_num_fragment_filter
 # bioRxiv_method = config.bioRxiv_method
@@ -162,10 +166,10 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
     #### Test Set Performance ####
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filename)
 
-def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types, meso,
+def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types, meso, meso_waddell_only,
                                   scATAC_source="bing_ren"):
     if (meso):
-        mutations_df = load_meso_mutations()
+        mutations_df = load_meso_mutations(meso, meso_waddell_only)
     else:
         mutations_df = load_agg_mutations()
 
@@ -175,7 +179,8 @@ def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, can
 
     for cancer_type in cancer_types:
         scATAC_dir = f"scATAC_source_{scATAC_source}_cell_number_filter_{scATAC_cell_number_filter}_" \
-                     f"tss_filtered_{tss_filtered}_fragment_filter_{tss_filtered_num_fragment_filter}_meso_{meso}"
+                     f"tss_filtered_{tss_filtered}_fragment_filter_{tss_filtered_num_fragment_filter}_" \
+                     f"meso_{meso}_meso_waddell_only_{meso_waddell_only}"
         os.makedirs(f"models/{cancer_type}/{scATAC_dir}",
                     exist_ok=True)
         cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
@@ -289,8 +294,8 @@ if (bing_ren and shendure and tsankov):
     scATAC_sources = "combined_datasets"
 
 if (run_all_cells or run_tissue_spec_cells):
-    run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells, cancer_types, meso,
-                                  scATAC_sources)
+    run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells,
+                                  cancer_types, meso, meso_waddell_only, scATAC_sources)
 
 
 # if (run_all_cells and shendure):
