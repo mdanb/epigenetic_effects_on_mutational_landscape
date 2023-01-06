@@ -42,9 +42,9 @@ group.add_argument('--meso_waddell_and_biphasic', action="store_true",
 group.add_argument('--meso_waddell_only', action="store_true", default=False)
 group.add_argument('--meso_waddell_and_broad_only', action="store_true", default=False)
 group.add_argument('--meso_waddell_biph_786_846', action="store_true", default=False)
-parser.add_argument('--tss_filtered', action="store_true",
-                    help='Use TSS filtered data', default=False)
-parser.add_argument('--tss_filtered_num_fragment_filter', type=int, default=-1)
+# parser.add_argument('--tss_filtered', action="store_true",
+#                     help='Use TSS filtered data', default=False)
+parser.add_argument('--tss_fragment_filter', type=int, default=-1)
 # parser.add_argument('--bioRxiv_method', action="store_true",
 #                     help='Use method from bioRxiv paper. Different from tissue_spec_cells by fact that here ' \
 #                          'dont a priori know which tissue to train on, so trains on all of them', default=False)
@@ -63,8 +63,8 @@ meso_waddell_only = config.meso_waddell_only
 meso_waddell_and_broad_only = config.meso_waddell_and_broad_only
 meso_waddell_biph_786_846 = config.meso_waddell_biph_786_846
 
-tss_filtered = config.tss_filtered
-tss_filtered_num_fragment_filter = config.tss_filtered_num_fragment_filter
+# tss_filtered = config.tss_filtered
+tss_fragment_filter = config.tss_fragment_filter
 # bioRxiv_method = config.bioRxiv_method
 
 #### Helpers ####
@@ -170,9 +170,8 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filename)
 
 def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types,
-                                  meso_waddell_and_biphasic, meso_waddell_only,
-                                  meso_waddell_and_broad_only, meso_waddell_biph_786_846,
-                                  scATAC_source="bing_ren"):
+                                  meso_waddell_and_biphasic, meso_waddell_only, meso_waddell_and_broad_only,
+                                  meso_waddell_biph_786_846, tss_fragment_filter, scATAC_source="bing_ren"):
     if (meso_waddell_and_biphasic or meso_waddell_only or meso_waddell_and_broad_only or
         meso_waddell_biph_786_846):
         mutations_df = load_meso_mutations(meso_waddell_and_biphasic, meso_waddell_only,
@@ -185,8 +184,8 @@ def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, can
 
     scATAC_dir = f"scATAC_source_{scATAC_source}_cell_number_filter_{scATAC_cell_number_filter}"
 
-    if (tss_filtered):
-        scATAC_dir = scATAC_dir + "_tss_filtered_fragment_filter_" + str(tss_filtered_num_fragment_filter)
+    if (tss_fragment_filter != -1):
+        scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + str(tss_fragment_filter)
 
     if (meso_waddell_and_biphasic):
         scATAC_dir = scATAC_dir + "_meso_waddell_and_biphasic"
@@ -269,21 +268,21 @@ def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, clus
 #### Load scATAC ####
 tss_filtered_root = "processed_data/count_overlap_data/tsse_filtered"
 
-if (tss_filtered):
+if (tss_fragment_filter != -1):
     # TODO: Fix for other than Bing Ren
     #result = pyreadr.read_r("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData") #
     chr_ranges = pd.read_csv("processed_data/chr_ranges.csv")
     if (bing_ren):
         scATAC_df = load_scATAC(f"{tss_filtered_root}/bing_ren/combined/" \
-                               f"combined_{tss_filtered_num_fragment_filter}_fragments.rds").T
+                               f"combined_{tss_fragment_filter}_fragments.rds").T
         scATAC_df.index = chr_ranges["x"].values
 
     if (shendure):
         scATAC_df_shendure = load_scATAC(f"{tss_filtered_root}/shendure/combined/" \
-                                    f"combined_{tss_filtered_num_fragment_filter}_fragments.rds")
+                                    f"combined_{tss_fragment_filter}_fragments.rds")
     if (tsankov):
         scATAC_df_tsankov = load_scATAC(f"{tss_filtered_root}/tsankov/combined/" \
-                                     f"combined_{tss_filtered_num_fragment_filter}_fragments.rds").T
+                                     f"combined_{tss_fragment_filter}_fragments.rds").T
         scATAC_df_tsankov.index = chr_ranges["x"].values
 else:
     scATAC_df_bingren = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
@@ -314,7 +313,8 @@ if (bing_ren and shendure and tsankov):
 if (run_all_cells or run_tissue_spec_cells):
     run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells,
                                   cancer_types, meso_waddell_and_biphasic, meso_waddell_only,
-                                  meso_waddell_and_broad_only, meso_waddell_biph_786_846, scATAC_sources)
+                                  meso_waddell_and_broad_only, meso_waddell_biph_786_846, tss_fragment_filter,
+                                  scATAC_sources)
 
 
 # if (run_all_cells and shendure):
