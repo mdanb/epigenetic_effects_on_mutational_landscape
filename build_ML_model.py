@@ -36,10 +36,12 @@ parser.add_argument('--scATAC_cell_number_filter', type=int,
                     help='minimum number of cells per cell type in scATAC', default=100)
 # parser.add_argument('--combined_datasets', action="store_true",
 #                     help='combine all scATACseq', default=False)
-parser.add_argument('--meso', action="store_true",
-                    help='meso data', default=False)
-parser.add_argument('--meso_waddell_only', action="store_true", default=False)
-parser.add_argument('--meso_waddell_and_broad_only', action="store_true", default=False)
+group = parser.add_mutually_exclusive_group()
+group.add_argument('--meso_waddell_and_biphasic', action="store_true",
+                    default=False)
+group.add_argument('--meso_waddell_only', action="store_true", default=False)
+group.add_argument('--meso_waddell_and_broad_only', action="store_true", default=False)
+group.add_argument('--meso_waddell_biph_786_846', action="store_true", default=False)
 parser.add_argument('--tss_filtered', action="store_true",
                     help='Use TSS filtered data', default=False)
 parser.add_argument('--tss_filtered_num_fragment_filter', type=int, default=-1)
@@ -56,9 +58,10 @@ bing_ren = config.bing_ren
 shendure = config.shendure
 tsankov = config.tsankov
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
-meso = config.meso
+meso_waddell_and_biphasic = config.meso_waddell_and_biphasic
 meso_waddell_only = config.meso_waddell_only
 meso_waddell_and_broad_only = config.meso_waddell_and_broad_only
+meso_waddell_biph_786_846 = config.meso_waddell_biph_786_846
 
 tss_filtered = config.tss_filtered
 tss_filtered_num_fragment_filter = config.tss_filtered_num_fragment_filter
@@ -166,22 +169,35 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
     #### Test Set Performance ####
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filename)
 
-def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types, meso, meso_waddell_only,
-                                  meso_waddell_and_broad_only, scATAC_source="bing_ren"):
-    if (meso or meso_waddell_only or meso_waddell_and_broad_only):
-        mutations_df = load_meso_mutations(meso, meso_waddell_only)
+def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types,
+                                  meso_waddell_and_biphasic, meso_waddell_only,
+                                  meso_waddell_and_broad_only, meso_waddell_biph_786_846,
+                                  scATAC_source="bing_ren"):
+    if (meso_waddell_and_biphasic or meso_waddell_only or meso_waddell_and_broad_only or
+        meso_waddell_biph_786_846):
+        mutations_df = load_meso_mutations(meso_waddell_and_biphasic, meso_waddell_only,
+                                           meso_waddell_and_broad_only, meso_waddell_biph_786_846)
     else:
         mutations_df = load_agg_mutations()
 
     #### Filter data ####
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
 
+    scATAC_dir = f"scATAC_source_{scATAC_source}_cell_number_filter_{scATAC_cell_number_filter}"
+
+    if (tss_filtered):
+        scATAC_dir = scATAC_dir + "_tss_filtered_fragment_filter_" + str(tss_filtered_num_fragment_filter)
+
+    if (meso_waddell_and_biphasic):
+        scATAC_dir = scATAC_dir + "_meso_waddell_and_biphasic"
+    elif (meso_waddell_only):
+        scATAC_dir = scATAC_dir + "_meso_waddell_only"
+    elif (meso_waddell_and_broad_only):
+        scATAC_dir = scATAC_dir + "_meso_waddell_and_broad_only"
+    elif (meso_waddell_biph_786_846):
+         scATAC_dir = scATAC_dir + "_meso_waddell_biph_786_846"
 
     for cancer_type in cancer_types:
-        scATAC_dir = f"scATAC_source_{scATAC_source}_cell_number_filter_{scATAC_cell_number_filter}_" \
-                     f"tss_filtered_{tss_filtered}_fragment_filter_{tss_filtered_num_fragment_filter}_" \
-                     f"meso_{meso}_meso_waddell_only_{meso_waddell_only}_meso_waddell_and_broad_only_" \
-                     f"{meso_waddell_and_broad_only}"
         os.makedirs(f"models/{cancer_type}/{scATAC_dir}",
                     exist_ok=True)
         cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
@@ -297,8 +313,8 @@ if (bing_ren and shendure and tsankov):
 
 if (run_all_cells or run_tissue_spec_cells):
     run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells,
-                                  cancer_types, meso, meso_waddell_only, meso_waddell_and_broad_only,
-                                  scATAC_sources)
+                                  cancer_types, meso_waddell_and_biphasic, meso_waddell_only,
+                                  meso_waddell_and_broad_only, meso_waddell_biph_786_846, scATAC_sources)
 
 
 # if (run_all_cells and shendure):

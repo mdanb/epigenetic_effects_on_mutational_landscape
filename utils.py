@@ -12,17 +12,20 @@ def load_agg_mutations():
     return pd.read_csv("processed_data/mut_count_data.csv",
                        index_col=0)
 
-def load_meso_mutations(meso, meso_waddell_only):
-    if (meso):
+def load_meso_mutations(meso_waddell_and_biphasic, meso_waddell_only, meso_waddell_and_broad_only,
+                        meso_waddell_biph_786_846):
+    if (meso_waddell_and_biphasic):
         return pd.read_csv("processed_data/meso_mut_count_data.csv",
                            index_col=0)
     elif (meso_waddell_only):
         return pd.read_csv("processed_data/mesothelioma_epithelioid_sarcomatoid2_WGS_Waddell.csv",
                            index_col=0)
-    else:
+    elif (meso_waddell_and_broad_only):
         return pd.read_csv("processed_data/mesothelioma_p786_waddell_sarco.csv",
                            index_col=0)
-
+    elif (meso_waddell_biph_786_846):
+         return pd.read_csv("processed_data/mesothelioma_epithelioid_sarcomatoid_biphasic_WGS_Waddell_786_846.csv",
+                           index_col=0)
 
 
 # Filter Data Helpers
