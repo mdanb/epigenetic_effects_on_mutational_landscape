@@ -273,13 +273,14 @@ if (tss_fragment_filter != -1):
     #result = pyreadr.read_r("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData") #
     chr_ranges = pd.read_csv("processed_data/chr_ranges.csv")
     if (bing_ren):
-        scATAC_df = load_scATAC(f"{tss_filtered_root}/bing_ren/combined/" \
+        scATAC_df_bingren = load_scATAC(f"{tss_filtered_root}/bing_ren/combined/" \
                                f"combined_{tss_fragment_filter}_fragments.rds").T
-        scATAC_df.index = chr_ranges["x"].values
+        scATAC_df_bingren.index = chr_ranges["x"].values
 
     if (shendure):
         scATAC_df_shendure = load_scATAC(f"{tss_filtered_root}/shendure/combined/" \
-                                    f"combined_{tss_fragment_filter}_fragments.rds")
+                                    f"combined_{tss_fragment_filter}_fragments.rds").T
+        scATAC_df_shendure.index = chr_ranges["x"].values
     if (tsankov):
         scATAC_df_tsankov = load_scATAC(f"{tss_filtered_root}/tsankov/combined/" \
                                      f"combined_{tss_fragment_filter}_fragments.rds").T
