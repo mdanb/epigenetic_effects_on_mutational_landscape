@@ -22,14 +22,14 @@ parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
 parser <- add_option(parser, c("--bar_plot_num_features"), type="integer")
 parser <- add_option(parser, c("--tss_fragment_filter"), 
                      type="integer", default=-1)
-group = parser$add_mutually_exclusive_group()
-group$add_argument('--meso_waddell_and_biphasic', action="store_true", 
-                   default=F)
-group$add_argument('--meso_waddell_only', action="store_true", default=F)
-group$add_argument('--meso_waddell_and_broad_only', action="store_true", 
-                   default=F)
-group$add_argument('--meso_waddell_biph_786_846', action="store_true", 
-                   default=F)
+parser <- add_option(parser, c("--meso_waddell_and_biphasic"), action="store_true",
+                     default=F)
+parser <- add_option(parser, c("--meso_waddell_only"), action="store_true",
+                     default=F)
+parser <- add_option(parser, c("--meso_waddell_and_broad_only"), action="store_true",
+                     default=F)
+parser <- add_option(parser, c("--meso_waddell_biph_786_846"), action="store_true",
+                     default=F)
 
 args = parse_args(parser)
 # args = parse_args(parser, args = c("--cancer_types=Lung-AdenoCA,Lung-SCC",
