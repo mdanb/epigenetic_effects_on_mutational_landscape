@@ -14,30 +14,53 @@ parser <- add_option(parser, c("--bing_ren"), action="store_true",
                                default=F)
 parser <- add_option(parser, c("--tsankov"), action="store_true",
                      default=F)
-parser <- add_option(parser, c("--meso"), action="store_true",
+parser <- add_option(parser, c("--shendure"), action="store_true",
                      default=F)
 parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
 parser <- add_option(parser, c("--bar_plot_num_features"), type="integer")
-parser <- add_option(parser, c("--tss_filtered"), action="store_true", default=F)
-parser <- add_option(parser, c("--tss_filtered_num_fragment_filter"), 
+parser <- add_option(parser, c("--tss_fragment_filter"), 
                      type="integer", default=-1)
+group.add_argument('--meso_waddell_and_biphasic', action="store_true",
+                   default=False)
+group.add_argument('--meso_waddell_only', action="store_true", default=False)
+group.add_argument('--meso_waddell_and_broad_only', action="store_true", default=False)
+group.add_argument('--meso_waddell_biph_786_846', action="store_true", default=False)
 
 args = parse_args(parser)
-# args = parse_args(parser, args = c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,CNS-GBM,Eso-AdenoCA,Lung-AdenoCA,Lung-SCC",
-#                                    "--all_cells", "--cell_number_filter=100",
-#                                    "--bar_plot_num_features=20", "--bing_ren"))
+args = parse_args(parser, args = c("--cancer_types=Lung-AdenoCA,Lung-SCC",
+                                   "--all_cells", "--cell_number_filter=1",
+                                   "--bar_plot_num_features=20", "--tsankov"))
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
-                                         cell_number_filter, tss_filtered,
-                                         tss_filtered_num_fragment_filter, 
-                                         meso) {
+                                         cell_number_filter,
+                                         tss_fragment_filter, 
+                                         meso_waddell_and_biphasic,
+                                         meso_waddell_only,
+                                         meso_waddell_and_broad_only,
+                                         meso_waddell_biph_786_846) {
   scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
-                        cell_number_filter, "tss_filtered", 
-                        str_to_title(tss_filtered),
-                        "fragment_filter", tss_filtered_num_fragment_filter, 
-                        "meso", meso, sep="_")
+                        cell_number_filter, sep="_")
+  
+  if (tss_fragment_filter != -1) {
+    scATAC_source = paste(scATAC_source, "tss_fragment_filter", 
+                          tss_fragment_filter, sep="_")
+  }
+    
+  if (meso_waddell_and_biphasic) {
+      scATAC_source = paste(scATAC_source, "meso_waddell_and_biphasic", 
+                            sep="_")
+  } else if (meso_waddell_only) {
+      scATAC_source = paste(scATAC_source, "meso_waddell_only", sep="_")
+  } else if (meso_waddell_and_broad_only) {
+      scATAC_source = paste(scATAC_source, "meso_waddell_and_broad_only",
+                            sep="_")
+  } else if (meso_waddell_biph_786_846) {
+      scATAC_source = paste(scATAC_source, "meso_waddell_biph_786_846", 
+                            sep="_")
+  }
+  
   dir = paste("figures", "models", cancer_type, scATAC_source,
               "backwards_elimination_results", sep="/")
   return(dir)
