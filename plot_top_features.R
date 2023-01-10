@@ -88,29 +88,41 @@ get_relevant_backwards_elim_dirs <- function(args) {
           backward_elim_dirs = append(backward_elim_dirs,
                         construct_backwards_elim_dir(cancer_type, "bing_ren", 
                                                      cell_number_filter,
-                                                     tss_filtered,
-                                                     tss_filtered_num_fragment_filter,
-                                                     str_to_title(meso)))
+                                                     tss_fragment_filter,
+                                                     meso_waddell_and_biphasic,
+                                                     meso_waddell_only,
+                                                     meso_waddell_and_broad_only,
+                                                     meso_waddell_biph_786_846))
         }
         if (tsankov) {
           backward_elim_dirs = append(backward_elim_dirs,
                                       construct_backwards_elim_dir(cancer_type, "tsankov", 
                                                                    cell_number_filter,
-                                                                   tss_filtered,
-                                                                   tss_filtered_num_fragment_filter,
-                                                                   str_to_title(meso)))
+                                                                   tss_fragment_filter,
+                                                                   meso_waddell_and_biphasic,
+                                                                   meso_waddell_only,
+                                                                   meso_waddell_and_broad_only,
+                                                                   meso_waddell_biph_786_846))
         }
-        # if (shendure) {
-        #   backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, 
-        #                                                          "shendure"))
-        # }
+        if (shendure) {
+          backward_elim_dirs = append(backward_elim_dirs,
+                                      construct_backwards_elim_dir(cancer_type, "shendure", 
+                                       cell_number_filter,
+                                       tss_fragment_filter,
+                                       meso_waddell_and_biphasic,
+                                       meso_waddell_only,
+                                       meso_waddell_and_broad_only,
+                                       meso_waddell_biph_786_846))
+        }
         if (combined_datasets) {
           backward_elim_dirs = append(backward_elim_dirs,
-                 construct_backwards_elim_dir(cancer_type, "combined_datasets",
-                                              cell_number_filter,
-                                              tss_filtered,
-                                              tss_filtered_num_fragment_filter,
-                                              str_to_title(meso)))
+                                      construct_backwards_elim_dir(cancer_type, "combined_datasets", 
+                                                                   cell_number_filter,
+                                                                   tss_fragment_filter,
+                                                                   meso_waddell_and_biphasic,
+                                                                   meso_waddell_only,
+                                                                   meso_waddell_and_broad_only,
+                                                                   meso_waddell_biph_786_846))
         }
       }
     }
