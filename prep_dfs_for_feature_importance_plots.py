@@ -83,11 +83,10 @@ def get_relevant_backwards_elim_dirs(config):
     for cancer_type in cancer_types:
         if (all_cells):
             backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, scATAC_sources, cell_number_filter,
-                                                                   tss_fragment_filter, meso_waddell_only,
+                                                                   tss_fragment_filter, meso_waddell_and_biphasic,
+                                                                   meso_waddell_only,
                                                                    meso_waddell_and_broad_only,
                                                                    meso_waddell_biph_786_846))
-            print(backward_elim_dirs)
-
     return backward_elim_dirs
         # if (run_tissue_spec):
         #     backwards_elim_dir=f"models/{cancer_type}/scATAC_source_{scATAC_source}/" \
