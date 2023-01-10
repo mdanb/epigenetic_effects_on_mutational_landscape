@@ -75,6 +75,7 @@ get_relevant_backwards_elim_dirs <- function(args) {
     all_cells = args$all_cells
     combined_datasets = args$combined_datasets
     bing_ren = args$bing_ren
+    shendure = args$shendure
     tsankov = args$tsankov
     cell_number_filter = args$cell_number_filter
     tss_fragment_filter = args$tss_fragment_filter
