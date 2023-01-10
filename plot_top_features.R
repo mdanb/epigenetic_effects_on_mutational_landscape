@@ -77,10 +77,12 @@ get_relevant_backwards_elim_dirs <- function(args) {
     bing_ren = args$bing_ren
     tsankov = args$tsankov
     cell_number_filter = args$cell_number_filter
-    tss_filtered = args$tss_filtered
-    tss_filtered_num_fragment_filter = args$tss_filtered_num_fragment_filter
-    meso = args$meso
-    
+    tss_fragment_filter = args$tss_fragment_filter
+    meso_waddell_and_biphasic = args$meso_waddell_and_biphasic
+    meso_waddell_only = args$meso_waddell_only
+    meso_waddell_and_broad_only = args$meso_waddell_and_broad_only
+    meso_waddell_biph_786_846 = args$meso_waddell_biph_786_846
+      
     backward_elim_dirs = list()
     for (cancer_type in cancer_types) {
       if (all_cells) {
