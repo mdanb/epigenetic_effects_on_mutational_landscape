@@ -22,16 +22,19 @@ parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
 parser <- add_option(parser, c("--bar_plot_num_features"), type="integer")
 parser <- add_option(parser, c("--tss_fragment_filter"), 
                      type="integer", default=-1)
-group.add_argument('--meso_waddell_and_biphasic', action="store_true",
-                   default=False)
-group.add_argument('--meso_waddell_only', action="store_true", default=False)
-group.add_argument('--meso_waddell_and_broad_only', action="store_true", default=False)
-group.add_argument('--meso_waddell_biph_786_846', action="store_true", default=False)
+group = parser$add_mutually_exclusive_group()
+group$add_argument('--meso_waddell_and_biphasic', action="store_true", 
+                   default=F)
+group$add_argument('--meso_waddell_only', action="store_true", default=F)
+group$add_argument('--meso_waddell_and_broad_only', action="store_true", 
+                   default=F)
+group$add_argument('--meso_waddell_biph_786_846', action="store_true", 
+                   default=F)
 
 args = parse_args(parser)
-args = parse_args(parser, args = c("--cancer_types=Lung-AdenoCA,Lung-SCC",
-                                   "--all_cells", "--cell_number_filter=1",
-                                   "--bar_plot_num_features=20", "--tsankov"))
+# args = parse_args(parser, args = c("--cancer_types=Lung-AdenoCA,Lung-SCC",
+#                                    "--all_cells", "--cell_number_filter=1",
+#                                    "--bar_plot_num_features=20", "--tsankov"))
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter,
