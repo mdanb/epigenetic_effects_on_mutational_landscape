@@ -40,7 +40,7 @@ def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
                                  meso_waddell_biph_786_846):
     dir = f"models/{cancer_type}/scATAC_source_{scATAC_source}_cell_number_filter_{cell_number_filter}"
     if (tss_fragment_filter != -1):
-        dir = dir + f"tss_fragment_filter_{tss_fragment_filter}"
+        dir = dir + f"_tss_fragment_filter_{tss_fragment_filter}"
 
     if (meso_waddell_and_biphasic):
         dir = dir + "_meso_waddell_and_biphasic"
