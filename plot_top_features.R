@@ -8,8 +8,6 @@ source("utils.R")
 
 parser <- OptionParser()
 parser <- add_option(parser, c("--all_cells"), action="store_true", default=T)
-parser <- add_option(parser, c("--combined_datasets"), action="store_true",
-                               default=F)
 parser <- add_option(parser, c("--bing_ren"), action="store_true",
                                default=F)
 parser <- add_option(parser, c("--tsankov"), action="store_true",
