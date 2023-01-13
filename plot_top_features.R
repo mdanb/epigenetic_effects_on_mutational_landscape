@@ -17,7 +17,7 @@ parser <- add_option(parser, c("--shendure"), action="store_true",
 parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
-parser <- add_option(parser, c("--bar_plot_num_features"), type="integer")
+# parser <- add_option(parser, c("--bar_plot_num_features"), type="integer")
 parser <- add_option(parser, c("--tss_fragment_filter"), 
                      type="integer", default=-1)
 parser <- add_option(parser, c("--meso_waddell_and_biphasic"), action="store_true",
@@ -165,11 +165,20 @@ construct_bar_plots <- function(args) {
   for (dir in dirs) {
     file = paste(dir, "df_for_feature_importance_plots.csv", sep="/")
     df = as_tibble(read.csv(file))
-    df = df %>% filter(num_features == args$bar_plot_num_features)
+    # df = df %>% filter(num_features == args$bar_plot_num_features)
     df$num_features_f = factor(df$num_features, levels=unique(df$num_features))
     colors = get_n_colors(20, 1)
+    
+    from = as.character(unique(df$num_features))
+    to = paste(paste(levels(df$num_features_f), "features"),
+               paste("(R^2=", as.character(round(unique(df$score*100), 1)), 
+                     ")", sep=""), sep=" ")
+    names(to) <- from
+    
     plot = ggplot(df, aes(x=reorder(features, -importance), 
                           y=importance, fill=features)) +
+          facet_wrap(~num_features_f, nrow=1, 
+                     labeller = as_labeller(to), scales = "free") +
            geom_bar(stat="identity", width=1, color="white") +
            xlab("Cell type") +
            ylab("Percent importance (%)") +
@@ -178,8 +187,10 @@ construct_bar_plots <- function(args) {
            theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1)) +
            guides(fill="none") +
            scale_fill_manual(values=colors) +
-           ggtitle(paste0(unlist(strsplit(dir, split ="/"))[3], " (R^2=",
-                         as.character(round(unique(df$score*100), 1)), ")")) +
+           # ggtitle(paste0(unlist(strsplit(dir, split ="/"))[3], " (R^2=",
+           #               as.character(round(unique(df$score*100), 1)), ")")) +
+           ggtitle(unlist(strsplit(dir, split ="/"))[3]) +
+      
            theme(plot.title = element_text(hjust = 0.5))
     ggsave(paste(dir, "bar_plot.png", sep="/"), width = 6, height = 8, plot)
   }
