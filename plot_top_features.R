@@ -30,9 +30,9 @@ parser <- add_option(parser, c("--meso_waddell_biph_786_846"), action="store_tru
                      default=F)
 
 args = parse_args(parser)
-# args = parse_args(parser, args = c("--cancer_types=Lung-AdenoCA,Lung-SCC",
-#                                    "--all_cells", "--cell_number_filter=1",
-#                                    "--bar_plot_num_features=20", "--tsankov"))
+args = parse_args(parser, args = c("--cancer_types=Skin-Melanoma",
+                                   "--all_cells", "--cell_number_filter=1",
+                                   "--bing_ren", "--tsankov", "--shendure"))
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter,
@@ -184,7 +184,8 @@ construct_bar_plots <- function(args) {
            ylab("Percent importance (%)") +
            # theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1),
            #       aspect.ratio = 1.1/1) +
-           theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1)) +
+           theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1,
+                                            size=15)) +
            guides(fill="none") +
            scale_fill_manual(values=colors) +
            # ggtitle(paste0(unlist(strsplit(dir, split ="/"))[3], " (R^2=",
@@ -192,7 +193,7 @@ construct_bar_plots <- function(args) {
            ggtitle(unlist(strsplit(dir, split ="/"))[3]) +
       
            theme(plot.title = element_text(hjust = 0.5))
-    ggsave(paste(dir, "bar_plot.png", sep="/"), width = 6, height = 8, plot)
+    ggsave(paste(dir, "bar_plot.png", sep="/"), width = 20, height = 15, plot)
   }
 }
 # labeller = as_labeller(c("20" = "A",
