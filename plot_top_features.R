@@ -30,9 +30,9 @@ parser <- add_option(parser, c("--meso_waddell_biph_786_846"), action="store_tru
                      default=F)
 
 args = parse_args(parser)
-args = parse_args(parser, args = c("--cancer_types=Skin-Melanoma",
-                                   "--all_cells", "--cell_number_filter=1",
-                                   "--bing_ren", "--tsankov", "--shendure"))
+# args = parse_args(parser, args = c("--cancer_types=Skin-Melanoma",
+#                                    "--all_cells", "--cell_number_filter=1",
+#                                    "--bing_ren", "--tsankov", "--shendure"))
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter,
