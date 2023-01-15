@@ -1,4 +1,5 @@
 library(ggplot2)
+library(tidytext)
 library(magrittr)
 library(RColorBrewer)
 library(dplyr)
@@ -30,7 +31,7 @@ parser <- add_option(parser, c("--meso_waddell_biph_786_846"), action="store_tru
                      default=F)
 
 args = parse_args(parser)
-# args = parse_args(parser, args = c("--cancer_types=Skin-Melanoma",
+# args = parse_args(parser, args = c("--cancer_types=Biliary-AdenoCA",
 #                                    "--all_cells", "--cell_number_filter=1",
 #                                    "--bing_ren", "--tsankov", "--shendure"))
 
@@ -174,8 +175,9 @@ construct_bar_plots <- function(args) {
                paste("(R^2=", as.character(round(unique(df$score*100), 1)), 
                      ")", sep=""), sep=" ")
     names(to) <- from
-    
-    plot = ggplot(df, aes(x=reorder(features, -importance), 
+    # df = df %>% group_by(num_features_f) %>% arrange(-importance, .by_group=T)
+    plot = ggplot(df, aes(x=reorder_within(features, -importance, within=num_features_f,
+                                           sep="."), 
                           y=importance, fill=features)) +
           facet_wrap(~num_features_f, nrow=1, 
                      labeller = as_labeller(to), scales = "free") +
