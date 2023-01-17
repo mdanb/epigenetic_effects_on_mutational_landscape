@@ -3,9 +3,9 @@ library(dplyr)
 
 option_list <- list( 
   make_option("--fragment_count_range", type="character"),
-  make_option("--bing_ren", type="logical", default=F),
-  make_option("--shendure", type="logical", default=F),                         
-  make_option("--tsankov", type="logical", default=F)
+  make_option("--bing_ren", action="store_true", type="logical", default=F),
+  make_option("--shendure", action="store_true", type="logical", default=F),                         
+  make_option("--tsankov", action="store_true", type="logical", default=F)
 )
 
 args = parse_args(OptionParser(option_list=option_list))
