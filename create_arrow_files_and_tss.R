@@ -2,7 +2,7 @@ library(ArchR)
 library(optparse)
 
 option_list <- list( 
-  make_option("--dataset")
+  make_option("--dataset", type="char")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
