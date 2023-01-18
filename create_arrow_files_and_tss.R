@@ -13,11 +13,7 @@ addArchRThreads(threads = 8)
 create_arrow_files_and_tss <- function(genome_version, fragment_paths, 
                                        output_dir) {
   if (!file.exists(paste(output_dir, "Save-ArchR-Project.rds", sep="/"))) {
-    archp = ArchRProject(ArrowFiles = arrow_files, 
-                         outputDirectory = output_dir,
-                         copyArrows = FALSE)
     addArchRGenome(genome_version)
-    
     sample_names = sub(".fragments.*", fragment_paths)
     arrow_files = createArrowFiles(inputFiles = fragment_paths,
                                    sampleNames = sample_names,
@@ -26,6 +22,9 @@ create_arrow_files_and_tss <- function(genome_version, fragment_paths,
                                    addTileMat = F,
                                    addGeneScoreMat = F,
                                    force = F)
+    archp = ArchRProject(ArrowFiles = arrow_files, 
+                         outputDirectory = output_dir,
+                         copyArrows = FALSE)
     saveArchRProject(archp)
     write.csv(archp@cellColMetadata, paste(output_dir, "metadata.csv", sep="/"))
   }
