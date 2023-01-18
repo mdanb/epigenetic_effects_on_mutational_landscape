@@ -6,6 +6,8 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#        c("--dataset=bing_ren"))
 dataset = args$dataset
 
 addArchRThreads(threads = 8)
@@ -31,9 +33,9 @@ create_arrow_files_and_tss <- function(genome_version, fragment_paths,
 }
 
 if (dataset == "bing_ren") {
-  output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC"
+  output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files"
   create_arrow_files_and_tss("hg38", list.files(output_dir), output_dir)
 } else if (dataset == "shendure") {
-  output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files"
+  output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC"
   create_arrow_files_and_tss("hg19", list.files(output_dir), output_dir)
 }
