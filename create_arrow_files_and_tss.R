@@ -26,7 +26,7 @@ create_arrow_files_and_tss <- function(genome_version, fragment_paths,
                                    force = F)
     archp = ArchRProject(ArrowFiles = arrow_files, 
                          outputDirectory = output_dir,
-                         copyArrows = FALSE)
+                         copyArrows = F)
     saveArchRProject(archp)
     write.csv(archp@cellColMetadata, paste(output_dir, "metadata.csv", sep="/"))
   }
@@ -34,8 +34,16 @@ create_arrow_files_and_tss <- function(genome_version, fragment_paths,
 
 if (dataset == "bing_ren") {
   output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files"
-  create_arrow_files_and_tss("hg38", list.files(output_dir), output_dir)
+  create_arrow_files_and_tss("hg38", 
+                             setdiff(list.files(output_dir, full.names=T),
+                                     list.dirs(output_dir, recursive = F, 
+                                               full.names = T)), 
+                             output_dir)
 } else if (dataset == "shendure") {
   output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC"
-  create_arrow_files_and_tss("hg19", list.files(output_dir), output_dir)
+  create_arrow_files_and_tss("hg19", 
+                             setdiff(list.files(output_dir, full.names=T),
+                                     list.dirs(output_dir, recursive = F, 
+                                               full.names = T)), 
+                             output_dir)
 }
