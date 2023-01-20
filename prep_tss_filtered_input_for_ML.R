@@ -17,12 +17,15 @@ bing_ren = args$bing_ren
 shendure = args$shendure
 tsankov = args$tsankov
 
-root = "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/processed_data/count_overlap_data/tsse_filtered"
-bingren_path = paste(root, "bing_ren", sep="/")
-shendure_path = paste(root, "shendure", sep="/")
-tsankov_path = paste(root, "tsankov", sep="/")
+root_tss_filtered = "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/processed_data/count_overlap_data/tsse_filtered"
+combined_count_overlaps_path = "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/processed_data/count_overlap_data/combined_count_overlaps"
+bingren_path = paste(root_tss_filtered, "bing_ren", sep="/")
+shendure_path = paste(root_tss_filtered, "shendure", sep="/")
+tsankov_path = paste(root_tss_filtered, "tsankov", sep="/")
 
-combined_tss_filtered_cells <- function(fragment_count_range, tss_path) {
+combined_tss_filtered_cells <- function(fragment_count_range, tss_path, 
+                                        combined_overlaps_filepath) {
+  combined_overlaps_unfiltered = readRDS(combined_overlaps_filepath)
   combined_path = paste(tss_path, "combined", sep="/")
   dir.create(combined_path)
   for (fragment_count in fragment_count_range) {
@@ -44,6 +47,11 @@ combined_tss_filtered_cells <- function(fragment_count_range, tss_path) {
       combined_df_list = append(combined_df_list, list(df))
     }
     combined_df = bind_cols(combined_df_list)
+    for (cell_type in colnames(combined_overlaps_unfiltered)) {
+      if (!(cell_type %in% colnames(combined_df))) {
+        combined_df[cell_type] = combined_overlaps_unfiltered[cell_type]
+      }
+    }
     filename = paste0("combined_", fragment_count, "_fragments",".rds")
     filepath = paste(combined_path, filename, sep="/")
     saveRDS(combined_df, filepath)
@@ -51,13 +59,25 @@ combined_tss_filtered_cells <- function(fragment_count_range, tss_path) {
 }
 
 if (bing_ren) {
-	combined_tss_filtered_cells(fragment_count_range, bingren_path)
+  combined_overlaps_file = "count_filter_1_combined_count_overlaps.rds"
+  combined_overlaps_filepath = paste(combined_count_overlaps_path, 
+                                     combined_overlaps_file, sep="/")
+	combined_tss_filtered_cells(fragment_count_range, bingren_path, 
+	                            combined_overlaps_filepath)
 }
 
 if (shendure) {
-	combined_tss_filtered_cells(fragment_count_range, shendure_path)
+  combined_overlaps_file = "shendure_count_filter_1_combined_count_overlaps.rds"
+  combined_overlaps_filepath = paste(combined_count_overlaps_path, 
+                                     combined_overlaps_file, sep="/")
+	combined_tss_filtered_cells(fragment_count_range, shendure_path, 
+	                            combined_overlaps_filepath)
 }
 
 if (tsankov) {
-	combined_tss_filtered_cells(fragment_count_range, tsankov_path)
+  combined_overlaps_file = "tsankov_count_filter_1_combined_count_overlaps.rds"
+  combined_overlaps_filepath = paste(combined_count_overlaps_path, 
+                                     combined_overlaps_file, sep="/")
+	combined_tss_filtered_cells(fragment_count_range, tsankov_path, 
+	                            combined_overlaps_filepath)
 }
