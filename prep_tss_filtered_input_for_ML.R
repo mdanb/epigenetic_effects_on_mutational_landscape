@@ -9,8 +9,8 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-#args = parse_args(OptionParser(option_list=option_list), args=
-#                   c("--fragment_count_range=50000,100000,300000"))
+args = parse_args(OptionParser(option_list=option_list), args=
+                  c("--fragment_count_range=100000,200000"))
 
 fragment_count_range = unlist(strsplit(args$fragment_count_range, ","))
 bing_ren = args$bing_ren
@@ -47,9 +47,11 @@ combined_tss_filtered_cells <- function(fragment_count_range, tss_path,
       combined_df_list = append(combined_df_list, list(df))
     }
     combined_df = bind_cols(combined_df_list)
-    for (cell_type in colnames(combined_overlaps_unfiltered)) {
+    for (cell_type in rownames(combined_overlaps_unfiltered)) {
       if (!(cell_type %in% colnames(combined_df))) {
-        combined_df[cell_type] = combined_overlaps_unfiltered[cell_type]
+        combined_df = cbind(unlist(combined_overlaps_unfiltered[cell_type, ]), 
+                            combined_df)
+        colnames(combined_df)[1] = cell_type
       }
     }
     filename = paste0("combined_", fragment_count, "_fragments",".rds")
