@@ -102,10 +102,10 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
     sample_barcodes_in_metadata = substr(sample_barcodes_in_metadata, 1, 16)
   }
   else if (dataset == "greenleaf_blood_bm") {
-    
+    print("todo")
   }
   else if (dataset == "greenleaf_brain") {
-    
+    print("todo")
   }
   return(sample_barcodes_in_metadata)
 }
@@ -130,10 +130,10 @@ get_sample_name <- function(file, dataset) {
     sample$name = substr(sample$name, 1, 16)
   }
   else if (dataset == "greenleaf_blood_bm") {
-    
+    print("todo")
   }
   else if (dataset == "greenleaf_brain") {
-    
+    print("todo")
   }
   return(sample_name)
 }
