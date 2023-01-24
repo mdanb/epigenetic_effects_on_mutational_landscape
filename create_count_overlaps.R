@@ -5,6 +5,7 @@ library(dplyr)
 library(tibble)                                                                 
 library(parallel)
 library(optparse)
+library(rtracklayer)
 source("create_count_overlaps_utils.R")
 
 option_list <- list( 
@@ -14,10 +15,10 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                   c("--dataset=tsankov",
-#                     "--cell_number_filter=100",
-#                     "--cores=8"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                  c("--dataset=shendure",
+                    "--cell_number_filter=1",
+                    "--cores=1"))
 
 cell_number_filter = args$cell_number_filter
 cores = args$cores
@@ -66,14 +67,17 @@ create_count_overlaps_files <- function(file, cell_number_filter, metadata,
         sample = migrate_bed_file_to_hg37(sample, chain)
       }
       else if (dataset == "bingren") {
-        sample = as_tibble(migrate_bed_file_to_hg37(sample, chain))
+        sample = migrate_bed_file_to_hg37(sample, chain)
       }
-
+      
+      # Because the function applied is used in another place over multiple 
+      # samples, not just one, as is done here.
       sample <- unlist(lapply(c(1), 
                               filter_samples_to_contain_only_cells_in_metadata,
                               list(sample),
                               list(sample_barcodes_in_metadata)))
-      sample <- get_sample_cell_types(sample, sample_barcodes_in_metadata,
+      
+      sample <- get_sample_cell_types(sample[[1]], sample_barcodes_in_metadata,
                                       filtered_metadata, dataset)
       counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
       sample <- filter_sample_by_cell_number(sample,
@@ -107,16 +111,16 @@ get_sample_cell_types <- function(fragments,
                                   filtered_metadata,
                                   dataset) {
   if (dataset == "bingren") {
-    sample <- get_sample_cell_types_bingren(sample, sample_barcodes_in_metadata, 
+    sample <- get_sample_cell_types_bingren(fragments, sample_barcodes_in_metadata, 
                                             filtered_metadata)
   }
   else if (dataset == "shendure") {
-    sample <- get_sample_cell_types_shendure(sample, 
+    sample <- get_sample_cell_types_shendure(fragments, 
                                              sample_barcodes_in_metadata,
                                              filtered_metadata)
   }
   else if (dataset == "tsankov") {
-    sample <- get_sample_cell_types_tsankov(sample, 
+    sample <- get_sample_cell_types_tsankov(fragments, 
                                             sample_barcodes_in_metadata,
                                             filtered_metadata)
   }
@@ -131,7 +135,7 @@ get_sample_cell_types_bingren <- function(fragments,
                                  sample_barcodes_in_metadata)
   fragments$cell_type = filtered_metadata[unlist(sample_idx_in_metadata), 
                                            "cell.type"]
-  return(fragments)
+  return(as.tibble(fragments))
 }
 
 get_sample_cell_types_shendure <- function(sample, 
@@ -159,12 +163,12 @@ dir.create("processed_data/count_overlap_data", recursive=TRUE)
 dir.create("processed_data/cell_counts_per_sample")                                       
 ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/hg38ToHg19.over.chain")
 
-if (dataset == "bing_ren") {
+if (dataset == "bingren") {
   metadata_bingren = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE184462_metadata.tsv", 
                         sep="\t",
                         header=T)
   files_bingren = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/",
-                              pattern=".*fragments\\.txt\\.gz")
+                              pattern=".*fragments\\.bed\\.gz")
   
   mclapply(files_bingren, create_count_overlaps_files,
            cell_number_filter=cell_number_filter,
