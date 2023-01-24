@@ -61,18 +61,20 @@ create_count_overlaps_files <- function(file, cell_number_filter, metadata,
       sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(filtered_metadata,
                                                                     dataset)
       
+      if (dataset == "tsankov") {
+        sample$name = substr(sample$name, 1, 16)
+        sample = migrate_bed_file_to_hg37(sample, chain)
+      }
+      else if (dataset == "bingren") {
+        sample = as_tibble(migrate_bed_file_to_hg37(sample, chain))
+      }
+
       sample <- unlist(lapply(c(1), 
                               filter_samples_to_contain_only_cells_in_metadata,
                               list(sample),
                               list(sample_barcodes_in_metadata)))
       sample <- get_sample_cell_types(sample, sample_barcodes_in_metadata,
                                       filtered_metadata, dataset)
-      if (dataset == "tsankov") {
-        sample = migrate_bed_file_to_hg37(sample, chain)
-      }
-      else if (dataset == "bingren") {
-        sample = as_tibble(migrate_bed_file_to_hg37(sample, chain))
-      }
       counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
       sample <- filter_sample_by_cell_number(sample,
                                              counts_per_cell_type, 
