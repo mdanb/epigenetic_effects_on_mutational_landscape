@@ -141,7 +141,7 @@ get_sample_name <- function(file, dataset) {
     print("todo")
   }
   else if (dataset == "greenleaf_brain") {
-    sample_name = get_sample_name_greenleaf(file)
+    sample_name = get_sample_name_greenleaf_brain(file)
   }
   return(sample_name)
 }
