@@ -77,6 +77,11 @@ get_sample_filename <- function(file, dataset) {
                      "count_overlaps", filename, sep="_")
     filename = paste(filename, "rds", sep=".")
   }
+  else if (dataset == "greenleaf_brain") {
+    filename = paste("Greenleaf_brain_count_filter", cell_number_filter,  
+                     "count_overlaps", paste(file_path_sans_ext(file, TRUE),
+                                             "rds", sep="."), sep="_")
+  }
   return(filename)
 }
 
