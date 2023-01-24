@@ -34,21 +34,111 @@ filter_samples_to_contain_only_cells_in_metadata <- function(i,
   return(samples[[i]])
 }
 
+import_sample <- function(file, dataset) {
+  if (dataset == "bingren") {
+    sample = import(paste("/broad", "hptmp", "bgiotti", 
+                          "BingRen_scATAC_atlas", 
+                          "raw_dir", "bed_files", file, sep="/"), 
+                    format="bed")
+  }
+  else if (dataset == "shendure") {
+    sample = import(paste("/broad", "hptmp", "bgiotti", 
+                          "BingRen_scATAC_atlas", 
+                          "raw_dir", "bed_files", "JShendure_scATAC", file, 
+                          sep="/"), format="bed")
+  }
+  else if (dataset == "tsankov") {
+    sample = import(paste0(paste("/broad", "hptmp", "bgiotti", 
+                                 "BingRen_scATAC_atlas", "raw_dir", "bed_files",
+                                 "Tsankov_scATAC", 
+                                 substr(file, 1, nchar(file) - 3), sep="/"), 
+                           "tsv"),
+                    format="bed")
+  }
+  return(sample)
+}
+
+get_sample_filename <- function(file, dataset) {
+  if (dataset == "bingren") {
+    filename = paste("Bingren_count_filter", cell_number_filter,  
+                     "count_overlaps", paste(file_path_sans_ext(file, TRUE),
+                                             "rds", sep="."), sep="_")
+  }
+  else if (dataset == "shendure") {
+    filename = paste("Shendure_count_filter", cell_number_filter,  
+                     "count_overlaps", paste(file_path_sans_ext(file, TRUE),
+                                             "rds", sep="."), sep="_")
+  }
+  else if (dataset == "tsankov") {
+    filename = paste(file_path_sans_ext(file, TRUE))
+    filename = unlist(strsplit(filename, split = "_"))
+    filename = paste(filename[1:length(filename) - 1], collapse="_")
+    filename = paste("Tsankov_count_filter", cell_number_filter,  
+                     "count_overlaps", filename, sep="_")
+    filename = paste(filename, "rds", sep=".")
+  }
+  return(filename)
+}
+
 get_fragments_by_cell_barcode <- function(i, sample_idx, fragments, 
                                           top_barcodes) {
   return(fragments[[sample_idx[i]]][fragments[[sample_idx[i]]]$name %in% 
                                       top_barcodes[i]])
 }
 
-get_sample_barcodes_in_metadata <- function(metadata, cellID_col_name,
-                                            separator_char) {
+get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
+  if (dataset == "bingren") {
+    sample_barcodes_in_metadata = get_sample_barcodes_in_metadata_helper(filtered_metadata,
+                                                                  "cellID",
+                                                                  "\\+")
+  }
+  else if (dataset == "shendure") {
+    sample_barcodes_in_metadata = filtered_metadata[["cell"]]
+  }
+  else if (dataset == "tsankov") {
+    sample_barcodes_in_metadata = get_sample_barcodes_in_metadata_helper(filtered_metadata, 
+                                                                  "X",
+                                                                  "#")
+    sample_barcodes_in_metadata = substr(sample_barcodes_in_metadata, 1, 16)
+  }
+  else if (dataset == "greenleaf_blood_bm") {
+    
+  }
+  else if (dataset == "greenleaf_brain") {
+    
+  }
+  return(sample_barcodes_in_metadata)
+}
+
+get_sample_barcodes_in_metadata_helper <- function(metadata, cellID_col_name,
+                                                   separator_char) {
   sample_barcodes_in_metadata = unlist(lapply(metadata[[cellID_col_name]],
                                               function(x) unlist(strsplit(x,
                                                            separator_char))[2]))
   return(sample_barcodes_in_metadata)
 }
 
-get_sample_name <- function(file) {
+get_sample_name <- function(file, dataset) {
+  if (dataset == "bingren") {
+    sample_name = get_sample_name_bingren(file)
+  }
+  else if (dataset == "shendure") {
+    sample_name = get_sample_name_shendure(file)
+  }
+  else if (dataset == "tsankov") {
+    sample_name = get_sample_name_tsankov(file)
+    sample$name = substr(sample$name, 1, 16)
+  }
+  else if (dataset == "greenleaf_blood_bm") {
+    
+  }
+  else if (dataset == "greenleaf_brain") {
+    
+  }
+  return(sample_name)
+}
+
+get_sample_name_bingren <- function(file) {
   sample_name = str_remove(file, "rep")
   sample_name = str_remove(sample_name, "_fragments.bed.gz")
   sample_name = unlist(strsplit(sample_name, split="_"))
