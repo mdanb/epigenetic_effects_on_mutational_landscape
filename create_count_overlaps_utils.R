@@ -114,7 +114,8 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
     print("todo")
   }
   else if (dataset == "greenleaf_brain") {
-    print("todo")
+    sample_barcodes_in_metadata = 
+      substr(filtered_metadata[["Cell.Barcode"]], 1, 16)
   }
   return(sample_barcodes_in_metadata)
 }
