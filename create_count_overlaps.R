@@ -1,5 +1,4 @@
 library(tools)                                                                  
-library(rtracklayer)                                                            
 library(stringr)                                                                
 library(data.table)                                                             
 library(dplyr)                                                                  
@@ -15,7 +14,7 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args = 
+# args = parse_args(OptionParser(option_list=option_list), args =
 #                   c("--dataset=tsankov",
 #                     "--cell_number_filter=100",
 #                     "--cores=8"))
@@ -45,7 +44,7 @@ compute_count_overlaps <- function(sample, interval_ranges) {
   return(count_overlaps)
 }
 
-create_count_overlaps <- function(file, cell_number_filter, metadata,
+create_count_overlaps_files <- function(file, cell_number_filter, metadata,
                                   interval_ranges, chain, dataset) {
   filename = get_sample_filename(file, dataset)
   filepath = paste("processed_data/count_overlap_data", filename, sep="/")
@@ -159,16 +158,15 @@ dir.create("processed_data/cell_counts_per_sample")
 ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/hg38ToHg19.over.chain")
 
 if (dataset == "bing_ren") {
-  metadata = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE184462_metadata.tsv", 
+  metadata_bingren = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE184462_metadata.tsv", 
                         sep="\t",
                         header=T)
-  files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/"), 
-                  list.dirs("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files", 
-                            recursive = FALSE, 
-                            full.names = FALSE))
-  mclapply(files, create_count_overlaps_file,
+  files_bingren = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/",
+                              pattern=".*fragments\\.txt\\.gz")
+  
+  mclapply(files_bingren, create_count_overlaps_files,
            cell_number_filter=cell_number_filter,
-           metadata=metadata,
+           metadata=metadata_bingren,
            interval_ranges=interval.ranges,
            chain=ch,
            mc.cores=cores)
@@ -176,12 +174,10 @@ if (dataset == "bing_ren") {
   metadata_Shendure = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
                                   sep="\t",
                                   header=TRUE)
-  files_Shendure = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC/"), 
-                           list.dirs("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC/", 
-                                     recursive = FALSE, 
-                                     full.names = FALSE))
+  files_Shendure = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC/",
+                              pattern = ".*fragments\\.txt\\.gz")
   
-  mclapply(files_Shendure, create_count_overlaps_file_shendure,
+  mclapply(files_Shendure, create_count_overlaps_files,
          cell_number_filter=cell_number_filter,
          metadata=metadata_Shendure,
          interval_ranges=interval.ranges,
@@ -198,7 +194,7 @@ if (dataset == "bing_ren") {
   files_Tsankov_proximal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/Tsankov_scATAC/", 
                                       pattern="IC")
   mclapply(files_Tsankov_proximal, 
-           create_count_overlaps_file_tsankov,
+           create_count_overlaps_files,
            cell_number_filter=cell_number_filter,
            metadata=metadata_tsankov_proximal,
            interval_ranges=interval.ranges,
@@ -206,10 +202,23 @@ if (dataset == "bing_ren") {
            mc.cores = cores)
   
   mclapply(files_Tsankov_distal,
-            create_count_overlaps_file_tsankov,
+           create_count_overlaps_files,
             cell_number_filter=cell_number_filter,
             metadata=metadata_tsankov_distal,
             interval_ranges=interval.ranges,
             chain=ch,
             mc.cores= cores)
+} else if (dataset == "greenleaf_brain") {
+  metadata_greenleaf_brain =
+    read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE162170_atac_cell_metadata.txt.gz",
+    sep="\t")
+  colnames(metadata_greenleaf_brain)[2] <- "sample"
+  files_greenleaf_brain = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/greenleaf_brain_scATAC/", 
+                                     pattern=".*fragments\\.tsv\\.gz")
+  mclapply(files_greenleaf_brain, create_count_overlaps_files,
+           cell_number_filter=cell_number_filter,
+           metadata=metadata_greenleaf_brain,
+           interval_ranges=interval.ranges,
+           chain=ch,
+           mc.cores=cores)
 }

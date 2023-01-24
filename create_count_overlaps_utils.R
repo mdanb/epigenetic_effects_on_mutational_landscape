@@ -1,6 +1,7 @@
 library(exomeCopy)
 library(data.table)
 library(stringr)
+library(rtracklayer)                                                            
 
 add_cell_barcodes_to_metadata <- function(i, metadatas, barcodes) {
   metadatas[[i]]["cell_barcode"] = barcodes[i]
@@ -48,12 +49,15 @@ import_sample <- function(file, dataset) {
                           sep="/"), format="bed")
   }
   else if (dataset == "tsankov") {
-    sample = import(paste0(paste("/broad", "hptmp", "bgiotti", 
+    sample = import(paste("/broad", "hptmp", "bgiotti", 
                                  "BingRen_scATAC_atlas", "raw_dir", "bed_files",
-                                 "Tsankov_scATAC", 
-                                 substr(file, 1, nchar(file) - 3), sep="/"), 
-                           "tsv"),
-                    format="bed")
+                                 "Tsankov_scATAC", file, sep="/"), format="bed")
+  }
+  else if (dataset == "greenleaf_brain") {
+    sample = import(paste("/broad", "hptmp", "bgiotti", 
+                                 "BingRen_scATAC_atlas", "raw_dir", "bed_files",
+                                 "greenleaf_brain_scATAC", 
+                                 file, sep="/"), format="bed")
   }
   return(sample)
 }
@@ -132,13 +136,12 @@ get_sample_name <- function(file, dataset) {
   }
   else if (dataset == "tsankov") {
     sample_name = get_sample_name_tsankov(file)
-    sample$name = substr(sample$name, 1, 16)
   }
   else if (dataset == "greenleaf_blood_bm") {
     print("todo")
   }
   else if (dataset == "greenleaf_brain") {
-    print("todo")
+    sample_name = get_sample_name_greenleaf(file)
   }
   return(sample_name)
 }
@@ -158,6 +161,11 @@ get_sample_name_shendure <- function(file) {
 
 get_sample_name_tsankov <- function(file) {
   sample_name = str_remove(file, "_fragments.tsv")
+  return(sample_name)
+}
+
+get_sample_name_greenleaf_brain <- function(file) {
+  sample_name = str_remove(file, "_fragments.tsv.gz")
   return(sample_name)
 }
 
