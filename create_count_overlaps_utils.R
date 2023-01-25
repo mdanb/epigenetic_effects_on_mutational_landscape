@@ -59,6 +59,12 @@ import_sample <- function(file, dataset) {
                                  "greenleaf_brain_scATAC", 
                                  file, sep="/"), format="bed")
   }
+  else if (dataset == "greenleaf_pbmc_bm") {
+    sample = import(paste("/broad", "hptmp", "bgiotti", 
+                          "BingRen_scATAC_atlas", "raw_dir", "bed_files",
+                          "greenleaf_pbmc_bm", 
+                          file, sep="/"), format="bed")
+  }
   return(sample)
 }
 
