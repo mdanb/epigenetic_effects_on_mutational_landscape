@@ -86,6 +86,11 @@ get_sample_filename <- function(file, dataset) {
                      "count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                              "rds", sep="."), sep="_")
   }
+  else if (dataset == "greenleaf_pbmc_bm") {
+    filename = paste("Greenleaf_pbmc_bm_count_filter", cell_number_filter,  
+                     "count_overlaps", paste(file_path_sans_ext(file, TRUE),
+                                             "rds", sep="."), sep="_")
+  }
   return(filename)
 }
 

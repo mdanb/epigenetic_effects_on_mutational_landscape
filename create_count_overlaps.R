@@ -254,5 +254,28 @@ if (dataset == "bingren") {
            chain=ch,
            dataset=dataset)
 } else if (dataset == "greenleaf_pbmc_bm") {
-  metadata_greenleaf_pbmc_bm = read.csv("mmc1.xlsx", sep="\t")
+    if (!(file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/greenleaf_pbmc_bm.txt"))) {
+      metadata_greenleaf_pbmc_bm = readRDS("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/scATAC-Healthy-Hematopoiesis-191120.rds")
+      metadata_greenleaf_pbmc_bm = data.frame(barcode = metadata_greenleaf_pbmc_bm$Barcode, 
+                                              cell_type = unlist(lapply(
+                                              strsplit(metadata_greenleaf_pbmc_bm$BioClassification, 
+                                                       split="_"), "[", 2)))
+      
+      write.csv(metadata_greenleaf_pbmc_bm, 
+                "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/greenleaf_pbmc_bm.txt")
+    }
+    else {
+      metadata_greenleaf_pbmc_bm = 
+        read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/greenleaf_pbmc_bm.txt")
+    }
+    files_greenleaf_pbmc_bm = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/greenleaf_pbmc_bm_scATAC", 
+                                         pattern=".*fragments\\.tsv\\.gz")
+    mclapply(files_greenleaf_pbmc_bm, 
+             create_count_overlaps_files,
+             cell_number_filter=cell_number_filter,
+             metadata=metadata_greenleaf_pbmc_bm,
+             interval_ranges=interval.ranges,
+             chain=ch,
+             dataset=dataset,
+             mc.cores=cores)
 }
