@@ -7,7 +7,7 @@ library(parallel)
 library(optparse)
 library(rtracklayer)
 library(readxl)
-source("create_count_overlaps_utils.R")
+source("count_overlaps_utils.R")
 
 option_list <- list( 
   make_option("--dataset", type="character"),

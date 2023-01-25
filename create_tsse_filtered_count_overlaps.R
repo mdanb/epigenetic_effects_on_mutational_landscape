@@ -371,9 +371,10 @@ if (dataset == "bing_ren") {
   metadata = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE184462_metadata.tsv", sep="\t", 
                         header=TRUE)
   colnames(metadata)[grep("cell.type", colnames(metadata))] = "cell_type"
-  files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/", pattern=files_pattern),
+  files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/", pattern=files_pattern,
+                             full_names=TRUE),
                   list.dirs("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files", recursive = FALSE, full.names = 
-                              FALSE))
+                             TRUE))
   create_tsse_filtered_count_overlaps_per_tissue(files,
                                                  metadata,
                                                  interval.ranges,
@@ -391,9 +392,9 @@ if (dataset == "bing_ren") {
   colnames(metadata)[grep("frit", colnames(metadata))] = "tsse"
   
   files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC/", 
-                             pattern=files_pattern),
+                             pattern=files_pattern, full.names = TRUE),
                   list.dirs("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC/", 
-                            recursive = FALSE, full.names = FALSE))
+                            recursive = FALSE, full.names = TRUE))
   create_tsse_filtered_count_overlaps_per_tissue(files,
                                                  metadata,
                                                  interval.ranges,
