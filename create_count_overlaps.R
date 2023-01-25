@@ -63,7 +63,8 @@ create_count_overlaps_files <- function(file, cell_number_filter, metadata,
       sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(filtered_metadata,
                                                                     dataset)
       
-      if (dataset == "tsankov" || dataset == "greenleaf_brain") {
+      if (dataset == "tsankov" || dataset == "greenleaf_brain" || dataset ==
+          "greenleaf_pbmc_bm") {
         sample$name = substr(sample$name, 1, 16)
         sample = migrate_bed_file_to_hg37(sample, chain)
       }
@@ -259,7 +260,8 @@ if (dataset == "bingren") {
       metadata_greenleaf_pbmc_bm = data.frame(barcode = metadata_greenleaf_pbmc_bm$Barcode, 
                                               cell_type = unlist(lapply(
                                               strsplit(metadata_greenleaf_pbmc_bm$BioClassification, 
-                                                       split="_"), "[", 2)))
+                                                       split="_"), "[", 2)),
+                                              sample = metadata_greenleaf_pbmc_bm$Group)
       
       write.csv(metadata_greenleaf_pbmc_bm, 
                 "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/greenleaf_pbmc_bm.txt")
