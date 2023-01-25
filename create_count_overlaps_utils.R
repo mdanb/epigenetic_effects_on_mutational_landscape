@@ -182,7 +182,9 @@ get_sample_name_greenleaf_brain <- function(file) {
 }
 
 get_sample_name_greenleaf_pbmc_bm <- function(file) {
-  sample_name = unlist(strsplit(file[[1]], split="_"))[3]
+  part_one = unlist(strsplit(file, split="_"))[3]
+  part_two = unlist(strsplit(unlist(strsplit(file, split="_"))[4], split="\\."))[1]
+  sample_name = paste(part_one, part_two, sep="_")
   return(sample_name)
 }
 
