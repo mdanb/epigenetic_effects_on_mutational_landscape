@@ -149,11 +149,11 @@ get_sample_name <- function(file, dataset) {
   else if (dataset == "tsankov") {
     sample_name = get_sample_name_tsankov(file)
   }
-  else if (dataset == "greenleaf_blood_bm") {
-    print("todo")
-  }
   else if (dataset == "greenleaf_brain") {
     sample_name = get_sample_name_greenleaf_brain(file)
+  }
+  else if (dataset == "greenleaf_pbmc_bm") {
+    sample_name =  get_sample_name_greenleaf_pbmc_bm(file)
   }
   return(sample_name)
 }
@@ -178,6 +178,11 @@ get_sample_name_tsankov <- function(file) {
 
 get_sample_name_greenleaf_brain <- function(file) {
   sample_name = str_remove(file, "_fragments.tsv.gz")
+  return(sample_name)
+}
+
+get_sample_name_greenleaf_pbmc_bm <- function(file) {
+  sample_name = str_remove(file, ".fragments.tsv.gz")
   return(sample_name)
 }
 
