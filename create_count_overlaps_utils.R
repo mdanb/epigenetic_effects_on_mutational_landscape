@@ -182,7 +182,7 @@ get_sample_name_greenleaf_brain <- function(file) {
 }
 
 get_sample_name_greenleaf_pbmc_bm <- function(file) {
-  sample_name = str_remove(file, ".fragments.tsv.gz")
+  sample_name = unlist(strsplit(file[[1]], split="_"))[3]
   return(sample_name)
 }
 
