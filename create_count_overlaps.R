@@ -240,13 +240,19 @@ if (dataset == "bingren") {
   colnames(metadata_greenleaf_brain)[grepl("Sample.ID", colnames(metadata_greenleaf_brain))] = "sample"
   files_greenleaf_brain = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/greenleaf_brain_scATAC/", 
                                      pattern=".*fragments\\.tsv\\.gz")
-  mclapply(files_greenleaf_brain, create_count_overlaps_files,
+  # mclapply(files_greenleaf_brain, create_count_overlaps_files,
+  #          cell_number_filter=cell_number_filter,
+  #          metadata=metadata_greenleaf_brain,
+  #          interval_ranges=interval.ranges,
+  #          chain=ch,
+  #          dataset=dataset,
+  #          mc.cores=cores)
+  lapply(files_greenleaf_brain, create_count_overlaps_files,
            cell_number_filter=cell_number_filter,
            metadata=metadata_greenleaf_brain,
            interval_ranges=interval.ranges,
            chain=ch,
-           dataset=dataset,
-           mc.cores=cores)
+           dataset=dataset)
 } else if (dataset == "greenleaf_pbmc_bm") {
   metadata_greenleaf_pbmc_bm = read.csv("mmc1.xlsx", sep="\t")
 }
