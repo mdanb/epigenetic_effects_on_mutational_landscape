@@ -200,7 +200,7 @@ get_tissue_name <- function(file, dataset) {
     tissue_name = get_tissue_name_tsankov(file)
   }
   else if (dataset == "Greenleaf_brain") {
-    tissue_name = get_tissue_name_greenleaf_brain(file)
+    tissue_name = "brain"
   }
   else if (dataset == "Greenleaf_pbmc_bm") {
     tissue_name = get_tissue_name_greenleaf_pbmc_bm(file)
@@ -244,8 +244,18 @@ get_tissue_name_shendure <- function(filename) {
   return(tissue_name)
 }
 
-get_tissue_name_tsankov <- function(file) {
-  if (grepl("RPL", file)) {
+get_tissue_name_greenleaf_pbmc_bm <- function(filename) {
+  if (grepl("PBMC", filename)) {
+    tissue_name = "blood"
+  }
+  else {
+    tissue_name = "bonemarrow"
+  }
+  return(tissue_name)
+}
+
+get_tissue_name_tsankov <- function(filename) {
+  if (grepl("RPL", filename)) {
     tissue_name = "distal lung"
   }
   else {
