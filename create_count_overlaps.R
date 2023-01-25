@@ -16,10 +16,10 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-args = parse_args(OptionParser(option_list=option_list), args =
-                  c("--dataset=shendure",
-                    "--cell_number_filter=1",
-                    "--cores=1"))
+#args = parse_args(OptionParser(option_list=option_list), args =
+#                  c("--dataset=shendure",
+#                    "--cell_number_filter=1",
+#                    "--cores=1"))
 
 cell_number_filter = args$cell_number_filter
 cores = args$cores
