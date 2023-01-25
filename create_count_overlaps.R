@@ -166,6 +166,7 @@ if (dataset == "bingren") {
            metadata=metadata_bingren,
            interval_ranges=interval.ranges,
            chain=ch,
+           dataset=dataset,
            mc.cores=cores)
 } else if (dataset == "shendure") {
   metadata_Shendure = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
@@ -178,6 +179,8 @@ if (dataset == "bingren") {
          cell_number_filter=cell_number_filter,
          metadata=metadata_Shendure,
          interval_ranges=interval.ranges,
+         chain=ch,
+         dataset=dataset,
          mc.cores=cores)
 } else if (dataset == "tsankov") {
   metadata_tsankov_proximal = 
@@ -204,7 +207,8 @@ if (dataset == "bingren") {
            metadata=metadata_tsankov_proximal,
            interval_ranges=interval.ranges,
            chain=ch,
-           mc.cores = cores)
+           dataset=dataset,
+           mc.cores=cores)
   
   mclapply(files_Tsankov_distal,
            create_count_overlaps_files,
@@ -212,7 +216,8 @@ if (dataset == "bingren") {
             metadata=metadata_tsankov_distal,
             interval_ranges=interval.ranges,
             chain=ch,
-            mc.cores= cores)
+            dataset=dataset,
+            mc.cores=cores)
 } else if (dataset == "greenleaf_brain") {
     if (!(file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt"))) {
       metadata_greenleaf_brain =
@@ -240,6 +245,7 @@ if (dataset == "bingren") {
            metadata=metadata_greenleaf_brain,
            interval_ranges=interval.ranges,
            chain=ch,
+           dataset=dataset,
            mc.cores=cores)
 } else if (dataset == "greenleaf_pbmc_bm") {
   metadata_greenleaf_pbmc_bm = read.csv("mmc1.xlsx", sep="\t")
