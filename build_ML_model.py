@@ -26,12 +26,14 @@ parser.add_argument('--tissue_spec_cells', action="store_true",
                      help='run model on tissue specific cells', default=False)
 parser.add_argument('--clustered_mutations', action="store_true",
                     help='run model on hierarchically clustered mutations', default=False)
-parser.add_argument('--bing_ren', action="store_true",
-                    help='use Bing Ren ATACseq', default=False)
-parser.add_argument('--shendure', action="store_true",
-                    help='use Shendure ATACseq', default=False)
-parser.add_argument('--tsankov', action="store_true",
-                    help='use Tsankov ATACseq', default=False)
+# parser.add_argument('--bing_ren', action="store_true",
+#                     help='use Bing Ren ATACseq', default=False)
+# parser.add_argument('--shendure', action="store_true",
+#                     help='use Shendure ATACseq', default=False)
+# parser.add_argument('--tsankov', action="store_true",
+#                     help='use Tsankov ATACseq', default=False)
+parser.add_argument('--datasets', nargs="+", type=str,
+                    help='which sc-ATACseq datasets to analyze', required=True)
 parser.add_argument('--scATAC_cell_number_filter', type=int,
                     help='minimum number of cells per cell type in scATAC', default=100)
 # parser.add_argument('--combined_datasets', action="store_true",
@@ -54,9 +56,10 @@ cancer_types = config.cancer_types
 run_all_cells = config.all_cells
 run_tissue_spec_cells = config.tissue_spec_cells
 run_clustered_mutations = config.clustered_mutations
-bing_ren = config.bing_ren
-shendure = config.shendure
-tsankov = config.tsankov
+# bing_ren = config.bing_ren
+# shendure = config.shendure
+# tsankov = config.tsankov
+datasets = config.datasets
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
 meso_waddell_and_biphasic = config.meso_waddell_and_biphasic
 meso_waddell_only = config.meso_waddell_only
@@ -68,6 +71,20 @@ tss_fragment_filter = config.tss_fragment_filter
 # bioRxiv_method = config.bioRxiv_method
 
 #### Helpers ####
+# Dataframe curation
+def add_dataset_origin_to_cell_types(df, dataset):
+    if (dataset == "Bingren"):
+        df.columns = [c + " BR" for c in df.columns]
+    elif (dataset == "Shendure"):
+        df.columns = [c + " SH" for c in df.columns]
+    elif (dataset == "Tsankov"):
+        df.columns = [c + " TS" for c in df.columns]
+    elif (dataset == "Greenleaf_brain"):
+        df.columns = [c + " GL_Br" for c in df.columns]
+    elif (dataset == "greenleaf_pbmc_bm"):
+        df.columns = [c + " GL_BlBM" for c in df.columns]
+    return(df)
+
 # Filter Data helpers
 def filter_clustered_data(scATAC_df, mutations_df):
     return pd.DataFrame(scATAC_df, index=mutations_df.index)
@@ -267,7 +284,7 @@ def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, clus
 
 #### Load scATAC ####
 tss_filtered_root = "processed_data/count_overlap_data/tsse_filtered"
-
+datasets_combined_count_overlaps = []
 if (tss_fragment_filter != -1):
     # TODO: Fix for other than Bing Ren
     #result = pyreadr.read_r("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData") #
@@ -286,29 +303,34 @@ if (tss_fragment_filter != -1):
                                      f"combined_{tss_fragment_filter}_fragments.rds").T
         scATAC_df_tsankov.index = chr_ranges["x"].values
 else:
-    scATAC_df_bingren = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
-                            f"/count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
-    scATAC_df_shendure = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
-                                 f"/shendure_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
-    scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
-                                 f"/tsankov_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+    for dataset in datasets:
+        datasets_combined_count_overlaps.append(load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
+                                f"/{dataset}_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds"))
+        # scATAC_df_bingren = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
+        #                         f"/count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+        # scATAC_df_shendure = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
+        #                              f"/shendure_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
+        # scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
+        #                              f"/tsankov_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
 
 scATAC_df = pd.DataFrame()
 scATAC_sources = ""
-if (bing_ren):
-    scATAC_df_bingren.columns = [c + " BR" for c in scATAC_df_bingren.columns]
-    scATAC_df = pd.concat((scATAC_df, scATAC_df_bingren), axis=1)
-    scATAC_sources = scATAC_sources + "bing_ren"
-if (shendure):
-    scATAC_df_shendure.columns = [c + " SH" for c in scATAC_df_shendure.columns]
-    scATAC_df = pd.concat((scATAC_df, scATAC_df_shendure), axis=1)
-    scATAC_sources = scATAC_sources + "shendure"
-if (tsankov):
-    scATAC_df_tsankov.columns = [c + " TS" for c in scATAC_df_tsankov.columns]
-    scATAC_df = pd.concat((scATAC_df, scATAC_df_tsankov), axis=1)
-    scATAC_sources = scATAC_sources + "tsankov"
 
-if (bing_ren and shendure and tsankov):
+for idx, dataset in enumerate(datasets):
+    scATAC_sources = "_".join(scATAC_sources, dataset)
+    datasets_combined_count_overlaps[idx] = [add_dataset_origin_to_cell_types(datasets_combined_count_overlaps[idx],
+                                             dataset)]
+
+scATAC_df = pd.concat(datasets_combined_count_overlaps, axis=1)
+
+# scATAC_df = pd.concat((scATAC_df, scATAC_df_bingren), axis=1)
+# scATAC_sources = scATAC_sources + "bing_ren"
+# scATAC_df = pd.concat((scATAC_df, scATAC_df_shendure), axis=1)
+# scATAC_sources = scATAC_sources + "shendure"
+# scATAC_df = pd.concat((scATAC_df, scATAC_df_tsankov), axis=1)
+# scATAC_sources = scATAC_sources + "tsankov"
+
+if (len(datasets) == 5):
     scATAC_sources = "combined_datasets"
 
 if (run_all_cells or run_tissue_spec_cells):
