@@ -16,6 +16,8 @@ import glob
 from utils import load_scATAC, load_agg_mutations, filter_agg_data, \
                   filter_mutations_by_cancer, load_meso_mutations
 
+from itertools import chain
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--cancer_types', nargs="+", type=str,
@@ -59,7 +61,7 @@ run_clustered_mutations = config.clustered_mutations
 # bing_ren = config.bing_ren
 # shendure = config.shendure
 # tsankov = config.tsankov
-datasets = config.datasets
+datasets = sorted(config.datasets)
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
 meso_waddell_and_biphasic = config.meso_waddell_and_biphasic
 meso_waddell_only = config.meso_waddell_only
@@ -81,8 +83,8 @@ def add_dataset_origin_to_cell_types(df, dataset):
         df.columns = [c + " TS" for c in df.columns]
     elif (dataset == "Greenleaf_brain"):
         df.columns = [c + " GL_Br" for c in df.columns]
-    elif (dataset == "greenleaf_pbmc_bm"):
-        df.columns = [c + " GL_BlBM" for c in df.columns]
+    elif (dataset == "Greenleaf_pbmc_bm"):
+        df.columns = [c + " GL_BlBm" for c in df.columns]
     return(df)
 
 # Filter Data helpers
@@ -188,7 +190,7 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
 
 def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types,
                                   meso_waddell_and_biphasic, meso_waddell_only, meso_waddell_and_broad_only,
-                                  meso_waddell_biph_786_846, tss_fragment_filter, scATAC_source="bing_ren"):
+                                  meso_waddell_biph_786_846, tss_fragment_filter, scATAC_source="Bingren"):
     if (meso_waddell_and_biphasic or meso_waddell_only or meso_waddell_and_broad_only or
         meso_waddell_biph_786_846):
         mutations_df = load_meso_mutations(meso_waddell_and_biphasic, meso_waddell_only,
@@ -317,11 +319,14 @@ scATAC_df = pd.DataFrame()
 scATAC_sources = ""
 
 for idx, dataset in enumerate(datasets):
-    scATAC_sources = "_".join(scATAC_sources, dataset)
+    if (scATAC_sources == ""):
+        scATAC_sources = dataset
+    else:
+        scATAC_sources = "_".join((scATAC_sources, dataset))
     datasets_combined_count_overlaps[idx] = [add_dataset_origin_to_cell_types(datasets_combined_count_overlaps[idx],
                                              dataset)]
 
-scATAC_df = pd.concat(datasets_combined_count_overlaps, axis=1)
+scATAC_df = pd.concat(chain(*datasets_combined_count_overlaps), axis=1)
 
 # scATAC_df = pd.concat((scATAC_df, scATAC_df_bingren), axis=1)
 # scATAC_sources = scATAC_sources + "bing_ren"
