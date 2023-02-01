@@ -1,5 +1,6 @@
 library(parallel)
 library(rtracklayer)
+library(optparse)
 source("count_overlaps_utils.R")
 
 option_list <- list(
