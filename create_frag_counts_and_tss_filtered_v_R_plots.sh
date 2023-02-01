@@ -275,6 +275,17 @@ fi
 #    --plot_filename "lung_scc_BR_only_with_bottom_feats_num_frags_vs_correlation.png" \
 #    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 #fi                                                                             
+
+if ! [ -f "figures/lung_scc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then               
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                  
+    --cancer_type "Lung.SCC" \                                                 
+    --boxplot_cell_types "esophagus_mucosa Esophageal Epithelial Cell (BR)/artery_aorta Smooth Muscle (General) (BR)/small_intestine T Lymphocyte 1 (CD8+) (BR)/small_intestine Smooth Muscle (General) (BR)/lung Club Cell (BR)/thyroid Thyroid Follicular Cell (BR)/mammary_tissue Macrophage (General) (BR)/skin Fibroblast (General) (BR)/muscle Type I Skeletal Myocyte (BR)/muscle Endothelial Cell (General) 1 (BR)" \
+    --tsse_filtered_cell_types "Esophageal Epithelial Cell/Smooth Muscle (General)/ T Lymphocyte 1 (CD8+)/Smooth Muscle (General)/Club Cell/Thyroid Follicular Cell/Macrophage (General)/Fibroblast (General)/Type I Skeletal Myocyte/Endothelial Cell (General) 1" \
+    --tissue_for_tsse_filtered_cell_types "Bing Ren-Esophagus Mucosa,Bing Ren-Artery Aorta,Bing Ren-Small Intestine,Bing Ren-Small Intestine,Bing Ren-Lung,Bing Ren-Thyroid,Bing Ren-Mammary Tissue,Bing Ren-Skin,Bing Ren-Muscle,Bing Ren-Muscle" \
+    --plot_filename "lung_scc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
+    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
+#fi                                                                             
+
 ## Liver HCC
 #if ! [ -f "figures/liver_hcc_num_frags_vs_correlation.png" ]; then
 #	Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \

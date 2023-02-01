@@ -96,21 +96,21 @@ args = parse_args(OptionParser(option_list=option_list), args =
 args = parse_args(OptionParser(option_list=option_list), args =
                     c("--cancer_type=sarcomatoid",
                       "--meso",
-                      "--boxplot_cell_types=distal_lung AT1 (TS)/distal_lung AT2 (TS)/distal_lung B_cells (TS)/distal_lung Ciliated (TS)/distal_lung Endothelial (TS)/distal_lung Fibroblasts (TS)/distal_lung Immune (TS)/distal_lung Mesothelium (TS)/distal_lung Secretory (TS)/distal_lung SmoothMuscle (TS)",
+                      "--boxplot_cell_types=Distal Lung AT1 (TS)/Distal Lung AT2 (TS)/Distal Lung B_cells (TS)/Distal Lung Ciliated (TS)/Distal Lung Endothelial (TS)/Distal Lung Fibroblasts (TS)/Distal Lung Immune (TS)/Distal Lung Mesothelium (TS)/Distal Lung Secretory (TS)/Distal Lung SmoothMuscle (TS)",
                       "--tissue_for_tsse_filtered_cell_types=Tsankov-Distal Lung",
                       "--tsse_filtered_cell_types=AT1;AT2;B_cells;Ciliated;Endothelial;Fibroblasts;Immune;Mesothelium;Secretory;SmoothMuscle",
                       "--plot_filename=sarcomatoid_distal_lung_tsankov_num_frags_vs_correlation.png",
                       "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
 
 
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                     c("--cancer_type=sarcomatoid",
-#                       "--meso",
-#                       "--boxplot_cell_types=proximal_lung Basal (TS)/proximal_lung Ciliated (TS)/proximal_lung Endothelial (TS)/proximal_lung Ionocytes (TS)/proximal_lung Myeloid (TS)/proximal_lung Neuroendocrine (TS)/proximal_lung Sec-Ciliated (TS)/proximal_lung Secretory (TS)/proximal_lung Stromal (TS)/proximal_lung T.NK.cells (TS)/proximal_lung Tuft.like (TS)/proximal_lung B.cells (TS)",
-#                       "--tissue_for_tsse_filtered_cell_types=Tsankov-Proximal Lung",
-#                       "--tsse_filtered_cell_types=Basal;Ciliated;Endothelial;Ionocytes;Myeloid;Neuroendocrine;Sec-Ciliated;Secretory;Stromal;T.NK.cells;Tuft.like;B.cells",
-#                       "--plot_filename=sarcomatoid_proximal_lung_tsankov_num_frags_vs_correlation.png",
-#                       "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--cancer_type=sarcomatoid",
+                      "--meso",
+                      "--boxplot_cell_types=Proximal Lung Basal (TS)/Proximal Lung Ciliated (TS)/Proximal Lung Endothelial (TS)/Proximal Lung Ionocytes (TS)/Proximal Lung Myeloid (TS)/Proximal Lung Neuroendocrine (TS)/Proximal Lung Sec-Ciliated (TS)/Proximal Lung Secretory (TS)/Proximal Lung Stromal (TS)/Proximal Lung T.NK.cells (TS)/Proximal Lung Tuft.like (TS)/Proximal Lung B.cells (TS)",
+                      "--tissue_for_tsse_filtered_cell_types=Tsankov-Proximal Lung",
+                      "--tsse_filtered_cell_types=Basal;Ciliated;Endothelial;Ionocytes;Myeloid;Neuroendocrine;Sec-Ciliated;Secretory;Stromal;T.NK.cells;Tuft.like;B.cells",
+                      "--plot_filename=sarcomatoid_proximal_lung_tsankov_num_frags_vs_correlation.png",
+                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
 
 cancer_type = args$cancer_type
 meso = args$meso

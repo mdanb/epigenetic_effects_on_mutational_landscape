@@ -65,6 +65,12 @@ import_sample <- function(file, dataset) {
                           "greenleaf_pbmc_bm_scATAC", 
                           file, sep="/"), format="bed")
   }
+  else if (dataset == "yang") {
+    sample = import(paste("/broad", "hptmp", "bgiotti", 
+                          "BingRen_scATAC_atlas", "raw_dir", "bed_files",
+                          "yang_kidney_scATAC", 
+                          file, sep="/"), format="bed")
+  }
   return(sample)
 }
 
@@ -97,6 +103,11 @@ get_sample_filename <- function(file, dataset) {
                      "count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                              "rds", sep="."), sep="_")
   }
+  else if (dataset == "yang") {
+    filename = paste("Yang", cell_number_filter,  
+                     "count_overlaps", paste(file_path_sans_ext(file, TRUE),
+                                             "rds", sep="."), sep="_")
+  }
   return(filename)
 }
 
@@ -121,7 +132,7 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
                                                                   "#")
     sample_barcodes_in_metadata = substr(sample_barcodes_in_metadata, 1, 16)
   }
-  else if (dataset == "greenleaf_pbmc_bm") {
+  else if (dataset == "greenleaf_pbmc_bm" || dataset == "yang") {
     sample_barcodes_in_metadata = 
       substr(filtered_metadata[["barcode"]], 1, 16)
   }
@@ -156,6 +167,9 @@ get_sample_name <- function(file, dataset) {
   else if (dataset == "greenleaf_pbmc_bm") {
     sample_name =  get_sample_name_greenleaf_pbmc_bm(file)
   }
+  else if (dataset == "yang") {
+    sample_name =  get_sample_name_yang(file)
+  }
   return(sample_name)
 }
 
@@ -186,6 +200,11 @@ get_sample_name_greenleaf_pbmc_bm <- function(file) {
   part_one = unlist(strsplit(file, split="_"))[3]
   part_two = unlist(strsplit(unlist(strsplit(file, split="_"))[4], split="\\."))[1]
   sample_name = paste(part_one, part_two, sep="_")
+  return(sample_name)
+}
+
+get_sample_name_yang <- function(file) {
+  print("TODO")
   return(sample_name)
 }
 

@@ -1,6 +1,5 @@
 library(tidyverse)
 library(optparse)
-# source("utils.R")
 source("count_overlaps_utils.R")
 
 load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
@@ -8,10 +7,6 @@ dir.create("processed_data/cell_counts_per_sample/combined_cell_counts")
 
 option_list <- list( 
   make_option("--datasets", type = "character"),
-  # make_option("--shendure", action="store_true", default = FALSE),
-  # make_option("--tsankov", action="store_true", default = FALSE),
-  # make_option("--greenleaf_brain", action="store_true", default = FALSE),
-  # make_option("--greenleaf_pbmc_bm", action="store_true", default = FALSE),
   make_option("--cell_number_filter", type="integer")
 )
 
@@ -168,46 +163,3 @@ for (dataset in datasets) {
     save_combined_overlaps(filepaths, combined_filepath, dataset)
   }
 }
-
-# if (bing_ren) {
-#   if (!file.exists(combined_filepath) || 
-#     !file.exists(unsquashed_overlaps_filepath)) {
-#   pattern = paste("^count_filter_", cell_number_filter, "_count_overlaps", 
-#                   sep="")
-#   filepaths = list.files("processed_data/count_overlap_data", pattern = pattern, 
-#                          full.names = TRUE)
-#   save_combined_overlaps(filepaths, combined_filepath)
-#   }
-# }
-
-# if (shendure) {
-#   if (!file.exists(combined_filepath_shendure)) {
-#     pattern = paste("Shendure_count_filter_", cell_number_filter, 
-#                     "_count_overlaps", sep="")
-#     filepaths = list.files("processed_data/count_overlap_data", pattern = pattern, 
-#                            full.names = TRUE)
-#     save_combined_overlaps_shendure_tsankov(filepaths, combined_filepath_shendure)
-#   }
-# }
-# 
-# if (tsankov) {
-#   if (!file.exists(combined_filepath_tsankov)) {
-#     pattern = paste("Tsankov_count_filter_", cell_number_filter, 
-#                     "_count_overlaps", sep="")
-#     filepaths = list.files("processed_data/count_overlap_data", 
-#                            pattern = pattern, 
-#                            full.names = TRUE)
-#     save_combined_overlaps_shendure_tsankov(filepaths, combined_filepath_tsankov)
-#   }
-# }
-
-
-
-# if (!file.exists(combined_subdivided_filepath)) {
-#   pattern_subdivided = paste("count_filter_", CELL_NUMBER_FILTER, "_subdivided", 
-#                              sep="")
-#   filepaths_subdivided = list.files("processed_data/count_overlap_data", 
-#                                     pattern = pattern_subdivided, 
-#                                     full.names = TRUE)
-#   save_combined_overlaps(filepaths_subdivided, combined_subdivided_filepath)
-# }

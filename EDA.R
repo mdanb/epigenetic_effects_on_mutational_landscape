@@ -12,7 +12,7 @@ library(gtools)
 library(data.table)
 source("utils.R")
 
-load('raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 dir.create("figures") 
 CELL_NUMBER_FILTER = 1
 
@@ -24,9 +24,14 @@ save_heatmap_file <- function(path, width, height, df, ...) {
 }
 
 mut = load_mutation_data()
-mut_count_data = get_mutation_df_all_cancers()
+
+mut_count_data = get_mutation_df_all_cancers(mut, interval.ranges)
 rownames(mut_count_data) = mut_count_data[, 1]
 mut_count_data = mut_count_data[, 2:length(colnames(mut_count_data))]
+
+meso_mut_count_data = read.csv("processed_data/meso_mut_count_data.csv")
+rownames(meso_mut_count_data) = meso_mut_count_data[, 1]
+meso_mut_count_data = meso_mut_count_data[, 2:length(colnames(meso_mut_count_data))]
   
 combined_data_path = "processed_data/count_overlap_data/combined_count_overlaps/"
 
@@ -692,6 +697,15 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
 combined_count_overlaps = t(readRDS(combined_filepath))
 shendure_combined_count_overlaps = t(readRDS(combined_filepath_shendure))
 tsankov_combined_count_overlaps = t(readRDS(combined_filepath_tsankov))
+tsankov_combined_count_overlaps = tsankov_combined_count_overlaps[
+                                  rownames(tsankov_combined_count_overlaps) %in% 
+                                  rownames(meso_mut_count_data), ]
+correlations = cor(tsankov_combined_count_overlaps, 
+                   meso_mut_count_data[, "sarcomatoid"])
+write.csv(correlations, "results/sarcomatoid_correlations.csv")
+correlations = cor(tsankov_combined_count_overlaps, 
+                   meso_mut_count_data[, "epithelioid"])
+write.csv(correlations, "results/epithelioid_correlations.csv")
 combined_counts_overlaps_all_scATAC_data = cbind(combined_count_overlaps, 
                                                  shendure_combined_count_overlaps,
                                                  tsankov_combined_count_overlaps)

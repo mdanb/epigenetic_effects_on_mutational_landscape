@@ -66,12 +66,12 @@ create_count_overlaps_files <- function(file, cell_number_filter, metadata,
       if (dataset == "tsankov" || dataset == "greenleaf_brain" || dataset ==
           "greenleaf_pbmc_bm") {
         sample$name = substr(sample$name, 1, 16)
+      }
+      if (dataset == "tsankov" || dataset == "greenleaf_brain" || dataset ==
+          "greenleaf_pbmc_bm" || dataset == "bingren") {
         sample = migrate_bed_file_to_hg37(sample, chain)
       }
-      else if (dataset == "bingren") {
-        sample = migrate_bed_file_to_hg37(sample, chain)
-      }
-      
+
       # Because the function applied is used in another place over multiple 
       # samples, not just one, as is done here.
       sample <- unlist(lapply(c(1), 
@@ -280,4 +280,17 @@ if (dataset == "bingren") {
              chain=ch,
              dataset=dataset,
              mc.cores=cores)
+} else if (dataset == "yang") {
+  metadata_Yang = read_excel("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/41467_2021_27660_MOESM4_ESM.xlsx", 
+                             skip=1)
+  files_Yang = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/yang_kidney_scATAC/",
+                              pattern = ".*fragments\\.txt\\.gz")
+  colnames(metadata_Yang)[2] = "cell_type"
+  mclapply(files_Yang, create_count_overlaps_files,
+           cell_number_filter=cell_number_filter,
+           metadata=metadata_Yang,
+           interval_ranges=interval.ranges,
+           chain=ch,
+           dataset=dataset,
+           mc.cores=cores)
 }
