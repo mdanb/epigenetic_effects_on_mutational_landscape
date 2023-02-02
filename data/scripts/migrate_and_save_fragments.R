@@ -18,7 +18,7 @@ if (dataset == "bing_ren") {
   dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/bingren_scATAC/migrated_to_hg19"
   dir.create(dir_path)
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/",
-                     pattern="tsv.gz",
+                     pattern="bed.gz",
                      full.names=TRUE)
   fragments = mclapply(files, import, format="bed", mc.cores=cores)
   migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
