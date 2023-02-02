@@ -204,7 +204,7 @@ get_sample_name_greenleaf_pbmc_bm <- function(file) {
 }
 
 get_sample_name_yang <- function(file) {
-  print("TODO")
+  sample_name = str_remove(file, ".fragments.tsv.gz")
   return(sample_name)
 }
 
