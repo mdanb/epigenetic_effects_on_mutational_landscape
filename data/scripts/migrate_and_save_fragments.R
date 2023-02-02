@@ -17,7 +17,7 @@ ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/hg38ToHg19.
 if (dataset == "bing_ren") {
   dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/bingren_scATAC/migrated_to_hg19"
   dir.create(dir_path)
-  files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/",
+  files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/bingren_scATAC",
                      pattern="bed.gz",
                      full.names=TRUE)
   fragments = mclapply(files, import, format="bed", mc.cores=cores)
