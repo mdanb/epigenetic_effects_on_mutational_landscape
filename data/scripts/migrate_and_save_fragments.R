@@ -68,7 +68,7 @@ if (dataset == "bing_ren") {
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/greenleaf_pbmc_bm_scATAC",
                      pattern="tsv.gz",
                      full.names=TRUE)
-  for (l in split(files, ceiling(seq_along(files)/4))) {
+  for (l in split(files, ceiling(seq_along(files)/2))) {
     helper(l, dir_path, ch, cores)
   }
   # fragments = mclapply(files, import, format="bed", mc.cores=cores)
