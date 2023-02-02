@@ -284,7 +284,7 @@ if (dataset == "bingren") {
   metadata_Yang = read_excel("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/41467_2021_27660_MOESM4_ESM.xlsx", 
                              skip=1)
   files_Yang = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/yang_kidney_scATAC/",
-                              pattern = ".*fragments\\.txt\\.gz")
+                              pattern = ".*fragments\\.tsv\\.gz")
   colnames(metadata_Yang)[2] = "cell_type"
   mclapply(files_Yang, create_count_overlaps_files,
            cell_number_filter=cell_number_filter,
