@@ -53,8 +53,12 @@ if (dataset == "bing_ren") {
                                 mc.cores=cores)
 }
 
-migrated_filepaths = paste(dir_path, gsub(".gz", "", migrated_filenames),
+files = lapply(strsplit(files, split = "/"), "[", 9)
+migrated_filepaths = paste(dir_path, gsub(".gz", "", files),
                            sep = "/")
                            
-mclapply(fragments, export, format="bed", index=T)
-
+mclapply(length(migrated_fragments), function(i) {export(migrated_fragments[i],
+                                                         migrated_filepaths[i],
+                                                         format="bed",
+                                                         index=T)})
+         
