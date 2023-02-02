@@ -65,7 +65,7 @@ import_sample <- function(file, dataset) {
                           "greenleaf_pbmc_bm_scATAC", 
                           file, sep="/"), format="bed")
   }
-  else if (dataset == "yang") {
+  else if (dataset == "yang_kidney") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", "raw_dir", "bed_files",
                           "yang_kidney_scATAC", 
