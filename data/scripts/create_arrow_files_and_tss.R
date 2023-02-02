@@ -44,7 +44,7 @@ create_arrow_files_and_tss <- function(genome_version, fragment_paths,
 
 if (dataset == "bing_ren") {
   output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/arrow/bingren" 
-  files_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/bingren/migrated_to_hg19"
+  files_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/bingren_scATAC/migrated_to_hg19"
   create_arrow_files_and_tss("hg38", list.files(output_dir, full.names=T,
                                                 pattern = "bgz$"),
 						output_dir)
@@ -72,7 +72,7 @@ if (dataset == "bing_ren") {
 	                                   pattern = "bgz$"), output_dir)
 } else if (dataset == "yang_kidney") {
     output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/arrow/yang_kidney"
-    files_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/"
+    files_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/yang_kidney_scATAC"
     create_arrow_files_and_tss("hg19", list.files(files_dir, full.names=T,
 	                          pattern = "bgz$"), output_dir)
 }
