@@ -5,7 +5,7 @@ library(RColorBrewer)
 library(dplyr)
 library(optparse)
 library(stringr)
-source("utils.R")
+source("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/utils.R")
 
 parser <- OptionParser()
 parser <- add_option(parser, c("--all_cells"), action="store_true", default=T)
