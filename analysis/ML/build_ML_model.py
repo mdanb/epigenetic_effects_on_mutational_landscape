@@ -238,9 +238,9 @@ def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, can
         scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + str(tss_fragment_filter)
 
     if (waddell_sarc_biph):
-        scATAC_dir = scATAC_dir + "_waddell_sarc_biph_waddell_epith"
+        scATAC_dir = scATAC_dir + "_waddell_sarc_biph"
     elif (waddell_sarc):
-        scATAC_dir = scATAC_dir + "_waddell_sarc_waddell_epith"
+        scATAC_dir = scATAC_dir + "_waddell_sarc"
     elif (waddell_sarc_tsankov_sarc):
         scATAC_dir = scATAC_dir + "_waddell_sarc_tsankov_sarc"
     elif (waddell_sarc_biph_tsankov_sarc_biph):
