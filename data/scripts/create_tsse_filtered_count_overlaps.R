@@ -5,7 +5,7 @@ library(optparse)
 library(rprojroot)
 
 # setwd((find_rstudio_root_file()))
-source("count_overlaps_utils.R")
+source("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/data/scripts/count_overlaps_utils.R")
 
 option_list <- list( 
   make_option("--cell_types", type="character"),
@@ -175,11 +175,11 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
                                                            dataset="bing_ren",
                                                            cores) {
   
-  if (dataset == "bing_ren") {
+  if (dataset == "Bingren") {
     filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
                       "data", "bed_files", "bingren_scATAC", files, sep="/")
   }
-  else if (dataset == "shendure") {
+  else if (dataset == "Shendure") {
     filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
                       "data", "bed_files", "JShendure_scATAC", 
                       files, sep="/")
@@ -193,13 +193,13 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   print("Importing BED files...")
   fragments = mclapply(filepaths, import, format="bed", mc.cores=cores)
 
-  if (dataset == "bing_ren") {
+  if (dataset == "Bingren") {
     print("Migrating BED files...")
     migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
                                   mc.cores=cores)
     sample_names = unlist(lapply(files, get_sample_name))
   }
-  else if (dataset == "shendure") {
+  else if (dataset == "Shendure") {
     migrated_fragments = fragments
     sample_names = unlist(lapply(files, get_sample_name_shendure))
   }
@@ -224,25 +224,23 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   #   }
   # }
   
-  if (dataset == "bing_ren") {
+  if (dataset == "Bingren") {
     sample_barcodes_in_metadatas = mclapply(filtered_metadatas, 
                                             get_sample_barcodes_in_metadata,
-                                            "cellID", 
-                                            "\\+")
+                                            "Bingren")
     filtered_metadatas = lapply(seq_along(filtered_metadatas),
                                 add_cell_barcodes_to_metadata,
                                 filtered_metadatas,
                                 sample_barcodes_in_metadatas)
   }
-  else if (dataset == "shendure") {
+  else if (dataset == "Shendure") {
     sample_barcodes_in_metadatas = mclapply(filtered_metadatas, 
                                             function(x) x[["cell_barcode"]])
   }
   else {
     sample_barcodes_in_metadatas = mclapply(filtered_metadatas, 
                                             get_sample_barcodes_in_metadata,
-                                            "cell_barcode", 
-                                            "#")
+                                            "Tsankov")
     sample_barcodes_in_metadatas = lapply(sample_barcodes_in_metadatas, 
                                           substr, 1, 16)
     fix_barcodes <- function(i, metadatas, sample_barcodes_in_metadatas) {
@@ -300,10 +298,10 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   metadata_with_fragment_counts = metadata_with_fragment_counts %>% 
                                   filter(cell_type %in% cell_types_to_consider)
   
-  if (dataset == "bing_ren") {
+  if (dataset == "Bingren") {
     tissue_name = get_tissue_name(files[1])
   }
-  else if (dataset == "shendure") {
+  else if (dataset == "Shendure") {
     tissue_name = get_tissue_name_shendure(files[1])
   }
   else {
@@ -318,7 +316,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   for (count in top_tsse_fragment_count_range) {
     filename = paste("count_overlaps", "frag_count_filter", count, sep="_")
     filename = paste(filename, "rds", sep=".")
-    filepath = paste("../processed_data/count_overlap_data/tsse_filtered",
+    filepath = paste("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/data/processed_data/count_overlap_data/tsse_filtered",
                      dataset, tissue_name, sep="/")
     dir.create(filepath, recursive = T)
     filepath = paste(filepath, filename, sep="/")
@@ -367,7 +365,7 @@ load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/hg19.1Mb.rang
 # hg38_path = system.file(package="liftOver", "extdata", "hg38ToHg19.over.chain")
 ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/hg38ToHg19.over.chain")
 
-if (dataset == "bing_ren") {
+if (dataset == "Bingren") {
   metadata = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE184462_metadata.tsv", sep="\t", 
                         header=TRUE)
   colnames(metadata)[grep("cell.type", colnames(metadata))] = "cell_type"
@@ -383,7 +381,7 @@ if (dataset == "bing_ren") {
                                                  cell_types,
                                                  dataset,
                                                  cores)
-} else if (dataset == "shendure") {
+} else if (dataset == "Shendure") {
   metadata = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
                         sep="\t",
                         header=TRUE)
@@ -403,7 +401,7 @@ if (dataset == "bing_ren") {
                                                  cell_types,
                                                  dataset,
                                                  cores)
-} else if (dataset == "tsankov") {
+} else if (dataset == "Tsankov") {
   metadata_tsankov_proximal = 
     read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/tsankov_lung_proximal_barcode_annotation.csv")
   metadata_tsankov_distal = 
