@@ -27,29 +27,30 @@ parser.add_argument('--tsankov', action="store_true",
 parser.add_argument('--cell_number_filter', type=int)
 parser.add_argument('--tss_fragment_filter', type=int, default=-1)
 group = parser.add_mutually_exclusive_group()
-group.add_argument('--meso_waddell_and_biphasic', action="store_true",
+group.add_argument('--waddell_sarc_biph', action="store_true",
                     default=False)
-group.add_argument('--meso_waddell_only', action="store_true", default=False)
-group.add_argument('--meso_waddell_and_broad_only', action="store_true", default=False)
-group.add_argument('--meso_waddell_biph_786_846', action="store_true", default=False)
+group.add_argument('--waddell_sarc', action="store_true", default=False)
+group.add_argument('--waddell_sarc_tsankov_sarc', action="store_true", default=False)
+group.add_argument('--waddell_sarc_biph_tsankov_sarc_biph', action="store_true", default=False)
 
 
 def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
-                                 tss_fragment_filter, meso_waddell_and_biphasic,
-                                 meso_waddell_only, meso_waddell_and_broad_only,
-                                 meso_waddell_biph_786_846):
-    dir = f"models/{cancer_type}/scATAC_source_{scATAC_source}_cell_number_filter_{cell_number_filter}"
+                                 tss_fragment_filter, waddell_sarc_biph,
+                                 waddell_sarc, waddell_sarc_tsankov_sarc,
+                                 waddell_sarc_biph_tsankov_sarc_biph):
+    dir = f"../../figures/models/{cancer_type}/scATAC_source_" \
+          f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
     if (tss_fragment_filter != -1):
         dir = dir + f"_tss_fragment_filter_{tss_fragment_filter}"
 
-    if (meso_waddell_and_biphasic):
-        dir = dir + "_meso_waddell_and_biphasic"
-    elif (meso_waddell_only):
-        dir = dir + "_meso_waddell_only"
-    elif (meso_waddell_and_broad_only):
-        dir = dir + "_meso_waddell_and_broad_only"
-    elif (meso_waddell_biph_786_846):
-        dir = dir + "_meso_waddell_biph_786_846"
+    if (waddell_sarc_biph):
+        dir = dir + "_waddell_sarc_biph"
+    elif (waddell_sarc):
+        dir = dir + "_waddell_sarc"
+    elif (waddell_sarc_tsankov_sarc):
+        dir = dir + "_waddell_sarc_tsankov_sarc"
+    elif (waddell_sarc_biph_tsankov_sarc_biph):
+        dir = dir + "_waddell_sarc_biph_tsankov_sarc_biph"
 
     return f"{dir}/backwards_elimination_results/"
 
@@ -61,10 +62,10 @@ def get_relevant_backwards_elim_dirs(config):
     bing_ren = config.bing_ren
     shendure = config.shendure
     tsankov = config.tsankov
-    meso_waddell_and_biphasic = config.meso_waddell_and_biphasic
-    meso_waddell_only = config.meso_waddell_only
-    meso_waddell_and_broad_only = config.meso_waddell_and_broad_only
-    meso_waddell_biph_786_846 = config.meso_waddell_biph_786_846
+    waddell_sarc_biph = config.waddell_sarc_biph
+    waddell_sarc = config.waddell_sarc
+    waddell_sarc_tsankov_sarc = config.waddell_sarc_tsankov_sarc
+    waddell_sarc_biph_tsankov_sarc_biph = config.waddell_sarc_biph_tsankov_sarc_biph
     # combined_datasets = config.combined_datasets
     cell_number_filter = config.cell_number_filter
     tss_fragment_filter = config.tss_fragment_filter
@@ -83,10 +84,10 @@ def get_relevant_backwards_elim_dirs(config):
     for cancer_type in cancer_types:
         if (all_cells):
             backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, scATAC_sources, cell_number_filter,
-                                                                   tss_fragment_filter, meso_waddell_and_biphasic,
-                                                                   meso_waddell_only,
-                                                                   meso_waddell_and_broad_only,
-                                                                   meso_waddell_biph_786_846))
+                                                                   tss_fragment_filter, waddell_sarc_biph,
+                                                                   waddell_sarc,
+                                                                   waddell_sarc_tsankov_sarc,
+                                                                   waddell_sarc_biph_tsankov_sarc_biph))
     return backward_elim_dirs
         # if (run_tissue_spec):
         #     backwards_elim_dir=f"models/{cancer_type}/scATAC_source_{scATAC_source}/" \

@@ -21,13 +21,15 @@ parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
 # parser <- add_option(parser, c("--bar_plot_num_features"), type="integer")
 parser <- add_option(parser, c("--tss_fragment_filter"), 
                      type="integer", default=-1)
-parser <- add_option(parser, c("--meso_waddell_and_biphasic"), action="store_true",
+parser <- add_option(parser, c("--waddell_sarc_biph"), action="store_true",
                      default=F)
-parser <- add_option(parser, c("--meso_waddell_only"), action="store_true",
+parser <- add_option(parser, c("--waddell_sarc"), action="store_true",
                      default=F)
-parser <- add_option(parser, c("--meso_waddell_and_broad_only"), action="store_true",
+parser <- add_option(parser, c("--waddell_sarc_tsankov_sarc"), 
+                     action="store_true",
                      default=F)
-parser <- add_option(parser, c("--meso_waddell_biph_786_846"), action="store_true",
+parser <- add_option(parser, c("--waddell_sarc_biph_tsankov_sarc_biph"), 
+                     action="store_true",
                      default=F)
 
 args = parse_args(parser)
@@ -38,10 +40,10 @@ args = parse_args(parser)
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter,
                                          tss_fragment_filter, 
-                                         meso_waddell_and_biphasic,
-                                         meso_waddell_only,
-                                         meso_waddell_and_broad_only,
-                                         meso_waddell_biph_786_846) {
+                                         waddell_sarc_biph,
+                                         waddell_sarc,
+                                         waddell_sarc_tsankov_sarc,
+                                         waddell_sarc_biph_tsankov_sarc_biph) {
   scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
                         cell_number_filter, sep="_")
   
@@ -50,20 +52,20 @@ construct_backwards_elim_dir <- function(cancer_type, scATAC_source,
                           tss_fragment_filter, sep="_")
   }
     
-  if (meso_waddell_and_biphasic) {
-      scATAC_source = paste(scATAC_source, "meso_waddell_and_biphasic", 
+  if (waddell_sarc_biph) {
+      scATAC_source = paste(scATAC_source, "waddell_sarc_biph", 
                             sep="_")
-  } else if (meso_waddell_only) {
-      scATAC_source = paste(scATAC_source, "meso_waddell_only", sep="_")
-  } else if (meso_waddell_and_broad_only) {
-      scATAC_source = paste(scATAC_source, "meso_waddell_and_broad_only",
+  } else if (waddell_sarc) {
+      scATAC_source = paste(scATAC_source, "waddell_sarc", sep="_")
+  } else if (waddell_sarc_tsankov_sarc) {
+      scATAC_source = paste(scATAC_source, "waddell_sarc_tsankov_sarc",
                             sep="_")
-  } else if (meso_waddell_biph_786_846) {
-      scATAC_source = paste(scATAC_source, "meso_waddell_biph_786_846", 
+  } else if (waddell_sarc_biph_tsankov_sarc_biph) {
+      scATAC_source = paste(scATAC_source, "waddell_sarc_biph_tsankov_sarc_biph", 
                             sep="_")
   }
   
-  dir = paste("figures", "models", cancer_type, scATAC_source,
+  dir = paste("..", "..", "figures", "models", cancer_type, scATAC_source,
               "backwards_elimination_results", sep="/")
   return(dir)
 }
