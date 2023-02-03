@@ -9,22 +9,31 @@ def load_scATAC(scATAC_path):
     return scATAC_df
 
 def load_agg_mutations():
-    return pd.read_csv("processed_data/mut_count_data.csv",
+    return pd.read_csv("../../data/processed_data/mut_count_data.csv",
                        index_col=0)
 
-def load_meso_mutations(meso_waddell_and_biphasic, meso_waddell_only, meso_waddell_and_broad_only,
-                        meso_waddell_biph_786_846):
-    if (meso_waddell_and_biphasic):
-        return pd.read_csv("processed_data/meso_mut_count_data.csv",
+# def load_meso_mutations(meso_waddell_and_biphasic, meso_waddell_only, meso_waddell_and_broad_only,
+#                         meso_waddell_biph_786_846):
+def load_meso_mutations(waddell_sarc_biph,
+                        waddell_sarc,
+                        waddell_sarc_tsankov_sarc,
+                        waddell_sarc_biph_tsankov_sarc_biph):
+    if (waddell_sarc_biph):
+        # (waddell sarcomatoid + waddell biphasic = 5 samples) + waddell epithelioid
+        return pd.read_csv("../../data/processed_data/meso_mut_count_data.csv",
                            index_col=0)
-    elif (meso_waddell_only):
-        return pd.read_csv("processed_data/mesothelioma_epithelioid_sarcomatoid2_WGS_Waddell.csv",
+    elif (waddell_sarc):
+        # (just waddell sarcomatoid = 2 samples) + waddell epithelioid
+        return pd.read_csv("../../data/processed_data/mesothelioma_epithelioid_sarcomatoid2_WGS_Waddell.csv",
                            index_col=0)
-    elif (meso_waddell_and_broad_only):
-        return pd.read_csv("processed_data/mesothelioma_p786_waddell_sarco.csv",
+    elif (waddell_sarc_tsankov_sarc):
+        # (waddell sarcomatoid + tsankov sarcomatoid = 3 samples)
+        return pd.read_csv("../../data/processed_data/mesothelioma_p786_waddell_sarco.csv",
                            index_col=0)
-    elif (meso_waddell_biph_786_846):
-         return pd.read_csv("processed_data/mesothelioma_epithelioid_sarcomatoid_biphasic_WGS_Waddell_786_846.csv",
+    elif (waddell_sarc_biph_tsankov_sarc_biph):
+         # (waddell sarcomatoid + waddell biphasic + tsankov sarcomatoid + tsankov biphasic
+         # = 7 samples) + waddell epithelioid
+         return pd.read_csv("../../data/processed_data/mesothelioma_epithelioid_sarcomatoid_biphasic_WGS_Waddell_786_846.csv",
                            index_col=0)
 
 

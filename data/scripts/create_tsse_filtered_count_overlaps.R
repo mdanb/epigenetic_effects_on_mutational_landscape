@@ -4,8 +4,8 @@ library(rtracklayer)
 library(optparse)
 library(rprojroot)
 
-setwd((find_rstudio_root_file()))
-source("create_count_overlaps_utils.R")
+#setwd((find_rstudio_root_file()))
+source("count_overlaps_utils.R")
 
 option_list <- list( 
   make_option("--cell_types", type="character"),
@@ -177,16 +177,16 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   
   if (dataset == "bing_ren") {
     filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
-                      "raw_dir", "bed_files", files, sep="/")
+                      "data", "bed_files", "bingren_scATAC", files, sep="/")
   }
   else if (dataset == "shendure") {
     filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
-                      "raw_dir", "bed_files", "JShendure_scATAC", 
+                      "data", "bed_files", "JShendure_scATAC", 
                       files, sep="/")
   }
   else {
     filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
-                      "raw_dir", "bed_files", "Tsankov_scATAC", 
+                      "data", "bed_files", "Tsankov_scATAC", 
                       files, sep="/")
   }
 
@@ -318,7 +318,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   for (count in top_tsse_fragment_count_range) {
     filename = paste("count_overlaps", "frag_count_filter", count, sep="_")
     filename = paste(filename, "rds", sep=".")
-    filepath = paste("processed_data/count_overlap_data/tsse_filtered",
+    filepath = paste("../processed_data/count_overlap_data/tsse_filtered",
                      dataset, tissue_name, sep="/")
     dir.create(filepath, recursive = T)
     filepath = paste(filepath, filename, sep="/")
@@ -363,17 +363,17 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   }
 }
 
-load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 # hg38_path = system.file(package="liftOver", "extdata", "hg38ToHg19.over.chain")
-ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/hg38ToHg19.over.chain")
+ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/hg38ToHg19.over.chain")
 
 if (dataset == "bing_ren") {
-  metadata = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE184462_metadata.tsv", sep="\t", 
+  metadata = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE184462_metadata.tsv", sep="\t", 
                         header=TRUE)
   colnames(metadata)[grep("cell.type", colnames(metadata))] = "cell_type"
-  files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/", pattern=files_pattern,
+  files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/", pattern=files_pattern,
                              full_names=TRUE),
-                  list.dirs("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files", recursive = FALSE, full.names = 
+                  list.dirs("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files", recursive = FALSE, full.names = 
                              TRUE))
   create_tsse_filtered_count_overlaps_per_tissue(files,
                                                  metadata,
@@ -384,16 +384,16 @@ if (dataset == "bing_ren") {
                                                  dataset,
                                                  cores)
 } else if (dataset == "shendure") {
-  metadata = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+  metadata = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
                         sep="\t",
                         header=TRUE)
   colnames(metadata)[1] = "cell_barcode"
   colnames(metadata)[2] = "sample"
   colnames(metadata)[grep("frit", colnames(metadata))] = "tsse"
   
-  files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC/", 
+  files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/JShendure_scATAC/", 
                              pattern=files_pattern, full.names = TRUE),
-                  list.dirs("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC/", 
+                  list.dirs("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/JShendure_scATAC/", 
                             recursive = FALSE, full.names = TRUE))
   create_tsse_filtered_count_overlaps_per_tissue(files,
                                                  metadata,
@@ -405,9 +405,9 @@ if (dataset == "bing_ren") {
                                                  cores)
 } else if (dataset == "tsankov") {
   metadata_tsankov_proximal = 
-    read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv")
+    read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/tsankov_lung_proximal_barcode_annotation.csv")
   metadata_tsankov_distal = 
-    read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv")
+    read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/tsankov_lung_distal_barcode_annotation.csv")
   
   colnames(metadata_tsankov_proximal)[1] = "cell_barcode"
   colnames(metadata_tsankov_proximal)[2] = "sample"
@@ -423,9 +423,9 @@ if (dataset == "bing_ren") {
   colnames(metadata_tsankov_distal)[grep("celltypes", 
                               colnames(metadata_tsankov_distal))] = "cell_type"
   
-  files_Tsankov_proximal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/Tsankov_scATAC/", 
+  files_Tsankov_proximal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/", 
                                       pattern="IC")
-  files_Tsankov_distal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/Tsankov_scATAC/", 
+  files_Tsankov_distal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/", 
                                     pattern="RPL")
   if (files_pattern == "RPL") {
     create_tsse_filtered_count_overlaps_per_tissue(files_Tsankov_distal,

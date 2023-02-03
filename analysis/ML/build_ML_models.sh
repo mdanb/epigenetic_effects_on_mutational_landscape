@@ -39,6 +39,24 @@
 ##############################################
 ##############################################
 
+############### Mesothelioma #################
+
+#python3 build_ML_model.py --cancer_types sarcomatoid epithelioid --all_cells --datasets=Tsankov --scATAC_cell_number_filter=1 --waddell_sarc_biph
+#python3 build_ML_model.py --cancer_types sarcomatoid --all_cells --datasets=Tsankov --scATAC_cell_number_filter=1 --waddell_sarc
+#python3 build_ML_model.py --cancer_types sarcomatoid --all_cells --datasets=Tsankov --scATAC_cell_number_filter=1 --waddell_sarc_tsankov_sarc
+#python3 build_ML_model.py --cancer_types sarcomatoid --all_cells --datasets=Tsankov --scATAC_cell_number_filter=1 --waddell_sarc_biph_tsankov_sarc_biph
+
+#python3 build_ML_model.py --cancer_types sarcomatoid --all_cells --datasets=Tsankov --scATAC_cell_number_filter=1 --waddell_sarc_biph --tss_fragment_filter=100000
+#python3 build_ML_model.py --cancer_types sarcomatoid epithelioid --all_cells --datasets=Tsankov --scATAC_cell_number_filter=1 --waddell_sarc --tss_fragment_filter=100000
+#python3 build_ML_model.py --cancer_types sarcomatoid --all_cells --datasets=Tsankov --scATAC_cell_number_filter=1 --waddell_sarc_tsankov_sarc --tss_fragment_filter=100000
+#python3 build_ML_model.py --cancer_types sarcomatoid --all_cells --datasets=Tsankov --scATAC_cell_number_filter=1 --waddell_sarc_biph_tsankov_sarc_biph --tss_fragment_filter=100000
+
+
+
+#############################################
+#############################################
+#############################################
+
 
 # Lung AdenoCA, Lung SCC 100k filter, Broad only
 #python3 build_ML_model.py --cancer_types Lung-AdenoCA Lung-SCC --all_cells --tsankov --scATAC_cell_number_filter=1 --tss_fragment_filter=100000
@@ -94,21 +112,27 @@
 # Thy-AdenoCA, Uterus-AdenoCA, all data, 1 cell filter, no fragment filter
 # python3 build_ML_model.py --cancer_types Thy-AdenoCA Uterus-AdenoCA --all_cells --bing_ren --tsankov --shendure --scATAC_cell_number_filter=1
 
-# 7 cancer types, with Greenleaf, 1 cell filter, no frag filter
+# 7 cancer types, all data, 1 cell filter, no frag filter
 # python3 build_ML_model.py --cancer_types Skin-Melanoma Liver-HCC ColoRect-AdenoCA CNS-GBM Eso-AdenoCA Lung-AdenoCA Lung-SCC --all_cells --datasets Bingren Greenleaf_brain Greenleaf_pbmc_bm Shendure Tsankov --scATAC_cell_number_filter=1
 
-# Biliary-AdenoCA, Bladder-TCC, Bone-Benign, Bone-Epith, Bone-Osteosarc, Breast-AdenoCA, Breast-DCIS, all data with Greenleaf, 1 cell filter, no fragment filter
-# python3 build_ML_model.py --cancer_types Biliary-AdenoCA Bladder-TCC Bone-Benign Bone-Epith Bone-Osteosarc Breast-AdenoCA Breast-DCIS --all_cells --datasets Bingren Greenleaf_brain Greenleaf_pbmc_bm Shendure Tsankov --scATAC_cell_number_filter=1
+# Biliary-AdenoCA, Bladder-TCC, Bone-Benign, Bone-Epith, Bone-Osteosarc, Breast-AdenoCA, Breast-DCIS, all data, 1 cell filter, no fragment filter
+# python3 build_ML_model.py --cancer_types Biliary-AdenoCA Bladder-TCC Bone-Benign Bone-Epith Bone-Osteosarc Breast-AdenoCA Breast-DCIS --all_cells --datasets Bingren Greenleaf_brain Greenleaf_pbmc_bm Shendure Tsankov Yang_kidney --scATAC_cell_number_filter=1
 
 # Breast-LobularCA, CNS-Medullo, CNS-Oligo, CNS-PiloAstro, Cervix-AdenoCA, Cervix-SCC, Head-SCC, all data with Greenleaf, 1 cell filter, no fragment filter
-# python3 build_ML_model.py --cancer_types Breast-LobularCA CNS-Medullo CNS-Oligo CNS-PiloAstro Cervix-AdenoCA Cervix-SCC Head-SCC --all_cells --datasets Bingren Greenleaf_brain Greenleaf_pbmc_bm Shendure Tsankov --scATAC_cell_number_filter=1
+# python3 build_ML_model.py --cancer_types Breast-LobularCA CNS-Medullo CNS-Oligo CNS-PiloAstro Cervix-AdenoCA Cervix-SCC Head-SCC --all_cells --datasets Bingren Greenleaf_brain Greenleaf_pbmc_bm Shendure Tsankov Yang_kidney --scATAC_cell_number_filter=1
 
 # Kidney-ChRCC, Kidney-RCC, Lymph-BNHL, Lymph-CLL, Myeloid-AML, Myeloid-MDS, Myeloid-MPN, all data with Greenleaf, 1 cell filter, no fragment filter
-# python3 build_ML_model.py --cancer_types Kidney-ChRCC Kidney-RCC Lymph-BNHL Lymph-CLL Myeloid-AML Myeloid-MDS Myeloid-MPN --all_cells --datasets Bingren Greenleaf_brain Greenleaf_pbmc_bm Shendure Tsankov --scATAC_cell_number_filter=1
+# python3 build_ML_model.py --cancer_types Kidney-ChRCC Kidney-RCC Lymph-BNHL Lymph-CLL Myeloid-AML Myeloid-MDS Myeloid-MPN --all_cells --datasets Bingren Greenleaf_brain Greenleaf_pbmc_bm Shendure Tsankov Yang_kidney --scATAC_cell_number_filter=1
 
 # Ovary-AdenoCA, Panc-AdenoCA, Panc-Endocrine, Prost-AdenoCA, SoftTissue-Leiomyo, SoftTissue-Liposarc, Stomach-AdenoCA, all data with Greenleaf, 1 cell filter, no fragment filter
-python3 build_ML_model.py --cancer_types Ovary-AdenoCA Panc-AdenoCA Panc-Endocrine Prost-AdenoCA SoftTissue-Leiomyo SoftTissue-Liposarc Stomach-AdenoCA --all_cells --datasets Bingren Greenleaf_brain Greenleaf_pbmc_bm Shendure Tsankov --scATAC_cell_number_filter=1
+# python3 build_ML_model.py --cancer_types Ovary-AdenoCA Panc-AdenoCA Panc-Endocrine Prost-AdenoCA SoftTissue-Leiomyo SoftTissue-Liposarc Stomach-AdenoCA --all_cells --datasets Bingren Greenleaf_brain Greenleaf_pbmc_bm Shendure Tsankov Yang_kidney --scATAC_cell_number_filter=1
 
 # Thy-AdenoCA, Uterus-AdenoCA, all data, 1 cell filter, no fragment filter
-# python3 build_ML_model.py --cancer_types Thy-AdenoCA Uterus-AdenoCA --all_cells --datasets Bingren Greenleaf_brain Greenleaf_pbmc_bm Shendure Tsankov --scATAC_cell_number_filter=1
+# python3 build_ML_model.py --cancer_types Thy-AdenoCA Uterus-AdenoCA --all_cells --datasets Bingren Greenleaf_brain Greenleaf_pbmc_bm Shendure Tsankov Yang_kidney --scATAC_cell_number_filter=1
+
+########################################
+########################################
+########################################
+
+### BR, SH, TS, GL_Br, GL_BlBm, Y_k ###
 
