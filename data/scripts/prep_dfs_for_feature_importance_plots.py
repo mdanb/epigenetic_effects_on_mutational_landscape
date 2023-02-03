@@ -41,7 +41,7 @@ def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
                                  tss_fragment_filter, waddell_sarc_biph,
                                  waddell_sarc, waddell_sarc_tsankov_sarc,
                                  waddell_sarc_biph_tsankov_sarc_biph):
-    dir = f"/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/figures/models/{cancer_type}/scATAC_source_" \
+    dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/scATAC_source_" \
           f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
     if (tss_fragment_filter != -1):
         dir = dir + f"_tss_fragment_filter_{tss_fragment_filter}"
@@ -119,7 +119,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips=5):
     for backwards_elim_dir in backwards_elim_dirs:
         df = pd.DataFrame(columns = ["features", "importance", "num_features", "score"])
         figure_path = os.path.join("figures", backwards_elim_dir)
-        os.makedirs(figure_path, exist_ok=True)
+        #os.makedirs(figure_path, exist_ok=True)
         files = natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))
         for idx, file in enumerate(files):
             if (idx % num_iter_skips == 0 or idx == 18):
