@@ -16,7 +16,7 @@ parser <- add_option(parser, c("--all_cells"), action="store_true", default=T)
 #                      default=F)
 # parser <- add_option(parser, c("--shendure"), action="store_true",
 #                      default=F)
-
+parser <- add_option(parser, c("--datasets"), type="character")
 parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
