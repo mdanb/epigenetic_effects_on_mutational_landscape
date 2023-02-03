@@ -13,13 +13,13 @@ dataset = args$dataset
 #Sys.setenv(HDF5_USE_FILE_LOCKING=FALSE)
 #Sys.setenv(RHDF5_USE_FILE_LOCKING=FALSE)
 addArchRThreads(threads = 8)
+addArchRGenome("hg19")
 
 #h5disableFileLocking()
 #h5enableFileLocking()
-create_arrow_files_and_tss <- function(genome_version, fragment_paths, 
-                                       output_dir) {
+create_arrow_files <- function(fragment_paths, 
+                               output_dir) {
 #if (!file.exists(paste(output_dir, "Save-ArchR-Project.rds", sep="/"))) {
-    addArchRGenome(genome_version)
     sample_names = strsplit(fragment_paths, split="/")
     length = length(sample_names[[1]])
     sample_names = lapply(sample_names, "[", length)
@@ -27,7 +27,7 @@ create_arrow_files_and_tss <- function(genome_version, fragment_paths,
     createArrowFiles(inputFiles = fragment_paths,
                      sampleNames = sample_names,
                      outputNames = paste(output_dir, sample_names, sep="/"),
-	  	     minTSS = 4, 
+	  	               minTSS = 4, 
                      minFrags = 1000,
                      addTileMat = F,
                      addGeneScoreMat = F,
@@ -42,37 +42,28 @@ create_arrow_files_and_tss <- function(genome_version, fragment_paths,
  # }
 }
 
-if (dataset == "bing_ren") {
-  output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/arrow/bingren" 
-  files_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/bingren_scATAC/migrated_to_hg19"
-  create_arrow_files_and_tss("hg19", list.files(output_dir, full.names=T,
-                                                pattern = "bgz$"),
-						output_dir)
-						
-} else if (dataset == "shendure") {
-  output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/arrow/shendure"
-  files_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC"
-  create_arrow_files_and_tss("hg19", list.files(files_dir, full.names=T,
-                                     pattern = "bgz$"), output_dir)
-} else if (dataset == "greenleaf_pbmc_bm") {
-   output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/arrow/greenleaf_pbmc_bm"
-   files_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/greenleaf_pbmc_bm_scATAC/migrated_to_hg19"
-   create_arrow_files_and_tss("hg19", list.files(files_dir, full.names=T,
-                               pattern = "bgz$"), output_dir)
-} else if (dataset == "greenleaf_brain") {
-   output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/arrow/greenleaf_brain"
-   files_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/greenleaf_brain_scATAC/migrated_to_hg19"
-   create_arrow_files_and_tss("hg19", list.files(files_dir, full.names=T,
-	                          pattern = "bgz$"), output_dir)
-
-} else if (dataset == "tsankov") {
-   output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/arrow/tsankov"
-   files_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/Tsankov_scATAC/migrated_to_hg19"
-   create_arrow_files_and_tss("hg19", list.files(files_dir, full.names=T,
-	                                   pattern = "bgz$"), output_dir)
-} else if (dataset == "yang_kidney") {
-    output_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/arrow/yang_kidney"
-    files_dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/yang_kidney_scATAC"
-    create_arrow_files_and_tss("hg19", list.files(files_dir, full.names=T,
-	                          pattern = "bgz$"), output_dir)
+root = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data"
+if (dataset == "Bingren") {
+  output_dir = paste(root, "arrow/bingren", sep="/") 
+  files_dir = paste(root, "bed_files/bingren_scATAC/migrated_to_hg19", sep="/")
+} else if (dataset == "Shendure") {
+  output_dir = paste(root, "arrow/shendure", sep="/") 
+  files_dir = paste(root, "bed_files/JShendure_scATAC", sep="/")
+} else if (dataset == "Greenleaf_pbmc_bm") {
+   output_dir = paste(root, "arrow/greenleaf_pbmc_bm", sep="/")
+   files_dir = paste(root, "bed_files/greenleaf_pbmc_bm_scATAC/migrated_to_hg19", 
+                     sep="/")
+} else if (dataset == "Greenleaf_brain") {
+   output_dir = paste(root, "arrow/greenleaf_brain", sep="/")
+   files_dir = paste(root, "bed_files/greenleaf_brain_scATAC/migrated_to_hg19",
+                     sep="/")
+} else if (dataset == "Tsankov") {
+   output_dir = paste(root, "arrow/tsankov", sep="/")
+   files_dir = paste(root, "bed_files/Tsankov_scATAC/migrated_to_hg19", sep="/")
+} else if (dataset == "Yang_kidney") {
+    output_dir = paste(root, "arrow/yang_kidney", sep="/")
+    files_dir = paste(root, "bed_files/yang_kidney_scATAC", sep="/")
 }
+
+create_arrow_files(list.files(files_dir, full.names=T, pattern = "bgz$"),  
+                   output_dir)
