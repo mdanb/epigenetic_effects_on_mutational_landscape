@@ -41,7 +41,7 @@ def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
                                  tss_fragment_filter, waddell_sarc_biph,
                                  waddell_sarc, waddell_sarc_tsankov_sarc,
                                  waddell_sarc_biph_tsankov_sarc_biph):
-    dir = f"../../figures/models/{cancer_type}/scATAC_source_" \
+    dir = f"/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/figures/models/{cancer_type}/scATAC_source_" \
           f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
     if (tss_fragment_filter != -1):
         dir = dir + f"_tss_fragment_filter_{tss_fragment_filter}"
