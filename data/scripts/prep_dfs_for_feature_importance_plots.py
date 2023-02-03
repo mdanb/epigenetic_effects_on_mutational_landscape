@@ -16,12 +16,15 @@ parser.add_argument('--tissue_spec_cells', action="store_true",
 parser.add_argument('--clustered_mutations', action="store_true",
                     help='obtain model run on hierarchically clustered mutations',
                     default=False)
-parser.add_argument('--bing_ren', action="store_true",
-                    help='obtain model which used Bing Ren ATACseq', default=False)
-parser.add_argument('--shendure', action="store_true",
-                    help='obtain model which used Shendure ATACseq', default=False)
-parser.add_argument('--tsankov', action="store_true",
-                    help='obtain model which used tsankov ATACseq', default=False)
+parser.add_argument('--datasets', nargs="+", type=str,
+                    help='which sc-ATACseq datasets to analyze', required=True)
+
+# parser.add_argument('--bing_ren', action="store_true",
+#                     help='obtain model which used Bing Ren ATACseq', default=False)
+# parser.add_argument('--shendure', action="store_true",
+#                     help='obtain model which used Shendure ATACseq', default=False)
+# parser.add_argument('--tsankov', action="store_true",
+#                     help='obtain model which used tsankov ATACseq', default=False)
 # parser.add_argument('--combined_datasets', action="store_true",
 #                     help='obtain model which combined all scATACseq', default=False)
 parser.add_argument('--cell_number_filter', type=int)
@@ -59,9 +62,10 @@ def get_relevant_backwards_elim_dirs(config):
     all_cells = config.all_cells
     # tissue_spec_cells = config.tissue_spec_cells
     # clustered_mutations = config.clustered_mutations
-    bing_ren = config.bing_ren
-    shendure = config.shendure
-    tsankov = config.tsankov
+    # bing_ren = config.bing_ren
+    # shendure = config.shendure
+    # tsankov = config.tsankov
+    datasets = config.datasets
     waddell_sarc_biph = config.waddell_sarc_biph
     waddell_sarc = config.waddell_sarc
     waddell_sarc_tsankov_sarc = config.waddell_sarc_tsankov_sarc
@@ -71,15 +75,22 @@ def get_relevant_backwards_elim_dirs(config):
     tss_fragment_filter = config.tss_fragment_filter
     backward_elim_dirs = []
 
-    scATAC_sources = ""
-    if (bing_ren):
-        scATAC_sources = scATAC_sources + "bing_ren"
-    if (shendure):
-        scATAC_sources = scATAC_sources + "shendure"
-    if (tsankov):
-        scATAC_sources = scATAC_sources + "tsankov"
-    if (bing_ren and shendure and tsankov):
-        scATAC_sources = "combined_datasets"
+    for idx, dataset in enumerate(datasets):
+        if (scATAC_sources == ""):
+            scATAC_sources = dataset
+        else:
+            scATAC_sources = "_".join((scATAC_sources, dataset))
+
+    # scATAC_sources = ""
+    # if (bing_ren):
+    #     scATAC_sources = scATAC_sources + "bing_ren"
+    # if (shendure):
+    #     scATAC_sources = scATAC_sources + "shendure"
+    # if (tsankov):
+    #     scATAC_sources = scATAC_sources + "tsankov"
+
+    # if (bing_ren and shendure and tsankov):
+    #     scATAC_sources = "combined_datasets"
 
     for cancer_type in cancer_types:
         if (all_cells):
