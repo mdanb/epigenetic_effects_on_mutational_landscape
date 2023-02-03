@@ -2,8 +2,8 @@ library(tidyverse)
 library(optparse)
 source("count_overlaps_utils.R")
 
-load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
-dir.create("processed_data/cell_counts_per_sample/combined_cell_counts") 
+load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+dir.create("../../data/processed_data/cell_counts_per_sample/combined_cell_counts") 
 
 option_list <- list( 
   make_option("--datasets", type = "character"),
@@ -22,7 +22,7 @@ datasets = unlist(strsplit(args$datasets, split = ","))
 get_cell_counts_df <- function(count_overlaps_filename) {
   cell_counts_filename = unlist(strsplit(unlist(
                                          strsplit(count_overlaps_filename,
-                                         split="/"))[3], 
+                                         split="/"))[6], 
                                          "_"))
   start_index = grep("overlaps", cell_counts_filename) + 1
   cell_counts_filename = 
@@ -35,7 +35,8 @@ get_cell_counts_df <- function(count_overlaps_filename) {
     # cell_counts_filename = paste("fragments", cell_counts_filename, sep="_")
   }
   cell_counts_filename = paste("cell_counts", cell_counts_filename, sep="_")
-  cell_counts_path = paste("processed_data", "cell_counts_per_sample", 
+  cell_counts_path = paste("..", "..", "data", "processed_data", 
+                           "cell_counts_per_sample", 
                            cell_counts_filename, sep = "/")
   df = readRDS(cell_counts_path)
   return(df)  
@@ -129,7 +130,7 @@ save_combined_overlaps <- function(filepaths,
 }
 
 combined_data_path = 
-  "processed_data/count_overlap_data/combined_count_overlaps/"
+  "../../data/processed_data/count_overlap_data/combined_count_overlaps/"
 dir.create(combined_data_path)
 
 unsquashed_overlaps_filepath = paste(combined_data_path,
@@ -158,7 +159,8 @@ for (dataset in datasets) {
       #!file.exists(unsquashed_overlaps_filepath)) {
     pattern = paste(dataset, "count_filter", cell_number_filter, "count_overlaps", 
                     sep="_")
-    filepaths = list.files("processed_data/count_overlap_data", pattern = pattern, 
+    filepaths = list.files("../../data/processed_data/count_overlap_data", 
+                           pattern = pattern, 
                            full.names = TRUE)
     save_combined_overlaps(filepaths, combined_filepath, dataset)
   }
