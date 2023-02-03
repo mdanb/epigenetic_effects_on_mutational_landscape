@@ -5,7 +5,7 @@ library(optparse)
 library(rprojroot)
 
 # setwd((find_rstudio_root_file()))
-source("count_overlaps_utils.R")
+source("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/data/scripts/count_overlaps_utils.R")
 
 option_list <- list( 
   make_option("--cell_types", type="character"),
