@@ -65,7 +65,8 @@ construct_backwards_elim_dir <- function(cancer_type, scATAC_source,
                             sep="_")
   }
   
-  dir = paste("..", "..", "figures", "models", cancer_type, scATAC_source,
+  dir = paste("ahg", "regevdata", "projects", "ICA_Lung", "Mohamad", "cell_of_origin",
+              "figures", "models", cancer_type, scATAC_source,
               "backwards_elimination_results", sep="/")
   return(dir)
 }
