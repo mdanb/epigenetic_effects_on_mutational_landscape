@@ -9,12 +9,14 @@ source("utils.R")
 
 parser <- OptionParser()
 parser <- add_option(parser, c("--all_cells"), action="store_true", default=T)
-parser <- add_option(parser, c("--bing_ren"), action="store_true",
-                               default=F)
-parser <- add_option(parser, c("--tsankov"), action="store_true",
-                     default=F)
-parser <- add_option(parser, c("--shendure"), action="store_true",
-                     default=F)
+
+# parser <- add_option(parser, c("--bing_ren"), action="store_true",
+#                                default=F)
+# parser <- add_option(parser, c("--tsankov"), action="store_true",
+#                      default=F)
+# parser <- add_option(parser, c("--shendure"), action="store_true",
+#                      default=F)
+
 parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
@@ -76,9 +78,10 @@ get_relevant_backwards_elim_dirs <- function(args) {
     cancer_types = unlist(strsplit(cancer_types, split = ","))
     all_cells = args$all_cells
     combined_datasets = args$combined_datasets
-    bing_ren = args$bing_ren
-    shendure = args$shendure
-    tsankov = args$tsankov
+    # bing_ren = args$bing_ren
+    # shendure = args$shendure
+    # tsankov = args$tsankov
+    datasets = unlist(strsplit(args$datasets, split = ","))
     cell_number_filter = args$cell_number_filter
     tss_fragment_filter = args$tss_fragment_filter
     meso_waddell_and_biphasic = args$meso_waddell_and_biphasic
@@ -86,22 +89,32 @@ get_relevant_backwards_elim_dirs <- function(args) {
     meso_waddell_and_broad_only = args$meso_waddell_and_broad_only
     meso_waddell_biph_786_846 = args$meso_waddell_biph_786_846
     
+    # if (bing_ren) {
+    #   scATAC_sources = paste(scATAC_sources, "bing_ren", sep="_")
+    # }
+    # if (shendure) {
+    #   scATAC_sources = paste(scATAC_sources, "shendure", sep="_")
+    # }
+    # if (tsankov) {
+    #   scATAC_sources = paste(scATAC_sources, "tsankov", sep="_")
+    # }
+    # if (bing_ren && shendure && tsankov) {
+    #   scATAC_sources = "combined_datasets"
+    # }
     scATAC_sources = ""
     
-    if (bing_ren) {
-      scATAC_sources = paste(scATAC_sources, "bing_ren", sep="_")
-    }
-    if (shendure) {
-      scATAC_sources = paste(scATAC_sources, "shendure", sep="_")
-    }
-    if (tsankov) {
-      scATAC_sources = paste(scATAC_sources, "tsankov", sep="_")
-    }
-    if (bing_ren && shendure && tsankov) {
-      scATAC_sources = "combined_datasets"
+    for (i in 1:length(datasets)) {
+      dataset = datasets[i]
+      if (scATAC_sources == "") {
+        scATAC_sources = dataset
+      }
+      else {
+        scATAC_sources = scATAC_sources + "_" + dataset
+      }
     }
     
-    scATAC_sources = sub("^_", "", scATAC_sources)
+    # scATAC_sources = sub("^_", "", scATAC_sources)
+    
     backward_elim_dirs = list()
     for (cancer_type in cancer_types) {
       if (all_cells) {
