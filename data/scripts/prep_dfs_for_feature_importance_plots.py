@@ -118,7 +118,14 @@ def get_relevant_backwards_elim_dirs(config):
 def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips=5):
     for backwards_elim_dir in backwards_elim_dirs:
         df = pd.DataFrame(columns = ["features", "importance", "num_features", "score"])
-        figure_path = os.path.join("figures", backwards_elim_dir)
+
+        temp = backwards_elim_dir.split("/")
+        cancer_type = temp[-4]
+        cancer_type_dir = temp[-3]
+        figure_path = os.path.join("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/figures/models",
+                                    cancer_type,
+                                   cancer_type_dir,
+                                   "backwards_elimination_results")
         #os.makedirs(figure_path, exist_ok=True)
         files = natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))
         for idx, file in enumerate(files):
