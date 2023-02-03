@@ -65,5 +65,5 @@ if (dataset == "Bingren") {
     files_dir = paste(root, "bed_files/yang_kidney_scATAC", sep="/")
 }
 
-create_arrow_files(list.files(output_dir, full.names=T, pattern = "bgz$"),  
+create_arrow_files(list.files(files_dir, full.names=T, pattern = "bgz$"),  
                    output_dir)
