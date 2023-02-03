@@ -75,6 +75,7 @@ def get_relevant_backwards_elim_dirs(config):
     tss_fragment_filter = config.tss_fragment_filter
     backward_elim_dirs = []
 
+    scATAC_sources = ""
     for idx, dataset in enumerate(datasets):
         if (scATAC_sources == ""):
             scATAC_sources = dataset
