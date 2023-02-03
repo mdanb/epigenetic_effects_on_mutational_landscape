@@ -64,7 +64,7 @@ if (dataset == "Bingren") {
   files = filepaths[[1]]
   migrated_filepaths = filepaths[[2]]
   if (!is.null(files)) {
-    for (l in split(files, ceiling(seq_along(files)/8))) {
+    for (l in split(files, ceiling(seq_along(files)/4))) {
       helper(l, migrated_filepaths, ch, cores)
     }
   }
@@ -79,7 +79,7 @@ if (dataset == "Bingren") {
   files = filepaths[[1]]
   migrated_filepaths = filepaths[[2]]
   if (!is.null(files)) {
-    for (l in split(files, ceiling(seq_along(files)/8))) {
+    for (l in split(files, ceiling(seq_along(files)/4))) {
       helper(l, migrated_filepaths, ch, cores)
     }
   }
