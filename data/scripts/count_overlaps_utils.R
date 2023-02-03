@@ -36,36 +36,36 @@ filter_samples_to_contain_only_cells_in_metadata <- function(i,
 }
 
 import_sample <- function(file, dataset) {
-  if (dataset == "bingren") {
+  if (dataset == "Bingren") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", 
                           "raw_dir", "bed_files", file, sep="/"), 
                     format="bed")
   }
-  else if (dataset == "shendure") {
+  else if (dataset == "Shendure") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", 
                           "raw_dir", "bed_files", "JShendure_scATAC", file, 
                           sep="/"), format="bed")
   }
-  else if (dataset == "tsankov") {
+  else if (dataset == "Tsankov") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                                  "BingRen_scATAC_atlas", "raw_dir", "bed_files",
                                  "Tsankov_scATAC", file, sep="/"), format="bed")
   }
-  else if (dataset == "greenleaf_brain") {
+  else if (dataset == "Greenleaf_brain") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                                  "BingRen_scATAC_atlas", "raw_dir", "bed_files",
                                  "greenleaf_brain_scATAC", 
                                  file, sep="/"), format="bed")
   }
-  else if (dataset == "greenleaf_pbmc_bm") {
+  else if (dataset == "Greenleaf_pbmc_bm") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", "raw_dir", "bed_files",
                           "greenleaf_pbmc_bm_scATAC", 
                           file, sep="/"), format="bed")
   }
-  else if (dataset == "yang_kidney") {
+  else if (dataset == "Yang_kidney") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", "raw_dir", "bed_files",
                           "yang_kidney_scATAC", 
@@ -75,17 +75,17 @@ import_sample <- function(file, dataset) {
 }
 
 get_sample_filename <- function(file, dataset) {
-  if (dataset == "bingren") {
+  if (dataset == "Bingren") {
     filename = paste("Bingren_count_filter", cell_number_filter,  
                      "count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                              "rds", sep="."), sep="_")
   }
-  else if (dataset == "shendure") {
+  else if (dataset == "Shendure") {
     filename = paste("Shendure_count_filter", cell_number_filter,  
                      "count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                              "rds", sep="."), sep="_")
   }
-  else if (dataset == "tsankov") {
+  else if (dataset == "Tsankov") {
     filename = paste(file_path_sans_ext(file, TRUE))
     filename = unlist(strsplit(filename, split = "_"))
     filename = paste(filename[1:length(filename) - 1], collapse="_")
@@ -93,17 +93,17 @@ get_sample_filename <- function(file, dataset) {
                      "count_overlaps", filename, sep="_")
     filename = paste(filename, "rds", sep=".")
   }
-  else if (dataset == "greenleaf_brain") {
+  else if (dataset == "Greenleaf_brain") {
     filename = paste("Greenleaf_brain_count_filter", cell_number_filter,  
                      "count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                              "rds", sep="."), sep="_")
   }
-  else if (dataset == "greenleaf_pbmc_bm") {
+  else if (dataset == "Greenleaf_pbmc_bm") {
     filename = paste("Greenleaf_pbmc_bm_count_filter", cell_number_filter,  
                      "count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                              "rds", sep="."), sep="_")
   }
-  else if (dataset == "yang_kidney") {
+  else if (dataset == "Yang_kidney") {
     filename = paste("Yang", cell_number_filter,  
                      "count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                              "rds", sep="."), sep="_")
@@ -118,25 +118,25 @@ get_fragments_by_cell_barcode <- function(i, sample_idx, fragments,
 }
 
 get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
-  if (dataset == "bingren") {
+  if (dataset == "Bingren") {
     sample_barcodes_in_metadata = get_sample_barcodes_in_metadata_helper(filtered_metadata,
                                                                   "cellID",
                                                                   "\\+")
   }
-  else if (dataset == "shendure") {
+  else if (dataset == "Shendure") {
     sample_barcodes_in_metadata = filtered_metadata[["cell"]]
   }
-  else if (dataset == "tsankov") {
+  else if (dataset == "Tsankov") {
     sample_barcodes_in_metadata = get_sample_barcodes_in_metadata_helper(filtered_metadata, 
                                                                   "X",
                                                                   "#")
     sample_barcodes_in_metadata = substr(sample_barcodes_in_metadata, 1, 16)
   }
-  else if (dataset == "greenleaf_pbmc_bm" || dataset == "yang") {
+  else if (dataset == "Greenleaf_pbmc_bm" || dataset == "Yang_kidney") {
     sample_barcodes_in_metadata = 
       substr(filtered_metadata[["barcode"]], 1, 16)
   }
-  else if (dataset == "greenleaf_brain") {
+  else if (dataset == "Greenleaf_brain") {
     sample_barcodes_in_metadata = 
       substr(filtered_metadata[["Cell.Barcode"]], 1, 16)
   }
@@ -152,22 +152,22 @@ get_sample_barcodes_in_metadata_helper <- function(metadata, cellID_col_name,
 }
 
 get_sample_name <- function(file, dataset) {
-  if (dataset == "bingren") {
+  if (dataset == "Bingren") {
     sample_name = get_sample_name_bingren(file)
   }
-  else if (dataset == "shendure") {
+  else if (dataset == "Shendure") {
     sample_name = get_sample_name_shendure(file)
   }
-  else if (dataset == "tsankov") {
+  else if (dataset == "Tsankov") {
     sample_name = get_sample_name_tsankov(file)
   }
-  else if (dataset == "greenleaf_brain") {
+  else if (dataset == "Greenleaf_brain") {
     sample_name = get_sample_name_greenleaf_brain(file)
   }
-  else if (dataset == "greenleaf_pbmc_bm") {
+  else if (dataset == "Greenleaf_pbmc_bm") {
     sample_name =  get_sample_name_greenleaf_pbmc_bm(file)
   }
-  else if (dataset == "yang") {
+  else if (dataset == "Yang_kidney") {
     sample_name =  get_sample_name_yang(file)
   }
   return(sample_name)
@@ -204,7 +204,7 @@ get_sample_name_greenleaf_pbmc_bm <- function(file) {
 }
 
 get_sample_name_yang <- function(file) {
-  print("TODO")
+  sample_name = str_remove(file, ".fragments.tsv.gz")
   return(sample_name)
 }
 
@@ -223,6 +223,9 @@ get_tissue_name <- function(file, dataset) {
   }
   else if (dataset == "Greenleaf_pbmc_bm") {
     tissue_name = get_tissue_name_greenleaf_pbmc_bm(file)
+  }
+  else if (dataset == "Yang_kidney") {
+    tissue_name = "kidney"
   }
   return(tissue_name)
 }
