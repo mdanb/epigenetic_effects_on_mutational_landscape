@@ -54,7 +54,7 @@ get_files_not_done <- function(files, dir_path) {
   return(list(files_not_done, migrated_filepaths_not_done))
 }
 
-if (dataset == "bing_ren") {
+if (dataset == "Bingren") {
   dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC/migrated_to_hg19"
   dir.create(dir_path)
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC",
@@ -69,7 +69,7 @@ if (dataset == "bing_ren") {
     }
   }
   
-} else if (dataset == "tsankov") {
+} else if (dataset == "Tsankov") {
   dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/migrated_to_hg19"
   dir.create(dir_path)
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC",
@@ -86,7 +86,7 @@ if (dataset == "bing_ren") {
   # fragments = mclapply(files, import, format="bed", mc.cores=cores)
   # migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
   #                               mc.cores=cores)
-} else if (dataset == "greenleaf_brain") {
+} else if (dataset == "Greenleaf_brain") {
   dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_brain_scATAC/migrated_to_hg19"
   dir.create(dir_path)
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_brain_scATAC",
@@ -103,7 +103,7 @@ if (dataset == "bing_ren") {
   # fragments = mclapply(files, import, format="bed", mc.cores=cores)
   # migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
   #                               mc.cores=cores)
-} else if (dataset == "greenleaf_pbmc_bm") {
+} else if (dataset == "Greenleaf_pbmc_bm") {
   dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_pbmc_bm_scATAC/migrated_to_hg19"
   dir.create(dir_path)
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_pbmc_bm_scATAC",
