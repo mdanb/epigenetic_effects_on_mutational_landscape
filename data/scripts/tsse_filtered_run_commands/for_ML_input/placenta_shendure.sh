@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -cwd
-#$ -l h_rt=24:00:00
+#$ -l h_rt=48:00:00
 #$ -l os=RedHat7
 #$ -pe smp 1
 #$ -l h_vmem=320G
