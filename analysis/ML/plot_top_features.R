@@ -84,10 +84,10 @@ get_relevant_backwards_elim_dirs <- function(args) {
     datasets = unlist(strsplit(args$datasets, split = ","))
     cell_number_filter = args$cell_number_filter
     tss_fragment_filter = args$tss_fragment_filter
-    meso_waddell_and_biphasic = args$meso_waddell_and_biphasic
-    meso_waddell_only = args$meso_waddell_only
-    meso_waddell_and_broad_only = args$meso_waddell_and_broad_only
-    meso_waddell_biph_786_846 = args$meso_waddell_biph_786_846
+    waddell_sarc_biph = args$waddell_sarc_biph
+    waddell_sarc = args$waddell_sarc
+    waddell_sarc_tsankov_sarc = args$waddell_sarc_tsankov_sarc
+    waddell_sarc_biph_tsankov_sarc_biph = args$waddell_sarc_biph_tsankov_sarc_biph
     
     # if (bing_ren) {
     #   scATAC_sources = paste(scATAC_sources, "bing_ren", sep="_")
@@ -123,10 +123,10 @@ get_relevant_backwards_elim_dirs <- function(args) {
                                                                    scATAC_sources,
                                                                    cell_number_filter,
                                                                    tss_fragment_filter,
-                                                                   meso_waddell_and_biphasic,
-                                                                   meso_waddell_only,
-                                                                   meso_waddell_and_broad_only,
-                                                                   meso_waddell_biph_786_846))
+                                                                   waddell_sarc_biph,
+                                                                   waddell_sarc,
+                                                                   waddell_sarc_tsankov_sarc,
+                                                                   waddell_sarc_biph_tsankov_sarc_biph))
       }
     }
     return(unlist(backward_elim_dirs))
