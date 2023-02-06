@@ -109,7 +109,7 @@ get_relevant_backwards_elim_dirs <- function(args) {
         scATAC_sources = dataset
       }
       else {
-        scATAC_sources = scATAC_sources + "_" + dataset
+        scATAC_sources = paste(scATAC_sources, dataset, sep="_")
       }
     }
     
