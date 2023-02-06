@@ -4,6 +4,7 @@ import glob
 from natsort import natsorted
 import pandas as pd
 import os
+from pathlib import Path
 
 parser = argparse.ArgumentParser()
 
@@ -122,6 +123,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips=5):
         temp = backwards_elim_dir.split("/")
         cancer_type = temp[-4]
         cancer_type_dir = temp[-3]
+
         figure_path = os.path.join("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/figures/models",
                                     cancer_type,
                                    cancer_type_dir,
@@ -139,6 +141,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips=5):
                                         [cv_score] * len(features))).T
                 df_curr.columns = df.columns
                 df = pd.concat((df, df_curr))
+        Path(figure_path).mkdir(parents=True, exist_ok=True)
         df.to_csv(os.path.join(figure_path, "df_for_feature_importance_plots.csv"), index=False)
         # import matplotlib.pyplot as plt
         # ax = df.plot.bar(x = "num_features", y = "importance", stacked=True)
