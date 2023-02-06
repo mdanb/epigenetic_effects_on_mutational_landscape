@@ -104,7 +104,7 @@ get_sample_filename <- function(file, dataset) {
                                              "rds", sep="."), sep="_")
   }
   else if (dataset == "Yang_kidney") {
-    filename = paste("Yang", cell_number_filter,  
+    filename = paste("Yang_kidney", cell_number_filter,  
                      "count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                              "rds", sep="."), sep="_")
   }
@@ -128,7 +128,7 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
   }
   else if (dataset == "Tsankov") {
     sample_barcodes_in_metadata = get_sample_barcodes_in_metadata_helper(filtered_metadata, 
-                                                                  "X",
+                                                                  "cell_barcode",
                                                                   "#")
     sample_barcodes_in_metadata = substr(sample_barcodes_in_metadata, 1, 16)
   }
@@ -187,7 +187,7 @@ get_sample_name_shendure <- function(file) {
 }
 
 get_sample_name_tsankov <- function(file) {
-  sample_name = str_remove(file, "_fragments.tsv")
+  sample_name = str_remove(file, "_fragments.tsv.gz")
   return(sample_name)
 }
 
