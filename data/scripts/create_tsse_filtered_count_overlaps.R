@@ -312,9 +312,11 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   }
   else {
     if (grepl("RPL", files[1])) {
+      print("distal_lung")
       tissue_name = "distal_lung"
     }
     else {
+      print("proximal lung")
       tissue_name = "proximal_lung"
     }
   }
@@ -433,6 +435,7 @@ if (dataset == "Bingren") {
                                     pattern="RPL.*[.]gz")
   if (files_pattern == "RPL") {
     print("Tsankov RPL")
+    files = c("RPL_dummy_280_neg1.tsv.gz", "RPL_dummy_280_neg2.tsv.gz")
     create_tsse_filtered_count_overlaps_per_tissue(files=files_Tsankov_distal,
                                                    metadata=metadata_tsankov_distal,
                                                    interval_ranges=interval.ranges,
