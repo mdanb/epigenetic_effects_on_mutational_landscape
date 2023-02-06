@@ -436,7 +436,7 @@ if (dataset == "Bingren") {
                                     pattern="RPL.*[.]gz")
   if (files_pattern == "RPL") {
     print("Tsankov RPL")
-    files = c("RPL_dummy_280_neg1.tsv.gz", "RPL_dummy_280_neg2.tsv.gz")
+    files_Tsankov_distal = c("RPL_dummy_280_neg1.tsv.gz", "RPL_dummy_280_neg2.tsv.gz")
     create_tsse_filtered_count_overlaps_per_tissue(files=files_Tsankov_distal,
                                                    metadata=metadata_tsankov_distal,
                                                    interval_ranges=interval.ranges,
