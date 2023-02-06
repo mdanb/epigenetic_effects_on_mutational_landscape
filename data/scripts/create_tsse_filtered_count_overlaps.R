@@ -194,6 +194,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
     filepaths = paste("/broad", "hptmp", "bgiotti", "BingRen_scATAC_atlas", 
                       "data", "bed_files", "Tsankov_scATAC", 
                       files, sep="/")
+    print(filepaths)
   }
 
   print("Importing BED files...")
