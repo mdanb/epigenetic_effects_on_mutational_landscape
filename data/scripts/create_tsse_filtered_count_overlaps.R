@@ -89,6 +89,12 @@ args = parse_args(OptionParser(option_list=option_list))
 #                      "--files_pattern=RPL",
 #                      "--cores=1"))
 
+args = parse_args(OptionParser(option_list=option_list), args=
+                   c("--top_tsse_fragment_count_range=100000,150000,200000,300000,400000,500000,1000000",
+                     "--dataset=Tsankov",
+                     "--cell_types=Basal;Ciliated;Secretory;Myeloid;Endothelial;Neuroendocrine;B.cells;Ionocytes;T.NK.cells;Stromal;Tuft.like;Sec-Ciliated",
+                     "--files_pattern=IC",
+                     "--cores=1"))
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
                                            split = ",")))
@@ -154,7 +160,7 @@ create_tsse_filtered_count_overlaps_helper <- function(metadata_with_fragment_co
                                       count_filtered_metadata_with_fragment_counts_per_cell_type,
                                       migrated_fragments,
                                       sample_names, mc.cores=cores)
-  
+  set.seed(42)
   fragments_from_top_cells = mclapply(fragments_from_top_cells, sample, count,
                                       mc.cores=cores)
   count_overlaps = mclapply(fragments_from_top_cells,
@@ -426,7 +432,7 @@ if (dataset == "Bingren") {
   files_Tsankov_distal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/", 
                                     pattern="RPL.*[.]gz")
   if (files_pattern == "RPL") {
-    create_tsse_filtered_count_overlaps_per_tissue(files_Tsankov_distal,
+    create_tsse_filtered_count_overlaps_per_tissue(files=files_Tsankov_distal,
                                                    metadata_tsankov_distal,
                                                    interval.ranges,
                                                    ch,
@@ -436,12 +442,12 @@ if (dataset == "Bingren") {
                                                    cores)
   }
   else {
-    create_tsse_filtered_count_overlaps_per_tissue(files_Tsankov_proximal,
-                                                   metadata_tsankov_proximal,
-                                                   interval.ranges,
-                                                   ch,
+    create_tsse_filtered_count_overlaps_per_tissue(files=files_Tsankov_proximal,
+                                                   metadata=metadata_tsankov_proximal,
+                                                   interval_ranges=interval.ranges,
+                                                   chain=ch,
                                                    top_tsse_fragment_count_range,
-                                                   cell_types,
+                                                   cell_types_to_consider=cell_types,
                                                    dataset,
                                                    cores)
   }
