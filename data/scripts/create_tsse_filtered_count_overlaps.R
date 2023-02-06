@@ -93,7 +93,7 @@ args = parse_args(OptionParser(option_list=option_list), args=
                    c("--top_tsse_fragment_count_range=100000,150000,200000,300000,400000,500000,1000000",
                      "--dataset=Tsankov",
                      "--cell_types=Basal;Ciliated;Secretory;Myeloid;Endothelial;Neuroendocrine;B.cells;Ionocytes;T.NK.cells;Stromal;Tuft.like;Sec-Ciliated",
-                     "--files_pattern=IC",
+                     "--files_pattern=RPL",
                      "--cores=1"))
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
@@ -432,16 +432,19 @@ if (dataset == "Bingren") {
   files_Tsankov_distal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/", 
                                     pattern="RPL.*[.]gz")
   if (files_pattern == "RPL") {
+    print("Tsankov RPL")
     create_tsse_filtered_count_overlaps_per_tissue(files=files_Tsankov_distal,
-                                                   metadata_tsankov_distal,
-                                                   interval.ranges,
-                                                   ch,
+                                                   metadata=metadata_tsankov_distal,
+                                                   interval_ranges=interval.ranges,
+                                                   chain=ch,
                                                    top_tsse_fragment_count_range,
                                                    cell_types,
                                                    dataset,
                                                    cores)
+      
   }
   else {
+    print("Tsankov IC")
     create_tsse_filtered_count_overlaps_per_tissue(files=files_Tsankov_proximal,
                                                    metadata=metadata_tsankov_proximal,
                                                    interval_ranges=interval.ranges,
