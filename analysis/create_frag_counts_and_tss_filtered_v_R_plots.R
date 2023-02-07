@@ -3,7 +3,7 @@ library(gtools)
 library(parallel)
 library(tidyverse)
 library(data.table)
-source("utils.R")
+source("../utils.R")
 options(scipen=999)
 
 option_list <- list( 
@@ -37,13 +37,13 @@ args = parse_args(OptionParser(option_list=option_list))
 #                       "--plot_filename=melanoma_num_frags_vs_correlation.png",
 #                       "--plot_x_ticks=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000,15000000,20000000"))
 
-args = parse_args(OptionParser(option_list=option_list), args =
-                   c("--cancer_type=Lung.AdenoCA",
-                     "--boxplot_cell_types=Distal Lung AT2 (TS)/Lung Alveolar Type 2 (AT2) Cell (BR)/Lung Bronchiolar and alveolar epithelial cells (SH)",
-                     "--tissue_for_tsse_filtered_cell_types=Tsankov-Lung,Bing Ren-Lung,Shendure-Lung",
-                     "--tsse_filtered_cell_types=AT2/Alveolar Type 2 (AT2) Cell/Bronchiolar and alveolar epithelial cells",
-                     "--plot_filename=lung_adenoca_at2_only_frags_vs_correlation.png",
-                     "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000,700000,800000,900000,1000000,2000000,3000000,4000000,5000000,6000000,8000000,10000000,15000000,20000000"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                    c("--cancer_type=Lung.AdenoCA",
+#                      "--boxplot_cell_types=Distal Lung AT2 (TS)/Lung Alveolar Type 2 (AT2) Cell (BR)/Lung Bronchiolar and alveolar epithelial cells (SH)",
+#                      "--tissue_for_tsse_filtered_cell_types=Tsankov-Lung,Bing Ren-Lung,Shendure-Lung",
+#                      "--tsse_filtered_cell_types=AT2/Alveolar Type 2 (AT2) Cell/Bronchiolar and alveolar epithelial cells",
+#                      "--plot_filename=lung_adenoca_at2_only_frags_vs_correlation.png",
+#                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,600000,700000,800000,900000,1000000,2000000,3000000,4000000,5000000,6000000,8000000,10000000,15000000,20000000"))
 
 # args = parse_args(OptionParser(option_list=option_list), args =
 #                    c("--cancer_type=Eso.AdenoCA",
@@ -93,24 +93,24 @@ args = parse_args(OptionParser(option_list=option_list), args =
 #                      "--plot_filename=liver_hcc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png",
 #                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"))
 
-args = parse_args(OptionParser(option_list=option_list), args =
-                    c("--cancer_type=sarcomatoid",
-                      "--meso",
-                      "--boxplot_cell_types=Distal Lung AT1 (TS)/Distal Lung AT2 (TS)/Distal Lung B_cells (TS)/Distal Lung Ciliated (TS)/Distal Lung Endothelial (TS)/Distal Lung Fibroblasts (TS)/Distal Lung Immune (TS)/Distal Lung Mesothelium (TS)/Distal Lung Secretory (TS)/Distal Lung SmoothMuscle (TS)",
-                      "--tissue_for_tsse_filtered_cell_types=Tsankov-Distal Lung",
-                      "--tsse_filtered_cell_types=AT1;AT2;B_cells;Ciliated;Endothelial;Fibroblasts;Immune;Mesothelium;Secretory;SmoothMuscle",
-                      "--plot_filename=sarcomatoid_distal_lung_tsankov_num_frags_vs_correlation.png",
-                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
-
-
-args = parse_args(OptionParser(option_list=option_list), args =
-                    c("--cancer_type=sarcomatoid",
-                      "--meso",
-                      "--boxplot_cell_types=Proximal Lung Basal (TS)/Proximal Lung Ciliated (TS)/Proximal Lung Endothelial (TS)/Proximal Lung Ionocytes (TS)/Proximal Lung Myeloid (TS)/Proximal Lung Neuroendocrine (TS)/Proximal Lung Sec-Ciliated (TS)/Proximal Lung Secretory (TS)/Proximal Lung Stromal (TS)/Proximal Lung T.NK.cells (TS)/Proximal Lung Tuft.like (TS)/Proximal Lung B.cells (TS)",
-                      "--tissue_for_tsse_filtered_cell_types=Tsankov-Proximal Lung",
-                      "--tsse_filtered_cell_types=Basal;Ciliated;Endothelial;Ionocytes;Myeloid;Neuroendocrine;Sec-Ciliated;Secretory;Stromal;T.NK.cells;Tuft.like;B.cells",
-                      "--plot_filename=sarcomatoid_proximal_lung_tsankov_num_frags_vs_correlation.png",
-                      "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--cancer_type=sarcomatoid",
+#                       "--meso",
+#                       "--boxplot_cell_types=Distal Lung AT1 (TS)/Distal Lung AT2 (TS)/Distal Lung B_cells (TS)/Distal Lung Ciliated (TS)/Distal Lung Endothelial (TS)/Distal Lung Fibroblasts (TS)/Distal Lung Immune (TS)/Distal Lung Mesothelium (TS)/Distal Lung Secretory (TS)/Distal Lung SmoothMuscle (TS)",
+#                       "--tissue_for_tsse_filtered_cell_types=Tsankov-Distal Lung",
+#                       "--tsse_filtered_cell_types=AT1;AT2;B_cells;Ciliated;Endothelial;Fibroblasts;Immune;Mesothelium;Secretory;SmoothMuscle",
+#                       "--plot_filename=sarcomatoid_distal_lung_tsankov_num_frags_vs_correlation.png",
+#                       "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
+# 
+# 
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--cancer_type=sarcomatoid",
+#                       "--meso",
+#                       "--boxplot_cell_types=Proximal Lung Basal (TS)/Proximal Lung Ciliated (TS)/Proximal Lung Endothelial (TS)/Proximal Lung Ionocytes (TS)/Proximal Lung Myeloid (TS)/Proximal Lung Neuroendocrine (TS)/Proximal Lung Sec-Ciliated (TS)/Proximal Lung Secretory (TS)/Proximal Lung Stromal (TS)/Proximal Lung T.NK.cells (TS)/Proximal Lung Tuft.like (TS)/Proximal Lung B.cells (TS)",
+#                       "--tissue_for_tsse_filtered_cell_types=Tsankov-Proximal Lung",
+#                       "--tsse_filtered_cell_types=Basal;Ciliated;Endothelial;Ionocytes;Myeloid;Neuroendocrine;Sec-Ciliated;Secretory;Stromal;T.NK.cells;Tuft.like;B.cells",
+#                       "--plot_filename=sarcomatoid_proximal_lung_tsankov_num_frags_vs_correlation.png",
+#                       "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
 
 cancer_type = args$cancer_type
 meso = args$meso
@@ -123,7 +123,7 @@ plot_filename = args$plot_filename
 plot_x_ticks = as.integer(unlist(strsplit(args$plot_x_ticks, split = ",")))
 
 CELL_NUMBER_FILTER = 1
-load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 
 run_one_simulation <- function(n_samples, count_overlaps, 
                                sampling_vec, mutations) {
@@ -137,28 +137,7 @@ run_one_simulation <- function(n_samples, count_overlaps,
   return(correlation)
 }
 
-# create_plot_x_ticks <- function(lower, upper, log=T) {
-#   if (log) {
-#     lower = log(lower, base=2)
-#     upper = log(upper, base=2)
-#   }
-#   num_fragments_to_subsample <- seq(lower, upper, (upper - lower) / 9)
-#   # num_fragments_to_subsample[2:(length(num_fragments_to_subsample) - 1)] = 
-#   #   num_fragments_to_subsample[2:(length(num_fragments_to_subsample) 
-#   #                                            - 1)]
-#   if (!log) {
-#     num_fragments_to_subsample[2:(length(num_fragments_to_subsample) 
-#                                   - 1)] =
-#       as.integer(num_fragments_to_subsample[2:(length(num_fragments_to_subsample)
-#                                                - 1)])
-#   }
-#   return(num_fragments_to_subsample)
-# }
-
 run_simulations_per_num_fragments <- function(num_fragments) {
-  # if (log) {
-  #   num_fragments = as.integer(2^num_fragments)
-  # }
   samples_10 = mclapply(rep(i, 10), run_one_simulation, 
                         cell_type_count_overlaps,
                         sampling_vec, mutations,
@@ -173,14 +152,9 @@ run_subsampling_simulations <- function(num_fragments_to_subsample,
   list_idx = 1
   set.seed(42)
   
-  # subsampling_simulations = mclapply(num_fragments_to_subsample, 
-  #                                    run_simulations_per_num_fragments,
-  #                                    log, mc.cores=8)
   for (i in num_fragments_to_subsample) {
     ptm <- proc.time()
-    # if (log) {
-    #   i = as.integer(2^i)
-    # }
+
     print(paste("subsampling", i, 
                 "fragments for", paste0(cell_type), sep=" "))
     samples_10 = mclapply(rep(i, 10), run_one_simulation, 
@@ -194,11 +168,6 @@ run_subsampling_simulations <- function(num_fragments_to_subsample,
                 "seconds"), sep=" ")
   }
   names(subsampling_simulations) = num_fragments_to_subsample
-  
-  # if (log) {
-  #   names(subsampling_simulations) = as.integer(unlist(lapply(2, `^`, 
-  #                                               num_fragments_to_subsample)))
-  # }
   subsampling_simulations = as_tibble(subsampling_simulations)
   return(subsampling_simulations)
 }
@@ -238,50 +207,12 @@ plot_and_save_boxplots <- function(correlations_long, cell_types,
                                    correlations_for_tsse_filtered_cells=NULL) {
   switch = F
   if (!is.null(correlations_for_tsse_filtered_cells)) {
-    # x_for_filtered_correlations = unique(correlations_long %>% 
-    #                                        pull("num_fragments"))
-    # correlations_tsse_filtered = 
-    #   as.list(as.data.frame(t(correlations_for_tsse_filtered_cells)))
-    
-    # correlations_tsse_filtered = lapply(correlations_tsse_filtered,
-    #                                     function(x) x[!is.na(x)])
-    # x_for_filtered_correlations = lapply(correlations_tsse_filtered,
-    #                                      function(x) 
-    #                                    x_for_filtered_correlations[1:length(x)])
-    
-    # levels_for_filtered_correlations = x_for_filtered_correlations
     cell_type_for_tsse_filtered = lapply(correlations_for_tsse_filtered_cells, 
                                          "[", 1)
-    # dfs = lapply(correlations_for_tsse_filtered_cells, 
-    #              as_tibble)
     df = rbindlist(correlations_for_tsse_filtered_cells)
-    # df[, "cell_type"] = unlist(cell_type_for_tsse_filtered)
     df = pivot_longer(df, -cell_type)
     colnames(df)[2] = "frag_counts"
     df["frag_counts"] = as.integer(df[["frag_counts"]])
-    # lengths = lapply(x_for_filtered_correlations, length)
-    
-    # repeat_cell_types <- function(i, cell_type_for_tsse_filtered, lengths) {
-    #   return(rep(cell_type_for_tsse_filtered[[i]], each=lengths[[i]]))
-    # }
-    # 
-    # cell_type_for_tsse_filtered = lapply(seq_along(cell_type_for_tsse_filtered),
-    #                                      repeat_cell_types,
-    #                                      cell_type_for_tsse_filtered,
-    #                                      lengths)
-    # 
-    # create_cell_type_and_frag_counts_columns <- function(i, df, 
-    #                                                      cell_type_for_tsse_filtered,
-    #                                                      x_for_filtered_correlations) {
-    #   df[[i]]["frag_counts"] = x_for_filtered_correlations[[i]]
-    #   df[[i]]["cell_type"] = cell_type_for_tsse_filtered[[i]]
-    #   
-    #   return(df[[i]])
-    # }
-    # 
-    # dfs = lapply(seq_along(dfs), create_cell_type_and_frag_counts_columns, 
-    #              dfs, cell_type_for_tsse_filtered, x_for_filtered_correlations)
-    # df = rbindlist(dfs)
     switch = T
   }
   ggplot() +
@@ -306,12 +237,6 @@ remove_bigger_than_curr_fragments <- function(plot_x_ticks,
                                               curr_num_fragments) {
   plot_x_ticks_reduced <- c()
   for (num_fragments in plot_x_ticks) {
-    # if (log) {
-    #   if (as.integer(2^num_fragments) <= curr_num_fragments) {
-    #     plot_x_ticks_reduced <- append(plot_x_ticks_reduced,
-    #                                                   num_fragments)
-    #   }
-    # }
     if (num_fragments <= curr_num_fragments) {
       plot_x_ticks_reduced <- append(plot_x_ticks_reduced,
                                                     num_fragments)
@@ -334,12 +259,9 @@ get_long_correlations_per_cell_type <- function(i,
   if (is.null(cell_type_plot_x_ticks)) {
     return(tibble())
   }
-  # upper = cell_type_total_fragments
   sampling_vec = rep(names(cell_type_count_overlaps), 
                      cell_type_count_overlaps)
-  # plot_x_ticks <- create_plot_x_ticks(lower, 
-  #                                                                   upper, 
-  #                                                                   log)
+
   subsampling_simulations <- run_subsampling_simulations(cell_type_plot_x_ticks, 
                                                          cell_type_count_overlaps, 
                                                          sampling_vec, 
@@ -350,9 +272,6 @@ get_long_correlations_per_cell_type <- function(i,
                                         names_to = "num_fragments", 
                                         values_to = "correlation")
   curr_correlations_long["cell_type"] = cell_types[i]
-  # correlations_long = rbind(correlations_long, curr_correlations_long)
-  # num_fragments_per_cell_type = append(num_fragments_per_cell_type,
-  #                                      cell_type_total_fragments)
   return(curr_correlations_long)
 }
 
@@ -413,14 +332,11 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
   cell_types_total_fragments = apply(cell_types_count_overlaps, 2, sum)
   mutations <- mut_count_data[cancer_type]
   correlations_filename = paste0(cancer_type, ".rds")
-  correlations_filepath = paste("processed_data", "subsampled_correlations",
+  correlations_filepath = paste("..", "data", "processed_data", 
+                                "subsampled_correlations",
                                 correlations_filename, sep="/")
   
   if (!file.exists(correlations_filepath)) {
-    # plot_x_ticks <- create_plot_x_ticks(lower, 
-    #                                             max(cell_types_total_fragments), 
-    #                                             log)
-    
     correlations_long = mclapply(seq_along(cell_types),
                                  get_long_correlations_per_cell_type,
                                  colnames(cell_types_count_overlaps),
@@ -486,7 +402,6 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
                                use="complete"))
         corrs = corrs %>% add_column(cell_type = colnames(count_overlaps), 
                                       .before=1)
-        # corrs["cell_type"] = colnames(count_overlaps)
       }
       if (nrow(tsse_filtered_correlations) != 0) {
         for (cell_type in tsse_filtered_correlations[["cell_type"]]) {
@@ -497,7 +412,6 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
           }
         }
       }
-      # colnames(corrs) = c("cell_type", "correlation")
       if (count == 1) {
         tsse_filtered_correlations = corrs
       }
@@ -512,56 +426,6 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
   return(tsse_filtered_correlations)
 }
 
-# combine_scATAC <- function(combined_filepath, combined_filepath_shendure,
-#                            combined_filepath_tsankov) {
-#   combined_count_overlaps = t(readRDS(combined_filepath))
-#   shendure_combined_count_overlaps = t(readRDS(combined_filepath_shendure))
-#   tsankov_combined_count_overlaps = t(readRDS(combined_filepath_tsankov))
-#   return(cbind(combined_count_overlaps, shendure_combined_count_overlaps,
-#                tsankov_combined_count_overlaps))
-# }
-
-
-# RECALL that Shendure and Tsankov do NOT have Melanocytes
-# colnames(combined_count_overlaps)[grep("Lung",
-#                                         colnames(combined_count_overlaps))]
-# colnames(shendure_combined_count_overlaps)[grep("Lung",
-#                                      colnames(shendure_combined_count_overlaps))]
-# colnames(tsankov_combined_count_overlaps)[grep("Lung",
-#                                       colnames(tsankov_combined_count_overlaps))]
-
-# lung_cell_types = c("Lung Alveolar Type 2 (AT2) Cell",
-#                      "Lung Bronchiolar and alveolar epithelial cells",
-#                      "Distal Lung AT2")
-# 
-# # lung_tsse_filtered_count_overlaps = c()
-# # tsse_filtered_correlations = c()
-# # for (file in mixedsort(list.files("processed_data/count_overlap_data/tsse_filtered/lung",
-# #                          full.names = TRUE))) {
-# #    count_overlaps = readRDS(file)
-# #    tsse_filtered_correlations = append(tsse_filtered_correlations,
-# #                                        cor(count_overlaps,
-# #                                        mut_count_data[, "Lung.AdenoCA"],
-# #                                        use="complete"))
-# # }
-# lung_tsse_filtered_correlations =
-#   combine_tsse_filtered_count_overlaps_into_correlation_df(
-#     "processed_data/count_overlap_data/tsse_filtered/lung",
-#     "Lung.AdenoCA")
-# 
-# rownames(lung_tsse_filtered_correlations) =
-#   paste("Lung", rownames(lung_tsse_filtered_correlations))
-# 
-# 
-# tsse_filtered_correlations = list(lung_tsse_filtered_correlations)
-# prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
-#                                mut_count_data,
-#                                "Lung.AdenoCA",
-#                                lung_cell_types,
-#                                1000,
-#                                T,
-#                                "lung_adenoca_log_num_frags_vs_correlation.png",
-#                                tsse_filtered_correlations)
 
 if (meso) {
   mut_count_data = load_meso_mutation_data()
@@ -572,21 +436,21 @@ if (meso) {
   mut_count_data = mut_count_data[, 2:length(colnames(mut_count_data))]
 }
 
-combined_data_path = "processed_data/count_overlap_data/combined_count_overlaps/"
+combined_data_path = "../data/processed_data/count_overlap_data/combined_count_overlaps/"
 
 combined_filepath = paste(combined_data_path,
-                          "count_filter_",
+                          "Bingren_count_filter_",
                           CELL_NUMBER_FILTER,
                           "_combined_count_overlaps.rds", sep="")
 combined_count_overlaps = t(readRDS(combined_filepath))
 
 combined_filepath_shendure = paste(combined_data_path,
-                                   "shendure_count_filter_",
+                                   "Shendure_count_filter_",
                                    CELL_NUMBER_FILTER,
                                    "_combined_count_overlaps.rds", sep="")
 
 combined_filepath_tsankov = paste(combined_data_path,
-                                  "tsankov_count_filter_",
+                                  "Tsankov_count_filter_",
                                   CELL_NUMBER_FILTER,
                                   "_combined_count_overlaps.rds", sep="")
 
@@ -611,7 +475,7 @@ for (dataset_tissue in tissue_dataset_for_tsse_filtered_cell_types) {
   dataset_dir = gsub(" ", "_", dataset_dir)
   tissue_dir = tolower(tissue)
   tissue_dir = gsub(" ", "_", tissue_dir)
-  path = paste("processed_data/count_overlap_data/tsse_filtered",
+  path = paste("../data/processed_data/count_overlap_data/tsse_filtered",
                dataset_dir, tissue_dir, sep="/")
   current_tsse_cell_types = tsse_filtered_cell_types[idx]
   current_tsse_cell_types = unlist(strsplit(current_tsse_cell_types, 
@@ -647,60 +511,3 @@ prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
                               plot_x_ticks,
                               plot_filename,
                               tsse_filtered_correlations)
-
-
-# #### ColoRect.AdenoCA ####
-# cell_types = c("Colon Transverse Colon Epithelial Cell 2",
-#                 "Colon Transverse T Lymphocyte 1 (CD8+)",
-#                 "Mammary Tissue Basal Epithelial (Mammary)",
-#                 "Mammary Tissue Mammary Luminal Epithelial Cell 1",
-#                 "Colon Transverse Colonic Goblet Cell")
-# 
-# colon_transverse_tsse_filtered_correlations =
-#   combine_tsse_filtered_count_overlaps_into_correlation_df(
-#     "processed_data/count_overlap_data/tsse_filtered/colon_transverse",
-#     "ColoRect.AdenoCA")
-# 
-# rownames(colon_transverse_tsse_filtered_correlations) =
-#   paste("Colon Transverse",
-#         rownames(colon_transverse_tsse_filtered_correlations))
-# 
-# mammary_tissue_tsse_filtered_correlations =
-#   combine_tsse_filtered_count_overlaps_into_correlation_df(
-#     "processed_data/count_overlap_data/tsse_filtered/mammary_tissue",
-#     "ColoRect.AdenoCA")
-# 
-# rownames(mammary_tissue_tsse_filtered_correlations) =
-#   paste("Mammary Tissue", rownames(mammary_tissue_tsse_filtered_correlations))
-# 
-# tsse_filtered_correlations = list(colon_transverse_tsse_filtered_correlations,
-#                                   mammary_tissue_tsse_filtered_correlations)
-# 
-# prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
-#                               mut_count_data,
-#                               "ColoRect.AdenoCA",
-#                               cell_types,
-#                               1000,
-#                               T,
-#                               "colorect_adenoca_log_num_frags_vs_correlation.png",
-#                               tsse_filtered_correlations)
-
-# #### Breast AdenoCA ####
-# cell_types = c("Mammary Tissue Mammary Luminal Epithelial Cell 1",
-#                "Mammary Tissue Basal Epithelial (Mammary)",
-#                "Esophagus Mucosa Airway Goblet Cell",
-#                "Mammary Tissue Mammary Luminal Epithelial Cell 2",
-#                "Heart Atrial Appendage Cardiac Pericyte 1")
-# 
-# mammary_tissue_tsse_filtered_correlations =
-#   combine_tsse_filtered_count_overlaps_into_correlation_df(
-#     "processed_data/count_overlap_data/tsse_filtered/mammary_tissue",
-#     "Breast.AdenoCA")
-# 
-# prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
-#                               mut_count_data,
-#                               "Breast.AdenoCA",
-#                               cell_types,
-#                               1000,
-#                               "breast_adenoca_log_num_frags_vs_correlation.png",
-#                               mammary_tissue_tsse_filtered_correlations)
