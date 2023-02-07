@@ -244,8 +244,9 @@ plot_and_save_boxplots <- function(correlations_long, cell_types,
     xlab("Num Fragments") +
     ylab("Correlation") +
     labs(color="Cell type", fill = "Cell type (TSS filtered)") +
+    ylim(-0.1, -0.3) +
     scale_x_discrete(limits = as.factor(sort(as.integer(
-      unique(correlations_long["num_fragments"]) %>% pull))))#+ 
+      unique(correlations_long["num_fragments"]) %>% pull))))#+ + 
   ggsave(paste("../figures", plot_filename, sep="/"), width = 20, height = 12)
 }
 
