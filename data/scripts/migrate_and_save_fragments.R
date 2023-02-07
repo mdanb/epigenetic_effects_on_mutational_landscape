@@ -60,17 +60,6 @@ if (dataset == "Bingren") {
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC",
                      pattern="bed.gz",
                      full.names=TRUE)
-  filepaths = get_files_not_done(files, dir_path)
-  files = filepaths[[1]]
-  migrated_filepaths = filepaths[[2]]
-  split_files = split(files, ceiling(seq_along(files)/cores))
-  split_migrated_filepaths = split(migrated_filepaths, 
-                                   ceiling(seq_along(files)/cores))
-  if (!is.null(files)) {
-    for (i in 1:length(split_files)) {
-      helper(split_files[i], migrated_filepaths[i], ch, cores)
-    }
-  }
   
 } else if (dataset == "Tsankov") {
   dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/migrated_to_hg19"
@@ -78,50 +67,28 @@ if (dataset == "Bingren") {
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC",
                      pattern="tsv.gz",
                      full.names=TRUE)
-  filepaths = get_files_not_done(files, dir_path)
-  files = filepaths[[1]]
-  migrated_filepaths = filepaths[[2]]
-  if (!is.null(files)) {
-    for (l in split(files, ceiling(seq_along(files)/cores))) {
-      helper(l, migrated_filepaths, ch, cores)
-    }
-  }
-  # fragments = mclapply(files, import, format="bed", mc.cores=cores)
-  # migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
-  #                               mc.cores=cores)
 } else if (dataset == "Greenleaf_brain") {
   dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_brain_scATAC/migrated_to_hg19"
   dir.create(dir_path)
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_brain_scATAC",
                      pattern="tsv.gz",
                      full.names=TRUE)
-  filepaths = get_files_not_done(files, dir_path)
-  files = filepaths[[1]]
-  migrated_filepaths = filepaths[[2]]
-  if (!is.null(files)) {
-    for (l in split(files, ceiling(seq_along(files)/cores))) {
-      helper(l, migrated_filepaths, ch, cores)
-    }
-  }
-  # fragments = mclapply(files, import, format="bed", mc.cores=cores)
-  # migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
-  #                               mc.cores=cores)
 } else if (dataset == "Greenleaf_pbmc_bm") {
   dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_pbmc_bm_scATAC/migrated_to_hg19"
   dir.create(dir_path)
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_pbmc_bm_scATAC",
                      pattern="tsv.gz",
                      full.names=TRUE)
-  filepaths = get_files_not_done(files, dir_path)
-  files = filepaths[[1]]
-  migrated_filepaths = filepaths[[2]]
-  if (!is.null(files)) {
-    for (l in split(files, ceiling(seq_along(files)/cores))) {
-      helper(l, migrated_filepaths, ch, cores)
-    }
-  }
-  # fragments = mclapply(files, import, format="bed", mc.cores=cores)
-  # migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
-  #                               mc.cores=cores)
 }
 
+filepaths = get_files_not_done(files, dir_path)
+files = filepaths[[1]]
+migrated_filepaths = filepaths[[2]]
+split_files = split(files, ceiling(seq_along(files)/cores))
+split_migrated_filepaths = split(migrated_filepaths, 
+                                 ceiling(seq_along(files)/cores))
+if (!is.null(files)) {
+  for (i in 1:length(split_files)) {
+    helper(split_files[[i]], split_migrated_filepaths[[i]], ch, cores)
+  }
+}
