@@ -89,12 +89,12 @@ args = parse_args(OptionParser(option_list=option_list))
 #                      "--files_pattern=RPL",
 #                      "--cores=1"))
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                   c("--top_tsse_fragment_count_range=100000,150000,200000,300000,400000,500000,1000000",
-                     "--dataset=Tsankov",
-                     "--cell_types=Basal;Ciliated;Secretory;Myeloid;Endothelial;Neuroendocrine;B.cells;Ionocytes;T.NK.cells;Stromal;Tuft.like;Sec-Ciliated",
-                     "--files_pattern=RPL",
-                     "--cores=1"))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                    c("--top_tsse_fragment_count_range=100000,150000,200000,300000,400000,500000,1000000",
+#                      "--dataset=Tsankov",
+#                      "--cell_types=Basal;Ciliated;Secretory;Myeloid;Endothelial;Neuroendocrine;B.cells;Ionocytes;T.NK.cells;Stromal;Tuft.like;Sec-Ciliated",
+#                      "--files_pattern=RPL",
+#                      "--cores=1"))
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
                                            split = ",")))
