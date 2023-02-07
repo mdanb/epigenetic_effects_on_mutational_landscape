@@ -8,7 +8,10 @@ options(scipen=999)
 
 option_list <- list( 
   make_option("--cancer_type", type="character"),
-  make_option("--meso", type="logical", action="store_true", default=FALSE),
+  make_option("--waddell_sarc_biph", type="logical", action="store_true", default=FALSE),
+  make_option("--waddell_sarc", type="logical", action="store_true", default=FALSE),
+  make_option("--waddell_sarc_tsankov_sarc", type="logical", action="store_true", default=FALSE),
+  make_option("--waddell_sarc_biph_tsankov_sarc_biph", type="logical", action="store_true", default=FALSE),
   make_option("--boxplot_cell_types", type="character"),
   make_option("--tissue_for_tsse_filtered_cell_types", type="character",
               help="format: comma separated [Dataset]-[Tissue]"),
@@ -113,12 +116,16 @@ args = parse_args(OptionParser(option_list=option_list))
 #                       "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
 
 cancer_type = args$cancer_type
-meso = args$meso
 boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = "/"))
 tissue_dataset_for_tsse_filtered_cell_types = unlist(strsplit(args$tissue_for_tsse_filtered_cell_types, 
                                               split = ","))
 tsse_filtered_cell_types = unlist(strsplit(args$tsse_filtered_cell_types, 
                                            split = "/"))
+waddell_sarc_biph = args$waddell_sarc_biph
+waddell_sarc = args$waddell_sarc
+waddell_sarc_tsankov_sarc = args$waddell_sarc_tsankov_sarc
+waddell_sarc_biph_tsankov_sarc_biph = args$waddell_sarc_biph_tsankov_sarc_biph
+
 plot_filename = args$plot_filename
 plot_x_ticks = as.integer(unlist(strsplit(args$plot_x_ticks, split = ",")))
 
@@ -426,9 +433,11 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
   return(tsse_filtered_correlations)
 }
 
-
-if (meso) {
-  mut_count_data = load_meso_mutation_data()
+if (waddell_sarc_biph || waddell_sarc || waddell_sarc_tsankov_sarc || 
+    waddell_sarc_biph_tsankov_sarc_biph) {
+  mut_count_data = load_meso_mutation_data(waddell_sarc_biph, waddell_sarc,
+                                           waddell_sarc_tsankov_sarc, 
+                                           waddell_sarc_biph_tsankov_sarc_biph)
 } else {
   mut = load_mutation_data()
   mut_count_data = get_mutation_df_all_cancers(mut, interval.ranges)
