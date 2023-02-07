@@ -27,11 +27,12 @@ create_arrow_files <- function(fragment_paths,
     createArrowFiles(inputFiles = fragment_paths,
                      sampleNames = sample_names,
                      outputNames = paste(output_dir, sample_names, sep="/"),
-	  	               minTSS = 4, 
+	  	     minTSS = 4, 
                      minFrags = 1000,
                      addTileMat = F,
                      addGeneScoreMat = F,
                      force = F,
+		     cleanTmp = F,
 		     QCDir = "../../analysis/ArchR_analysis/QualityControl")
 				   
     #archp = ArchRProject(ArrowFiles = arrow_files, 
@@ -44,24 +45,24 @@ create_arrow_files <- function(fragment_paths,
 
 root = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data"
 if (dataset == "Bingren") {
-  output_dir = paste(root, "arrow/bingren", sep="/") 
+  output_dir = paste(root, "arrow/Bingren", sep="/") 
   files_dir = paste(root, "bed_files/bingren_scATAC/migrated_to_hg19", sep="/")
 } else if (dataset == "Shendure") {
-  output_dir = paste(root, "arrow/shendure", sep="/") 
+  output_dir = paste(root, "arrow/Shendure", sep="/") 
   files_dir = paste(root, "bed_files/JShendure_scATAC", sep="/")
 } else if (dataset == "Greenleaf_pbmc_bm") {
-   output_dir = paste(root, "arrow/greenleaf_pbmc_bm", sep="/")
+   output_dir = paste(root, "arrow/Greenleaf_pbmc_bm", sep="/")
    files_dir = paste(root, "bed_files/greenleaf_pbmc_bm_scATAC/migrated_to_hg19", 
                      sep="/")
 } else if (dataset == "Greenleaf_brain") {
-   output_dir = paste(root, "arrow/greenleaf_brain", sep="/")
+   output_dir = paste(root, "arrow/Greenleaf_brain", sep="/")
    files_dir = paste(root, "bed_files/greenleaf_brain_scATAC/migrated_to_hg19",
                      sep="/")
 } else if (dataset == "Tsankov") {
-   output_dir = paste(root, "arrow/tsankov", sep="/")
+   output_dir = paste(root, "arrow/Tsankov", sep="/")
    files_dir = paste(root, "bed_files/Tsankov_scATAC/migrated_to_hg19", sep="/")
 } else if (dataset == "Yang_kidney") {
-    output_dir = paste(root, "arrow/yang_kidney", sep="/")
+    output_dir = paste(root, "arrow/Yang_kidney", sep="/")
     files_dir = paste(root, "bed_files/yang_kidney_scATAC", sep="/")
 }
 
