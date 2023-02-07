@@ -115,6 +115,15 @@ args = parse_args(OptionParser(option_list=option_list))
 #                       "--plot_filename=sarcomatoid_proximal_lung_tsankov_num_frags_vs_correlation.png",
 #                       "--plot_x_tick=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000"))
 
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cancer_type=sarcomatoid",
+                      "--waddell_sarc_biph",
+                      "--boxplot_cell_types=proximal_lung Basal (TS)/proximal_lung Ciliated (TS)/proximal_lung Secretory (TS)/proximal_lung Myeloid (TS)/proximal_lung Endothelial (TS)/proximal_lung Neuroendocrine (TS)/proximal_lung B.cells (TS)/proximal_lung Ionocytes (TS)/proximal_lung T.NK.cells (TS)/proximal_lung Stromal (TS)/proximal_lung Tuft.like (TS)/proximal_lung Sec-Ciliated (TS)/distal_lung SmoothMuscle (TS)/distal_lung Fibroblasts (TS)/distal_lung AT2 (TS)/distal_lung Immune (TS)/distal_lung AT1 (TS)/distal_lung Endothelial (TS)/distal_lung Ciliated (TS)/distal_lung Mesothelium (TS)/distal_lung Secretory (TS)/distal_lung B_cells (TS)",
+                      "--tsse_filtered_cell_types=Basal;Ciliated;Secretory;Myeloid;Endothelial;Neuroendocrine;B.cells;Ionocytes;T.NK.cells;Stromal;Tuft.like;Sec-Ciliated/SmoothMuscle;Fibroblasts;AT2;Immune;AT1;Endothelial;Ciliated;Mesothelium;Secretory;B_cells",
+                      "--tissue_for_tsse_filtered_cell_types=Tsankov-Proximal Lung,Tsankov-Distal Lung",
+                      "--plot_filename=sarcomatoid_Tsankov_all_cell_types.png",
+                      "--plot_x_ticks=1000,50000,100000,150000,250000,300000,400000,500000,1000000"))
+
 cancer_type = args$cancer_type
 boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = "/"))
 tissue_dataset_for_tsse_filtered_cell_types = unlist(strsplit(args$tissue_for_tsse_filtered_cell_types, 
@@ -480,12 +489,12 @@ idx = 1
 for (dataset_tissue in tissue_dataset_for_tsse_filtered_cell_types) {
   dataset = unlist(strsplit(dataset_tissue, split = "-"))[1]
   tissue = unlist(strsplit(dataset_tissue, split = "-"))[2]
-  dataset_dir = tolower(dataset)
-  dataset_dir = gsub(" ", "_", dataset_dir)
+  # dataset_dir = tolower(dataset)
+  # dataset_dir = gsub(" ", "_", dataset_dir)
   tissue_dir = tolower(tissue)
   tissue_dir = gsub(" ", "_", tissue_dir)
   path = paste("../data/processed_data/count_overlap_data/tsse_filtered",
-               dataset_dir, tissue_dir, sep="/")
+               dataset, tissue_dir, sep="/")
   current_tsse_cell_types = tsse_filtered_cell_types[idx]
   current_tsse_cell_types = unlist(strsplit(current_tsse_cell_types, 
                                             split = ";"))
