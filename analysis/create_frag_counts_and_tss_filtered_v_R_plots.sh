@@ -347,3 +347,13 @@ if ! [ -f "../figures/sarcomatoid_Tsankov_all_cell_types.png" ]; then
     --plot_x_ticks "1000,50000,100000,150000,250000,300000,400000,500000,1000000"
 fi 
 
+if ! [ -f "../figures/sarcomatoid_Tsankov_top_10_and_relevant_cells.png" ]; then           
+    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                   
+    --cancer_type "sarcomatoid" \                                               
+    --waddell_sarc_biph \                                                       
+    --boxplot_cell_types "proximal lung Basal (TS)/proximal lung Ciliated (TS)/proximal lung Secretory (TS)/proximal lung Endothelial (TS)/proximal lung Neuroendocrine (TS)/proximal lung Ionocytes (TS)/proximal lung Stromal (TS)/proximal lung Tuft.like (TS)/distal lung SmoothMuscle (TS)/distal lung Fibroblasts (TS)/distal lung AT2 (TS)/distal lung AT1 (TS)/distal lung Endothelial (TS)/distal lung Ciliated (TS)/distal lung Mesothelium (TS)/distal lung Secretory (TS)" \
+    --tsse_filtered_cell_types "Basal;Ciliated;Secretory;Myeloid;Endothelial;Neuroendocrine;B.cells;Ionocytes;T.NK.cells;Stromal;Tuft.like;Sec-Ciliated/SmoothMuscle;Fibroblasts;AT2;Immune;AT1;Endothelial;Ciliated;Mesothelium;Secretory;B_cells" \
+    --tissue_for_tsse_filtered_cell_types "Tsankov-Proximal Lung,Tsankov-Distal Lung" \
+    --plot_filename "sarcomatoid_Tsankov_top_10_and_relevant_cells.png" \                  
+    --plot_x_ticks "1000,50000,100000,150000,250000,300000,400000,500000,1000000"
+fi
