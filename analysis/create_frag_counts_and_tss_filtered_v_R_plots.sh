@@ -71,15 +71,15 @@
 #   --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 #fi
 
-if ! [ -f "figures/esophagus_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then
-   Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
-   --cancer_type "Eso.AdenoCA" \
-   --boxplot_cell_types "lung Club Cell (BR)/stomach Foveolar Cell (BR)/colon_transverse Colon Epithelial Cell 2 (BR)/esophagus_muscularis Foveolar Cell (BR)/small_intestine Small Intestinal Enterocyte (BR)/ovary Smooth Muscle (General) (BR)/esophagus_mucosa Airway Goblet Cell (BR)/pancreas Pancreatic Acinar Cell (BR)/artery_aorta Smooth Muscle (General) (BR)/small_intestine Endothelial Cell (General) 1 (BR)" \
-   --tsse_filtered_cell_types "Club Cell/Foveolar Cell/Colon Epithelial Cell 2/Foveolar Cell/Small Intestinal Enterocyte/Smooth Muscle (General)/Airway Goblet Cell/Pancreatic Acinar Cell/Smooth Muscle (General)/Endothelial Cell (General) 1" \
-   --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Esophagus Muscularis,Bing Ren-Small Intestine,Bing Ren-Ovary,Bing Ren-Esophagus Mucosa,Bing Ren-Pancreas,Bing Ren-Artery Aorta,Bing Ren-Small Intestine" \
-   --plot_filename "esophagus_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
-   --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
-fi 
+#if ! [ -f "figures/esophagus_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then
+#   Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+#   --cancer_type "Eso.AdenoCA" \
+#   --boxplot_cell_types "lung Club Cell (BR)/stomach Foveolar Cell (BR)/colon_transverse Colon Epithelial Cell 2 (BR)/esophagus_muscularis Foveolar Cell (BR)/small_intestine Small Intestinal Enterocyte (BR)/ovary Smooth Muscle (General) (BR)/esophagus_mucosa Airway Goblet Cell (BR)/pancreas Pancreatic Acinar Cell (BR)/artery_aorta Smooth Muscle (General) (BR)/small_intestine Endothelial Cell (General) 1 (BR)" \
+#   --tsse_filtered_cell_types "Club Cell/Foveolar Cell/Colon Epithelial Cell 2/Foveolar Cell/Small Intestinal Enterocyte/Smooth Muscle (General)/Airway Goblet Cell/Pancreatic Acinar Cell/Smooth Muscle (General)/Endothelial Cell (General) 1" \
+#   --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Stomach,Bing Ren-Colon Transverse,Bing Ren-Esophagus Muscularis,Bing Ren-Small Intestine,Bing Ren-Ovary,Bing Ren-Esophagus Mucosa,Bing Ren-Pancreas,Bing Ren-Artery Aorta,Bing Ren-Small Intestine" \
+#   --plot_filename "esophagus_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
+#   --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
+#fi 
 
 ## Lung AdenoCA AT2 only
 #if ! [ -f "figures/lung_adenoca_at2_only_frags_vs_correlation.png" ]; then
@@ -124,15 +124,15 @@ fi
 #fi
 #
 
-if ! [ -f "figures/lung_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then               
-    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
-    --cancer_type "Lung.AdenoCA" \
-    --boxplot_cell_types "lung Club Cell (BR)/small_intestine Smooth Muscle (General) (BR)/muscle Type II Skeletal Myocyte (BR)/heart_lv Endothelial Cell (Myocardial) (BR)/artery_tibial Vascular Smooth Muscle 1 (BR)/artery_aorta Vascular Smooth Muscle 2 (BR)/esophagus_mucosa Esophageal Epithelial Cell (BR)/ovary Smooth Muscle (General) (BR)/artery_aorta Endothelial Cell (General) 2 (BR)/nerve_tibial Fibroblast (Peripheral Nerve) (BR)" \
-    --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Small Intestine,Bing Ren-Muscle,Bing Ren-Heart Lv,Bing Ren-Artery Tibial,Bing Ren-Artery Aorta,Bing Ren-Esophagus Mucosa,Bing Ren-Ovary,Bing Ren-Artery Aorta,Bing Ren-Nerve Tibial" \
-    --tsse_filtered_cell_types "Club Cell/Smooth Muscle (General)/Type II Skeletal Myocyte/Endothelial Cell (Myocardial)/Vascular Smooth Muscle 1/Vascular Smooth Muscle 2/Esophageal Epithelial Cell/Smooth Muscle (General)/Endothelial Cell (General) 2/Fibroblast (Peripheral Nerve)" \
-    --plot_filename "lung_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
-    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
-fi                        
+#if ! [ -f "figures/lung_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then               
+#    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+#    --cancer_type "Lung.AdenoCA" \
+#    --boxplot_cell_types "lung Club Cell (BR)/small_intestine Smooth Muscle (General) (BR)/muscle Type II Skeletal Myocyte (BR)/heart_lv Endothelial Cell (Myocardial) (BR)/artery_tibial Vascular Smooth Muscle 1 (BR)/artery_aorta Vascular Smooth Muscle 2 (BR)/esophagus_mucosa Esophageal Epithelial Cell (BR)/ovary Smooth Muscle (General) (BR)/artery_aorta Endothelial Cell (General) 2 (BR)/nerve_tibial Fibroblast (Peripheral Nerve) (BR)" \
+#    --tissue_for_tsse_filtered_cell_types "Bing Ren-Lung,Bing Ren-Small Intestine,Bing Ren-Muscle,Bing Ren-Heart Lv,Bing Ren-Artery Tibial,Bing Ren-Artery Aorta,Bing Ren-Esophagus Mucosa,Bing Ren-Ovary,Bing Ren-Artery Aorta,Bing Ren-Nerve Tibial" \
+#    --tsse_filtered_cell_types "Club Cell/Smooth Muscle (General)/Type II Skeletal Myocyte/Endothelial Cell (Myocardial)/Vascular Smooth Muscle 1/Vascular Smooth Muscle 2/Esophageal Epithelial Cell/Smooth Muscle (General)/Endothelial Cell (General) 2/Fibroblast (Peripheral Nerve)" \
+#    --plot_filename "lung_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
+#    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
+#fi                        
 
 
 ## Breast AdenoCA
@@ -232,15 +232,15 @@ fi
 #    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 #fi                                                                              
 
-if ! [ -f "figures/colorect_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then
-    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
-    --cancer_type "ColoRect.AdenoCA" \
-    --boxplot_cell_types "colon_transverse Colon Epithelial Cell 2 (BR)/colon_transverse Colonic Goblet Cell (BR)/colon_transverse Colon Epithelial Cell 1 (BR)/colon_sigmoid Fibroblast (Gastrointestinal) (BR)/artery_aorta Fibroblast (General) (BR)/stomach Foveolar Cell (BR)/heart_lv Fibroblast (General) (BR)/adipose_omentum T Lymphocyte 1 (CD8+) (BR)/colon_transverse Smooth Muscle (General) (BR)/nerve_tibial Smooth Muscle (General) (BR)" \
-    --tsse_filtered_cell_types "Colon Epithelial Cell 2;Colonic Goblet Cell;Colon Epithelial Cell 1/Fibroblast (Gastrointestinal)/Fibroblast (General)/Foveolar Cell/Fibroblast (General)/T Lymphocyte 1 (CD8+)/Smooth Muscle (General)/Smooth Muscle (General)" \
-    --tissue_for_tsse_filtered_cell_types "Bing Ren-Colon Transverse,Bing Ren-Colon Sigmoid,Bing Ren-Artery Aorta,Bing Ren-Stomach,Bing Ren-Heart Lv,Bing Ren-Adipose Omentum,Bing Ren-Colon Transverse,Bing Ren-Nerve Tibial" \
-    --plot_filename "colorect_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
-    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
-fi                                                                              
+#if ! [ -f "figures/colorect_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then
+#    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+#    --cancer_type "ColoRect.AdenoCA" \
+#    --boxplot_cell_types "colon_transverse Colon Epithelial Cell 2 (BR)/colon_transverse Colonic Goblet Cell (BR)/colon_transverse Colon Epithelial Cell 1 (BR)/colon_sigmoid Fibroblast (Gastrointestinal) (BR)/artery_aorta Fibroblast (General) (BR)/stomach Foveolar Cell (BR)/heart_lv Fibroblast (General) (BR)/adipose_omentum T Lymphocyte 1 (CD8+) (BR)/colon_transverse Smooth Muscle (General) (BR)/nerve_tibial Smooth Muscle (General) (BR)" \
+#    --tsse_filtered_cell_types "Colon Epithelial Cell 2;Colonic Goblet Cell;Colon Epithelial Cell 1/Fibroblast (Gastrointestinal)/Fibroblast (General)/Foveolar Cell/Fibroblast (General)/T Lymphocyte 1 (CD8+)/Smooth Muscle (General)/Smooth Muscle (General)" \
+#    --tissue_for_tsse_filtered_cell_types "Bing Ren-Colon Transverse,Bing Ren-Colon Sigmoid,Bing Ren-Artery Aorta,Bing Ren-Stomach,Bing Ren-Heart Lv,Bing Ren-Adipose Omentum,Bing Ren-Colon Transverse,Bing Ren-Nerve Tibial" \
+#    --plot_filename "colorect_adenoca_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
+#    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
+#fi                                                                              
 
 
 #
@@ -276,14 +276,14 @@ fi
 #    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 #fi                                                                             
 
-if ! [ -f "figures/lung_scc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then               
-    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                  
-    --cancer_type "Lung.SCC" \                                                 
-    --boxplot_cell_types "esophagus_mucosa Esophageal Epithelial Cell (BR)/artery_aorta Smooth Muscle (General) (BR)/small_intestine T Lymphocyte 1 (CD8+) (BR)/small_intestine Smooth Muscle (General) (BR)/lung Club Cell (BR)/thyroid Thyroid Follicular Cell (BR)/mammary_tissue Macrophage (General) (BR)/skin Fibroblast (General) (BR)/muscle Type I Skeletal Myocyte (BR)/muscle Endothelial Cell (General) 1 (BR)" \
-    --tsse_filtered_cell_types "Esophageal Epithelial Cell/Smooth Muscle (General)/ T Lymphocyte 1 (CD8+)/Smooth Muscle (General)/Club Cell/Thyroid Follicular Cell/Macrophage (General)/Fibroblast (General)/Type I Skeletal Myocyte/Endothelial Cell (General) 1" \
-    --tissue_for_tsse_filtered_cell_types "Bing Ren-Esophagus Mucosa,Bing Ren-Artery Aorta,Bing Ren-Small Intestine,Bing Ren-Small Intestine,Bing Ren-Lung,Bing Ren-Thyroid,Bing Ren-Mammary Tissue,Bing Ren-Skin,Bing Ren-Muscle,Bing Ren-Muscle" \
-    --plot_filename "lung_scc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
-    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
+#if ! [ -f "figures/lung_scc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then               
+#    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \                  
+#    --cancer_type "Lung.SCC" \                                                 
+#    --boxplot_cell_types "esophagus_mucosa Esophageal Epithelial Cell (BR)/artery_aorta Smooth Muscle (General) (BR)/small_intestine T Lymphocyte 1 (CD8+) (BR)/small_intestine Smooth Muscle (General) (BR)/lung Club Cell (BR)/thyroid Thyroid Follicular Cell (BR)/mammary_tissue Macrophage (General) (BR)/skin Fibroblast (General) (BR)/muscle Type I Skeletal Myocyte (BR)/muscle Endothelial Cell (General) 1 (BR)" \
+#    --tsse_filtered_cell_types "Esophageal Epithelial Cell/Smooth Muscle (General)/ T Lymphocyte 1 (CD8+)/Smooth Muscle (General)/Club Cell/Thyroid Follicular Cell/Macrophage (General)/Fibroblast (General)/Type I Skeletal Myocyte/Endothelial Cell (General) 1" \
+#    --tissue_for_tsse_filtered_cell_types "Bing Ren-Esophagus Mucosa,Bing Ren-Artery Aorta,Bing Ren-Small Intestine,Bing Ren-Small Intestine,Bing Ren-Lung,Bing Ren-Thyroid,Bing Ren-Mammary Tissue,Bing Ren-Skin,Bing Ren-Muscle,Bing Ren-Muscle" \
+#    --plot_filename "lung_scc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
+#    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 #fi                                                                             
 
 ## Liver HCC
@@ -317,12 +317,33 @@ if ! [ -f "figures/lung_scc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_corr
 #    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
 #fi 
 
-if ! [ -f "figures/liver_hcc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then              
+#if ! [ -f "figures/liver_hcc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" ]; then              
+#    Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
+#    --cancer_type "Liver.HCC" \
+#    --boxplot_cell_types "liver Hepatocyte (BR)/small_intestine Smooth Muscle (General) (BR)/artery_aorta Smooth Muscle (General) (BR)/muscle Type II Skeletal Myocyte (BR)/small_intestine T Lymphocyte 1 (CD8+) (BR)/skin Fibroblast (Epithelial) (BR)/esophagus_ge_junction Fibroblast (General) (BR)/artery_aorta Fibroblast (General) (BR)/colon_sigmoid Fibroblast (Gastrointestinal) (BR)/colon_sigmoid Fibroblast (General) (BR)" \
+#    --tsse_filtered_cell_types "Hepatocyte/Smooth Muscle (General)/Smooth Muscle (General)/Type II Skeletal Myocyte/T Lymphocyte 1 (CD8+)/Fibroblast (Epithelial)/Fibroblast (General)/Fibroblast (General)/Fibroblast (Gastrointestinal)/Fibroblast (General)" \
+#    --tissue_for_tsse_filtered_cell_types "Bing Ren-Liver,Bing Ren-Small Intestine,Bing Ren-Artery Aorta,Bing Ren-Muscle,Bing Ren-Small Intestine,Bing Ren-Skin,Bing Ren-Esophagus Ge Junction,Bing Ren-Artery Aorta,Bing Ren-Colon Sigmoid,Bing Ren-Colon Sigmoid" \
+#    --plot_filename "liver_hcc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
+#    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
+#fi 
+
+
+
+#####################################
+#####################################
+#####################################
+
+############ Mesothelioma ###########
+
+# Sarcomatoid
+if ! [ -f "../figures/sarcomatoid_Tsankov_all_cell_types.png" ]; then              
     Rscript create_frag_counts_and_tss_filtered_v_R_plots.R \
-    --cancer_type "Liver.HCC" \
-    --boxplot_cell_types "liver Hepatocyte (BR)/small_intestine Smooth Muscle (General) (BR)/artery_aorta Smooth Muscle (General) (BR)/muscle Type II Skeletal Myocyte (BR)/small_intestine T Lymphocyte 1 (CD8+) (BR)/skin Fibroblast (Epithelial) (BR)/esophagus_ge_junction Fibroblast (General) (BR)/artery_aorta Fibroblast (General) (BR)/colon_sigmoid Fibroblast (Gastrointestinal) (BR)/colon_sigmoid Fibroblast (General) (BR)" \
-    --tsse_filtered_cell_types "Hepatocyte/Smooth Muscle (General)/Smooth Muscle (General)/Type II Skeletal Myocyte/T Lymphocyte 1 (CD8+)/Fibroblast (Epithelial)/Fibroblast (General)/Fibroblast (General)/Fibroblast (Gastrointestinal)/Fibroblast (General)" \
-    --tissue_for_tsse_filtered_cell_types "Bing Ren-Liver,Bing Ren-Small Intestine,Bing Ren-Artery Aorta,Bing Ren-Muscle,Bing Ren-Small Intestine,Bing Ren-Skin,Bing Ren-Esophagus Ge Junction,Bing Ren-Artery Aorta,Bing Ren-Colon Sigmoid,Bing Ren-Colon Sigmoid" \
-    --plot_filename "liver_hcc_BR_only_with_top_20_bottom_5_feats_num_frags_vs_correlation.png" \
-    --plot_x_ticks "1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000,1500000,2000000,5000000,10000000"
+    --cancer_type "sarcomatoid" \
+    --waddell_sarc_biph \
+    --boxplot_cell_types "proximal lung Basal (TS)/proximal lung Ciliated (TS)/proximal lung Secretory (TS)/proximal lung Myeloid (TS)/proximal lung Endothelial (TS)/proximal lung Neuroendocrine (TS)/proximal lung B.cells (TS)/proximal lung Ionocytes (TS)/proximal lung T.NK.cells (TS)/proximal lung Stromal (TS)/proximal lung Tuft.like (TS)/proximal lung Sec-Ciliated (TS)/distal lung SmoothMuscle (TS)/distal lung Fibroblasts (TS)/distal lung AT2 (TS)/distal lung Immune (TS)/distal lung AT1 (TS)/distal lung Endothelial (TS)/distal lung Ciliated (TS)/distal lung Mesothelium (TS)/distal lung Secretory (TS)/distal lung B_cells (TS)" \
+    --tsse_filtered_cell_types "Basal;Ciliated;Secretory;Myeloid;Endothelial;Neuroendocrine;B.cells;Ionocytes;T.NK.cells;Stromal;Tuft.like;Sec-Ciliated/SmoothMuscle;Fibroblasts;AT2;Immune;AT1;Endothelial;Ciliated;Mesothelium;Secretory;B_cells" \
+    --tissue_for_tsse_filtered_cell_types "Tsankov-Proximal Lung,Tsankov-Distal Lung" \
+    --plot_filename "sarcomatoid_Tsankov_all_cell_types.png" \
+    --plot_x_ticks "1000,50000,100000,150000,250000,300000,400000,500000,1000000"
 fi 
+
