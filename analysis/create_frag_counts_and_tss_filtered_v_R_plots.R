@@ -118,7 +118,7 @@ args = parse_args(OptionParser(option_list=option_list))
 args = parse_args(OptionParser(option_list=option_list), args=
                     c("--cancer_type=sarcomatoid",
                       "--waddell_sarc_biph",
-                      "--boxplot_cell_types=proximal_lung Basal (TS)/proximal_lung Ciliated (TS)/proximal_lung Secretory (TS)/proximal_lung Myeloid (TS)/proximal_lung Endothelial (TS)/proximal_lung Neuroendocrine (TS)/proximal_lung B.cells (TS)/proximal_lung Ionocytes (TS)/proximal_lung T.NK.cells (TS)/proximal_lung Stromal (TS)/proximal_lung Tuft.like (TS)/proximal_lung Sec-Ciliated (TS)/distal_lung SmoothMuscle (TS)/distal_lung Fibroblasts (TS)/distal_lung AT2 (TS)/distal_lung Immune (TS)/distal_lung AT1 (TS)/distal_lung Endothelial (TS)/distal_lung Ciliated (TS)/distal_lung Mesothelium (TS)/distal_lung Secretory (TS)/distal_lung B_cells (TS)",
+                      "--boxplot_cell_types=proximal lung Basal (TS)/proximal lung Ciliated (TS)/proximal lung Secretory (TS)/proximal lung Myeloid (TS)/proximal lung Endothelial (TS)/proximal lung Neuroendocrine (TS)/proximal lung B.cells (TS)/proximal lung Ionocytes (TS)/proximal lung T.NK.cells (TS)/proximal lung Stromal (TS)/proximal lung Tuft.like (TS)/proximal lung Sec-Ciliated (TS)/distal lung SmoothMuscle (TS)/distal lung Fibroblasts (TS)/distal lung AT2 (TS)/distal lung Immune (TS)/distal lung AT1 (TS)/distal lung Endothelial (TS)/distal lung Ciliated (TS)/distal lung Mesothelium (TS)/distal lung Secretory (TS)/distal lung B_cells (TS)",
                       "--tsse_filtered_cell_types=Basal;Ciliated;Secretory;Myeloid;Endothelial;Neuroendocrine;B.cells;Ionocytes;T.NK.cells;Stromal;Tuft.like;Sec-Ciliated/SmoothMuscle;Fibroblasts;AT2;Immune;AT1;Endothelial;Ciliated;Mesothelium;Secretory;B_cells",
                       "--tissue_for_tsse_filtered_cell_types=Tsankov-Proximal Lung,Tsankov-Distal Lung",
                       "--plot_filename=sarcomatoid_Tsankov_all_cell_types.png",
@@ -246,7 +246,7 @@ plot_and_save_boxplots <- function(correlations_long, cell_types,
     labs(color="Cell type", fill = "Cell type (TSS filtered)") +
     scale_x_discrete(limits = as.factor(sort(as.integer(
       unique(correlations_long["num_fragments"]) %>% pull))))#+ 
-  ggsave(paste("figures", plot_filename, sep="/"), width = 20, height = 12)
+  ggsave(paste("../figures", plot_filename, sep="/"), width = 20, height = 12)
 }
 
 remove_bigger_than_curr_fragments <- function(plot_x_ticks,
@@ -522,10 +522,10 @@ for (dataset_tissue in tissue_dataset_for_tsse_filtered_cell_types) {
   idx = idx + 1
 }
 
-prep_boxplots_per_cancer_type(combined_counts_overlaps_all_scATAC_data,
+prep_boxplots_per_cancer_type(combined_count_overlaps = combined_counts_overlaps_all_scATAC_data,
                               mut_count_data,
                               cancer_type,
-                              boxplot_cell_types,
+                              cell_types=boxplot_cell_types,
                               plot_x_ticks,
                               plot_filename,
-                              tsse_filtered_correlations)
+                              correlations_for_tsse_filtered_cells=tsse_filtered_correlations)
