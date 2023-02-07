@@ -63,9 +63,12 @@ if (dataset == "Bingren") {
   filepaths = get_files_not_done(files, dir_path)
   files = filepaths[[1]]
   migrated_filepaths = filepaths[[2]]
+  split_files = split(files, ceiling(seq_along(files)/cores))
+  split_migrated_filepaths = split(migrated_filepaths, 
+                                   ceiling(seq_along(files)/cores))
   if (!is.null(files)) {
-    for (l in split(files, ceiling(seq_along(files)/cores))) {
-      helper(l, migrated_filepaths, ch, cores)
+    for (i in 1:length(split_files)) {
+      helper(split_files[i], migrated_filepaths[i], ch, cores)
     }
   }
   
