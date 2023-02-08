@@ -19,31 +19,37 @@ arrow_files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/arrow/T
 
 dir = "archr_subcluster_Tsankov_lung"
 dir.create(dir)
-sub_cluster_Tsankov <- ArchRProject(ArrowFiles = arrow_files, 
-                                    outputDirectory = dir,
-                                    copyArrows = FALSE)
-
-sub_cluster_Tsankov <- addGeneScoreMatrix(sub_cluster_Tsankov)
-sub_cluster_Tsankov <- addTileMatrix(sub_cluster_Tsankov)
-
-sub_cluster_Tsankov <- addIterativeLSI(
-  ArchRProj = sub_cluster_Tsankov,
-  useMatrix = "TileMatrix", 
-  name = "IterativeLSI", 
-  iterations = 2, 
-  clusterParams = list( #See Seurat::FindClusters
-                        resolution = c(0.2), 
-                        sampleCells = 10000, 
-                        n.start = 10
-                        ), 
-  varFeatures = 25000, 
-  dimsToUse = 1:30
-)
-
-sub_cluster_Tsankov <- addUMAP(ArchRProj = sub_cluster_Tsankov, 
-                               reducedDims = "IterativeLSI", 
-                               name = "UMAP", nNeighbors = 30, minDist = 0.5, 
-                               metric = "cosine")
+if (!file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/sub_cluster_Tsankov")) {
+  sub_cluster_Tsankov <- ArchRProject(ArrowFiles = arrow_files, 
+                                      outputDirectory = dir,
+                                      copyArrows = FALSE)
+  
+  sub_cluster_Tsankov <- addGeneScoreMatrix(sub_cluster_Tsankov)
+  sub_cluster_Tsankov <- addTileMatrix(sub_cluster_Tsankov)
+  
+  sub_cluster_Tsankov <- addIterativeLSI(
+    ArchRProj = sub_cluster_Tsankov,
+    useMatrix = "TileMatrix", 
+    name = "IterativeLSI", 
+    iterations = 2, 
+    clusterParams = list( #See Seurat::FindClusters
+                          resolution = c(0.2), 
+                          sampleCells = 10000, 
+                          n.start = 10
+                          ), 
+    varFeatures = 25000, 
+    dimsToUse = 1:30
+  )
+  
+  sub_cluster_Tsankov <- addUMAP(ArchRProj = sub_cluster_Tsankov, 
+                                 reducedDims = "IterativeLSI", 
+                                 name = "UMAP", nNeighbors = 30, minDist = 0.5, 
+                                 metric = "cosine")
+  saveArchRProject(ArchRProj = sub_cluster_Tsankov, 
+                   outputDirectory = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/sub_cluster_Tsankov")
+} else {
+  sub_cluster_Tsankov = loadArchRProject("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/sub_cluster_Tsankov")
+}
 
 p <- plotEmbedding(
   ArchRProj = sub_cluster_Tsankov, 
