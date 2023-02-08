@@ -66,6 +66,6 @@ p2 <- lapply(p, function(x){
     )
 })
 
-pdf("")
+pdf("../figures/gene_marker_UMAPs_Tsankov_lung.pdf")
 cp = do.call(cowplot::plot_grid, c(list(ncol = 3), p2))
 dev.off()
