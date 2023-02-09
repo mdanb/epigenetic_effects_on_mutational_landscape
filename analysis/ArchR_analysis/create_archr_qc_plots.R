@@ -1,9 +1,17 @@
 library(ArchR)
+library(optparse)
 
-addArchRThreads(threads = 8)
+option_list <- list(
+  make_option("--cores", type="integer")
+)
+
+args = parse_args(OptionParser(option_list=option_list))
+cores = args$cores
+
+addArchRThreads(threads = cores)
 addArchRGenome("hg19")
 
-ArrowFiles = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/arrow", 
+ArrowFiles = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/arrow", 
                     			recursive=T,
                     			full.names=T,
                     			pattern=".arrow")
