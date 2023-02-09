@@ -47,7 +47,7 @@ if (!dir.exists(dir)) {
                                  metric = "cosine",
                                  force=T)
   saveArchRProject(ArchRProj = sub_cluster_Tsankov)
-  
+} else {
   sub_cluster_Tsankov = loadArchRProject(dir)
 }
 
