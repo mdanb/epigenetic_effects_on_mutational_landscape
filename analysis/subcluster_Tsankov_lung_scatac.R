@@ -46,6 +46,7 @@ if (!dir.exists(dir)) {
                                  name = "UMAP", nNeighbors = 30, minDist = 0.5, 
                                  metric = "cosine",
                                  force=T)
+  sub_cluster_Tsankov <- addImputeWeights(sub_cluster_Tsankov)
   saveArchRProject(ArchRProj = sub_cluster_Tsankov)
 } else {
   sub_cluster_Tsankov = loadArchRProject(dir)
@@ -57,7 +58,7 @@ p <- plotEmbedding(
   name = marker_genes, 
   embedding = "UMAP",
   quantCut = c(0.01, 0.95),
-  imputeWeights = NULL
+  
 )
 
 p2 <- lapply(p, function(x){
@@ -72,6 +73,6 @@ p2 <- lapply(p, function(x){
     )
 })
 
-pdf("../figures/gene_marker_UMAPs_Tsankov_lung.pdf")
+pdf("../../figures/gene_marker_UMAPs_Tsankov_lung.pdf")
 do.call(cowplot::plot_grid, c(list(ncol = 3), p2))
 dev.off()
