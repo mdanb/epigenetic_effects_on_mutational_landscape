@@ -52,7 +52,7 @@ if (dataset == "Bingren") {
   files_dir = paste(root, "bed_files/JShendure_scATAC", sep="/")
 } else if (dataset == "Greenleaf_pbmc_bm") {
    output_dir = paste(root, "arrow/Greenleaf_pbmc_bm", sep="/")
-   files_dir = paste(root, "bed_files/greenleaf_pbmc_bm_scATAC/migrated_to_hg19", 
+   files_dir = paste(root, "bed_files/greenleaf_pbmc_bm_scATAC", 
                      sep="/")
 } else if (dataset == "Greenleaf_brain") {
    output_dir = paste(root, "arrow/Greenleaf_brain", sep="/")
