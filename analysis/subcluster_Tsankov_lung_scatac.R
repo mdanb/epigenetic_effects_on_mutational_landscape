@@ -23,8 +23,8 @@ if (!dir.exists(dir)) {
                                       outputDirectory = dir,
                                       copyArrows = FALSE)
 
-  sub_cluster_Tsankov <- addGeneScoreMatrix(sub_cluster_Tsankov)
-  sub_cluster_Tsankov <- addTileMatrix(sub_cluster_Tsankov)
+  sub_cluster_Tsankov <- addGeneScoreMatrix(sub_cluster_Tsankov, force=T)
+  sub_cluster_Tsankov <- addTileMatrix(sub_cluster_Tsankov, force=T)
   
   sub_cluster_Tsankov <- addIterativeLSI(
     ArchRProj = sub_cluster_Tsankov,
@@ -37,13 +37,15 @@ if (!dir.exists(dir)) {
                           n.start = 10
                           ), 
     varFeatures = 25000, 
-    dimsToUse = 1:30
+    dimsToUse = 1:30,
+    force=T
   )
   
   sub_cluster_Tsankov <- addUMAP(ArchRProj = sub_cluster_Tsankov, 
                                  reducedDims = "IterativeLSI", 
                                  name = "UMAP", nNeighbors = 30, minDist = 0.5, 
-                                 metric = "cosine")
+                                 metric = "cosine",
+                                 force=T)
   saveArchRProject(ArchRProj = sub_cluster_Tsankov)
   
   sub_cluster_Tsankov = loadArchRProject(dir)
