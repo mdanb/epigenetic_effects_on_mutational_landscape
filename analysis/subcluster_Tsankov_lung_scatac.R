@@ -19,7 +19,7 @@ arrow_files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/arrow/T
 
 dir = "archr_subcluster_Tsankov_lung"
 dir.create(dir)
-if (!file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/sub_cluster_Tsankov")) {
+if (!dir.exists("broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/sub_cluster_Tsankov")) {
   sub_cluster_Tsankov <- ArchRProject(ArrowFiles = arrow_files, 
                                       outputDirectory = dir,
                                       copyArrows = FALSE)
