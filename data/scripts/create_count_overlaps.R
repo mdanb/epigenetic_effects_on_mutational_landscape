@@ -156,11 +156,11 @@ dir.create("../processed_data/cell_counts_per_sample")
 ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/hg38ToHg19.over.chain")
 
 if (dataset == "Bingren") {
-  metadata_bingren = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE184462_metadata.tsv", 
+  metadata_bingren = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE184462_metadata.tsv", 
                         sep="\t",
                         header=T)
   colnames(metadata_bingren)[grepl("cell.type", colnames(metadata_bingren))] = "cell_type"
-  files_bingren = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/",
+  files_bingren = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/",
                               pattern=".*fragments\\.bed\\.gz")
   
   mclapply(files_bingren, create_count_overlaps_files,
@@ -171,10 +171,10 @@ if (dataset == "Bingren") {
            dataset=dataset,
            mc.cores=cores)
 } else if (dataset == "Shendure") {
-  metadata_Shendure = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+  metadata_Shendure = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
                                   sep="\t",
                                   header=TRUE)
-  files_Shendure = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/JShendure_scATAC/",
+  files_Shendure = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/JShendure_scATAC/",
                               pattern = ".*fragments\\.txt\\.gz")
   
   mclapply(files_Shendure, create_count_overlaps_files,
@@ -186,9 +186,9 @@ if (dataset == "Bingren") {
          mc.cores=cores)
 } else if (dataset == "Tsankov") {
   metadata_tsankov_proximal = 
-    read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/tsankov_lung_proximal_barcode_annotation.csv")
+    read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/tsankov_lung_proximal_barcode_annotation.csv")
   metadata_tsankov_distal = 
-    read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/tsankov_lung_distal_barcode_annotation.csv")
+    read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/tsankov_lung_distal_barcode_annotation.csv")
   colnames(metadata_tsankov_proximal)[grepl("celltypes",
                                             colnames(metadata_tsankov_proximal))] = "cell_type"
   colnames(metadata_tsankov_proximal)[grepl("Sample",
@@ -199,9 +199,9 @@ if (dataset == "Bingren") {
                                             colnames(metadata_tsankov_distal))] = "sample"
   
 
-  files_Tsankov_distal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/Tsankov_scATAC/", 
+  files_Tsankov_distal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/", 
                                     pattern="RPL")
-  files_Tsankov_proximal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/Tsankov_scATAC/", 
+  files_Tsankov_proximal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/", 
                                       pattern="IC")
   mclapply(files_Tsankov_proximal, 
            create_count_overlaps_files,
@@ -221,26 +221,26 @@ if (dataset == "Bingren") {
             dataset=dataset,
             mc.cores=cores)
 } else if (dataset == "Greenleaf_brain") {
-    if (!(file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt"))) {
+    if (!(file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt"))) {
       metadata_greenleaf_brain =
-        read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE162170_atac_cell_metadata.txt.gz",
+        read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata.txt.gz",
                  sep="\t")
-      cluster_to_cell_names = read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/scATAC_Colors_greenleaf_brain.txt",
+      cluster_to_cell_names = read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/scATAC_Colors_greenleaf_brain.txt",
                                        sep = "\t") 
       cell_name_idx = match(metadata_greenleaf_brain[["Iterative.LSI.Clusters"]], 
                          cluster_to_cell_names[["cluster"]])
       cell_types = cluster_to_cell_names[cell_name_idx, "class"]
       metadata_greenleaf_brain["cell_type"] = cell_types
       write.csv(metadata_greenleaf_brain,
-                "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt")
+                "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt")
     }
     else {
       metadata_greenleaf_brain =
-        read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt")
+        read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt")
     }
 
   colnames(metadata_greenleaf_brain)[grepl("Sample.ID", colnames(metadata_greenleaf_brain))] = "sample"
-  files_greenleaf_brain = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/greenleaf_brain_scATAC/", 
+  files_greenleaf_brain = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_brain_scATAC/", 
                                      pattern=".*fragments\\.tsv\\.gz")
   # mclapply(files_greenleaf_brain, create_count_overlaps_files,
   #          cell_number_filter=cell_number_filter,
@@ -256,8 +256,8 @@ if (dataset == "Bingren") {
            chain=ch,
            dataset=dataset)
 } else if (dataset == "Greenleaf_pbmc_bm") {
-    if (!(file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/greenleaf_pbmc_bm.txt"))) {
-      metadata_greenleaf_pbmc_bm = readRDS("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/scATAC-Healthy-Hematopoiesis-191120.rds")
+    if (!(file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/greenleaf_pbmc_bm.txt"))) {
+      metadata_greenleaf_pbmc_bm = readRDS("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/scATAC-Healthy-Hematopoiesis-191120.rds")
       metadata_greenleaf_pbmc_bm = data.frame(barcode = metadata_greenleaf_pbmc_bm$Barcode, 
                                               cell_type = unlist(lapply(
                                               strsplit(metadata_greenleaf_pbmc_bm$BioClassification, 
@@ -265,13 +265,13 @@ if (dataset == "Bingren") {
                                               sample = metadata_greenleaf_pbmc_bm$Group)
       
       write.csv(metadata_greenleaf_pbmc_bm, 
-                "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/greenleaf_pbmc_bm.txt")
+                "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/greenleaf_pbmc_bm.txt")
     }
     else {
       metadata_greenleaf_pbmc_bm = 
-        read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/greenleaf_pbmc_bm.txt")
+        read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/greenleaf_pbmc_bm.txt")
     }
-    files_greenleaf_pbmc_bm = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/greenleaf_pbmc_bm_scATAC", 
+    files_greenleaf_pbmc_bm = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_pbmc_bm_scATAC", 
                                          pattern=".*fragments\\.tsv\\.gz")
     mclapply(files_greenleaf_pbmc_bm, 
              create_count_overlaps_files,
