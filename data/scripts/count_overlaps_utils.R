@@ -39,35 +39,35 @@ import_sample <- function(file, dataset) {
   if (dataset == "Bingren") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", 
-                          "raw_dir", "bed_files", file, sep="/"), 
+                          "data", "bed_files", file, sep="/"), 
                     format="bed")
   }
   else if (dataset == "Shendure") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", 
-                          "raw_dir", "bed_files", "JShendure_scATAC", file, 
+                          "data", "bed_files", "JShendure_scATAC", file, 
                           sep="/"), format="bed")
   }
   else if (dataset == "Tsankov") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
-                                 "BingRen_scATAC_atlas", "raw_dir", "bed_files",
+                                 "BingRen_scATAC_atlas", "data", "bed_files",
                                  "Tsankov_scATAC", file, sep="/"), format="bed")
   }
   else if (dataset == "Greenleaf_brain") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
-                                 "BingRen_scATAC_atlas", "raw_dir", "bed_files",
+                                 "BingRen_scATAC_atlas", "data", "bed_files",
                                  "greenleaf_brain_scATAC", 
                                  file, sep="/"), format="bed")
   }
   else if (dataset == "Greenleaf_pbmc_bm") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
-                          "BingRen_scATAC_atlas", "raw_dir", "bed_files",
+                          "BingRen_scATAC_atlas", "data", "bed_files",
                           "greenleaf_pbmc_bm_scATAC", 
                           file, sep="/"), format="bed")
   }
   else if (dataset == "Yang_kidney") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
-                          "BingRen_scATAC_atlas", "raw_dir", "bed_files",
+                          "BingRen_scATAC_atlas", "data", "bed_files",
                           "yang_kidney_scATAC", 
                           file, sep="/"), format="bed")
   }
