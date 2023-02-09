@@ -17,13 +17,12 @@ marker_genes = c('WT1','ITLN1','COL1A1','PECAM1','LYZ',
 arrow_files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/arrow/Tsankov", 
                          full.names=T, pattern="arrow")
 
-dir = "archr_subcluster_Tsankov_lung"
-dir.create(dir)
-if (!dir.exists("broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/sub_cluster_Tsankov")) {
+dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/sub_cluster_Tsankov"
+if (!dir.exists(dir)) {
   sub_cluster_Tsankov <- ArchRProject(ArrowFiles = arrow_files, 
                                       outputDirectory = dir,
                                       copyArrows = FALSE)
-  
+
   sub_cluster_Tsankov <- addGeneScoreMatrix(sub_cluster_Tsankov)
   sub_cluster_Tsankov <- addTileMatrix(sub_cluster_Tsankov)
   
@@ -45,10 +44,9 @@ if (!dir.exists("broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/sub_cluster_T
                                  reducedDims = "IterativeLSI", 
                                  name = "UMAP", nNeighbors = 30, minDist = 0.5, 
                                  metric = "cosine")
-  saveArchRProject(ArchRProj = sub_cluster_Tsankov, 
-                   outputDirectory = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/sub_cluster_Tsankov")
-} else {
-  sub_cluster_Tsankov = loadArchRProject("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/sub_cluster_Tsankov")
+  saveArchRProject(ArchRProj = sub_cluster_Tsankov)
+  
+  sub_cluster_Tsankov = loadArchRProject(dir)
 }
 
 p <- plotEmbedding(
