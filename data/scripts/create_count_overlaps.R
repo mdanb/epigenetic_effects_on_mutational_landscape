@@ -149,11 +149,11 @@ get_sample_cell_types_tsankov <- function(sample,
 }
 
 
-load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 
 dir.create("../processed_data/count_overlap_data", recursive=TRUE)                                       
 dir.create("../processed_data/cell_counts_per_sample")                                       
-ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/hg38ToHg19.over.chain")
+ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/hg38ToHg19.over.chain")
 
 if (dataset == "Bingren") {
   metadata_bingren = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/GSE184462_metadata.tsv", 
@@ -282,9 +282,9 @@ if (dataset == "Bingren") {
              dataset=dataset,
              mc.cores=cores)
 } else if (dataset == "Yang_kidney") {
-  metadata_Yang = read_excel("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/metadata/41467_2021_27660_MOESM4_ESM.xlsx", 
+  metadata_Yang = read_excel("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/41467_2021_27660_MOESM4_ESM.xlsx", 
                              skip=1)
-  files_Yang = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/bed_files/yang_kidney_scATAC/",
+  files_Yang = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/yang_kidney_scATAC/",
                               pattern = ".*fragments\\.tsv\\.gz")
   colnames(metadata_Yang)[2] = "cell_type"
   colnames(metadata_Yang)[3] = "sample"
