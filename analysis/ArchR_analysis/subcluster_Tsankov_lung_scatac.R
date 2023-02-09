@@ -57,8 +57,7 @@ p <- plotEmbedding(
   colorBy = "GeneScoreMatrix", 
   name = marker_genes, 
   embedding = "UMAP",
-  quantCut = c(0.01, 0.95),
-  
+  quantCut = c(0.01, 0.95)
 )
 
 p2 <- lapply(p, function(x){
