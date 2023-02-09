@@ -68,8 +68,8 @@ create_count_overlaps_files <- function(file, cell_number_filter, metadata,
         sample$name = substr(sample$name, 1, 16)
       }
       
-      if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || dataset ==
-          "Greenleaf_pbmc_bm" || dataset == "Bingren") {
+      if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || dataset ==  
+          || dataset == "Bingren") {
         sample = migrate_bed_file_to_hg37(sample, chain)
       }
 
