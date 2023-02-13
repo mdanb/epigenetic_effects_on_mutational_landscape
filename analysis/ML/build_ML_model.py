@@ -246,10 +246,10 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
                                          waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
                                          tss_filter=None):
 
-    cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
     #### Filter data ####
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter)
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
+    cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
 
     scATAC_dir = append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                                      waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir)
