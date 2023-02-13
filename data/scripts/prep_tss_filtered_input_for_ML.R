@@ -3,7 +3,7 @@ library(dplyr)
 
 option_list <- list( 
   make_option("--fragment_count_range", type="character"),
-  make_option("--datasets", type = "character"),
+  make_option("--datasets", type = "character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
