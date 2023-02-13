@@ -3,9 +3,8 @@ library(dplyr)
 
 option_list <- list( 
   make_option("--fragment_count_range", type="character"),
-  make_option("--bing_ren", action="store_true", type="logical", default=F),
-  make_option("--shendure", action="store_true", type="logical", default=F),                         
-  make_option("--tsankov", action="store_true", type="logical", default=F)
+  make_option("--datasets", type = "character"),
+  make_option("--cell_count_filter", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -13,17 +12,10 @@ args = parse_args(OptionParser(option_list=option_list))
 #                   c("--fragment_count_range=100000,200000"))
 
 fragment_count_range = unlist(strsplit(args$fragment_count_range, ","))
-bing_ren = args$bing_ren
-shendure = args$shendure
-tsankov = args$tsankov
+datasets = unlist(strsplit(args$datasets, split = ","))
+cell_count_filter = args$cell_count_filter
 
-root_tss_filtered = "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/processed_data/count_overlap_data/tsse_filtered"
-combined_count_overlaps_path = "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/processed_data/count_overlap_data/combined_count_overlaps"
-bingren_path = paste(root_tss_filtered, "bing_ren", sep="/")
-shendure_path = paste(root_tss_filtered, "shendure", sep="/")
-tsankov_path = paste(root_tss_filtered, "tsankov", sep="/")
-
-combined_tss_filtered_cells <- function(fragment_count_range, tss_path, 
+combine_tss_filtered_cells <- function(fragment_count_range, tss_path, 
                                         combined_overlaps_filepath) {
   combined_overlaps_unfiltered = readRDS(combined_overlaps_filepath)
   combined_path = paste(tss_path, "combined", sep="/")
@@ -60,26 +52,16 @@ combined_tss_filtered_cells <- function(fragment_count_range, tss_path,
   }
 }
 
-if (bing_ren) {
-  combined_overlaps_file = "count_filter_1_combined_count_overlaps.rds"
+root_tss_filtered = "../processed_data/count_overlap_data/tsse_filtered"
+combined_count_overlaps_path = "../processed_data/count_overlap_data/combined_count_overlaps"
+
+for (dataset in datasets) {
+  combined_overlaps_file = paste(dataset, "count_filter", cell_count_filter,
+                                 "combined_count_overlaps.rds", sep="/")
   combined_overlaps_filepath = paste(combined_count_overlaps_path, 
                                      combined_overlaps_file, sep="/")
-	combined_tss_filtered_cells(fragment_count_range, bingren_path, 
-	                            combined_overlaps_filepath)
+  dataset_tss_path = paste(root_tss_filtered, dataset, sep="/")
+  combine_tss_filtered_cells(fragment_count_range, dataset_tss_path, 
+                              combined_overlaps_filepath)
 }
 
-if (shendure) {
-  combined_overlaps_file = "shendure_count_filter_1_combined_count_overlaps.rds"
-  combined_overlaps_filepath = paste(combined_count_overlaps_path, 
-                                     combined_overlaps_file, sep="/")
-	combined_tss_filtered_cells(fragment_count_range, shendure_path, 
-	                            combined_overlaps_filepath)
-}
-
-if (tsankov) {
-  combined_overlaps_file = "tsankov_count_filter_1_combined_count_overlaps.rds"
-  combined_overlaps_filepath = paste(combined_count_overlaps_path, 
-                                     combined_overlaps_file, sep="/")
-	combined_tss_filtered_cells(fragment_count_range, tsankov_path, 
-	                            combined_overlaps_filepath)
-}
