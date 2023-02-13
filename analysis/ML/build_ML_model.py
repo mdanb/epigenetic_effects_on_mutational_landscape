@@ -62,7 +62,8 @@ group.add_argument('--waddell_sarc_biph_tsankov_sarc_biph', action="store_true",
 
 # parser.add_argument('--tss_filtered', action="store_true",
 #                     help='Use TSS filtered data', default=False)
-parser.add_argument('--tss_fragment_filter', type=int, default=-1)
+parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
+                    help='tss fragment filters to consider', default="")
 # parser.add_argument('--bioRxiv_method', action="store_true",
 #                     help='Use method from bioRxiv paper. Different from tissue_spec_cells by fact that here ' \
 #                          'dont a priori know which tissue to train on, so trains on all of them', default=False)
@@ -72,16 +73,8 @@ cancer_types = config.cancer_types
 run_all_cells = config.all_cells
 run_tissue_spec_cells = config.tissue_spec_cells
 run_clustered_mutations = config.clustered_mutations
-# bing_ren = config.bing_ren
-# shendure = config.shendure
-# tsankov = config.tsankov
 datasets = sorted(config.datasets)
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
-# meso_waddell_and_biphasic = config.meso_waddell_and_biphasic
-# meso_waddell_only = config.meso_waddell_only
-# meso_waddell_and_broad_only = config.meso_waddell_and_broad_only
-# meso_waddell_biph_786_846 = config.meso_waddell_biph_786_846
-
 waddell_sarc_biph = config.waddell_sarc_biph
 waddell_sarc = config.waddell_sarc
 waddell_sarc_tsankov_sarc = config.waddell_sarc_tsankov_sarc
@@ -107,6 +100,39 @@ def add_dataset_origin_to_cell_types(df, dataset):
     elif (dataset == "Yang_kidney"):
         df.columns = [c + " Y_K" for c in df.columns]
     return(df)
+
+def append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+                                        waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir):
+    if (waddell_sarc_biph):
+        scATAC_dir = scATAC_dir + "_waddell_sarc_biph"
+    elif (waddell_sarc):
+        scATAC_dir = scATAC_dir + "_waddell_sarc"
+    elif (waddell_sarc_tsankov_sarc):
+        scATAC_dir = scATAC_dir + "_waddell_sarc_tsankov_sarc"
+    elif (waddell_sarc_biph_tsankov_sarc_biph):
+         scATAC_dir = scATAC_dir + "_waddell_sarc_biph_tsankov_sarc_biph"
+    return(scATAC_dir)
+
+def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter):
+    datasets_combined_count_overlaps = []
+    for dataset in datasets:
+        if (tss_filter):
+            tss_filtered_root = "../../data/processed_data/count_overlap_data/tsse_filtered"
+            chr_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
+            scATAC_df = load_scATAC(f"{tss_filtered_root}/{dataset}/combined/" \
+                                    f"combined_{tss_filter}_fragments.rds").T
+            scATAC_df.index = chr_ranges["x"].values
+            datasets_combined_count_overlaps.append(scATAC_df)
+        else:
+            datasets_combined_count_overlaps.append(load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" \
+            f"/{dataset}_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds"))
+
+    for idx, dataset in enumerate(datasets):
+        datasets_combined_count_overlaps[idx] = [add_dataset_origin_to_cell_types(datasets_combined_count_overlaps[idx],
+                                                 dataset)]
+
+    scATAC_df = pd.concat(chain(*datasets_combined_count_overlaps), axis=1)
+    return(scATAC_df)
 
 # Filter Data helpers
 def filter_clustered_data(scATAC_df, mutations_df):
@@ -214,68 +240,88 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
 #                                   meso_waddell_biph_786_846, tss_fragment_filter, scATAC_source="Bingren"):
 
 
-def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types,
-                                  waddell_sarc_biph, waddell_sarc,
+def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir, run_all_cells,
+                                         run_tissue_spec, waddell_sarc_biph,
+                                         waddell_sarc, waddell_sarc_tsankov_sarc,
+                                         waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
+                                         tss_filter=None):
+
+    cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
+    #### Filter data ####
+    scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter)
+    scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
+
+    scATAC_dir = append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+                                                     waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir)
+    os.makedirs(f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}",
+                exist_ok=True)
+
+    if (run_all_cells):
+        backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/backwards_elimination_results"
+        grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/grid_search_results.pkl"
+        test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/test_set_performance.txt"
+
+        # All Cells
+        train_val_test(scATAC_df, cancer_specific_mutations,
+                       grid_search_filename,
+                       backwards_elim_dir,
+                       test_set_perf_filename)
+
+    # Tissue Specific
+    if (run_tissue_spec):
+        backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/backwards_elimination_results_tissue_spec"
+        grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/grid_search_results_tissue_specific.pkl"
+        test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/test_set_performance_tissue_spec.txt"
+
+        tissue = cancer_type.split("-")[0]
+        tissue_specific_cell_types = [cell_type for cell_type in scATAC_df.columns.values if tissue in cell_type]
+        per_tissue_df = scATAC_df.loc[:, tissue_specific_cell_types]
+        train_val_test(per_tissue_df,
+                       cancer_specific_mutations,
+                       grid_search_filename,
+                       backwards_elim_dir,
+                       test_set_perf_filename)
+
+def run_unclustered_data_analysis(datasets, run_all_cells, run_tissue_spec_cells,
+                                  cancer_types, waddell_sarc_biph, waddell_sarc,
                                   waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
-                                  tss_fragment_filter, scATAC_source="Bingren"):
+                                  scATAC_cell_number_filter, tss_fragment_filter):
     # waddell_sarc_biph_waddell_epith = config.waddell_sarc_biph_waddell_epith
     # waddell_sarc_waddell_epith = config.waddell_sarc_waddell_epith
     # waddell_sarc_tsankov_sarc_waddell_epith = config.waddell_sarc_tsankov_sarc_waddell_epith
     # waddell_sarc_biph_tsankov_sarc_biph = config.waddell_sarc_biph_tsankov_sarc_biph
+    scATAC_sources = ""
+
+    for idx, dataset in enumerate(datasets):
+        if (scATAC_sources == ""):
+            scATAC_sources = dataset
+        else:
+            scATAC_sources = "_".join((scATAC_sources, dataset))
+
+    scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
     if (waddell_sarc_biph or waddell_sarc or waddell_sarc_tsankov_sarc or
         waddell_sarc_biph_tsankov_sarc_biph):
-        mutations_df = load_meso_mutations(waddell_sarc_biph, waddell_sarc,
-                                           waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph)
+        mutations_df = load_meso_mutations(waddell_sarc_biph,
+                                           waddell_sarc,
+                                           waddell_sarc_tsankov_sarc,
+                                           waddell_sarc_biph_tsankov_sarc_biph)
     else:
         mutations_df = load_agg_mutations()
 
-    #### Filter data ####
-    scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
-
-    scATAC_dir = f"scATAC_source_{scATAC_source}_cell_number_filter_{scATAC_cell_number_filter}"
-
-    if (tss_fragment_filter != -1):
-        scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + str(tss_fragment_filter)
-
-    if (waddell_sarc_biph):
-        scATAC_dir = scATAC_dir + "_waddell_sarc_biph"
-    elif (waddell_sarc):
-        scATAC_dir = scATAC_dir + "_waddell_sarc"
-    elif (waddell_sarc_tsankov_sarc):
-        scATAC_dir = scATAC_dir + "_waddell_sarc_tsankov_sarc"
-    elif (waddell_sarc_biph_tsankov_sarc_biph):
-         scATAC_dir = scATAC_dir + "_waddell_sarc_biph_tsankov_sarc_biph"
-
     for cancer_type in cancer_types:
-        os.makedirs(f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}",
-                    exist_ok=True)
-        cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
+        if (tss_fragment_filter):
+            for tss_filter in tss_fragment_filter:
+                scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
+                run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir, run_all_cells,
+                                                     run_tissue_spec_cells, waddell_sarc_biph, waddell_sarc,
+                                                     waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
+                                                     scATAC_cell_number_filter, tss_filter=tss_filter)
 
-        if (run_all_cells):
-            backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/backwards_elimination_results"
-            grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/grid_search_results.pkl"
-            test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/test_set_performance.txt"
-
-            # All Cells
-            train_val_test(scATAC_df, cancer_specific_mutations,
-                           grid_search_filename,
-                           backwards_elim_dir,
-                           test_set_perf_filename)
-
-        # Tissue Specific
-        if (run_tissue_spec):
-            backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/backwards_elimination_results_tissue_spec"
-            grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/grid_search_results_tissue_specific.pkl"
-            test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/test_set_performance_tissue_spec.txt"
-
-            tissue = cancer_type.split("-")[0]
-            tissue_specific_cell_types = [cell_type for cell_type in scATAC_df.columns.values if tissue in cell_type]
-            per_tissue_df = scATAC_df.loc[:, tissue_specific_cell_types]
-            train_val_test(per_tissue_df,
-                           cancer_specific_mutations,
-                           grid_search_filename,
-                           backwards_elim_dir,
-                           test_set_perf_filename)
+        else:
+            run_unclustered_data_analysis_helper(mutations_df, cancer_type, scATAC_dir, run_all_cells,
+                                                 run_tissue_spec_cells, waddell_sarc_biph, waddell_sarc,
+                                                 waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
+                                                 scATAC_cell_number_filter)
         # if (bioRxiv_method):
         #     tissues = set(scATAC_df.columns.str.split().to_series().apply(lambda x: x[0]))
         #     for tissue in tissues:
@@ -315,49 +361,6 @@ def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, clus
                        backwards_elim_dir,
                        test_set_perf_filename)
 
-#### Load scATAC ####
-tss_filtered_root = "../../data/processed_data/count_overlap_data/tsse_filtered"
-datasets_combined_count_overlaps = []
-if (tss_fragment_filter != -1):
-    # TODO: Fix for other than Bing Ren
-    #result = pyreadr.read_r("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData") #
-    chr_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
-    if (bing_ren):
-        scATAC_df_bingren = load_scATAC(f"{tss_filtered_root}/bing_ren/combined/" \
-                               f"combined_{tss_fragment_filter}_fragments.rds").T
-        scATAC_df_bingren.index = chr_ranges["x"].values
-
-    if (shendure):
-        scATAC_df_shendure = load_scATAC(f"{tss_filtered_root}/shendure/combined/" \
-                                    f"combined_{tss_fragment_filter}_fragments.rds").T
-        scATAC_df_shendure.index = chr_ranges["x"].values
-    if (tsankov):
-        scATAC_df_tsankov = load_scATAC(f"{tss_filtered_root}/tsankov/combined/" \
-                                     f"combined_{tss_fragment_filter}_fragments.rds").T
-        scATAC_df_tsankov.index = chr_ranges["x"].values
-else:
-    for dataset in datasets:
-        datasets_combined_count_overlaps.append(load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" \
-                                f"/{dataset}_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds"))
-        # scATAC_df_bingren = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
-        #                         f"/count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
-        # scATAC_df_shendure = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
-        #                              f"/shendure_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
-        # scATAC_df_tsankov = load_scATAC("processed_data/count_overlap_data/combined_count_overlaps" \
-        #                              f"/tsankov_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds")
-
-scATAC_df = pd.DataFrame()
-scATAC_sources = ""
-
-for idx, dataset in enumerate(datasets):
-    if (scATAC_sources == ""):
-        scATAC_sources = dataset
-    else:
-        scATAC_sources = "_".join((scATAC_sources, dataset))
-    datasets_combined_count_overlaps[idx] = [add_dataset_origin_to_cell_types(datasets_combined_count_overlaps[idx],
-                                             dataset)]
-
-scATAC_df = pd.concat(chain(*datasets_combined_count_overlaps), axis=1)
 
 # scATAC_df = pd.concat((scATAC_df, scATAC_df_bingren), axis=1)
 # scATAC_sources = scATAC_sources + "bing_ren"
@@ -370,10 +373,16 @@ scATAC_df = pd.concat(chain(*datasets_combined_count_overlaps), axis=1)
 #     scATAC_sources = "combined_datasets"
 
 if (run_all_cells or run_tissue_spec_cells):
-    run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells,
+    run_unclustered_data_analysis(datasets, run_all_cells, run_tissue_spec_cells,
                                   cancer_types, waddell_sarc_biph, waddell_sarc,
                                   waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
-                                  tss_fragment_filter, scATAC_sources)
+                                  scATAC_cell_number_filter, tss_fragment_filter)
+
+
+    # run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells,
+    #                               cancer_types, waddell_sarc_biph, waddell_sarc,
+    #                               waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
+    #                               tss_fragment_filter, scATAC_sources)
 
 
 # if (run_all_cells and shendure):
