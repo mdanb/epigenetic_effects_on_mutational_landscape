@@ -6,7 +6,7 @@ library(optparse)
 option_list <- list( 
   make_option("--dataset", type="character"),
   make_option("--annotation", type="character"),
-  make_option("--cell_number_filter", type="integer"),
+  make_option("--cell_number_filter", type="integer")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
