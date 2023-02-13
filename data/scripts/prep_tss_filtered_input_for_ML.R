@@ -55,7 +55,8 @@ combined_count_overlaps_path = "../processed_data/count_overlap_data/combined_co
 
 for (dataset in datasets) {
   combined_overlaps_file = paste(dataset, 
-                                 "count_filter_1_combined_count_overlaps.rds", sep="/")
+                                 "count_filter_1_combined_count_overlaps.rds", 
+                                 sep="_")
   combined_overlaps_filepath = paste(combined_count_overlaps_path, 
                                      combined_overlaps_file, sep="/")
   dataset_tss_path = paste(root_tss_filtered, dataset, sep="/")
