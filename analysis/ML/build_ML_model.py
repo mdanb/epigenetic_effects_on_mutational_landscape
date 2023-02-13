@@ -121,7 +121,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
         if (tss_filter):
             tss_filtered_root = "../../data/processed_data/count_overlap_data/tsse_filtered"
             chr_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
-            scATAC_df = load_scATAC(f"{tss_filtered_root}/{dataset}/combined/{annotation_dir}" \
+            scATAC_df = load_scATAC(f"{tss_filtered_root}/{dataset}/combined/{annotation_dir}/" \
                                     f"combined_{tss_filter}_fragments.rds").T
             scATAC_df.index = chr_ranges["x"].values
             datasets_combined_count_overlaps.append(scATAC_df)
