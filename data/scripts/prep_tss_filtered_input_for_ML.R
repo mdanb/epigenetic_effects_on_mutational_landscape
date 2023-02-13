@@ -4,7 +4,6 @@ library(dplyr)
 option_list <- list( 
   make_option("--fragment_count_range", type="character"),
   make_option("--datasets", type = "character"),
-  make_option("--cell_count_filter", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -13,7 +12,6 @@ args = parse_args(OptionParser(option_list=option_list))
 
 fragment_count_range = unlist(strsplit(args$fragment_count_range, ","))
 datasets = unlist(strsplit(args$datasets, split = ","))
-cell_count_filter = args$cell_count_filter
 
 combine_tss_filtered_cells <- function(fragment_count_range, tss_path, 
                                         combined_overlaps_filepath) {
@@ -56,8 +54,8 @@ root_tss_filtered = "../processed_data/count_overlap_data/tsse_filtered"
 combined_count_overlaps_path = "../processed_data/count_overlap_data/combined_count_overlaps"
 
 for (dataset in datasets) {
-  combined_overlaps_file = paste(dataset, "count_filter", cell_count_filter,
-                                 "combined_count_overlaps.rds", sep="/")
+  combined_overlaps_file = paste(dataset, 
+                                 "count_filter_1_combined_count_overlaps.rds", sep="/")
   combined_overlaps_filepath = paste(combined_count_overlaps_path, 
                                      combined_overlaps_file, sep="/")
   dataset_tss_path = paste(root_tss_filtered, dataset, sep="/")
