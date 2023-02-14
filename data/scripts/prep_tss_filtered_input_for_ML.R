@@ -3,7 +3,8 @@ library(dplyr)
 
 option_list <- list( 
   make_option("--fragment_count_range", type="character"),
-  make_option("--datasets", type = "character")
+  make_option("--datasets", type = "character"),
+  make_option("--annotation", type = "character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -12,7 +13,8 @@ args = parse_args(OptionParser(option_list=option_list))
 
 fragment_count_range = unlist(strsplit(args$fragment_count_range, ","))
 datasets = unlist(strsplit(args$datasets, split = ","))
-
+annotation = args$annotation
+  
 combine_tss_filtered_cells <- function(fragment_count_range, tss_path, 
                                         combined_overlaps_filepath) {
   combined_overlaps_unfiltered = readRDS(combined_overlaps_filepath)
@@ -33,7 +35,7 @@ combine_tss_filtered_cells <- function(fragment_count_range, tss_path,
         next
       }
       
-      colnames(df) <- paste(dir, colnames(df))
+      colnames(df) <- paste(gsub("_", " ", dir), colnames(df))
       combined_df_list = append(combined_df_list, list(df))
     }
     combined_df = bind_cols(combined_df_list)
@@ -57,7 +59,7 @@ for (dataset in datasets) {
   combined_overlaps_file = paste(dataset, 
                                  "count_filter_1_combined_count_overlaps.rds", 
                                  sep="_")
-  combined_overlaps_filepath = paste(combined_count_overlaps_path, 
+  combined_overlaps_filepath = paste(combined_count_overlaps_path, annotation,
                                      combined_overlaps_file, sep="/")
   dataset_tss_path = paste(root_tss_filtered, dataset, sep="/")
   combine_tss_filtered_cells(fragment_count_range, dataset_tss_path, 
