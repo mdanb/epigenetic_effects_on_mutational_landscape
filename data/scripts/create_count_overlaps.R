@@ -261,13 +261,14 @@ if (dataset == "Bingren") {
   #          chain=ch,
   #          dataset=dataset,
   #          mc.cores=cores)
-  lapply(files_greenleaf_brain, create_count_overlaps_files,
+  mclapply(files_greenleaf_brain, create_count_overlaps_files,
            cell_number_filter=cell_number_filter,
            metadata=metadata_greenleaf_brain,
            interval_ranges=interval.ranges,
            chain=ch,
            dataset=dataset,
-           annotation=annotation)
+           annotation=annotation,
+           mc.cores=cores)
 } else if (dataset == "Greenleaf_pbmc_bm") {
     if (!(file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/greenleaf_pbmc_bm.txt"))) {
       metadata_greenleaf_pbmc_bm = readRDS("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/scATAC-Healthy-Hematopoiesis-191120.rds")
