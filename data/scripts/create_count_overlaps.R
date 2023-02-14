@@ -49,9 +49,10 @@ compute_count_overlaps <- function(sample, interval_ranges) {
 }
 
 create_count_overlaps_files <- function(file, cell_number_filter, metadata,
-                                  interval_ranges, chain, dataset) {
+                                  interval_ranges, chain, dataset, annotation) {
   filename = get_sample_filename(file, dataset)
-  filepath = paste("../processed_data/count_overlap_data", filename, sep="/")
+  filepath = paste("../processed_data/count_overlap_data", annotation, 
+                   filename, sep="/")
     if (!file.exists(filepath)) {
       print(paste("Processing", file, sep= " "))
       sample = import_sample(file, dataset)
@@ -265,7 +266,8 @@ if (dataset == "Bingren") {
            metadata=metadata_greenleaf_brain,
            interval_ranges=interval.ranges,
            chain=ch,
-           dataset=dataset)
+           dataset=dataset,
+           annotation=annotation)
 } else if (dataset == "Greenleaf_pbmc_bm") {
     if (!(file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/greenleaf_pbmc_bm.txt"))) {
       metadata_greenleaf_pbmc_bm = readRDS("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/scATAC-Healthy-Hematopoiesis-191120.rds")
