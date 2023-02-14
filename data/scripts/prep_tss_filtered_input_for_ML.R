@@ -16,9 +16,10 @@ datasets = unlist(strsplit(args$datasets, split = ","))
 annotation = args$annotation
   
 combine_tss_filtered_cells <- function(fragment_count_range, tss_path, 
-                                        combined_overlaps_filepath) {
+                                        combined_overlaps_filepath, 
+                                       annotation) {
   combined_overlaps_unfiltered = readRDS(combined_overlaps_filepath)
-  combined_path = paste(tss_path, "combined", sep="/")
+  combined_path = paste(tss_path, "combined", annotation, sep="/")
   dir.create(combined_path)
   for (fragment_count in fragment_count_range) {
     combined_df_list = list()
