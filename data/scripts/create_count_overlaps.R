@@ -12,7 +12,8 @@ source("count_overlaps_utils.R")
 option_list <- list( 
   make_option("--dataset", type="character"),
   make_option("--cell_number_filter", type="integer"),
-  make_option("--cores", type="integer")
+  make_option("--cores", type="integer"),
+  make_option("--annotation", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -24,6 +25,7 @@ args = parse_args(OptionParser(option_list=option_list))
 cell_number_filter = args$cell_number_filter
 cores = args$cores
 dataset = args$dataset
+annotation = args$annotation
 
 get_and_save_num_cells_per_sample <- function(sample, sample_file_name) {
   sample_file_name = paste0("cell_counts_", file_path_sans_ext(sample_file_name, 
@@ -168,6 +170,7 @@ if (dataset == "Bingren") {
            chain=ch,
            dataset=dataset,
            mc.cores=cores)
+  
 } else if (dataset == "Shendure") {
   metadata_Shendure = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
                                   sep="\t",
@@ -223,7 +226,7 @@ if (dataset == "Bingren") {
       metadata_greenleaf_brain =
         read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata.txt.gz",
                  sep="\t")
-      cluster_to_cell_names = read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/scATAC_Colors_greenleaf_brain.txt",
+      cluster_to_cell_names = read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/scATAC_Colors_greenleaf_brain.txt",
                                        sep = "\t") 
       cell_name_idx = match(metadata_greenleaf_brain[["Iterative.LSI.Clusters"]], 
                          cluster_to_cell_names[["cluster"]])
@@ -233,10 +236,20 @@ if (dataset == "Bingren") {
                 "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt")
     }
     else {
-      metadata_greenleaf_brain =
-        read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt")
+      if (annotation == "Greenleaf_lowest_level") {
+        metadata_greenleaf_brain =
+          read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata.txt.gz",
+                   sep="\t")
+        colnames(metadata_greenleaf_brain)[grepl("Iterative.LSI.Clusters", 
+                              colnames(metadata_greenleaf_brain))] = "cell_type"
+        dir.create("../processed_data/count_overlap_data/Greenleaf_lowest_level")
+      } 
+      else {
+          metadata_greenleaf_brain =
+            read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt")
+      }
     }
-
+  
   colnames(metadata_greenleaf_brain)[grepl("Sample.ID", colnames(metadata_greenleaf_brain))] = "sample"
   files_greenleaf_brain = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_brain_scATAC/", 
                                      pattern=".*fragments\\.tsv\\.gz")
