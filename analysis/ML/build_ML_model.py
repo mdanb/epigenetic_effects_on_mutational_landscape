@@ -221,8 +221,8 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
 #                                   meso_waddell_biph_786_846, tss_fragment_filter, scATAC_source="Bingren"):
 
 
-def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir, run_all_cells,
-                                         run_tissue_spec, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
+                                         waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                          waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
                                          tissues_to_consider, tss_filter=None):
 
@@ -307,7 +307,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
             run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir_orig, waddell_sarc_biph,
                                                  waddell_sarc, waddell_sarc_tsankov_sarc,
                                                  waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
-                                                 tissues_to_consider, annotation_dir)
+                                                 annotation_dir, tissues_to_consider)
         # if (bioRxiv_method):
         #     tissues = set(scATAC_df.columns.str.split().to_series().apply(lambda x: x[0]))
         #     for tissue in tissues:
