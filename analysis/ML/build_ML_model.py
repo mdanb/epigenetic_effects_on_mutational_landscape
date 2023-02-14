@@ -22,58 +22,36 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--cancer_types', nargs="+", type=str,
                     help='which cancer types to analyze', required=True)
-parser.add_argument('--all_cells', action="store_true",
-                    help='run model on all cells', default=False)
-parser.add_argument('--tissue_spec_cells', action="store_true",
-                     help='run model on tissue specific cells', default=False)
+# parser.add_argument('--all_cells', action="store_true",
+#                     help='run model on all cells', default=False)
+# parser.add_argument('--tissue_spec_cells', action="store_true",
+#                      help='run model on tissue specific cells', default=False)
 parser.add_argument('--clustered_mutations', action="store_true",
                     help='run model on hierarchically clustered mutations', default=False)
-# parser.add_argument('--bing_ren', action="store_true",
-#                     help='use Bing Ren ATACseq', default=False)
-# parser.add_argument('--shendure', action="store_true",
-#                     help='use Shendure ATACseq', default=False)
-# parser.add_argument('--tsankov', action="store_true",
-#                     help='use Tsankov ATACseq', default=False)
 parser.add_argument('--datasets', nargs="+", type=str,
                     help='which sc-ATACseq datasets to analyze', required=True)
 parser.add_argument('--scATAC_cell_number_filter', type=int,
                     help='minimum number of cells per cell type in scATAC', default=100)
 parser.add_argument('--annotation_dir', type=str,
                     help='name of annotation directory', default="default_annotation")
-# parser.add_argument('--combined_datasets', action="store_true",
-#                     help='combine all scATACseq', default=False)
 group = parser.add_mutually_exclusive_group()
-# group.add_argument('--meso_waddell_and_biphasic', action="store_true",
-#                     default=False)
-# group.add_argument('--meso_waddell_only', action="store_true", default=False)
-# group.add_argument('--meso_waddell_and_broad_only', action="store_true", default=False)
-# group.add_argument('--meso_waddell_biph_786_846', action="store_true", default=False)
-
-# group.add_argument('--waddell_biph', action="store_true",
-#                     default=False)
-# group.add_argument('--waddell_sarc', action="store_true", default=False)
-# group.add_argument('--waddell_sarc_tsankov_sarc', action="store_true", default=False)
-# group.add_argument('--waddell_sarc_biph_tsankov_sarc_biph_waddell_epith', action="store_true", default=False)
-
 group.add_argument('--waddell_sarc_biph', action="store_true",
                     default=False)
 group.add_argument('--waddell_sarc', action="store_true", default=False)
 group.add_argument('--waddell_sarc_tsankov_sarc', action="store_true", default=False)
 group.add_argument('--waddell_sarc_biph_tsankov_sarc_biph', action="store_true", default=False)
-
-
-# parser.add_argument('--tss_filtered', action="store_true",
-#                     help='Use TSS filtered data', default=False)
 parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
                     help='tss fragment filters to consider', default="")
+parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
+
 # parser.add_argument('--bioRxiv_method', action="store_true",
 #                     help='Use method from bioRxiv paper. Different from tissue_spec_cells by fact that here ' \
 #                          'dont a priori know which tissue to train on, so trains on all of them', default=False)
 
 config = parser.parse_args()
 cancer_types = config.cancer_types
-run_all_cells = config.all_cells
-run_tissue_spec_cells = config.tissue_spec_cells
+# run_all_cells = config.all_cells
+# run_tissue_spec_cells = config.tissue_spec_cells
 run_clustered_mutations = config.clustered_mutations
 datasets = sorted(config.datasets)
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
@@ -82,6 +60,7 @@ waddell_sarc = config.waddell_sarc
 waddell_sarc_tsankov_sarc = config.waddell_sarc_tsankov_sarc
 waddell_sarc_biph_tsankov_sarc_biph = config.waddell_sarc_biph_tsankov_sarc_biph
 annotation_dir = config.annotation_dir
+tissues_to_consider = config.tissues_to_consider
 # tss_filtered = config.tss_filtered
 tss_fragment_filter = config.tss_fragment_filter
 # bioRxiv_method = config.bioRxiv_method
@@ -127,7 +106,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             datasets_combined_count_overlaps.append(scATAC_df)
         else:
             datasets_combined_count_overlaps.append(load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" \
-            f"/{dataset}_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds"))
+            f"/{annotation_dir}/{dataset}_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds"))
 
     for idx, dataset in enumerate(datasets):
         datasets_combined_count_overlaps[idx] = [add_dataset_origin_to_cell_types(datasets_combined_count_overlaps[idx],
@@ -243,10 +222,9 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
 
 
 def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir, run_all_cells,
-                                         run_tissue_spec, waddell_sarc_biph,
-                                         waddell_sarc, waddell_sarc_tsankov_sarc,
+                                         run_tissue_spec, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                          waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
-                                         tss_filter=None):
+                                         tissues_to_consider, tss_filter=None):
 
     #### Filter data ####
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
@@ -260,7 +238,7 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
     os.makedirs(f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}",
                 exist_ok=True)
 
-    if (run_all_cells):
+    if (tissues_to_consider == "all"):
         backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/backwards_elimination_results"
         grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/grid_search_results.pkl"
         test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/test_set_performance.txt"
@@ -272,13 +250,18 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
                        test_set_perf_filename)
 
     # Tissue Specific
-    if (run_tissue_spec):
-        backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/backwards_elimination_results_tissue_spec"
-        grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/grid_search_results_tissue_specific.pkl"
-        test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/test_set_performance_tissue_spec.txt"
+    else:
+        tissues_string = "_".join(tissues_to_consider)
+        backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/backwards_elimination_results_{tissues_string}"
+        grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/grid_search_results_{tissues_string}.pkl"
+        test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/test_set_performance_{tissues_string}.txt"
 
-        tissue = cancer_type.split("-")[0]
-        tissue_specific_cell_types = [cell_type for cell_type in scATAC_df.columns.values if tissue in cell_type]
+        # tissue = cancer_type.split("-")[0]
+        def check_tissue(tissue_cell_type):
+            return(any(tissue in tissue_cell_type for tissue in tissues_to_consider))
+
+        idx = scATAC_df.columns.values.apply(check_tissue)
+        tissue_specific_cell_types = scATAC_df.columns.values[idx]
         per_tissue_df = scATAC_df.loc[:, tissue_specific_cell_types]
         train_val_test(per_tissue_df,
                        cancer_specific_mutations,
@@ -286,10 +269,9 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
                        backwards_elim_dir,
                        test_set_perf_filename)
 
-def run_unclustered_data_analysis(datasets, run_all_cells, run_tissue_spec_cells,
-                                  cancer_types, waddell_sarc_biph, waddell_sarc,
-                                  waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
-                                  scATAC_cell_number_filter, annotation_dir, tss_fragment_filter):
+def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+                                  waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
+                                  tissues_to_consider, tss_fragment_filter):
     # waddell_sarc_biph_waddell_epith = config.waddell_sarc_biph_waddell_epith
     # waddell_sarc_waddell_epith = config.waddell_sarc_waddell_epith
     # waddell_sarc_tsankov_sarc_waddell_epith = config.waddell_sarc_tsankov_sarc_waddell_epith
@@ -316,16 +298,16 @@ def run_unclustered_data_analysis(datasets, run_all_cells, run_tissue_spec_cells
         if (tss_fragment_filter):
             for tss_filter in tss_fragment_filter:
                 scATAC_dir = scATAC_dir_orig + "_tss_fragment_filter_" + tss_filter
-                run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir, run_all_cells,
-                                                     run_tissue_spec_cells, waddell_sarc_biph, waddell_sarc,
-                                                     waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
-                                                     scATAC_cell_number_filter, annotation_dir, tss_filter=tss_filter)
+                run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir, waddell_sarc_biph,
+                                                     waddell_sarc, waddell_sarc_tsankov_sarc,
+                                                     waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
+                                                     annotation_dir, tissues_to_consider, tss_filter=tss_filter)
 
         else:
-            run_unclustered_data_analysis_helper(mutations_df, cancer_type, scATAC_dir_orig, run_all_cells,
-                                                 run_tissue_spec_cells, waddell_sarc_biph, waddell_sarc,
-                                                 waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
-                                                 scATAC_cell_number_filter, annotation_dir)
+            run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir_orig, waddell_sarc_biph,
+                                                 waddell_sarc, waddell_sarc_tsankov_sarc,
+                                                 waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
+                                                 tissues_to_consider, annotation_dir)
         # if (bioRxiv_method):
         #     tissues = set(scATAC_df.columns.str.split().to_series().apply(lambda x: x[0]))
         #     for tissue in tissues:
@@ -376,11 +358,11 @@ def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, clus
 # if (len(datasets) == 5):
 #     scATAC_sources = "combined_datasets"
 
-if (run_all_cells or run_tissue_spec_cells):
-    run_unclustered_data_analysis(datasets, run_all_cells, run_tissue_spec_cells,
-                                  cancer_types, waddell_sarc_biph, waddell_sarc,
-                                  waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
-                                  scATAC_cell_number_filter, annotation_dir, tss_fragment_filter)
+# if (run_all_cells or run_tissue_spec_cells):
+
+run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+                              waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
+                              tissues_to_consider, tss_fragment_filter)
 
 
     # run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells,
