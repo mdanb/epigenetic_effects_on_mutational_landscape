@@ -61,7 +61,7 @@ for (dataset in datasets) {
                                  sep="_")
   combined_overlaps_filepath = paste(combined_count_overlaps_path, annotation,
                                      combined_overlaps_file, sep="/")
-  dataset_tss_path = paste(root_tss_filtered, dataset, annotation, sep="/")
+  dataset_tss_path = paste(root_tss_filtered, dataset, sep="/")
   combine_tss_filtered_cells(fragment_count_range, dataset_tss_path, 
                               combined_overlaps_filepath)
 }
