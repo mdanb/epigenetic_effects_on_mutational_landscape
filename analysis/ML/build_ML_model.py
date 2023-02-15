@@ -250,7 +250,7 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
         def check_tissue(tissue_cell_type):
             return(any(tissue in tissue_cell_type for tissue in tissues_to_consider))
 
-        idx = scATAC_df.columns.apply(check_tissue)
+        idx = pd.Series(scATAC_df.columns.values).apply(check_tissue)
         tissue_specific_cell_types = scATAC_df.columns.values[idx]
         per_tissue_df = scATAC_df.loc[:, tissue_specific_cell_types]
         train_val_test(per_tissue_df,
