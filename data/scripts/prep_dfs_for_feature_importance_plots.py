@@ -64,7 +64,6 @@ def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
 
 def get_relevant_backwards_elim_dirs(config):
     cancer_types = config.cancer_types
-    all_cells = config.all_cells
     # tissue_spec_cells = config.tissue_spec_cells
     # clustered_mutations = config.clustered_mutations
     # bing_ren = config.bing_ren
@@ -101,14 +100,13 @@ def get_relevant_backwards_elim_dirs(config):
     #     scATAC_sources = "combined_datasets"
 
     for cancer_type in cancer_types:
-        if (all_cells):
-            backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, scATAC_sources, cell_number_filter,
-                                                                   tss_fragment_filter, waddell_sarc_biph,
-                                                                   waddell_sarc,
-                                                                   waddell_sarc_tsankov_sarc,
-                                                                   waddell_sarc_biph_tsankov_sarc_biph,
-                                                                   annotation,
-                                                                   tissues_to_consider))
+        backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, scATAC_sources, cell_number_filter,
+                                                               tss_fragment_filter, waddell_sarc_biph,
+                                                               waddell_sarc,
+                                                               waddell_sarc_tsankov_sarc,
+                                                               waddell_sarc_biph_tsankov_sarc_biph,
+                                                               annotation,
+                                                               tissues_to_consider))
     return backward_elim_dirs
         # if (run_tissue_spec):
         #     backwards_elim_dir=f"models/{cancer_type}/scATAC_source_{scATAC_source}/" \
