@@ -18,7 +18,7 @@ ArrowFiles = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/arrow",
                     			pattern=".arrow")
 ArchR_proj <- ArchRProject(ArrowFiles = ArrowFiles,
 			                     copyArrows=F,
-    			      outputDirectory = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_QC")
+    			      outputDirectory = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj")
 
 dataset = unlist(lapply(strsplit(ArrowFiles, split = "/"), "[", 8))
 ArchR_proj = addSampleColData(ArchRProj = ArchR_proj, 
@@ -57,6 +57,7 @@ ggplot(as_tibble(getCellColData(ArchR_proj)),
        labs(fill="dataset")
 
 ggsave("../../figures/archr_log_frags_vs_sample.png", width=20)
+saveArchRProject(ArchRProj = ArchR_proj, load = FALSE)
 #bingren_cells = ArchR_proj
 
 # tss_p <-plotGroups(
