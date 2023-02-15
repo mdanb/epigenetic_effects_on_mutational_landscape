@@ -7,20 +7,14 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args=
-#        c("--dataset=bing_ren"))
 cores=args$cores
 dataset = args$dataset
-# dataset="bing_ren"
-#Sys.setenv(HDF5_USE_FILE_LOCKING=FALSE)
-#Sys.setenv(RHDF5_USE_FILE_LOCKING=FALSE)
 addArchRThreads(threads = cores)
 addArchRGenome("hg19")
 
 #h5disableFileLocking()
 #h5enableFileLocking()
 create_arrow_files <- function(fragment_paths) {
-#if (!file.exists(paste(output_dir, "Save-ArchR-Project.rds", sep="/"))) {
     sample_names = strsplit(fragment_paths, split="/")
     length = length(sample_names[[1]])
     sample_names = lapply(sample_names, "[", length)
@@ -28,13 +22,13 @@ create_arrow_files <- function(fragment_paths) {
     createArrowFiles(inputFiles = fragment_paths,
                      sampleNames = sample_names,
                      outputNames = sample_names,
-	  	     minTSS = 4, 
+	  	               minTSS = 4, 
                      minFrags = 1000,
-                     addTileMat = F,
-                     addGeneScoreMat = F,
+                     addTileMat = T,
+                     addGeneScoreMat = T,
                      force = F,
-		     cleanTmp = T,
-		     QCDir = "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/analysis/ArchR_analysis/QualityControl")
+		                 cleanTmp = F,
+		                 QCDir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj")
 				   
     #archp = ArchRProject(ArrowFiles = arrow_files, 
     #                     outputDirectory = output_dir,
@@ -68,6 +62,7 @@ if (dataset == "Bingren") {
 }
 
 setwd(root)
+dir.create(root)
 setwd(output_dir)
 
 create_arrow_files(list.files(files_dir, full.names=T, pattern = "bgz$"))
