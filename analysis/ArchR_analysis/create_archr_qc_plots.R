@@ -57,7 +57,7 @@ ggplot(as_tibble(getCellColData(ArchR_proj)),
        labs(fill="dataset")
 
 ggsave("../../figures/archr_log_frags_vs_sample.png", width=20)
-saveArchRProject(ArchRProj = ArchR_proj, load = FALSE)
+saveArchRProject(ArchRProj = ArchR_proj)
 #bingren_cells = ArchR_proj
 
 # tss_p <-plotGroups(
