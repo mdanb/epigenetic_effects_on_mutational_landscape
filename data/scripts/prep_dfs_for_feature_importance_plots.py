@@ -10,15 +10,13 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--cancer_types', nargs="+", type=str,
                     help='which cancer types to analyze', required=True)
-parser.add_argument('--all_cells', action="store_true",
-                    help='obtain model run on all cells', default=False)
-parser.add_argument('--tissue_spec_cells', action="store_true",
-                     help='obtain model run on tissue specific cells', default=False)
 parser.add_argument('--clustered_mutations', action="store_true",
                     help='obtain model run on hierarchically clustered mutations',
                     default=False)
 parser.add_argument('--datasets', nargs="+", type=str,
                     help='which sc-ATACseq datasets to analyze', required=True)
+parser.add_argument('--annotation', type=str, default="default_annotation")
+parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
 
 # parser.add_argument('--bing_ren', action="store_true",
 #                     help='obtain model which used Bing Ren ATACseq', default=False)
@@ -41,7 +39,8 @@ group.add_argument('--waddell_sarc_biph_tsankov_sarc_biph', action="store_true",
 def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
                                  tss_fragment_filter, waddell_sarc_biph,
                                  waddell_sarc, waddell_sarc_tsankov_sarc,
-                                 waddell_sarc_biph_tsankov_sarc_biph):
+                                 waddell_sarc_biph_tsankov_sarc_biph,
+                                 annotation, tissues_to_consider):
     dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/scATAC_source_" \
           f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
     if (tss_fragment_filter != -1):
@@ -56,7 +55,12 @@ def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
     elif (waddell_sarc_biph_tsankov_sarc_biph):
         dir = dir + "_waddell_sarc_biph_tsankov_sarc_biph"
 
-    return f"{dir}/backwards_elimination_results/"
+    dir = dir + f"_annotation_{annotation}"
+
+    if (tissues_to_consider != "all"):
+        return f"{dir}/backwards_elimination_results/"
+    else:
+        return f"{dir}/backwards_elimination_results_{tissues_to_consider}"
 
 def get_relevant_backwards_elim_dirs(config):
     cancer_types = config.cancer_types
@@ -74,6 +78,8 @@ def get_relevant_backwards_elim_dirs(config):
     # combined_datasets = config.combined_datasets
     cell_number_filter = config.cell_number_filter
     tss_fragment_filter = config.tss_fragment_filter
+    tissues_to_consider = "_".join(config.tissues_to_consider)
+    annotation = config.annotation
     backward_elim_dirs = []
 
     scATAC_sources = ""
@@ -100,7 +106,9 @@ def get_relevant_backwards_elim_dirs(config):
                                                                    tss_fragment_filter, waddell_sarc_biph,
                                                                    waddell_sarc,
                                                                    waddell_sarc_tsankov_sarc,
-                                                                   waddell_sarc_biph_tsankov_sarc_biph))
+                                                                   waddell_sarc_biph_tsankov_sarc_biph,
+                                                                   annotation,
+                                                                   tissues_to_consider))
     return backward_elim_dirs
         # if (run_tissue_spec):
         #     backwards_elim_dir=f"models/{cancer_type}/scATAC_source_{scATAC_source}/" \
@@ -125,7 +133,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips=5):
         cancer_type_dir = temp[-3]
 
         figure_path = os.path.join("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/figures/models",
-                                    cancer_type,
+                                   cancer_type,
                                    cancer_type_dir,
                                    "backwards_elimination_results")
         #os.makedirs(figure_path, exist_ok=True)
