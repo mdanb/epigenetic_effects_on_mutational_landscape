@@ -29,7 +29,7 @@ save_collapsed_df <- function(df, dataset, annotation, cell_number_filter) {
 
 collapse_using_mapping <- function(mapping, df) {
   for (pattern_replacement in mapping) {
-    idxs = grep(pattern_replacement[[1]], rownames(df))
+    idxs = matching_func(pattern_replacement[1], rownames(df))
     collapsed_co = rep(0, length(colnames(df)))
     for (idx in idxs) {
       row_to_add = df[idx, ]
@@ -61,7 +61,8 @@ if (dataset == "Greenleaf_pbmc_bm") {
                 c("bonemarrow B|bonemarrow Pre\\.B", "bonemarrow B"),
                 c("bonemarrow .*Eryth", "bonemarrow Eryth"))
     
-    df = collapse_using_mapping(mapping, default_combined_count_ovs)
+    df = collapse_using_mapping(mapping, default_combined_count_ovs,
+                                grep)
     df = df[-grep("Unk", rownames(df)), ]
     save_collapsed_df(df, dataset, annotation, cell_number_filter)
   } 
@@ -76,16 +77,16 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df = lowest_level_combined_count_ovs
     # pattern --> replacement (collapsing)
     mapping = list(
-      c("c0|c1|c2|c5|c6|c7|c13|c14", "GluN"),
-      c("c3|c4|c12|c16|c20", "IN"), 
-      c("c8", "nIPC"),
-      c("c9|c11", "RG"),
-      c("c10", "mGPC"),
-      c("c15", "OPC/Oligo"),
-      c("c17", "Peric"),
-      c("c19", "MG"),
-      c("c21", "EC"))
-    
+      c("brain (c0$|c1$|c2$|c5|c6|c7|c13|c14)", "brain GluN"),
+      c("brain (c3|c4|c12|c16|c20)", "brain IN"), 
+      c("brain c8", "brain nIPC"),
+      c("brain (c9|c11)", "brain RG"),
+      c("brain c10", "brain mGPC"),
+      c("brain c15", "brain OPC/Oligo"),
+      c("brain c17", "brain Peric"),
+      c("brain c19", "brain MG"),
+      c("brain c21", "brain EC"))
+
     df = collapse_using_mapping(mapping, lowest_level_combined_count_ovs)
     df = df[-grep("c18", rownames(df)), ]
     save_collapsed_df(df, dataset, annotation, cell_number_filter)
