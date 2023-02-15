@@ -170,6 +170,6 @@ for (dataset in datasets) {
     filepaths = list.files(co_fp, 
                            pattern = pattern, 
                            full.names = TRUE)
-    save_combined_overlaps(filepaths, combined_filepath, dataset)
+    save_combined_overlaps(filepaths, combined_filepath, dataset, annotation)
   }
 }
