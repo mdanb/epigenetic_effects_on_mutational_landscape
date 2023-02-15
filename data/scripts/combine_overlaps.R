@@ -124,7 +124,7 @@ save_combined_overlaps <- function(filepaths,
     # }
   }
   saveRDS(combined_count_overlaps, combined_filepath)
-  temp = unlist(strsplit(combined_filepath, "/"))[7]
+  temp = unlist(strsplit(combined_filepath, "/"))[6]
   metadata_filename = paste(unlist(strsplit(temp, "[.]"))[1], "metadata.rds", 
                             sep="_")
   metadata_filepath = paste("..", "processed_data", "count_overlap_data", 
