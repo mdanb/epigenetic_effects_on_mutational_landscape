@@ -29,7 +29,7 @@ save_collapsed_df <- function(df, dataset, annotation, cell_number_filter) {
 
 collapse_using_mapping <- function(mapping, df) {
   for (pattern_replacement in mapping) {
-    idxs = matching_func(pattern_replacement[1], rownames(df))
+    idxs = grep(pattern_replacement[1], rownames(df))
     collapsed_co = rep(0, length(colnames(df)))
     for (idx in idxs) {
       row_to_add = df[idx, ]
