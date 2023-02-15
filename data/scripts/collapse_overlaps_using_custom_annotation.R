@@ -1,10 +1,10 @@
 library(optparse)
 ####### CUSTOM ANNOTATION OPTIONS ####### 
 ### Greenleaf pbmc bm
-# CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm
+# Greenleaf_pbmc_bm_CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm
 
 ### Greenleaf brain
-# same+as+paper+but+Early+RG+Late+RG-RG_Unk-rm
+# Greenleaf_brain_same+as+paper+but+Early+RG+Late+RG-RG_Unk-rm
 
 option_list <- list( 
   make_option("--dataset", type="character"),
