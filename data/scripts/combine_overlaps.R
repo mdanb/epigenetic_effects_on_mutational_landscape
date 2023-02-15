@@ -22,7 +22,7 @@ datasets = unlist(strsplit(args$datasets, split = ","))
 get_cell_counts_df <- function(count_overlaps_filename, annotation) {
   cell_counts_filename = unlist(strsplit(unlist(
                                          strsplit(count_overlaps_filename,
-                                         split="/"))[6], 
+                                         split="/"))[5], 
                                          "_"))
   start_index = grep("overlaps", cell_counts_filename) + 1
   cell_counts_filename = 
