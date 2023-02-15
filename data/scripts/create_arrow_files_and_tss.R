@@ -62,7 +62,7 @@ if (dataset == "Bingren") {
 }
 
 setwd(root)
-dir.create(root)
+dir.create(output_dir)
 setwd(output_dir)
 
 create_arrow_files(list.files(files_dir, full.names=T, pattern = "bgz$"))
