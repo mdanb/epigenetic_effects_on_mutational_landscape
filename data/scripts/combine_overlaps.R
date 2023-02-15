@@ -35,7 +35,7 @@ get_cell_counts_df <- function(count_overlaps_filename, annotation) {
     # cell_counts_filename = paste("fragments", cell_counts_filename, sep="_")
   }
   cell_counts_filename = paste("cell_counts", cell_counts_filename, sep="_")
-  cell_counts_path = paste("..", "..", "data", "processed_data", 
+  cell_counts_path = paste("..", "processed_data", 
                            "cell_counts_per_sample", annotation,
                            cell_counts_filename, sep = "/")
   df = readRDS(cell_counts_path)
@@ -134,9 +134,7 @@ save_combined_overlaps <- function(filepaths,
 }
 
 combined_data_path = 
-  "../../data/processed_data/count_overlap_data/combined_count_overlaps"
-
-dir.create(combined_data_path)
+  "../processed_data/count_overlap_data/combined_count_overlaps"
 
 # unsquashed_overlaps_filepath = paste(combined_data_path,
 #                                      "count_filter_",
@@ -157,6 +155,7 @@ dir.create(combined_data_path)
 # dir.create("../../data/processed_data/cell_counts_per_sample/combined_cell_counts")
 for (dataset in datasets) {
   combined_filepath = paste(combined_data_path, annotation, sep="/")
+  dir.create(combined_filepath)
   combined_filename = paste(dataset,
                             "count_filter",
                             cell_number_filter, 
@@ -166,7 +165,7 @@ for (dataset in datasets) {
       #!file.exists(unsquashed_overlaps_filepath)) {
     pattern = paste(dataset, "count_filter", cell_number_filter, "count_overlaps", 
                     sep="_")
-    co_fp = paste("../../data/processed_data/count_overlap_data", annotation,
+    co_fp = paste("../processed_data/count_overlap_data", annotation,
                   sep = "/")
     filepaths = list.files(co_fp, 
                            pattern = pattern, 
