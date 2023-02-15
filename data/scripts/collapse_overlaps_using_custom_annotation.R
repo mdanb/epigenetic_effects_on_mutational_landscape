@@ -3,6 +3,9 @@ library(optparse)
 ### Greenleaf pbmc bm
 # CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm
 
+### Greenleaf brain
+# same+as+paper+but+Early+RG+Late+RG-RG_Unk-rm
+
 option_list <- list( 
   make_option("--dataset", type="character"),
   make_option("--annotation", type="character"),
@@ -14,6 +17,15 @@ args = parse_args(OptionParser(option_list=option_list))
 cell_number_filter = args$cell_number_filter
 dataset = args$dataset
 annotation = args$annotation
+
+save_collapsed_df <- function(df, dataset, annotation, cell_number_filter) {
+  save_dir = paste("../processed_data/count_overlap_data/combined_count_overlaps",
+                   annotation, sep="/")
+  save_file = paste(dataset, "count_filter", cell_number_filter, 
+                    "combined_count_overlaps.rds", sep = "_")
+  dir.create(save_dir)
+  saveRDS(df, paste(save_dir, save_file, sep="/"))
+}
 
 collapse_using_mapping <- function(mapping, df) {
   for (pattern_replacement in mapping) {
@@ -36,10 +48,10 @@ if (dataset == "Greenleaf_pbmc_bm") {
                                 "combined_count_overlaps.rds", sep="_")
   default_annotation_fp = paste(root, "default_annotation", 
                                 default_annotation_fn, sep="/")
-  default_combined_combine_count_ovs = readRDS(default_annotation_fp)
+  default_combined_count_ovs = readRDS(default_annotation_fp)
   
-  if (annotation == "CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm") {
-    df = default_combined_combine_count_ovs
+  if (annotation == "Greenleaf_pbmc_bm_CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm") {
+    df = default_combined_count_ovs
     # pattern --> replacement (collapsing)
     mapping = list(
                 c("bonemarrow CD14.Mono", "bonemarrow Monocytes"),
@@ -49,13 +61,33 @@ if (dataset == "Greenleaf_pbmc_bm") {
                 c("bonemarrow B|bonemarrow Pre\\.B", "bonemarrow B"),
                 c("bonemarrow .*Eryth", "bonemarrow Eryth"))
     
-    df = collapse_using_mapping(mapping, default_combined_combine_count_ovs)
+    df = collapse_using_mapping(mapping, default_combined_count_ovs)
     df = df[-grep("Unk", rownames(df)), ]
-    save_dir = paste("../processed_data/count_overlap_data/combined_count_overlaps",
-                annotation, sep="/")
-    save_file = paste(dataset, "count_filter", cell_number_filter, 
-                      "combined_count_overlaps.rds", sep = "_")
-    dir.create(save_dir)
-    saveRDS(df, paste(save_dir, save_file, sep="/"))
+    save_collapsed_df(df, dataset, annotation, cell_number_filter)
   } 
+} else if (dataset == "Greenleaf_brain") {
+  lowest_level_annotation_fn = paste("Greenleaf_brain_count_filter", 
+                                cell_number_filter, 
+                                "combined_count_overlaps.rds", sep="_")
+  lowest_level_annotation_fp = paste(root, "Greenleaf_brain_lowest_level_annotation", 
+                                     lowest_level_annotation_fn, sep="/")
+  lowest_level_combined_count_ovs = readRDS(lowest_level_annotation_fp)
+  if (annotation == "Greenleaf_brain_same+as+paper+but+Early+RG+Late+RG-RG_Unk-rm") {
+    df = lowest_level_combined_count_ovs
+    # pattern --> replacement (collapsing)
+    mapping = list(
+      c("c0|c1|c2|c5|c6|c7|c13|c14", "GluN"),
+      c("c3|c4|c12|c16|c20", "IN"), 
+      c("c8", "nIPC"),
+      c("c9|c11", "RG"),
+      c("c10", "mGPC"),
+      c("c15", "OPC/Oligo"),
+      c("c17", "Peric"),
+      c("c19", "MG"),
+      c("c21", "EC"))
+    
+    df = collapse_using_mapping(mapping, lowest_level_combined_count_ovs)
+    df = df[-grep("c18", rownames(df)), ]
+    save_collapsed_df(df, dataset, annotation, cell_number_filter)
+  }
 }
