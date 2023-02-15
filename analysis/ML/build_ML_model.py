@@ -22,10 +22,6 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--cancer_types', nargs="+", type=str,
                     help='which cancer types to analyze', required=True)
-# parser.add_argument('--all_cells', action="store_true",
-#                     help='run model on all cells', default=False)
-# parser.add_argument('--tissue_spec_cells', action="store_true",
-#                      help='run model on tissue specific cells', default=False)
 parser.add_argument('--clustered_mutations', action="store_true",
                     help='run model on hierarchically clustered mutations', default=False)
 parser.add_argument('--datasets', nargs="+", type=str,
@@ -44,14 +40,8 @@ parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
                     help='tss fragment filters to consider', default="")
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
 
-# parser.add_argument('--bioRxiv_method', action="store_true",
-#                     help='Use method from bioRxiv paper. Different from tissue_spec_cells by fact that here ' \
-#                          'dont a priori know which tissue to train on, so trains on all of them', default=False)
-
 config = parser.parse_args()
 cancer_types = config.cancer_types
-# run_all_cells = config.all_cells
-# run_tissue_spec_cells = config.tissue_spec_cells
 run_clustered_mutations = config.clustered_mutations
 datasets = sorted(config.datasets)
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
@@ -260,7 +250,7 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
         def check_tissue(tissue_cell_type):
             return(any(tissue in tissue_cell_type for tissue in tissues_to_consider))
 
-        idx = scATAC_df.columns.values.apply(check_tissue)
+        idx = scATAC_df.columns.apply(check_tissue)
         tissue_specific_cell_types = scATAC_df.columns.values[idx]
         per_tissue_df = scATAC_df.loc[:, tissue_specific_cell_types]
         train_val_test(per_tissue_df,
