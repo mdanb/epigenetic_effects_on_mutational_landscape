@@ -57,7 +57,7 @@ def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
 
     dir = dir + f"_annotation_{annotation}"
 
-    if (tissues_to_consider != "all"):
+    if (tissues_to_consider == "all"):
         return f"{dir}/backwards_elimination_results/"
     else:
         return f"{dir}/backwards_elimination_results_{tissues_to_consider}"
@@ -178,4 +178,5 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips=5):
 
 config = parser.parse_args()
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
+print(backwards_elim_dirs)
 prep_df_for_feat_importance_plots(backwards_elim_dirs)
