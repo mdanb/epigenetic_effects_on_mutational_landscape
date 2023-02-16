@@ -11,14 +11,15 @@ option_list <- list(
 args = parse_args(OptionParser(option_list=option_list))
 cores = args$cores
 marker_genes = unlist(strsplit(marker_genes, split=","))
+dataset = args$dataset
 
 addArchRThreads(threads = cores)
 addArchRGenome("hg19")
 
-arrow_files_path = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/arrow",
-                          dataset, sep="/")
+# arrow_files_path = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/arrow",
+#                           dataset, sep="/")
 
-arrow_files = list.files(arrow_files_path, full.names=T, pattern="arrow")
+# arrow_files = list.files(arrow_files_path, full.names=T, pattern="arrow")
 
 dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj"
 ArchR_proj <- loadArchRProject(dir)

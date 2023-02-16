@@ -237,7 +237,7 @@ if (dataset == "Bingren") {
                 "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt")
     }
     else {
-      if (annotation == "Greenleaf_lowest_level") {
+      if (annotation == "Greenleaf_brain_lowest_level") {
         metadata_greenleaf_brain =
           read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata.txt.gz",
                    sep="\t")

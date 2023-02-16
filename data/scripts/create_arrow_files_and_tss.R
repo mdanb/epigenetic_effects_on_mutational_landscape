@@ -28,7 +28,7 @@ create_arrow_files <- function(fragment_paths) {
                      addGeneScoreMat = T,
                      force = F,
 		                 cleanTmp = T,
-		                 QCDir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj")
+		                 QCDir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj/QC")
 				   
     #archp = ArchRProject(ArrowFiles = arrow_files, 
     #                     outputDirectory = output_dir,
