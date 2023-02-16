@@ -5,6 +5,7 @@ option_list <- list(
   make_option("--cores", type="integer"),
   make_option("--dataset", type="character"),
   make_option("--cluster", action="store_true"),
+  make_option("--cluster_res", type="integer"),
   make_option("--marker_genes", type="character", default=NULL)
 )
 
@@ -12,6 +13,7 @@ args = parse_args(OptionParser(option_list=option_list))
 cores = args$cores
 dataset = args$dataset
 cluster = args$cluster
+cluster_res = args$cluster_res
 
 addArchRThreads(threads = cores)
 addArchRGenome("hg19")
@@ -102,7 +104,7 @@ if (cluster) {
                                     reducedDims = "IterativeLSI",
                                     method = "Seurat",
                                     name = "Clusters",
-                                    resolution = 0.8,
+                                    resolution = cluster_res,
                                     force=T)
   p <- plotEmbedding(
     ArchRProj = ArchR_proj_subset, 
