@@ -10,7 +10,6 @@ option_list <- list(
 
 args = parse_args(OptionParser(option_list=option_list))
 cores = args$cores
-marker_genes = unlist(strsplit(marker_genes, split=","))
 dataset = args$dataset
 cluster = args$cluster
 
@@ -69,6 +68,7 @@ ArchR_proj_subset <- addImputeWeights(ArchR_proj_subset)
 
 #saveArchRProject(ArchRProj = ArchR_proj)
 if (!(is.null(marker_genes))) {
+  marker_genes = unlist(strsplit(marker_genes, split=","))
   p <- plotEmbedding(
     ArchRProj = ArchR_proj_subset, 
     colorBy = "GeneScoreMatrix", 
