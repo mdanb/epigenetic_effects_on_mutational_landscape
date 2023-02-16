@@ -27,6 +27,7 @@ parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
 # parser.add_argument('--combined_datasets', action="store_true",
 #                     help='obtain model which combined all scATACseq', default=False)
 parser.add_argument('--cell_number_filter', type=int)
+parser.add_argument('--num_iter_skips', type=int, default=5)
 parser.add_argument('--tss_fragment_filter', type=int, default=-1)
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--waddell_sarc_biph', action="store_true",
@@ -122,7 +123,7 @@ def get_relevant_backwards_elim_dirs(config):
         #             run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, cluster_method_dir,
         #                                    threshold_dir)
 
-def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips=5):
+def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips):
     for backwards_elim_dir in backwards_elim_dirs:
         df = pd.DataFrame(columns = ["features", "importance", "num_features", "score"])
 
@@ -178,5 +179,5 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips=5):
 
 config = parser.parse_args()
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
-print(backwards_elim_dirs)
-prep_df_for_feat_importance_plots(backwards_elim_dirs)
+num_iter_skips = config.num_iter_skips
+prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips)

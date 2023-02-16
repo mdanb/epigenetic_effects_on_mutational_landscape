@@ -22,6 +22,8 @@ parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
 # parser <- add_option(parser, c("--bar_plot_num_features"), type="integer")
 parser <- add_option(parser, c("--tss_fragment_filter"), 
                      type="integer", default=-1)
+parser <- add_option(parser, c("--num_iter_skips"), 
+                     type="integer", default=5)
 parser <- add_option(parser, c("--tissues_to_consider"), 
                      type="character", default="all")
 parser <- add_option(parser, c("--annotation"), 
@@ -236,6 +238,7 @@ cell_number_filter = args$cell_number_filter
 tss_fragment_filter = args$tss_fragment_filter
 waddell_sarc_biph = args$waddell_sarc_biph
 waddell_sarc = args$waddell_sarc
+num_iter_skips = args$num_iter_skips
 annotation = args$annotation
 waddell_sarc_tsankov_sarc = args$waddell_sarc_tsankov_sarc
 waddell_sarc_biph_tsankov_sarc_biph = args$waddell_sarc_biph_tsankov_sarc_biph
@@ -246,7 +249,8 @@ prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_import
                          paste(datasets, collapse=" "), 
                          "--annotation", annotation, "--tissues_to_consider",
                          paste(tissues_to_consider, collapse = " "), 
-                         "--cell_number_filter", cell_number_filter)
+                         "--cell_number_filter", cell_number_filter, 
+                         "--num_iter_skips", num_iter_skips)
 
 if (waddell_sarc_biph) {
   prep_dfs_command = paste(prep_dfs_command, "--waddell_sarc_biph")
