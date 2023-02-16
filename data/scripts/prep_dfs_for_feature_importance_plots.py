@@ -130,7 +130,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips=5):
         cancer_type = temp[-4]
         cancer_type_dir = temp[-3]
 
-        figure_path = os.path.join("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/figures/models",
+        figure_path = os.path.join("../../figures/models",
                                    cancer_type,
                                    cancer_type_dir,
                                    "backwards_elimination_results")
