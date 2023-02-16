@@ -38,6 +38,7 @@ parser <- add_option(parser, c("--waddell_sarc_tsankov_sarc"),
 parser <- add_option(parser, c("--waddell_sarc_biph_tsankov_sarc_biph"), 
                      action="store_true",
                      default=F)
+parser <- add_option(parser, c("--iters_dont_skip"), default="18")
 
 args = parse_args(parser)
 # args = parse_args(parser, args = c("--cancer_types=Biliary-AdenoCA",
@@ -233,6 +234,8 @@ construct_bar_plots <- function(args) {
 
 cancer_types = args$cancer_types
 cancer_types = unlist(strsplit(cancer_types, split = ","))
+iters_dont_skip = args$iters_dont_skip
+iters_dont_skip = as.integer(unlist(strsplit(iters_dont_skip, split = ",")))
 datasets = unlist(strsplit(args$datasets, split = ","))
 cell_number_filter = args$cell_number_filter
 tss_fragment_filter = args$tss_fragment_filter
@@ -250,7 +253,8 @@ prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_import
                          "--annotation", annotation, "--tissues_to_consider",
                          paste(tissues_to_consider, collapse = " "), 
                          "--cell_number_filter", cell_number_filter, 
-                         "--num_iter_skips", num_iter_skips)
+                         "--num_iter_skips", num_iter_skips, "--iters_dont_skip",
+                         iters_dont_skip)
 
 if (waddell_sarc_biph) {
   prep_dfs_command = paste(prep_dfs_command, "--waddell_sarc_biph")

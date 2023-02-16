@@ -17,6 +17,7 @@ parser.add_argument('--datasets', nargs="+", type=str,
                     help='which sc-ATACseq datasets to analyze', required=True)
 parser.add_argument('--annotation', type=str, default="default_annotation")
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
+parser.add_argument('--iters_dont_skip', nargs="+", type=int)
 
 # parser.add_argument('--bing_ren', action="store_true",
 #                     help='obtain model which used Bing Ren ATACseq', default=False)
@@ -123,7 +124,7 @@ def get_relevant_backwards_elim_dirs(config):
         #             run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, cluster_method_dir,
         #                                    threshold_dir)
 
-def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips):
+def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters_dont_skip):
     for backwards_elim_dir in backwards_elim_dirs:
         df = pd.DataFrame(columns = ["features", "importance", "num_features", "score"])
 
@@ -138,7 +139,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips):
         #os.makedirs(figure_path, exist_ok=True)
         files = natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))
         for idx, file in enumerate(files):
-            if (idx % num_iter_skips == 0 or idx == 18):
+            if (idx % num_iter_skips == 0 or idx in iters_dont_skip):
                 gs = pickle.load(open(file, "rb"))
                 model = gs.best_estimator_.get_params()['regressor__selected_model']
                 cv_score = gs.best_score_
@@ -180,4 +181,5 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips):
 config = parser.parse_args()
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
 num_iter_skips = config.num_iter_skips
-prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips)
+iters_dont_skip = config.iters_dont_skip
+prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters_dont_skip)
