@@ -12,6 +12,7 @@ args = parse_args(OptionParser(option_list=option_list))
 cores = args$cores
 marker_genes = unlist(strsplit(marker_genes, split=","))
 dataset = args$dataset
+cluster = args$cluster
 
 addArchRThreads(threads = cores)
 addArchRGenome("hg19")
@@ -20,7 +21,7 @@ addArchRGenome("hg19")
 #                           dataset, sep="/")
 
 # arrow_files = list.files(arrow_files_path, full.names=T, pattern="arrow")
-
+# markers = c('WT1','ITLN1','COL1A1','PECAM1','LYZ','CD3D','MSLN','KRT18','KRT5','VIM')
 dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj"
 ArchR_proj <- loadArchRProject(dir)
 
@@ -29,8 +30,18 @@ dataset_subsetted_idx = cell_col_data[["dataset_per_cell"]] == dataset
 ArchR_proj_subset = ArchR_proj[dataset_subsetted_idx]
 cell_col_data_subset = getCellColData(ArchR_proj_subset)
 
-ArchR_proj_subset <- addGeneScoreMatrix(ArchR_proj_subset)
-ArchR_proj_subset <- addTileMatrix(ArchR_proj_subset)
+# tryCatch({
+# getMatrixFromProject(ArchR_proj_subset, useMatrix = "GeneScoreMatrix")
+# }, error = function(err) {
+ArchR_proj_subset <- addGeneScoreMatrix(ArchR_proj_subset, force=T)
+# })
+
+# tryCatch({
+  # getMatrixFromProject(ArchR_proj_subset, useMatrix = "TileMatrix")
+# }, error = function(err) {
+ArchR_proj_subset <- addTileMatrix(ArchR_proj_subset, force=T)
+# })
+
 
 ArchR_proj_subset <- addIterativeLSI(
   ArchRProj = ArchR_proj_subset,
@@ -53,55 +64,60 @@ ArchR_proj_subset <- addUMAP(ArchRProj = ArchR_proj_subset,
                                metric = "cosine",
                                force=T)
 
-ArchR_proj_subset <- addImputeWeights(ArchR_proj_subset, force=T)
+ArchR_proj_subset <- addImputeWeights(ArchR_proj_subset)
 
 
 #saveArchRProject(ArchRProj = ArchR_proj)
+if (!(is.null(marker_genes))) {
+  p <- plotEmbedding(
+    ArchRProj = ArchR_proj_subset, 
+    colorBy = "GeneScoreMatrix", 
+    name = marker_genes, 
+    embedding = "UMAP",
+    quantCut = c(0.01, 0.95)
+  )
+  p2 <- lapply(p, function(x){
+    x + guides(color = FALSE, fill = FALSE) + 
+      theme_ArchR(baseSize = 6.5) +
+      theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
+      theme(
+        axis.text.x=element_blank(), 
+        axis.ticks.x=element_blank(), 
+        axis.text.y=element_blank(), 
+        axis.ticks.y=element_blank()
+      )
+  })
+  path = "../../figures"
+  fn = paste0("gene_marker_UMAPs_", dataset, ".pdf")
+  fp = paste(path, fn, sep="/")
+  pdf(fp)
+  do.call(cowplot::plot_grid, c(list(ncol = 3), p2))
+  dev.off()
+}
 
-p <- plotEmbedding(
-  ArchRProj = ArchR_proj, 
-  colorBy = "GeneScoreMatrix", 
-  name = marker_genes, 
-  embedding = "UMAP",
-  quantCut = c(0.01, 0.95)
-)
-
-if (!("Clusters" %in% colnames(cell_col_data))) {
-  ArchR_proj <- addClusters(
-                                    input = ArchR_proj,
+if (cluster) {
+# if (!("Clusters" %in% colnames(cell_col_data))) {
+  ArchR_proj_subset <- addClusters(
+                                    input = ArchR_proj_subset,
                                     reducedDims = "IterativeLSI",
                                     method = "Seurat",
                                     name = "Clusters",
-                                    resolution = 0.3
-                                  )
-  saveArchRProject(ArchRProj = ArchR_proj)
+                                    resolution = 0.8,
+                                    force=T)
+  p <- plotEmbedding(
+    ArchRProj = ArchR_proj_subset, 
+    colorBy = "cellColData", 
+    name = "Clusters", 
+    embedding = "UMAP",
+    quantCut = c(0.01, 0.95)
+  )
+  
+  fn = paste0("clusters_UMAPs_", dataset, ".pdf")
+  plotPDF(p, name=fn, ArchRProj = ArchR_proj_subset, addDOC = FALSE)
 }
 
-p2 <- lapply(p, function(x){
-  x + guides(color = FALSE, fill = FALSE) + 
-    theme_ArchR(baseSize = 6.5) +
-    theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
-    theme(
-      axis.text.x=element_blank(), 
-      axis.ticks.x=element_blank(), 
-      axis.text.y=element_blank(), 
-      axis.ticks.y=element_blank()
-    )
-})
-
-
-pdf("../../figures/gene_marker_UMAPs_Tsankov_lung.pdf")
-do.call(cowplot::plot_grid, c(list(ncol = 3), p2))
-dev.off()
-
-p <- plotEmbedding(
-  ArchRProj = ArchR_proj, 
-  colorBy = "cellColData", 
-  name = "Clusters", 
-  embedding = "UMAP",
-  quantCut = c(0.01, 0.95)
-)
-
-plotPDF(p, name="clusters_UMAPs_Tsankov_lung.pdf", 
-        ArchRProj = ArchR_proj, addDOC = FALSE)
+out = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis", 
+            "ArchR_per_dataset", dataset, sep="/")
+dir.create(out, recursive=T)
+saveArchRProject(ArchRProj = ArchR_proj_subset, outputDirectory=out)
 
