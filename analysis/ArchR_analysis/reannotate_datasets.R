@@ -14,6 +14,7 @@ cores = args$cores
 dataset = args$dataset
 cluster = args$cluster
 cluster_res = args$cluster_res
+marker_genes = args$marker_genes
 
 addArchRThreads(threads = cores)
 addArchRGenome("hg19")
@@ -60,10 +61,10 @@ ArchR_proj_subset <- addIterativeLSI(
 )
 
 ArchR_proj_subset <- addUMAP(ArchRProj = ArchR_proj_subset, 
-                               reducedDims = "IterativeLSI", 
-                               name = "UMAP", nNeighbors = 30, minDist = 0.5, 
-                               metric = "cosine",
-                               force=T)
+                             reducedDims = "IterativeLSI", 
+                             name = "UMAP", nNeighbors = 30, minDist = 0.5, 
+                             metric = "cosine",
+                             force=T)
 
 ArchR_proj_subset <- addImputeWeights(ArchR_proj_subset)
 
