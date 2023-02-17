@@ -157,21 +157,22 @@ dir.create("../processed_data/cell_counts_per_sample")
 ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/hg38ToHg19.over.chain")
 
 if (dataset == "Bingren") {
-  metadata_bingren = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE184462_metadata.tsv", 
-                        sep="\t",
-                        header=T)
-  colnames(metadata_bingren)[grepl("cell.type", colnames(metadata_bingren))] = "cell_type"
-  files_bingren = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/",
-                              pattern=".*fragments\\.bed\\.gz")
-  
-  mclapply(files_bingren, create_count_overlaps_files,
-           cell_number_filter=cell_number_filter,
-           metadata=metadata_bingren,
-           interval_ranges=interval.ranges,
-           chain=ch,
-           dataset=dataset,
-           mc.cores=cores)
-  
+  if (annotation = "default_annotation") {
+    metadata_bingren = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE184462_metadata.tsv", 
+                          sep="\t",
+                          header=T)
+    colnames(metadata_bingren)[grepl("cell.type", colnames(metadata_bingren))] = "cell_type"
+    files_bingren = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC",
+                                pattern=".*fragments\\.bed\\.gz")
+    
+    mclapply(files_bingren, create_count_overlaps_files,
+             cell_number_filter=cell_number_filter,
+             metadata=metadata_bingren,
+             interval_ranges=interval.ranges,
+             chain=ch,
+             dataset=dataset,
+             mc.cores=cores)
+  }
 } else if (dataset == "Shendure") {
   metadata_Shendure = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
                                   sep="\t",
