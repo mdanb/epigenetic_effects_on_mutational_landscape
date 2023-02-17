@@ -39,7 +39,7 @@ import_sample <- function(file, dataset) {
   if (dataset == "Bingren") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", 
-                          "data", "bed_files", file, sep="/"), 
+                          "data", "bed_files", "bingren_scATAC", file, sep="/"), 
                     format="bed")
   }
   else if (dataset == "Shendure") {
@@ -174,6 +174,12 @@ get_sample_name <- function(file, dataset) {
 }
 
 get_sample_name_bingren <- function(file) {
+  if ("UMB4540_snATAC_frontal_cortex_rep1" %in% file) {
+    return("Human_brain_1")
+  }
+  else if ("UMB4540_snATAC_frontal_cortex_rep2"  %in% file) {
+    return("Human_brain_2")
+  }
   sample_name = str_remove(file, "rep")
   sample_name = str_remove(sample_name, "_fragments.bed.gz")
   sample_name = unlist(strsplit(sample_name, split="_"))
