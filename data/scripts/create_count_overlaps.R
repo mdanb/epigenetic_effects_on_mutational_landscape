@@ -51,8 +51,9 @@ compute_count_overlaps <- function(sample, interval_ranges) {
 create_count_overlaps_files <- function(file, cell_number_filter, metadata,
                                   interval_ranges, chain, dataset, annotation) {
   filename = get_sample_filename(file, dataset)
-  filepath = paste("../processed_data/count_overlap_data", annotation, 
-                   filename, sep="/")
+  dirpath = paste("../processed_data/count_overlap_data", annotation, sep="/")
+  filepath = paste(dirpath, filename, sep="/")
+  dir.create(dirpath)
     if (!file.exists(filepath)) {
       print(paste("Processing", file, sep= " "))
       sample = import_sample(file, dataset)
