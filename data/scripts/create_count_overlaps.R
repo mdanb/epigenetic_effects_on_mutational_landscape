@@ -157,7 +157,7 @@ dir.create("../processed_data/cell_counts_per_sample")
 ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/hg38ToHg19.over.chain")
 
 if (dataset == "Bingren") {
-  if (annotation = "default_annotation") {
+  if (annotation == "default_annotation") {
     metadata_bingren = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE184462_metadata.tsv", 
                           sep="\t",
                           header=T)
@@ -192,6 +192,28 @@ if (dataset == "Bingren") {
     read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/tsankov_lung_proximal_barcode_annotation.csv")
   metadata_tsankov_distal = 
     read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/tsankov_lung_distal_barcode_annotation.csv")
+  
+  if (annotation == "Tsankov_separate_fibroblasts") {
+    if (!file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/Tsankov_fibro-fibro+C12+fibro+C14.csv")) {
+      refined_annotation = as_tibble(read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/metadata_Tsankov_refined_fibroblasts.csv"))
+      refined_annotation = refined_annotation %>% 
+                           filter(Clusters %in% c("C12", "C14"))
+      refined_annotation["Clusters"] = paste("Fibroblasts", 
+                                             refined_annotation[["Clusters"]],
+                                             sep="_")
+      idx = match(refined_annotation[["X"]], metadata_tsankov_distal[["X"]])
+      idx_idx = seq(1, length(idx))
+      idx_idx = idx_idx[!is.na(idx)]
+      idx = idx[!is.na(idx)]
+      metadata_tsankov_distal[idx, "celltypes"] = refined_annotation[idx_idx, 
+                                                                     "Clusters"]
+      write.csv(metadata_tsankov_distal, 
+                "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/Tsankov_fibro-fibro+C12+fibro+C14.csv")
+    } else {
+      metadata_tsankov_distal = 
+        read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/Tsankov_fibro-fibro+C12+fibro+C14.csv")
+    }
+  }
   colnames(metadata_tsankov_proximal)[grepl("celltypes",
                                             colnames(metadata_tsankov_proximal))] = "cell_type"
   colnames(metadata_tsankov_proximal)[grepl("Sample",
