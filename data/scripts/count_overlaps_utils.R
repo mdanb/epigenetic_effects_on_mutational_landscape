@@ -128,7 +128,7 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
   }
   else if (dataset == "Tsankov") {
     sample_barcodes_in_metadata = get_sample_barcodes_in_metadata_helper(filtered_metadata, 
-                                                                  "cell_barcode",
+                                                                  "X",
                                                                   "#")
     sample_barcodes_in_metadata = substr(sample_barcodes_in_metadata, 1, 16)
   }
@@ -174,10 +174,10 @@ get_sample_name <- function(file, dataset) {
 }
 
 get_sample_name_bingren <- function(file) {
-  if ("UMB4540_snATAC_frontal_cortex_rep1" %in% file) {
+  if (grepl("UMB4540_snATAC_frontal_cortex_rep1", file)) {
     return("Human_brain_1")
   }
-  else if ("UMB4540_snATAC_frontal_cortex_rep2"  %in% file) {
+  else if (grepl("UMB4540_snATAC_frontal_cortex_rep2", file)) {
     return("Human_brain_2")
   }
   sample_name = str_remove(file, "rep")
