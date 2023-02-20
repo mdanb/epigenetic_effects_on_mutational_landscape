@@ -171,6 +171,7 @@ if (dataset == "Bingren") {
              interval_ranges=interval.ranges,
              chain=ch,
              dataset=dataset,
+             annotation=annotation,
              mc.cores=cores)
   }
 } else if (dataset == "Shendure") {
@@ -186,6 +187,7 @@ if (dataset == "Bingren") {
          interval_ranges=interval.ranges,
          chain=ch,
          dataset=dataset,
+         annotation=annotation,
          mc.cores=cores)
 } else if (dataset == "Tsankov") {
   metadata_tsankov_proximal = 
@@ -235,6 +237,7 @@ if (dataset == "Bingren") {
            interval_ranges=interval.ranges,
            chain=ch,
            dataset=dataset,
+           annotation=annotation,
            mc.cores=cores)
   
   mclapply(files_Tsankov_distal,
@@ -244,6 +247,7 @@ if (dataset == "Bingren") {
             interval_ranges=interval.ranges,
             chain=ch,
             dataset=dataset,
+            annotation=annotation,
             mc.cores=cores)
 } else if (dataset == "Greenleaf_brain") {
     if (!(file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt"))) {
@@ -317,6 +321,7 @@ if (dataset == "Bingren") {
              interval_ranges=interval.ranges,
              chain=ch,
              dataset=dataset,
+             annotation=annotation,
              mc.cores=cores)
 } else if (dataset == "Yang_kidney") {
   metadata_Yang = read_excel("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/41467_2021_27660_MOESM4_ESM.xlsx", 
@@ -335,5 +340,6 @@ if (dataset == "Bingren") {
            interval_ranges=interval.ranges,
            chain=ch,
            dataset=dataset,
+           annotation=annotation,
            mc.cores=cores)
 }
