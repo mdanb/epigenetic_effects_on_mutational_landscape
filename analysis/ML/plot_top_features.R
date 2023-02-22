@@ -255,7 +255,7 @@ prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_import
                          "--cell_number_filter", cell_number_filter, 
                          "--num_iter_skips", num_iter_skips, "--iters_dont_skip",
                          iters_dont_skip, "--tss_fragment_filter", 
-                         tss_fragment_filter)
+                         paste(tss_fragment_filter, collapse = " "))
 
 if (waddell_sarc_biph) {
   prep_dfs_command = paste(prep_dfs_command, "--waddell_sarc_biph")
