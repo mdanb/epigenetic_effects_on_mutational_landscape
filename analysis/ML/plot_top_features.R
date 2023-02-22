@@ -140,7 +140,7 @@ get_relevant_backwards_elim_dirs <- function(args) {
                                     construct_backwards_elim_dir(cancer_type, 
                                                                  scATAC_sources,
                                                                  cell_number_filter,
-                                                                 tss_fragment_filter,
+                                                                 tss_filter,
                                                                  waddell_sarc_biph,
                                                                  waddell_sarc,
                                                                  waddell_sarc_tsankov_sarc,
