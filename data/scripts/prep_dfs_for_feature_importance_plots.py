@@ -29,7 +29,7 @@ parser.add_argument('--iters_dont_skip', nargs="+", type=int)
 #                     help='obtain model which combined all scATACseq', default=False)
 parser.add_argument('--cell_number_filter', type=int)
 parser.add_argument('--num_iter_skips', type=int, default=5)
-parser.add_argument('--tss_fragment_filter', type=int, default=-1)
+parser.add_argument('--tss_fragment_filter', nargs="+", type=int, default=[-1])
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--waddell_sarc_biph', action="store_true",
                     default=False)
@@ -102,13 +102,14 @@ def get_relevant_backwards_elim_dirs(config):
     #     scATAC_sources = "combined_datasets"
 
     for cancer_type in cancer_types:
-        backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, scATAC_sources, cell_number_filter,
-                                                               tss_fragment_filter, waddell_sarc_biph,
-                                                               waddell_sarc,
-                                                               waddell_sarc_tsankov_sarc,
-                                                               waddell_sarc_biph_tsankov_sarc_biph,
-                                                               annotation,
-                                                               tissues_to_consider))
+        for tss_filter in tss_fragment_filter:
+            backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, scATAC_sources, cell_number_filter,
+                                                                   tss_filter, waddell_sarc_biph,
+                                                                   waddell_sarc,
+                                                                   waddell_sarc_tsankov_sarc,
+                                                                   waddell_sarc_biph_tsankov_sarc_biph,
+                                                                   annotation,
+                                                                   tissues_to_consider))
     return backward_elim_dirs
         # if (run_tissue_spec):
         #     backwards_elim_dir=f"models/{cancer_type}/scATAC_source_{scATAC_source}/" \
