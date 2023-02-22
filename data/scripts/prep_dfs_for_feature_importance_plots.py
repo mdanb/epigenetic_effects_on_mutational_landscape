@@ -182,4 +182,5 @@ config = parser.parse_args()
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
 num_iter_skips = config.num_iter_skips
 iters_dont_skip = config.iters_dont_skip
+print(backwards_elim_dirs)
 prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters_dont_skip)
