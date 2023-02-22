@@ -100,7 +100,7 @@ get_relevant_backwards_elim_dirs <- function(args) {
     # tsankov = args$tsankov
     datasets = unlist(strsplit(args$datasets, split = ","))
     cell_number_filter = args$cell_number_filter
-    tss_fragment_filter = args$tss_fragment_filter
+    tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
     waddell_sarc_biph = args$waddell_sarc_biph
     waddell_sarc = args$waddell_sarc
     annotation = args$annotation
