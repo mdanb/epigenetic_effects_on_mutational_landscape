@@ -15,7 +15,7 @@ import argparse
 import glob
 from ML_utils import load_scATAC, load_agg_mutations, filter_agg_data, \
                      filter_mutations_by_cancer, load_meso_mutations, load_sclc_mutations
-
+from xgboost import XGBRegressor
 from itertools import chain
 
 parser = argparse.ArgumentParser()
@@ -40,6 +40,7 @@ group.add_argument("--SCLC", action="store_true", default=False)
 parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
                     help='tss fragment filters to consider', default="")
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
+parser.add_argument("--ML_model", type=str, default="RF")
 
 config = parser.parse_args()
 cancer_types = config.cancer_types
@@ -55,6 +56,7 @@ SCLC = config.SCLC
 tissues_to_consider = config.tissues_to_consider
 # tss_filtered = config.tss_filtered
 tss_fragment_filter = config.tss_fragment_filter
+ML_model = config.ML_model
 # bioRxiv_method = config.bioRxiv_method
 
 #### Helpers ####
@@ -141,7 +143,7 @@ def print_and_save_top_features(top_features, filepath):
         f.write(f"{idx+1}. {feature}\n")
 
 def backward_eliminate_features(X_train, y_train, starting_clf, starting_n,
-                                params, num_k_folds, backwards_elim_dir):
+                                params, num_k_folds, backwards_elim_dir, ML_model):
     os.makedirs(backwards_elim_dir, exist_ok=True)
     top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values)
     all_feature_rankings = get_top_n_features(starting_clf, len(X_train.columns.values), X_train.columns.values)
@@ -152,11 +154,18 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n,
     for idx in range(1, len(top_n_feats)):
         filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}.txt"
         if (not os.path.exists(filepath)):
-            pipe = Pipeline([
-                ('regressor', PipelineHelper([
-                    ('rf', RandomForestRegressor(random_state=idx)),
-                ])),
-            ])
+            if (ML_model == "RF"):
+                pipe = Pipeline([
+                    ('regressor', PipelineHelper([
+                        ('rf', RandomForestRegressor(random_state=idx)),
+                    ])),
+                ])
+            elif (ML_model == "XGB"):
+                pipe = Pipeline([
+                    ('regressor', PipelineHelper([
+                        ('xgb', XGBRegressor(random_state=idx)),
+                    ])),
+                ])
             grid_search_results = grid_search(X_train, y_train, pipe, params, num_k_folds)
             pickle.dump(grid_search_results, open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'wb'))
         grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
@@ -175,21 +184,31 @@ def print_and_save_test_set_perf(X_test, y_test, model, filename):
         f.write(str(test_set_performance))
     print(f"Test set performance: {test_set_performance}")
 
-def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
-                   test_set_perf_filename):
-    X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations,
-                                                            0.10)
-    pipe = Pipeline([
-        ('regressor', PipelineHelper([
-            ('rf', RandomForestRegressor(random_state=0)),
-        ])),
-    ])
+def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_set_perf_filename, ML_model):
+    X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10)
 
-    params = {
-        'regressor__selected_model': pipe.named_steps['regressor'].generate({
-            'rf__n_estimators':[10, 100, 1000],
-        })
-    }
+    if (ML_model == "RF"):
+        pipe = Pipeline([
+            ('regressor', PipelineHelper([
+                ('rf', RandomForestRegressor(random_state=0)),
+            ])),
+        ])
+
+        params_dict = {'rf__n_estimators':[10, 100, 1000]}
+        params = {
+            'regressor__selected_model': pipe.named_steps['regressor'].generate(params_dict)
+        }
+    elif (ML_model == "XGB"):
+        pipe = Pipeline([
+            ('regressor', PipelineHelper([
+                ('xgb', XGBRegressor(random_state=0)),
+            ])),
+        ])
+
+        params_dict = {'xgb__max_depth':[3, 6, 9]}
+        params = {
+            'regressor__selected_model': pipe.named_steps['regressor'].generate(params_dict)
+        }
 
     if (not os.path.exists(cv_filename)):
         grid_search_results = grid_search(X_train, y_train, pipe, params, 10)
@@ -203,7 +222,7 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
     # top_n_feats_tissue_spec = get_top_n_features(best_model_tissue_spec, n, X_train_tissue_spec.columns.values)
     #print_top_features(top_n_feats)
 
-    backward_eliminate_features(X_train, y_train, best_model, n, params, 10, backwards_elim_dir)
+    backward_eliminate_features(X_train, y_train, best_model, n, params, 10, backwards_elim_dir, ML_model)
 
     #### Test Set Performance ####
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filename)
@@ -216,8 +235,7 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir,
 def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
                                          waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                          waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
-                                         tissues_to_consider, tss_filter=None):
-
+                                         tissues_to_consider, ML_model, tss_filter=None):
     #### Filter data ####
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
@@ -227,26 +245,33 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
                                                      waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir)
     scATAC_dir = scATAC_dir + f"_annotation_{annotation_dir}"
 
-    os.makedirs(f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}",
+    os.makedirs(f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/{cancer_type}/{scATAC_dir}",
                 exist_ok=True)
 
     if (tissues_to_consider == "all"):
-        backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/backwards_elimination_results"
-        grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/grid_search_results.pkl"
-        test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/test_set_performance.txt"
+        backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+                           f"{cancer_type}/{scATAC_dir}/backwards_elimination_results"
+        grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+                               f"{cancer_type}/{scATAC_dir}/grid_search_results.pkl"
+        test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+                                 f"{cancer_type}/{scATAC_dir}/test_set_performance.txt"
 
         # All Cells
         train_val_test(scATAC_df, cancer_specific_mutations,
                        grid_search_filename,
                        backwards_elim_dir,
-                       test_set_perf_filename)
+                       test_set_perf_filename,
+                       ML_model)
 
     # Tissue Specific
     else:
         tissues_string = "_".join(tissues_to_consider)
-        backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/backwards_elimination_results_{tissues_string}"
-        grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/grid_search_results_{tissues_string}.pkl"
-        test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{scATAC_dir}/test_set_performance_{tissues_string}.txt"
+        backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+                           f"{cancer_type}/{scATAC_dir}/backwards_elimination_results_{tissues_string}"
+        grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+                               f"{cancer_type}/{scATAC_dir}/grid_search_results_{tissues_string}.pkl"
+        test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+                                 f"{cancer_type}/{scATAC_dir}/test_set_performance_{tissues_string}.txt"
 
         # tissue = cancer_type.split("-")[0]
         def check_tissue(tissue_cell_type):
@@ -263,7 +288,7 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
 
 def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                   waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
-                                  tissues_to_consider, tss_fragment_filter, SCLC):
+                                  tissues_to_consider, tss_fragment_filter, SCLC, ML_model):
     # waddell_sarc_biph_waddell_epith = config.waddell_sarc_biph_waddell_epith
     # waddell_sarc_waddell_epith = config.waddell_sarc_waddell_epith
     # waddell_sarc_tsankov_sarc_waddell_epith = config.waddell_sarc_tsankov_sarc_waddell_epith
@@ -295,13 +320,13 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
                 run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir, waddell_sarc_biph,
                                                      waddell_sarc, waddell_sarc_tsankov_sarc,
                                                      waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
-                                                     annotation_dir, tissues_to_consider, tss_filter=tss_filter)
+                                                     annotation_dir, tissues_to_consider, ML_model, tss_filter=tss_filter)
 
         else:
             run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir_orig, waddell_sarc_biph,
                                                  waddell_sarc, waddell_sarc_tsankov_sarc,
                                                  waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
-                                                 annotation_dir, tissues_to_consider)
+                                                 annotation_dir, tissues_to_consider, ML_model)
         # if (bioRxiv_method):
         #     tissues = set(scATAC_df.columns.str.split().to_series().apply(lambda x: x[0]))
         #     for tissue in tissues:
@@ -314,32 +339,32 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
         #                        test_set_perf_filename)
 
 
-def run_clustered_data_analysis(scATAC_df, cancer_types):
-    for cancer_type in cancer_types:
-        os.makedirs(f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}", exist_ok=True)
-        cancer_hierarchical_dir = f"../../data/processed_data/hierarchically_clustered_mutations/{cancer_type}"
-        for cluster_method_dir in os.listdir(cancer_hierarchical_dir):
-            for threshold_dir in os.listdir(f"{cancer_hierarchical_dir}/{cluster_method_dir}"):
-                run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, cluster_method_dir,
-                                       threshold_dir)
-
-def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, cluster_method_dir,
-                           threshold_dir):
-    for cluster_file in glob.glob(f"{cancer_hierarchical_dir}/{cluster_method_dir}/{threshold_dir}/aggregated*"):
-        mutations_df = pd.read_csv(cluster_file, index_col=0)
-        cluster_dir = cluster_file.split("/")[-1].split(".")[0]
-        cluster_dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{cluster_method_dir}/{threshold_dir}/{cluster_dir}/"
-        os.makedirs(cluster_dir, exist_ok=True)
-        backwards_elim_dir=f"{cluster_dir}/backwards_elimination_results"
-        grid_search_filename = f"{cluster_dir}/grid_search_results.pkl"
-        test_set_perf_filename = f"{cluster_dir}/test_set_performance.txt"
-
-        scATAC_df = filter_clustered_data(scATAC_df, mutations_df)
-        mutations = mutations_df.values.reshape(-1)
-        train_val_test(scATAC_df, mutations,
-                       grid_search_filename,
-                       backwards_elim_dir,
-                       test_set_perf_filename)
+# def run_clustered_data_analysis(scATAC_df, cancer_types):
+#     for cancer_type in cancer_types:
+#         os.makedirs(f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}", exist_ok=True)
+#         cancer_hierarchical_dir = f"../../data/processed_data/hierarchically_clustered_mutations/{cancer_type}"
+#         for cluster_method_dir in os.listdir(cancer_hierarchical_dir):
+#             for threshold_dir in os.listdir(f"{cancer_hierarchical_dir}/{cluster_method_dir}"):
+#                 run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, cluster_method_dir,
+#                                        threshold_dir)
+#
+# def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, cluster_method_dir,
+#                            threshold_dir):
+#     for cluster_file in glob.glob(f"{cancer_hierarchical_dir}/{cluster_method_dir}/{threshold_dir}/aggregated*"):
+#         mutations_df = pd.read_csv(cluster_file, index_col=0)
+#         cluster_dir = cluster_file.split("/")[-1].split(".")[0]
+#         cluster_dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{cluster_method_dir}/{threshold_dir}/{cluster_dir}/"
+#         os.makedirs(cluster_dir, exist_ok=True)
+#         backwards_elim_dir=f"{cluster_dir}/backwards_elimination_results"
+#         grid_search_filename = f"{cluster_dir}/grid_search_results.pkl"
+#         test_set_perf_filename = f"{cluster_dir}/test_set_performance.txt"
+#
+#         scATAC_df = filter_clustered_data(scATAC_df, mutations_df)
+#         mutations = mutations_df.values.reshape(-1)
+#         train_val_test(scATAC_df, mutations,
+#                        grid_search_filename,
+#                        backwards_elim_dir,
+#                        test_set_perf_filename)
 
 
 # scATAC_df = pd.concat((scATAC_df, scATAC_df_bingren), axis=1)
@@ -356,7 +381,7 @@ def run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, clus
 
 run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                               waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
-                              tissues_to_consider, tss_fragment_filter, SCLC)
+                              tissues_to_consider, tss_fragment_filter, SCLC, ML_model)
 
 
     # run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells,
