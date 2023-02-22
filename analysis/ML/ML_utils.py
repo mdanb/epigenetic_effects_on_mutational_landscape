@@ -36,6 +36,9 @@ def load_meso_mutations(waddell_sarc_biph,
          return pd.read_csv("../../data/processed_data/mesothelioma_epithelioid_sarcomatoid_biphasic_WGS_Waddell_786_846.csv",
                            index_col=0)
 
+def load_sclc_mutations():
+    return pd.read_csv("../../data/processed_data/sclc_count_overlaps.csv",
+                       index_col=0)
 
 # Filter Data Helpers
 def filter_agg_data(scATAC_df, mutations_df):
