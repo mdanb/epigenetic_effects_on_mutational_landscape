@@ -135,6 +135,7 @@ get_relevant_backwards_elim_dirs <- function(args) {
     
     backward_elim_dirs = list()
     for (cancer_type in cancer_types) {
+      for (tss_filter in tss_fragment_filter) {
         backward_elim_dirs = append(backward_elim_dirs,
                                     construct_backwards_elim_dir(cancer_type, 
                                                                  scATAC_sources,
@@ -146,6 +147,7 @@ get_relevant_backwards_elim_dirs <- function(args) {
                                                                  waddell_sarc_biph_tsankov_sarc_biph,
                                                                  annotation,
                                                                  tissues_to_consider))
+      }
     }
     return(unlist(backward_elim_dirs))
 }
