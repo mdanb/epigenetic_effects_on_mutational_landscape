@@ -205,7 +205,8 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_s
             ])),
         ])
 
-        params_dict = {'xgb__max_depth':[3, 6, 9]}
+        params_dict = {'xgb__max_depth':[3, 6, 9],
+                       'xgb__eta':[0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]}
         params = {
             'regressor__selected_model': pipe.named_steps['regressor'].generate(params_dict)
         }
