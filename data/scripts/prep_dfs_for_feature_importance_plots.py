@@ -137,8 +137,8 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
         cancer_type_dir = temp[-3]
 
         figure_path = os.path.join("../../figures/models",
-                                   cancer_type,
                                    ML_model,
+                                   cancer_type,
                                    cancer_type_dir,
                                    "backwards_elimination_results")
         #os.makedirs(figure_path, exist_ok=True)
