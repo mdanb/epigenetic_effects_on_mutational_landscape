@@ -12,7 +12,8 @@ option_list <- list(
   make_option("--dataset", type="character"),
   make_option("--top_tsse_fragment_count_range", type="character"),
   make_option("--files_pattern", type="character"),
-  make_option("--cores", type="integer")
+  make_option("--cores", type="integer"),
+  make_option("--annotation", type="integer")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -102,6 +103,7 @@ dataset = args$dataset
 cell_types = unlist(strsplit(args$cell_types, split = ";"))
 files_pattern = args$files_pattern
 cores = args$cores
+annotation = args$annotation
 
 get_fragments_from_top_cells <- function(i, 
                                          count_filtered_metadata_with_fragment_counts_per_cell_type, 
@@ -413,9 +415,13 @@ if (dataset == "Bingren") {
 } else if (dataset == "Tsankov") {
   metadata_tsankov_proximal = 
     read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/tsankov_lung_proximal_barcode_annotation.csv")
-  metadata_tsankov_distal = 
-    read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/tsankov_lung_distal_barcode_annotation.csv")
-  
+  if (annotation == "Tsankov_separate_fibroblasts") {
+    metadata_tsankov_distal = 
+      read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/Tsankov_fibro-fibro+C12+fibro+C14.csv")
+  } else {
+    metadata_tsankov_distal = 
+      read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/tsankov_lung_distal_barcode_annotation.csv")
+  }
   colnames(metadata_tsankov_proximal)[1] = "cell_barcode"
   colnames(metadata_tsankov_proximal)[2] = "sample"
   colnames(metadata_tsankov_proximal)[grep("TSSEnrichment", 

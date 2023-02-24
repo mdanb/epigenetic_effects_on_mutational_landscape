@@ -107,6 +107,10 @@ if (cluster) {
                                     name = "Clusters",
                                     resolution = cluster_res,
                                     force=T)
+  cell_col_data = getCellColData(ArchR_proj_subset)
+  write.csv(cell_col_data["Clusters"], 
+  "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/metadata_Tsankov_refined_fibroblasts.csv")
+            
   p <- plotEmbedding(
     ArchRProj = ArchR_proj_subset, 
     colorBy = "cellColData", 

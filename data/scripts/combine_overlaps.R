@@ -4,7 +4,7 @@ source("count_overlaps_utils.R")
 
 load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 
-option_list <- list( 
+option_list <- list(
   make_option("--datasets", type = "character"),
   make_option("--cell_number_filter", type="integer"),
   make_option("--annotation", type="character")
@@ -122,6 +122,10 @@ save_combined_overlaps <- function(filepaths,
     #   unsquashed_count_overlaps = rbind(unsquashed_count_overlaps, 
     #                                     count_overlaps)
     # }
+  }
+  if (annotation == "Tsankov_separate_fibroblasts") {
+    combined_count_overlaps = combined_count_overlaps[!(rownames(combined_count_overlaps) == 
+                                                        "distal lung Fibroblasts"), ]
   }
   saveRDS(combined_count_overlaps, combined_filepath)
   temp = unlist(strsplit(combined_filepath, "/"))[6]
