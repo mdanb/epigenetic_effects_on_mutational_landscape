@@ -232,7 +232,7 @@ construct_bar_plots <- function(args) {
            scale_fill_manual(values=colors) +
            # ggtitle(paste0(unlist(strsplit(dir, split ="/"))[3], " (R^2=",
            #               as.character(round(unique(df$score*100), 1)), ")")) +
-           ggtitle(unlist(strsplit(dir, split ="/"))[10]) +
+           ggtitle(unlist(strsplit(dir, split ="/"))[11]) +
            theme(plot.title = element_text(hjust = 0.5))
     ggsave(paste(dir, "bar_plot.png", sep="/"), width = 20, height = 15, plot)
   }
