@@ -18,6 +18,7 @@ parser.add_argument('--datasets', nargs="+", type=str,
 parser.add_argument('--annotation', type=str, default="default_annotation")
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
 parser.add_argument('--iters_dont_skip', nargs="+", type=int)
+parser.add_argument('--ML_model', type=str)
 
 # parser.add_argument('--bing_ren', action="store_true",
 #                     help='obtain model which used Bing Ren ATACseq', default=False)
@@ -42,8 +43,8 @@ def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
                                  tss_fragment_filter, waddell_sarc_biph,
                                  waddell_sarc, waddell_sarc_tsankov_sarc,
                                  waddell_sarc_biph_tsankov_sarc_biph,
-                                 annotation, tissues_to_consider):
-    dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/scATAC_source_" \
+                                 annotation, tissues_to_consider, ML_model):
+    dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/{cancer_type}/scATAC_source_" \
           f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
     if (tss_fragment_filter != -1):
         dir = dir + f"_tss_fragment_filter_{tss_fragment_filter}"
@@ -81,6 +82,7 @@ def get_relevant_backwards_elim_dirs(config):
     tss_fragment_filter = config.tss_fragment_filter
     tissues_to_consider = "_".join(config.tissues_to_consider)
     annotation = config.annotation
+    ML_model = config.ML_model
     backward_elim_dirs = []
 
     scATAC_sources = ""
@@ -109,7 +111,8 @@ def get_relevant_backwards_elim_dirs(config):
                                                                    waddell_sarc_tsankov_sarc,
                                                                    waddell_sarc_biph_tsankov_sarc_biph,
                                                                    annotation,
-                                                                   tissues_to_consider))
+                                                                   tissues_to_consider,
+                                                                   ML_model))
     return backward_elim_dirs
         # if (run_tissue_spec):
         #     backwards_elim_dir=f"models/{cancer_type}/scATAC_source_{scATAC_source}/" \

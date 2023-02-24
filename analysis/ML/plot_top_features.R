@@ -22,6 +22,7 @@ parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
 # parser <- add_option(parser, c("--bar_plot_num_features"), type="integer")
 parser <- add_option(parser, c("--tss_fragment_filter"), 
                      type="character", default="-1")
+parser <- add_option(parser, c("--ML_model"), type="character")
 parser <- add_option(parser, c("--num_iter_skips"), 
                      type="integer", default=5)
 parser <- add_option(parser, c("--tissues_to_consider"), 
@@ -53,7 +54,8 @@ construct_backwards_elim_dir <- function(cancer_type, scATAC_source,
                                          waddell_sarc_tsankov_sarc,
                                          waddell_sarc_biph_tsankov_sarc_biph,
                                          annotation,
-                                         tissues_to_consider) {
+                                         tissues_to_consider, 
+                                         ML_model) {
   scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
                         cell_number_filter, sep="_")
   
@@ -79,7 +81,7 @@ construct_backwards_elim_dir <- function(cancer_type, scATAC_source,
                         sep="_")
   
   dir = paste("/ahg", "regevdata", "projects", "ICA_Lung", "Mohamad", "cell_of_origin",
-              "figures", "models", cancer_type, scATAC_source,
+              "figures", "models", cancer_type, ML_model, scATAC_source,
               "backwards_elimination_results", sep="/")
   if (tissues_to_consider != "all") {
     dir = paste(dir, tissues_to_consider, sep="_")
@@ -106,7 +108,7 @@ get_relevant_backwards_elim_dirs <- function(args) {
     annotation = args$annotation
     waddell_sarc_tsankov_sarc = args$waddell_sarc_tsankov_sarc
     waddell_sarc_biph_tsankov_sarc_biph = args$waddell_sarc_biph_tsankov_sarc_biph
-    
+    ML_model = args$ML_model
     # if (bing_ren) {
     #   scATAC_sources = paste(scATAC_sources, "bing_ren", sep="_")
     # }
@@ -146,7 +148,8 @@ get_relevant_backwards_elim_dirs <- function(args) {
                                                                  waddell_sarc_tsankov_sarc,
                                                                  waddell_sarc_biph_tsankov_sarc_biph,
                                                                  annotation,
-                                                                 tissues_to_consider))
+                                                                 tissues_to_consider,
+                                                                 ML_model))
       }
     }
     return(unlist(backward_elim_dirs))
@@ -248,6 +251,7 @@ annotation = args$annotation
 waddell_sarc_tsankov_sarc = args$waddell_sarc_tsankov_sarc
 waddell_sarc_biph_tsankov_sarc_biph = args$waddell_sarc_biph_tsankov_sarc_biph
 tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
+ML_model = args$ML_model
 
 prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_importance_plots.py", 
                          "--cancer_types", paste(cancer_types, collapse=" "), "--datasets", 
@@ -257,7 +261,8 @@ prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_import
                          "--cell_number_filter", cell_number_filter, 
                          "--num_iter_skips", num_iter_skips, "--iters_dont_skip",
                          iters_dont_skip, "--tss_fragment_filter", 
-                         paste(tss_fragment_filter, collapse = " "))
+                         paste(tss_fragment_filter, collapse = " "),
+                         "--ML_model", ML_model)
 
 if (waddell_sarc_biph) {
   prep_dfs_command = paste(prep_dfs_command, "--waddell_sarc_biph")
