@@ -128,7 +128,7 @@ def get_relevant_backwards_elim_dirs(config):
         #             run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, cluster_method_dir,
         #                                    threshold_dir)
 
-def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters_dont_skip):
+def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters_dont_skip, ML_model):
     for backwards_elim_dir in backwards_elim_dirs:
         df = pd.DataFrame(columns = ["features", "importance", "num_features", "score"])
 
@@ -138,6 +138,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
 
         figure_path = os.path.join("../../figures/models",
                                    cancer_type,
+                                   ML_model,
                                    cancer_type_dir,
                                    "backwards_elimination_results")
         #os.makedirs(figure_path, exist_ok=True)
