@@ -6,8 +6,17 @@ option_list <- list(
   make_option("--dataset", type="character"),
   make_option("--cluster", action="store_true"),
   make_option("--cluster_res", type="integer"),
+  make_option("--tissue", type="integer"),
   make_option("--marker_genes", type="character", default=NULL)
 )
+
+subset_project_by_tissue <- function(proj, tissue, cell_col_data) {
+  sample_names = unlist(lapply(strsplit(rownames(cell_col_data), split="#"), 
+                               "[", 1))
+  idx = grep(tissue, sample_names)
+  proj = proj[idx]
+  return(proj)
+}
 
 args = parse_args(OptionParser(option_list=option_list))
 cores = args$cores
@@ -15,7 +24,7 @@ dataset = args$dataset
 cluster = args$cluster
 cluster_res = args$cluster_res
 marker_genes = args$marker_genes
-
+tissue = args$tissue
 addArchRThreads(threads = cores)
 addArchRGenome("hg19")
 
@@ -32,21 +41,24 @@ dataset_subsetted_idx = cell_col_data[["dataset_per_cell"]] == dataset
 ArchR_proj_subset = ArchR_proj[dataset_subsetted_idx]
 cell_col_data_subset = getCellColData(ArchR_proj_subset)
 
+tissue_specific_proj = subset_project_by_tissue(ArchR_proj_subset, tissue, 
+                                                cell_col_data_subset)
+
 # tryCatch({
 # getMatrixFromProject(ArchR_proj_subset, useMatrix = "GeneScoreMatrix")
 # }, error = function(err) {
-ArchR_proj_subset <- addGeneScoreMatrix(ArchR_proj_subset, force=T)
+# proj <- addGeneScoreMatrix(ArchR_proj_subset, force=T)
 # })
 
 # tryCatch({
   # getMatrixFromProject(ArchR_proj_subset, useMatrix = "TileMatrix")
 # }, error = function(err) {
-ArchR_proj_subset <- addTileMatrix(ArchR_proj_subset, force=T)
+# ArchR_proj_subset <- addTileMatrix(ArchR_proj_subset, force=T)
 # })
 
 
-ArchR_proj_subset <- addIterativeLSI(
-  ArchRProj = ArchR_proj_subset,
+tissue_specific_proj <- addIterativeLSI(
+  ArchRProj = tissue_specific_proj,
   useMatrix = "TileMatrix", 
   name = "IterativeLSI", 
   iterations = 2, 
@@ -60,20 +72,20 @@ ArchR_proj_subset <- addIterativeLSI(
   force=T
 )
 
-ArchR_proj_subset <- addUMAP(ArchRProj = ArchR_proj_subset, 
+tissue_specific_proj <- addUMAP(ArchRProj = tissue_specific_proj, 
                              reducedDims = "IterativeLSI", 
                              name = "UMAP", nNeighbors = 30, minDist = 0.5, 
                              metric = "cosine",
                              force=T)
 
-ArchR_proj_subset <- addImputeWeights(ArchR_proj_subset)
+# ArchR_proj_subset <- addImputeWeights(ArchR_proj_subset)
 
 
 #saveArchRProject(ArchRProj = ArchR_proj)
 if (!(is.null(marker_genes))) {
   marker_genes = unlist(strsplit(marker_genes, split=","))
   p <- plotEmbedding(
-    ArchRProj = ArchR_proj_subset, 
+    ArchRProj = tissue_specific_proj, 
     colorBy = "GeneScoreMatrix", 
     name = marker_genes, 
     embedding = "UMAP",
@@ -100,31 +112,32 @@ if (!(is.null(marker_genes))) {
 
 if (cluster) {
 # if (!("Clusters" %in% colnames(cell_col_data))) {
-  ArchR_proj_subset <- addClusters(
-                                    input = ArchR_proj_subset,
-                                    reducedDims = "IterativeLSI",
-                                    method = "Seurat",
-                                    name = "Clusters",
-                                    resolution = cluster_res,
-                                    force=T)
-  cell_col_data = getCellColData(ArchR_proj_subset)
-  write.csv(cell_col_data["Clusters"], 
-  "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/metadata_Tsankov_refined_fibroblasts.csv")
-            
+  tissue_specific_proj <- addClusters(input = tissue_specific_proj,
+                      reducedDims = "IterativeLSI",
+                      method = "Seurat",
+                      name = "Clusters",
+                      resolution = cluster_res,
+                      force=T)
+  cell_col_data = getCellColData(tissue_specific_proj)
+
+  if (dataset == "Tsankov") {
+    write.csv(cell_col_data["Clusters"], 
+    "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/metadata_Tsankov_refined_fibroblasts.csv")
+  }
   p <- plotEmbedding(
-    ArchRProj = ArchR_proj_subset, 
+    ArchRProj = tissue_specific_proj, 
     colorBy = "cellColData", 
     name = "Clusters", 
     embedding = "UMAP",
     quantCut = c(0.01, 0.95)
   )
   
-  fn = paste0("clusters_UMAPs_", dataset, ".pdf")
-  plotPDF(p, name=fn, ArchRProj = ArchR_proj_subset, addDOC = FALSE)
+  fn = paste0("clusters_UMAPs_", dataset, "_", tissue, ".pdf")
+  plotPDF(p, name=fn, ArchRProj = tissue_specific_proj, addDOC = FALSE)
 }
 
 out = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis", 
-            "ArchR_per_dataset", dataset, sep="/")
+            "ArchR_per_dataset", dataset, tissue, sep="/")
 dir.create(out, recursive=T)
-saveArchRProject(ArchRProj = ArchR_proj_subset, outputDirectory=out)
+saveArchRProject(ArchRProj = tissue_specific_proj, outputDirectory=out)
 
