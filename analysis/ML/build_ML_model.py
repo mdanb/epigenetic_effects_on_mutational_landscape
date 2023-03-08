@@ -14,7 +14,8 @@ from sklearn.metrics import r2_score
 import argparse
 import glob
 from ML_utils import load_scATAC, load_agg_mutations, filter_agg_data, \
-                     filter_mutations_by_cancer, load_meso_mutations, load_sclc_mutations
+                     filter_mutations_by_cancer, load_meso_mutations, load_sclc_mutations, \
+                     load_subtyped_lung_mutations
 from xgboost import XGBRegressor
 from itertools import chain
 
@@ -37,6 +38,7 @@ group.add_argument('--waddell_sarc', action="store_true", default=False)
 group.add_argument('--waddell_sarc_tsankov_sarc', action="store_true", default=False)
 group.add_argument('--waddell_sarc_biph_tsankov_sarc_biph', action="store_true", default=False)
 group.add_argument("--SCLC", action="store_true", default=False)
+group.add_argument("--lung_subtyped", action="store_true", default=False)
 parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
                     help='tss fragment filters to consider', default="")
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
@@ -57,6 +59,7 @@ tissues_to_consider = config.tissues_to_consider
 # tss_filtered = config.tss_filtered
 tss_fragment_filter = config.tss_fragment_filter
 ML_model = config.ML_model
+lung_subtyped = config.lung_subtyped
 # bioRxiv_method = config.bioRxiv_method
 
 #### Helpers ####
@@ -289,7 +292,7 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
 
 def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                   waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
-                                  tissues_to_consider, tss_fragment_filter, SCLC, ML_model):
+                                  tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, ML_model):
     # waddell_sarc_biph_waddell_epith = config.waddell_sarc_biph_waddell_epith
     # waddell_sarc_waddell_epith = config.waddell_sarc_waddell_epith
     # waddell_sarc_tsankov_sarc_waddell_epith = config.waddell_sarc_tsankov_sarc_waddell_epith
@@ -311,6 +314,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
                                            waddell_sarc_biph_tsankov_sarc_biph)
     elif (SCLC):
         mutations_df = load_sclc_mutations()
+    elif (lung_subtyped):
+        mutations_df = load_subtyped_lung_mutations()
     else:
         mutations_df = load_agg_mutations()
 
@@ -382,7 +387,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
 
 run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                               waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
-                              tissues_to_consider, tss_fragment_filter, SCLC, ML_model)
+                              tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, ML_model)
 
 
     # run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells,
