@@ -12,6 +12,8 @@ def load_agg_mutations():
     return pd.read_csv("../../data/processed_data/mut_count_data.csv",
                        index_col=0)
 
+def load_woo_pcawg_mutations():
+    return pd.read_csv("../../data/processed_data/")
 # def load_meso_mutations(meso_waddell_and_biphasic, meso_waddell_only, meso_waddell_and_broad_only,
 #                         meso_waddell_biph_786_846):
 def load_meso_mutations(waddell_sarc_biph,
