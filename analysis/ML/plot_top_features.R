@@ -192,7 +192,7 @@ construct_pie_charts <- function(args) {
                         axis.ticks = element_blank(),
                         panel.grid  = element_blank()) +
                   scale_fill_manual(values=colors) +
-                  ggtitle(unlist(strsplit(dir, split ="/"))[3]) +
+                  ggtitle(unlist(strsplit(dir, split ="/"))[11]) +
                   # geom_text(aes(y = ypos, label = features), color = "white", size=1) +
                   theme(plot.title = element_text(hjust = 0.5))
     ggsave(paste(dir, "pie_chart.png", sep="/"), width = 20,
@@ -277,8 +277,7 @@ if (waddell_sarc_biph) {
 
 system(prep_dfs_command)
 
-tissues_to_consider = paste(unlist(tissues_to_consider, 
-                                   "_"))
+tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
 
 if (args$pie_chart) {
   construct_pie_charts(args)
