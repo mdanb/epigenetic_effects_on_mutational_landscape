@@ -8,7 +8,7 @@ import numpy as np
 from matplotlib.pyplot import figure
 # import argparse
 
-def plot_dendrogram(model, plot_title, **kwargs):
+def plot_dendrogram(model, plot_title, linkage, affinity, **kwargs):
     # Create linkage matrix and then plot the dendrogram
     # create the counts of samples under each node
     figure(figsize=(30, 28))
@@ -33,6 +33,7 @@ def plot_dendrogram(model, plot_title, **kwargs):
     dendrogram(linkage_matrix, **kwargs)
     plt.xticks(fontsize=10)
     plt.show()
+    plt.savefig(f"../figures/cancer_cohort_{plot_title}_linkage_{linkage}_affinity_{affinity}.png")
 
 def save_clustered_datafiles(model, data, cancer_type, distance_threshold, linkage, affinity):
     os.makedirs("processed_data/hierarchically_clustered_mutations/", exist_ok=True)
@@ -63,6 +64,8 @@ def cluster_data_and_display_clustering(distance_threshold, mutations_df, plot_t
             print("affinity matrix musn't be None when affinity = 1-pearson")
     plot_dendrogram(model,
                     plot_title,
+                    linkage,
+                    affinity,
                     truncate_mode="level",
                     p=100,
                     no_labels=True,
