@@ -49,7 +49,7 @@ def save_clustered_datafiles(model, data, cancer_type, distance_threshold, linka
 
 
 def cluster_data_and_display_clustering(distance_threshold, mutations_df, plot_title,
-                                        save_clusters=False, affinity='euclidean',
+                                        save_clusters=False, affinity="euclidean",
                                         affinity_matrix=None, linkage="ward"):
     model = AgglomerativeClustering(n_clusters=None,
                                     distance_threshold=distance_threshold,
@@ -72,14 +72,14 @@ def cluster_data_and_display_clustering(distance_threshold, mutations_df, plot_t
         save_clustered_datafiles(model, mutations_df, plot_title, distance_threshold,
                                  linkage, affinity)
 
-def get_per_cancer_mutations(cancer_type):
-    binned_mutation_files = glob.glob(f'processed_data/per_patient_mutations/{cancer_type}/binned_mutations*')
+def get_per_cancer_mutations(cancer_cohort):
+    binned_mutation_files = glob.glob(f'processed_data/per_patient_mutations/{cancer_cohort}/binned_mutations*')
     columns = pd.read_csv(binned_mutation_files[0]).iloc[:, 0].values
     df = pd.DataFrame(columns=columns)
 
     for file in binned_mutation_files:
         patient_id = file.split("_")[-1].split(".")[0]
-        patient_mutations = pd.read_csv(file)['num_mutations']
+        patient_mutations = pd.read_csv(file)['x']
         df.loc[patient_id] = patient_mutations.values
 
     agg_mutation_df = pd.read_csv("processed_data/mut_count_data.csv", index_col=0)
@@ -102,24 +102,26 @@ def get_per_cancer_mutations(cancer_type):
 #                        how="left",
 #                        on=["icgc_donor_id", "icgc_mutation_id"])
 
-Lung_AdenoCA = get_per_cancer_mutations("Lung-AdenoCA")
-Skin_Melanoma = get_per_cancer_mutations("Skin-Melanoma")
-cluster_data_and_display_clustering(5, Skin_Melanoma, "Skin-Melanoma", False,
-                                    affinity="pearson", affinity_matrix= 1 - np.corrcoef(Skin_Melanoma),
-                                    linkage="average")
+LUAD_US = get_per_cancer_mutations("Lung-US")
+
+# Skin_Melanoma = get_per_cancer_mutations("Skin-Melanoma")
+# cluster_data_and_display_clustering(5, Skin_Melanoma, "Skin-Melanoma", False,
+#                                     affinity="pearson", affinity_matrix= 1 - np.corrcoef(Skin_Melanoma),
+#                                     linkage="average")
+
 # cluster_data_and_display_clustering(200, Lung_AdenoCA, "Lung-AdenoCA", False)
 # cluster_data_and_display_clustering(100, Lung_AdenoCA, "Lung-AdenoCA", False)
 # cluster_data_and_display_clustering(70, Lung_AdenoCA, "Lung-AdenoCA", False)
 
-cluster_data_and_display_clustering(2.5, Lung_AdenoCA, "Lung-AdenoCA", True,
+cluster_data_and_display_clustering(2.5, LUAD_US, "LUAD_US", False,
                                     affinity="pearson", affinity_matrix=
-                                    1 - np.corrcoef(Lung_AdenoCA),
+                                    1 - np.corrcoef(LUAD_US),
                                     linkage="average")
-cluster_data_and_display_clustering(2, Lung_AdenoCA, "Lung-AdenoCA", False,
+cluster_data_and_display_clustering(2, LUAD_US, "LUAD_US", False,
                                     affinity="pearson", affinity_matrix=
-                                    1 - np.corrcoef(Lung_AdenoCA),
+                                    1 - np.corrcoef(LUAD_US),
                                     linkage="average")
-cluster_data_and_display_clustering(1.9, Lung_AdenoCA, "Lung-AdenoCA", False,
+cluster_data_and_display_clustering(1.9, LUAD_US, "LUAD_US", False,
                                     affinity="pearson", affinity_matrix=
-                                    1 - np.corrcoef(Lung_AdenoCA),
+                                    1 - np.corrcoef(LUAD_US),
                                     linkage="average")
