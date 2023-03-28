@@ -46,6 +46,11 @@ def load_sclc_mutations():
 def load_subtyped_lung_mutations():
     return pd.read_csv("../../data/processed_data/lung_subtyped_mutation.csv",
                        index_col=0)
+
+def load_histologically_subtyped_mutations():
+    return pd.read_csv("../../data/processed_data/histologically_subtyped_mutations.csv",
+                       index_col=0)
+
 # Filter Data Helpers
 def filter_agg_data(scATAC_df, mutations_df):
     # if (meso):
