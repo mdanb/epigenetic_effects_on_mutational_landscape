@@ -248,7 +248,7 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
     #### Filter data ####
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
-    if (not pd.is_na(mutations_df).any().any()):
+    if (not pd.isna(mutations_df).any().any()):
         # for compatibility
         mutations_df = add_na_ranges(mutations_df)
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
