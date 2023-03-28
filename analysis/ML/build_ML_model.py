@@ -44,6 +44,7 @@ parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
 parser.add_argument("--ML_model", type=str, default="RF")
 parser.add_argument("--woo_pcawg", action="store_true", default=False)
+parser.add_argument("--histologically_subtyped_mutations", action="store_true", default=False)
 
 config = parser.parse_args()
 cancer_types = config.cancer_types
