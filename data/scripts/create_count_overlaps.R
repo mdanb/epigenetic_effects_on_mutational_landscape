@@ -88,6 +88,9 @@ create_count_overlaps_files <- function(file, cell_number_filter, metadata,
       sample <- filter_sample_by_cell_number(sample,
                                              counts_per_cell_type, 
                                              cell_number_filter)
+      if (dataset == "Yang_kidney") {
+        sample$seqnames = paste0("chr", sample$seqnames)
+      }
       
       count_overlaps <- compute_count_overlaps(sample, interval_ranges)
       saveRDS(count_overlaps, filepath)
