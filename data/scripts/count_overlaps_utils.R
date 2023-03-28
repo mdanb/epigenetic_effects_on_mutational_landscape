@@ -104,7 +104,7 @@ get_sample_filename <- function(file, dataset) {
                                              "rds", sep="."), sep="_")
   }
   else if (dataset == "Yang_kidney") {
-    filename = paste("Yang_kidney", cell_number_filter,  
+    filename = paste("Yang_kidney_count_filter", cell_number_filter,  
                      "count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                              "rds", sep="."), sep="_")
   }
