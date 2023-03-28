@@ -12,12 +12,13 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import KFold
 from sklearn.metrics import r2_score
 import argparse
-
 from ML_utils import load_scATAC, load_agg_mutations, filter_agg_data, \
                      filter_mutations_by_cancer, load_meso_mutations, load_sclc_mutations, \
-                     load_subtyped_lung_mutations, load_woo_pcawg_mutations, load_histologically_subtyped_mutations
+                     load_subtyped_lung_mutations, load_woo_pcawg_mutations, \
+                     load_histologically_subtyped_mutations, add_na_ranges
 from xgboost import XGBRegressor
 from itertools import chain
+from natsort import natsorted
 
 parser = argparse.ArgumentParser()
 
@@ -246,6 +247,10 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
                                          tissues_to_consider, ML_model, tss_filter=None):
     #### Filter data ####
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
+    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
+    if (not pd.is_na(mutations_df).any().any()):
+        # for compatibility
+        mutations_df = add_na_ranges(mutations_df)
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
     cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
 
