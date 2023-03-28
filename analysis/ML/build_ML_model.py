@@ -335,7 +335,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
                 run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir, waddell_sarc_biph,
                                                      waddell_sarc, waddell_sarc_tsankov_sarc,
                                                      waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
-                                                     annotation_dir, tissues_to_consider, ML_model, tss_filter=tss_filter)
+                                                     annotation_dir, tissues_to_consider, ML_model,
+                                                     tss_filter=tss_filter)
 
         else:
             run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir_orig, waddell_sarc_biph,
@@ -397,7 +398,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
 run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                               waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
                               tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
-                              ML_model)
+                              histologically_subtyped_mutations, ML_model)
 
 
     # run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells,
