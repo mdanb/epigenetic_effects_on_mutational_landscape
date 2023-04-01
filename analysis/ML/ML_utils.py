@@ -58,6 +58,11 @@ def load_histologically_subtyped_mutations():
                        index_col=0)
     return(df.loc[natsorted(df.index)])
 
+def load_de_novo_clustered_panc_adeno():
+    df = pd.read_csv("../../data/processed_data/de_novo_clustered_panc_adeno_mutations.csv",
+                       index_col=0)
+    return(df.loc[natsorted(df.index)])
+
 # Filter Data Helpers
 def filter_agg_data(scATAC_df, mutations_df):
     # if (meso):
