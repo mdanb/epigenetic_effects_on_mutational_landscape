@@ -25,6 +25,7 @@ args = parse_args(OptionParser(option_list=option_list))
 
 cell_number_filter = args$cell_number_filter
 cores = args$cores
+dataset = args$dataset
 dataset_subsets = unlist(strsplit(args$dataset_subsets, ","))
 cores = args$cores
 annotation = args$annotation
