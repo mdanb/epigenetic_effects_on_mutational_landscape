@@ -225,7 +225,7 @@ if (dataset == "Bingren") {
     }
   }
   else if (annotation == "Tsankov_de_novo_Basal_nfrags_filter_1000_tss_filter_4") {
-    metadata_tsankov_distal = 
+    metadata_tsankov_proximal = 
       read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/ArchR_dataset_Tsankov_tissue_all_cell_types_Basal_nfrags_filter_1000_tss_filter_4_annotation.csv")
   }
   colnames(metadata_tsankov_proximal)[grepl("celltypes",
