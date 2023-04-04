@@ -196,7 +196,7 @@ get_sample_name_shendure <- function(file) {
 }
 
 get_sample_name_tsankov <- function(file) {
-  sample_name = str_remove(file, "_fragments.tsv.gz")
+  sample_name = str_remove(file, "_fragments.tsv.bgz")
   return(sample_name)
 }
 
