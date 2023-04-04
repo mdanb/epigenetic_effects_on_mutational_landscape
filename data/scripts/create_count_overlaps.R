@@ -70,7 +70,8 @@ create_count_overlaps_files <- function(file, cell_number_filter, metadata,
       sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(filtered_metadata,
                                                                     dataset)
       
-      if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || dataset == "Greenleaf_pbmc_bm" || dataset == "Yang_kidney") {
+      if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || 
+          dataset == "Greenleaf_pbmc_bm" || dataset == "Yang_kidney") {
         sample$name = substr(sample$name, 1, 16)
       }
       
@@ -240,7 +241,7 @@ if (dataset == "Bingren") {
   files_Tsankov_distal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/migrated_to_hg19/", 
                                     pattern="RPL.*bgz$")
   files_Tsankov_proximal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/migrated_to_hg19/", 
-                                      pattern="IC")
+                                      pattern="IC.*bgz$")
   if ("proximal" %in% dataset_subsets) {
     mclapply(files_Tsankov_proximal, 
              create_count_overlaps_files,

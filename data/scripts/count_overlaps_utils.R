@@ -131,7 +131,7 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
   }
   else if (dataset == "Tsankov") {
     sample_barcodes_in_metadata = get_sample_barcodes_in_metadata_helper(filtered_metadata, 
-                                                                  "X",
+                                                                  "sample",
                                                                   "#")
     sample_barcodes_in_metadata = substr(sample_barcodes_in_metadata, 1, 16)
   }
