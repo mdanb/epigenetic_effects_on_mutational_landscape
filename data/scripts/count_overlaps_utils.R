@@ -39,42 +39,45 @@ import_sample <- function(file, dataset) {
   if (dataset == "Bingren") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", 
-                          "data", "bed_files", "bingren_scATAC", file, sep="/"), 
+                          "data", "bed_files", "bingren_scATAC", 
+                          "migrated_to_hg19", file, sep="/"), 
                     format="bed")
   }
   else if (dataset == "Shendure") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", 
-                          "data", "bed_files", "JShendure_scATAC", file, 
+                          "data", "bed_files", "JShendure_scATAC", 
+                          "migrated_to_hg19", file, 
                           sep="/"), format="bed")
   }
   else if (dataset == "Tsankov") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                                  "BingRen_scATAC_atlas", "data", "bed_files",
-                                 "Tsankov_scATAC", file, sep="/"), format="bed")
+                                 "Tsankov_scATAC", "migrated_to_hg19",
+                                 file, sep="/"), format="bed")
   }
   else if (dataset == "Greenleaf_brain") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                                  "BingRen_scATAC_atlas", "data", "bed_files",
-                                 "greenleaf_brain_scATAC", 
+                                 "greenleaf_brain_scATAC", "migrated_to_hg19",
                                  file, sep="/"), format="bed")
   }
   else if (dataset == "Greenleaf_pbmc_bm") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", "data", "bed_files",
-                          "greenleaf_pbmc_bm_scATAC", 
+                          "greenleaf_pbmc_bm_scATAC", "migrated_to_hg19",
                           file, sep="/"), format="bed")
   }
   else if (dataset == "Yang_kidney") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", "data", "bed_files",
-                          "yang_kidney_scATAC", 
+                          "migrated_to_hg19", "yang_kidney_scATAC", 
                           file, sep="/"), format="bed")
   }
   return(sample)
 }
 
-get_sample_filename <- function(file, dataset) {
+get_sample_filename <- function(file, dataset, cell_number_filter) {
   if (dataset == "Bingren") {
     filename = paste("Bingren_count_filter", cell_number_filter,  
                      "count_overlaps", paste(file_path_sans_ext(file, TRUE),

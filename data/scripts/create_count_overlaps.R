@@ -11,6 +11,7 @@ source("count_overlaps_utils.R")
 
 option_list <- list( 
   make_option("--dataset", type="character"),
+  make_option("--dataset_subsets", type="character", default=NULL),
   make_option("--cell_number_filter", type="integer"),
   make_option("--cores", type="integer"),
   make_option("--annotation", type="character")
@@ -24,7 +25,8 @@ args = parse_args(OptionParser(option_list=option_list))
 
 cell_number_filter = args$cell_number_filter
 cores = args$cores
-dataset = args$dataset
+dataset_subsets = unlist(strsplit(args$dataset_subsets, ","))
+cores = args$cores
 annotation = args$annotation
 
 get_and_save_num_cells_per_sample <- function(sample, sample_file_name) {
@@ -50,7 +52,7 @@ compute_count_overlaps <- function(sample, interval_ranges) {
 
 create_count_overlaps_files <- function(file, cell_number_filter, metadata,
                                   interval_ranges, chain, dataset, annotation) {
-  filename = get_sample_filename(file, dataset)
+  filename = get_sample_filename(file, dataset, cell_number_filter)
   dirpath = paste("../processed_data/count_overlap_data", annotation, sep="/")
   filepath = paste(dirpath, filename, sep="/")
   dir.create(dirpath)
@@ -71,9 +73,9 @@ create_count_overlaps_files <- function(file, cell_number_filter, metadata,
         sample$name = substr(sample$name, 1, 16)
       }
       
-      if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || dataset == "Bingren") {
-        sample = migrate_bed_file_to_hg37(sample, chain)
-      }
+      # if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || dataset == "Bingren") {
+      #   sample = migrate_bed_file_to_hg37(sample, chain)
+      # }
 
       # Because the function applied is used in another place over multiple 
       # samples, not just one, as is done here.
@@ -204,7 +206,7 @@ if (dataset == "Bingren") {
       refined_annotation = as_tibble(read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/metadata_Tsankov_refined_fibroblasts.csv"))
       refined_annotation = refined_annotation %>% 
                            filter(Clusters %in% c("C12", "C14"))
-      refined_annotation["Clusters"] = paste("Fibroblasts", 
+      refined_annotation["Clusters"] = paste("Fibroblasts",
                                              refined_annotation[["Clusters"]],
                                              sep="_")
       idx = match(refined_annotation[["X"]], metadata_tsankov_distal[["X"]])
@@ -220,6 +222,10 @@ if (dataset == "Bingren") {
         read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/Tsankov_fibro-fibro+C12+fibro+C14.csv")
     }
   }
+  else if (annotation == "Tsankov_de_novo_Basal_nfrags_filter_1000_tss_filter_4") {
+    metadata_tsankov_distal = 
+      read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/ArchR_dataset_Tsankov_tissue_all_cell_types_Basal_nfrags_filter_1000_tss_filter_4_annotation.csv")
+  }
   colnames(metadata_tsankov_proximal)[grepl("celltypes",
                                             colnames(metadata_tsankov_proximal))] = "cell_type"
   colnames(metadata_tsankov_proximal)[grepl("Sample",
@@ -230,29 +236,33 @@ if (dataset == "Bingren") {
                                             colnames(metadata_tsankov_distal))] = "sample"
   
 
-  files_Tsankov_distal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/", 
-                                    pattern="RPL")
-  files_Tsankov_proximal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/", 
+  files_Tsankov_distal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/migrated_to_hg19/", 
+                                    pattern="RPL.*bgz$")
+  files_Tsankov_proximal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/migrated_to_hg19/", 
                                       pattern="IC")
-  mclapply(files_Tsankov_proximal, 
-           create_count_overlaps_files,
-           cell_number_filter=cell_number_filter,
-           metadata=metadata_tsankov_proximal,
-           interval_ranges=interval.ranges,
-           chain=ch,
-           dataset=dataset,
-           annotation=annotation,
-           mc.cores=cores)
+  if ("proximal" %in% dataset_subsets) {
+    mclapply(files_Tsankov_proximal, 
+             create_count_overlaps_files,
+             cell_number_filter=cell_number_filter,
+             metadata=metadata_tsankov_proximal,
+             interval_ranges=interval.ranges,
+             chain=ch,
+             dataset=dataset,
+             annotation=annotation,
+             mc.cores=cores)
+  }
   
-  mclapply(files_Tsankov_distal,
-           create_count_overlaps_files,
-            cell_number_filter=cell_number_filter,
-            metadata=metadata_tsankov_distal,
-            interval_ranges=interval.ranges,
-            chain=ch,
-            dataset=dataset,
-            annotation=annotation,
-            mc.cores=cores)
+  if ("distal" %in% dataset_subsets) {
+    mclapply(files_Tsankov_distal,
+             create_count_overlaps_files,
+              cell_number_filter=cell_number_filter,
+              metadata=metadata_tsankov_distal,
+              interval_ranges=interval.ranges,
+              chain=ch,
+              dataset=dataset,
+              annotation=annotation,
+              mc.cores=cores)
+  }
 } else if (dataset == "Greenleaf_brain") {
     if (!(file.exists("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE162170_atac_cell_metadata_with_cell_names.txt"))) {
       metadata_greenleaf_brain =
