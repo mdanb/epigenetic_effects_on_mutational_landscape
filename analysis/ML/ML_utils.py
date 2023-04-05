@@ -59,11 +59,10 @@ def load_histologically_subtyped_mutations():
     return(df.loc[natsorted(df.index)])
 
 def load_de_novo_seurat_clustered_cancers(cancer_types):
-    cancer_type = cancer_types[0]
-    cancer_type = cancer_type.split(";")[0]
-    seurat_cluster_settings = cancer_type.split(";")[1]
+    cancer_type = cancer_types[0].split(";")[0]
+    seurat_cluster_settings = cancer_types[0].split(";")[1]
     df = pd.read_csv(f"../../data/processed_data/de_novo_seurat_clustered_mutations/{cancer_type}/"
-                     f"{seurat_cluster_settings}", index_col=0)
+                     f"{seurat_cluster_settings}.csv", index_col=0)
     # df = pd.read_csv("../../data/processed_data/de_novo_clustered_panc_adeno_mutations.csv",
     #                    index_col=0)
     return(df.loc[natsorted(df.index)])
