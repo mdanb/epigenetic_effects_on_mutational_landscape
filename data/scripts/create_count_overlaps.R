@@ -26,7 +26,6 @@ args = parse_args(OptionParser(option_list=option_list))
 cell_number_filter = args$cell_number_filter
 cores = args$cores
 dataset = args$dataset
-dataset_subsets = unlist(strsplit(args$dataset_subsets, ","))
 cores = args$cores
 annotation = args$annotation
 
@@ -171,7 +170,7 @@ if (dataset == "Bingren") {
                           header=T)
     colnames(metadata_bingren)[grepl("cell.type", colnames(metadata_bingren))] = "cell_type"
     files_bingren = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC",
-                                pattern=".*fragments\\.bed\\.gz")
+                                pattern=".*fragments\\.bed\\.bgz")
     
     mclapply(files_bingren, create_count_overlaps_files,
              cell_number_filter=cell_number_filter,
@@ -242,6 +241,7 @@ if (dataset == "Bingren") {
                                     pattern="RPL.*bgz$")
   files_Tsankov_proximal = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/migrated_to_hg19/", 
                                       pattern="IC.*bgz$")
+  dataset_subsets = unlist(strsplit(args$dataset_subsets, ","))
   if ("proximal" %in% dataset_subsets) {
     mclapply(files_Tsankov_proximal, 
              create_count_overlaps_files,
