@@ -51,7 +51,7 @@ def save_clustered_datafiles(model, data, cancer_type, distance_threshold, linka
 
 def cluster_data_and_display_clustering(distance_threshold, mutations_df, plot_title,
                                         save_clusters=False, affinity="euclidean",
-                                        affinity_matrix=None, linkage="ward"):
+                                        affinity_matrix=None, linkage="ward", labels=True):
     model = AgglomerativeClustering(n_clusters=None,
                                     distance_threshold=distance_threshold,
                                     linkage=linkage)
@@ -68,7 +68,7 @@ def cluster_data_and_display_clustering(distance_threshold, mutations_df, plot_t
                     affinity,
                     truncate_mode="level",
                     p=100,
-                    no_labels=True,
+                    no_labels=labels,
                     color_threshold=distance_threshold,
                     above_threshold_color="black")
     if (save_clusters):
