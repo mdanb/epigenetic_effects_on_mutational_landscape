@@ -7,8 +7,7 @@ library(optparse)
 library(stringr)
 source("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/utils.R")
 
-parser <- OptionParser()
-
+parser <- OptionParser() 
 # parser <- add_option(parser, c("--bing_ren"), action="store_true",
 #                                default=F)
 # parser <- add_option(parser, c("--tsankov"), action="store_true",
@@ -255,7 +254,7 @@ tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
 ML_model = args$ML_model
 
 prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_importance_plots.py", 
-                         "--cancer_types", paste(cancer_types, collapse=" "), "--datasets", 
+                         "--datasets", 
                          paste(datasets, collapse=" "), 
                          "--annotation", annotation, "--tissues_to_consider",
                          paste(tissues_to_consider, collapse = " "), 
@@ -263,7 +262,8 @@ prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_import
                          "--num_iter_skips", num_iter_skips, "--iters_dont_skip",
                          iters_dont_skip, "--tss_fragment_filter", 
                          paste(tss_fragment_filter, collapse = " "),
-                         "--ML_model", ML_model)
+                         "--ML_model", ML_model,
+                         "--cancer_types", paste0("'", paste(cancer_types, collapse=" "), "'"))
 
 if (waddell_sarc_biph) {
   prep_dfs_command = paste(prep_dfs_command, "--waddell_sarc_biph")

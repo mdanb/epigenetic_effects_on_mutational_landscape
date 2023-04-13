@@ -3,20 +3,17 @@ library(readxl)
 library(GenomicRanges)
 
 load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+rownames = names(interval.ranges)
+mut_df = read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/SCLC_MutCountperBin.txt",
+                  sep="\t")
+agg = rowSums(mut_df[, 4:ncol(mut_df)])
+agg = data.frame(SCLC = agg)
+rownames(agg) = rownames
+# mut_df = mut_df[, 1:3]
 
-mut_df = read_excel("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/sclc.xlsx",
-                sheet=3, skip=1, na=c("", "NA"))
-
-mut_df = mut_df[, 1:23]
-
-# remove weird mutation
-mut_df = mut_df[-which(mut_df["Start"] > mut_df["End"]), ]
-mut_granges = GRanges(mut_df[["Chromosome"]], 
-                      ranges=IRanges(start=mut_df[["Start"]], 
-                      end=mut_df[["End"]]))
-
-mut_overlaps = as.data.frame(countOverlaps(interval.ranges, mut_granges))
-colnames(mut_overlaps) = "SCLC"
-write.csv(as.data.frame(mut_overlaps), paste(
+# mut_df["agg"] = agg
+# 
+# mut_overlaps = as.data.frame(countOverlaps(interval.ranges, mut_granges))
+write.csv(agg, paste(
                 "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/data/processed_data",
                 "sclc_count_overlaps.csv", sep="/"))

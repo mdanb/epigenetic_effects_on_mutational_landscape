@@ -7,7 +7,8 @@ import numpy as np
 import umap
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
-from plotnine import ggplot, geom_point, aes, ggtitle, labs, theme
+from plotnine import ggplot, geom_point, aes, ggtitle, \
+                     labs, theme, scale_color_brewer
 from sklearn.preprocessing import StandardScaler
 
 def plot_dendrogram(model, plot_title, linkage, affinity, **kwargs):
@@ -112,7 +113,7 @@ def reduce_mutation_dims(df, method, n_components, scale=True):
         model = umap.UMAP(n_components=n_components, random_state=1)
 
     # df = df.drop("subtype", axis=1)
-    # df = np.log(df / np.sum(df, axis=0) + 1)
+    df = np.log(df.div(np.sum(df, axis=1).array, axis=0) + 1)
     if (scale):
         df = StandardScaler().fit_transform(df)
 #         df = (df - np.mean(df)) / np.std(df)
@@ -141,6 +142,7 @@ def plot_reduced_dim_mutations(reduced_dim_data, components_to_plot,
          + ggtitle(plot_title)
          + labs(color="mutation counts")
          + theme(figure_size=(18, 13))
+         + scale_color_brewer(type="qual", )
     ).draw(show=False, return_ggplot=True)
     return(fig)
 
@@ -150,6 +152,11 @@ def get_top_variable_bins(df, n):
     top = df.iloc[:, largest_variance_feat_idxs].iloc[:, 0:n]
     return top
 
+def drop_bottom_count_samples(df, n):
+    mut_counts = np.sum(df.drop("subtype", axis=1), axis=1)
+    bottom_count_idxs = np.argsort(mut_counts)[0:n]
+    top = df.loc[set(df.index) - set(bottom_count_idxs)]
+    return top
 
 
 
@@ -164,15 +171,21 @@ LUSC_US_annotation = pd.DataFrame(["Squamous"] * len(LUSC_US.index), index=LUSC_
 lung_adeno = group_donors_by_subtype(LUAD_US, LUAD_US_annotation)
 lung_squamous = group_donors_by_subtype(LUSC_US, LUSC_US_annotation)
 lung = create_cohort_df([lung_adeno, lung_squamous])
+
+bottom_n_remove = 2
+lung = drop_bottom_count_samples(lung, bottom_n_remove)
 subtype = lung["subtype"]
 lung = lung.drop("subtype", axis=1)
-n = 100
-lung = get_top_variable_bins(lung, n)
-model, reduced_dim_data = reduce_mutation_dims(lung, "PCA", 2, True)
+n_feats = 2128
+lung = get_top_variable_bins(lung, n_feats)
+method = "PCA"
+model, reduced_dim_data = reduce_mutation_dims(lung, method, 2, True)
 fig = plot_reduced_dim_mutations(reduced_dim_data,
                                ["dim1", "dim2"],
                                np.sum(lung, axis=1),
                                "Lung",
                                subtype)
 #fig.savefig('fig_log.png', dpi=300)
-fig.savefig(f'fig_PCA_top_{n}.png', dpi=300)
+fig.savefig(f'fig_{method}_top_{n_feats}_features_no_bottom_'
+            f'{bottom_n_remove}_samples.png',
+            dpi=300)

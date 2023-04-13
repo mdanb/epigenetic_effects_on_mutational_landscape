@@ -20,24 +20,6 @@ ArchR_proj <- ArchRProject(ArrowFiles = ArrowFiles,
 			                     copyArrows=F,
     			      outputDirectory = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj")
 
-dataset = unlist(lapply(strsplit(ArrowFiles, split = "/"), "[", 8))
-ArchR_proj = addSampleColData(ArchRProj = ArchR_proj, 
-			                        data=dataset, name="dataset", 
-		    	                    samples=rownames(getSampleColData(ArchRProj = 
-		    	                                                        ArchR_proj)))
-
-sample_col_data = getSampleColData(ArchRProj = ArchR_proj)
-#bingren = sample_col_data[sample_col_data$dataset == "bingren", ]
-#samples = rownames(bingren)
-samples = rownames(sample_col_data)
-samples_per_cell = unlist(lapply(strsplit(rownames(getCellColData(ArchRProj = ArchR_proj)), 
-			  split = "#"), "[", 1))
-idx = match(samples_per_cell, samples)
-dataset_per_cell = dataset[idx]
-ArchR_proj = addCellColData(ArchRProj = ArchR_proj,
-                            data=dataset_per_cell, name="dataset_per_cell",
-			                      cells=rownames(getCellColData(ArchRProj = ArchR_proj)))
-
 ggplot(as_tibble(getCellColData(ArchR_proj)), 
         aes(x = Sample, y = TSSEnrichment)) +
         geom_boxplot(aes(fill = dataset_per_cell), outlier.size=.2) +
@@ -57,7 +39,8 @@ ggplot(as_tibble(getCellColData(ArchR_proj)),
        labs(fill="dataset")
 
 ggsave("../../figures/archr_log_frags_vs_sample.png", width=20)
-saveArchRProject(ArchRProj = ArchR_proj)
+
+# saveArchRProject(ArchRProj = ArchR_proj)
 #bingren_cells = ArchR_proj
 
 # tss_p <-plotGroups(

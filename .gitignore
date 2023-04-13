@@ -10,3 +10,4 @@ software/
 figures/
 tmp/
 __pycache__/
+.Rproj.user

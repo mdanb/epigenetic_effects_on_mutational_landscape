@@ -41,13 +41,13 @@ group.add_argument('--waddell_sarc_tsankov_sarc', action="store_true", default=F
 group.add_argument('--waddell_sarc_biph_tsankov_sarc_biph', action="store_true", default=False)
 group.add_argument("--SCLC", action="store_true", default=False)
 group.add_argument("--lung_subtyped", action="store_true", default=False)
+parser.add_argument("--woo_pcawg", action="store_true", default=False)
+parser.add_argument("--histologically_subtyped_mutations", action="store_true", default=False)
+parser.add_argument("--de_novo_seurat_clustering", action="store_true", default=False)
 parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
                     help='tss fragment filters to consider', default="")
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
 parser.add_argument("--ML_model", type=str, default="RF")
-parser.add_argument("--woo_pcawg", action="store_true", default=False)
-parser.add_argument("--histologically_subtyped_mutations", action="store_true", default=False)
-parser.add_argument("--de_novo_seurat_clustering", action="store_true", default=False)
 
 config = parser.parse_args()
 cancer_types = config.cancer_types

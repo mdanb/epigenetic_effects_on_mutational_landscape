@@ -11,9 +11,10 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                     c("--datasets=Greenleaf_pbmc_bm",
-#                       "--cell_number_filter=1"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--datasets=Tsankov",
+                      "--cell_number_filter=1",
+                      "--annotation=default_annotation"))
 
 annotation = args$annotation
 cell_number_filter = args$cell_number_filter
@@ -59,8 +60,10 @@ add_to_combined_dataframes <- function(count_overlaps, combined_count_overlaps,
                   rownames(combined_count_overlaps))
       combined_count_overlaps[idx, ] = combined_count_overlaps[idx, ] +
                                        count_overlaps[i, ]
-      idx_tissue = match(tissue_name[1],
-                         combined_count_overlaps_metadata[, "tissue_name"])
+      idx_tissue = which(combined_count_overlaps_metadata[, "tissue_name"] %in%
+                         tissue_name[1])
+          # match(tissue_name[1],
+          #                combined_count_overlaps_metadata[, "tissue_name"])
       idx_cell_type = match(cell_types[i],
                             combined_count_overlaps_metadata[, "cell_type"])
       num_cells = cell_counts[cell_counts["cell_type"] == cell_types[i], 
