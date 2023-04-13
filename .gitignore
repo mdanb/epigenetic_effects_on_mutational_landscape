@@ -4,7 +4,6 @@
 data/*
 !data/scripts
 data/scripts/ArchRLogs/
-*.ipynb
 models/
 software/
 figures/
