@@ -144,7 +144,6 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
                                    "backwards_elimination_results")
         #os.makedirs(figure_path, exist_ok=True)
         files = natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))
-        print(files)
         for idx, file in enumerate(files):
             if (idx % num_iter_skips == 0 or idx in iters_dont_skip):
                 gs = pickle.load(open(file, "rb"))
@@ -156,7 +155,6 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
                                         [cv_score] * len(features))).T
                 df_curr.columns = df.columns
                 df = pd.concat((df, df_curr))
-                print(df)
         Path(figure_path).mkdir(parents=True, exist_ok=True)
         df.to_csv(os.path.join(figure_path, "df_for_feature_importance_plots.csv"), index=False)
         # import matplotlib.pyplot as plt
@@ -188,7 +186,6 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
 
 config = parser.parse_args()
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
-print(backwards_elim_dirs)
 num_iter_skips = config.num_iter_skips
 iters_dont_skip = config.iters_dont_skip
 ML_model = config.ML_model
