@@ -42,9 +42,9 @@ parser <- add_option(parser, c("--iters_dont_skip"), default="18")
 
 args = parse_args(parser)
 
-args = parse_args(parser, args = c("--cancer_types=combined_TCGA_CPTAC_adenoxtop_1500-no_bottom_0_samples-scale_TRUE-norm_by_mut_counts_TRUE-pca_n_components_30-dims_for_UMAP_1:15-regress_by_counts_TRUE_clustering_res_0.8xcluster_1",
-                                   "--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney", "--cell_number_filter=1",
-                                   "--ML_model=XGB", "--annotation=default_annotation"))
+# args = parse_args(parser, args = c("--cancer_types=combined_TCGA_CPTAC_adenoxtop_1500-no_bottom_0_samples-scale_TRUE-norm_by_mut_counts_TRUE-pca_n_components_30-dims_for_UMAP_1:15-regress_by_counts_TRUE_clustering_res_0.8xcluster_1",
+#                                    "--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney", "--cell_number_filter=1",
+#                                    "--ML_model=XGB", "--annotation=default_annotation"))
 
 # args = parse_args(parser, args = c("--cancer_types=Biliary-AdenoCA",
 #                                    "--all_cells", "--cell_number_filter=1",
