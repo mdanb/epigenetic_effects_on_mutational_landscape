@@ -24,7 +24,7 @@ from natsort import natsorted
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--cancer_types', nargs="+", type=str,
-                    help='which cancer types to analyze', required=True)
+                    help='which cancer types to analyze', default=None)
 parser.add_argument('--clustered_mutations', action="store_true",
                     help='run model on hierarchically clustered mutations', default=False)
 parser.add_argument('--datasets', nargs="+", type=str,
@@ -246,7 +246,7 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_s
 #                                   meso_waddell_biph_786_846, tss_fragment_filter, scATAC_source="Bingren"):
 
 
-def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
+def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_donor_id, scATAC_dir,
                                          waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                          waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
                                          tissues_to_consider, ML_model, tss_filter=None):
@@ -257,22 +257,22 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
         # for compatibility
         mutations_df = add_na_ranges(mutations_df)
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
-    cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
+    cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
 
     scATAC_dir = append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                                      waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir)
     scATAC_dir = scATAC_dir + f"_annotation_{annotation_dir}"
 
-    os.makedirs(f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/{cancer_type}/{scATAC_dir}",
+    os.makedirs(f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}",
                 exist_ok=True)
 
     if (tissues_to_consider == "all"):
         backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
-                           f"{cancer_type}/{scATAC_dir}/backwards_elimination_results"
+                           f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results"
         grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
-                               f"{cancer_type}/{scATAC_dir}/grid_search_results.pkl"
+                               f"{cancer_type_or_donor_id}/{scATAC_dir}/grid_search_results.pkl"
         test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
-                                 f"{cancer_type}/{scATAC_dir}/test_set_performance.txt"
+                                 f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance.txt"
 
         # All Cells
         train_val_test(scATAC_df, cancer_specific_mutations,
@@ -285,11 +285,11 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, sc
     else:
         tissues_string = "_".join(tissues_to_consider)
         backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
-                           f"{cancer_type}/{scATAC_dir}/backwards_elimination_results_{tissues_string}"
+                           f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results_{tissues_string}"
         grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
-                               f"{cancer_type}/{scATAC_dir}/grid_search_results_{tissues_string}.pkl"
+                               f"{cancer_type_or_donor_id}/{scATAC_dir}/grid_search_results_{tissues_string}.pkl"
         test_set_perf_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
-                                 f"{cancer_type}/{scATAC_dir}/test_set_performance_{tissues_string}.txt"
+                                 f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance_{tissues_string}.txt"
 
         # tissue = cancer_type.split("-")[0]
         def check_tissue(tissue_cell_type):
@@ -342,18 +342,26 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
     else:
         mutations_df = load_agg_mutations()
 
-    for cancer_type in cancer_types:
-        if (tss_fragment_filter):
-            for tss_filter in tss_fragment_filter:
-                scATAC_dir = scATAC_dir_orig + "_tss_fragment_filter_" + tss_filter
-                run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir, waddell_sarc_biph,
+    if (not per_donor):
+        for cancer_type in cancer_types:
+            if (tss_fragment_filter):
+                for tss_filter in tss_fragment_filter:
+                    scATAC_dir = scATAC_dir_orig + "_tss_fragment_filter_" + tss_filter
+                    run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir, waddell_sarc_biph,
+                                                         waddell_sarc, waddell_sarc_tsankov_sarc,
+                                                         waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
+                                                         annotation_dir, tissues_to_consider, ML_model,
+                                                         tss_filter=tss_filter)
+
+            else:
+                run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir_orig, waddell_sarc_biph,
                                                      waddell_sarc, waddell_sarc_tsankov_sarc,
                                                      waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
-                                                     annotation_dir, tissues_to_consider, ML_model,
-                                                     tss_filter=tss_filter)
-
-        else:
-            run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir_orig, waddell_sarc_biph,
+                                                     annotation_dir, tissues_to_consider, ML_model)
+    else:
+        for donor in mutations_df.columns:
+            run_unclustered_data_analysis_helper(datasets, mutations_df, donor, scATAC_dir_orig,
+                                                 waddell_sarc_biph,
                                                  waddell_sarc, waddell_sarc_tsankov_sarc,
                                                  waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
                                                  annotation_dir, tissues_to_consider, ML_model)
