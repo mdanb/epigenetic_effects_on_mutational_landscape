@@ -268,7 +268,7 @@ prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_import
                          iters_dont_skip, "--tss_fragment_filter", 
                          paste(tss_fragment_filter, collapse = " "),
                          "--ML_model", ML_model,
-                         "--cancer_types", paste0("'", paste(cancer_types, collapse=" "), "'"))
+                         "--cancer_types", cancer_types)
 
 print(prep_dfs_command)
 if (waddell_sarc_biph) {
