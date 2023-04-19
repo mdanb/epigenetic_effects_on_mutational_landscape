@@ -21,6 +21,13 @@ from xgboost import XGBRegressor
 from itertools import chain
 from natsort import natsorted
 
+def range_type(range_str):
+    start, end = map(int, range_str.split('-'))
+    if start > end:
+        raise argparse.ArgumentTypeError('Invalid range: start value must be '
+                                         'less than or equal to end value')
+    return (start, end)
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--cancer_types', nargs="+", type=str,
@@ -45,6 +52,8 @@ parser.add_argument("--woo_pcawg", action="store_true", default=False)
 parser.add_argument("--histologically_subtyped_mutations", action="store_true", default=False)
 parser.add_argument("--de_novo_seurat_clustering", action="store_true", default=False)
 parser.add_argument("--per_donor", action="store_true", default=False)
+parser.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
+                    default=None)
 parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
                     help='tss fragment filters to consider', default="")
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
@@ -70,6 +79,7 @@ woo_pcawg = config.woo_pcawg
 histologically_subtyped_mutations = config.histologically_subtyped_mutations
 de_novo_seurat_clustering = config.de_novo_seurat_clustering
 per_donor = config.per_donor
+donor_range = config.donor_range
 # bioRxiv_method = config.bioRxiv_method
 
 #### Helpers ####
@@ -307,7 +317,8 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
 def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                   waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
-                                  histologically_subtyped_mutations, de_novo_seurat_clustering, per_donor, ML_model):
+                                  histologically_subtyped_mutations, de_novo_seurat_clustering, per_donor,
+                                  donor_range, ML_model):
     # waddell_sarc_biph_waddell_epith = config.waddell_sarc_biph_waddell_epith
     # waddell_sarc_waddell_epith = config.waddell_sarc_waddell_epith
     # waddell_sarc_tsankov_sarc_waddell_epith = config.waddell_sarc_tsankov_sarc_waddell_epith
@@ -359,12 +370,13 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
                                                      waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
                                                      annotation_dir, tissues_to_consider, ML_model)
     else:
-        for donor in mutations_df.columns:
-            run_unclustered_data_analysis_helper(datasets, mutations_df, donor, scATAC_dir_orig,
-                                                 waddell_sarc_biph,
-                                                 waddell_sarc, waddell_sarc_tsankov_sarc,
-                                                 waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
-                                                 annotation_dir, tissues_to_consider, ML_model)
+        for idx, donor in enumerate(mutations_df.columns):
+            if (idx in range(donor_range)):
+                run_unclustered_data_analysis_helper(datasets, mutations_df, donor, scATAC_dir_orig,
+                                                     waddell_sarc_biph,
+                                                     waddell_sarc, waddell_sarc_tsankov_sarc,
+                                                     waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter,
+                                                     annotation_dir, tissues_to_consider, ML_model)
         # if (bioRxiv_method):
         #     tissues = set(scATAC_df.columns.str.split().to_series().apply(lambda x: x[0]))
         #     for tissue in tissues:
@@ -421,7 +433,7 @@ run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell
                               waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
                               tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                               histologically_subtyped_mutations, de_novo_seurat_clustering, per_donor,
-                              ML_model)
+                              donor_range, ML_model)
 
 
     # run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells,
