@@ -41,6 +41,11 @@ parser <- add_option(parser, c("--waddell_sarc_biph_tsankov_sarc_biph"),
 parser <- add_option(parser, c("--iters_dont_skip"), default="18")
 
 args = parse_args(parser)
+
+args = parse_args(parser, args = c("--cancer_types=combined_TCGA_CPTAC_adenoxtop_1500-no_bottom_0_samples-scale_TRUE-norm_by_mut_counts_TRUE-pca_n_components_30-dims_for_UMAP_1:15-regress_by_counts_TRUE_clustering_res_0.8xcluster_1",
+                                   "--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney", "--cell_number_filter=1",
+                                   "--ML_model=XGB", "--annotation=default_annotation"))
+
 # args = parse_args(parser, args = c("--cancer_types=Biliary-AdenoCA",
 #                                    "--all_cells", "--cell_number_filter=1",
 #                                    "--bing_ren", "--tsankov", "--shendure"))
@@ -265,6 +270,7 @@ prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_import
                          "--ML_model", ML_model,
                          "--cancer_types", paste0("'", paste(cancer_types, collapse=" "), "'"))
 
+print(prep_dfs_command)
 if (waddell_sarc_biph) {
   prep_dfs_command = paste(prep_dfs_command, "--waddell_sarc_biph")
 } else if (waddell_sarc) {
