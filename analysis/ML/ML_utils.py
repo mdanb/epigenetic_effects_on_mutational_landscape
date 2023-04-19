@@ -9,6 +9,11 @@ def load_scATAC(scATAC_path):
     scATAC_df = scATAC_df.T
     return scATAC_df
 
+def load_per_donor_mutations(cancer_type):
+    df = pd.read_csv(f"../../data/processed_data/per_patient_mutations/{cancer_type}_per_donor.csv",
+                     index_col=0)
+    return(df.loc[natsorted(df.index)])
+
 def load_agg_mutations():
     df = pd.read_csv("../../data/processed_data/mut_count_data.csv",
                        index_col=0)
