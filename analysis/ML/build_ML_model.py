@@ -371,7 +371,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
                                                      annotation_dir, tissues_to_consider, ML_model)
     else:
         for idx, donor in enumerate(mutations_df.columns):
-            if (idx in range(donor_range)):
+            if (idx in range(*donor_range)):
                 run_unclustered_data_analysis_helper(datasets, mutations_df, donor, scATAC_dir_orig,
                                                      waddell_sarc_biph,
                                                      waddell_sarc, waddell_sarc_tsankov_sarc,
