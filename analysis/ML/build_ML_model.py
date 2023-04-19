@@ -349,7 +349,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
     elif (de_novo_seurat_clustering):
         mutations_df = load_de_novo_seurat_clustered_cancers(cancer_types)
     elif (per_donor):
-        mutations_df = load_per_donor_mutations(cancer_types)
+        mutations_df = load_per_donor_mutations(cancer_types[0])
     else:
         mutations_df = load_agg_mutations()
 
