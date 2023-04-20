@@ -11,10 +11,10 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-args = parse_args(OptionParser(option_list=option_list), args =
-                    c("--datasets=Tsankov",
-                      "--cell_number_filter=1",
-                      "--annotation=default_annotation"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--datasets=Tsankov",
+#                       "--cell_number_filter=1",
+#                       "--annotation=default_annotation"))
 
 annotation = args$annotation
 cell_number_filter = args$cell_number_filter
