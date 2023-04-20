@@ -67,7 +67,10 @@ def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
         return f"{dir}/backwards_elimination_results_{tissues_to_consider}"
 
 def get_relevant_backwards_elim_dirs(config):
+    print("cancer types")
     cancer_types = config.cancer_types
+    print(cancer_types)
+
     # tissue_spec_cells = config.tissue_spec_cells
     # clustered_mutations = config.clustered_mutations
     # bing_ren = config.bing_ren
