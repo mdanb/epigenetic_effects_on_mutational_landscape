@@ -196,7 +196,8 @@ add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
 }
 
 filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile, nfrags_percentile,
-                        dataset, tissue, cell_types, min_cells_per_cell_type) {
+                        dataset, tissue, cell_types, min_cells_per_cell_type, 
+                        metadata) {
   cell_col_data = getCellColData(proj)
   
   if (tissue == "all") {
@@ -310,7 +311,7 @@ if (dir.exists(proj_dir)) {
   ArchR_proj <- loadArchRProject(dir)
   proj <- filter_proj(ArchR_proj, nfrags_filter, tss_filter, tss_percentile, 
                       nfrags_percentile, dataset, tissue, cell_types,
-                      min_cells_per_cell_type)
+                      min_cells_per_cell_type, metadata)
   
   proj <- saveArchRProject(ArchRProj = proj, 
                            outputDirectory = proj_dir,
@@ -465,7 +466,7 @@ if (cluster) {
                                                     dataset)
     ArchR_proj@cellColData = cell_col_data
     proj <- filter_proj(ArchR_proj, nfrags_filter, tss_filter, tss_percentile,
-                        dataset, "IC", "all")
+                        dataset, "IC", "all", metadata)
     cell_col_data = getCellColData(proj)
     non_basal_proximal = cell_col_data[cell_col_data[["cell_type"]] != "Basal", ]
     non_basal_proximal = as.data.frame(non_basal_proximal["cell_type"])
