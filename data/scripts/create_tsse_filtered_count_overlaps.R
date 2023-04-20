@@ -96,6 +96,14 @@ args = parse_args(OptionParser(option_list=option_list))
 #                      "--cell_types=Basal;Ciliated;Secretory;Myeloid;Endothelial;Neuroendocrine;B.cells;Ionocytes;T.NK.cells;Stromal;Tuft.like;Sec-Ciliated",
 #                      "--files_pattern=RPL",
 #                      "--cores=1"))
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                    c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000",
+#                      "--dataset=Bingren",
+#                      "--cell_types=Astrocyte;Blood Brain Barrier Endothelial Cell;CNS,Enteric Neuron;GABAergic Neuron;Glutaminergic Neuron;Microglia;Oligodendrocyte;Oligodendrocyte Precursor",
+#                      "--files_pattern=frontal_cortex",
+#                      "--cores=8",
+#                      "--annotation=bingren_remove_same_celltype_indexing"))
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
                                            split = ",")))
@@ -180,7 +188,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
                                                            chain, 
                                                            top_tsse_fragment_count_range=NA, 
                                                            cell_types_to_consider=NA,
-                                                           dataset="bing_ren",
+                                                           dataset="Bingren",
                                                            cores) {
   
   if (dataset == "Bingren") {
@@ -387,10 +395,8 @@ if (dataset == "Bingren") {
                           header=TRUE)
   }
   colnames(metadata)[grep("cell.type", colnames(metadata))] = "cell_type"
-  files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/", pattern=files_pattern,
-                             full_names=TRUE),
-                  list.dirs("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files", recursive = FALSE, full.names = 
-                             TRUE))
+  files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC", pattern=files_pattern),
+                  list.dirs("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC/", recursive = FALSE))
   create_tsse_filtered_count_overlaps_per_tissue(files,
                                                  metadata,
                                                  interval.ranges,
