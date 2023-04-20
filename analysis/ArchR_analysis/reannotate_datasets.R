@@ -199,7 +199,7 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile, nfrags_
                         dataset, tissue, cell_types, min_cells_per_cell_type, 
                         metadata) {
   cell_col_data = getCellColData(proj)
-  head(metadata)
+  print(metadata)
   if (tissue == "all") {
     tissue = "*"
   }
