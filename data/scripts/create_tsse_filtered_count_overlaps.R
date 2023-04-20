@@ -13,7 +13,7 @@ option_list <- list(
   make_option("--top_tsse_fragment_count_range", type="character"),
   make_option("--files_pattern", type="character"),
   make_option("--cores", type="integer"),
-  make_option("--annotation", type="integer")
+  make_option("--annotation", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
