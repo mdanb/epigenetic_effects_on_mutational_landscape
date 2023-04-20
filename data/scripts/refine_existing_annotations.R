@@ -44,3 +44,28 @@ write.table(metadata,
 "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/data/processed_data/Greenleaf_brain_refined_annotations.txt")
 
 ###################
+# BingRen frontal cortex
+metadata = read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE184462_metadata.tsv", 
+                      sep="\t",
+                      header=T)
+metadata = metadata[grepl("Human_brain", metadata[["tissue"]]), ]
+astro_1_idx = metadata[, "cell.type"] == "Astrocyte 1"
+astro_2_idx = metadata[, "cell.type"] == "Astrocyte 2"
+gaba_1_idx = metadata[, "cell.type"] == "GABAergic Neuron 1"
+gaba_2_idx = metadata[, "cell.type"] == "GABAergic Neuron 2"
+gluta_1_idx = metadata[, "cell.type"] == "Glutaminergic Neuron 1"
+gluta_2_idx = metadata[, "cell.type"] == "Glutaminergic Neuron 2"
+panc_idx = grepl("Pancreatic", metadata[, "cell.type"])
+
+metadata[astro_1_idx, "cell.type"] = "Astrocyte"
+metadata[astro_2_idx, "cell.type"] = "Astrocyte"
+metadata[gaba_1_idx, "cell.type"] = "GABAergic Neuron"
+metadata[gaba_2_idx, "cell.type"] = "GABAergic Neuron"
+metadata[gluta_1_idx, "cell.type"] = "Glutaminergic Neuron"
+metadata[gluta_2_idx, "cell.type"] = "Glutaminergic Neuron"
+metadata = metadata[!panc_idx, ]
+
+write.table(metadata, 
+    "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/data/processed_data/bingren_remove_same_celltype_indexing.tsv")
+
+

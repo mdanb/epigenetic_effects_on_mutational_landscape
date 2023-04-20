@@ -277,7 +277,7 @@ set.seed(42)
 metadata_root = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata"
 metadata_filepath = paste(metadata_root, metadata_for_celltype_fn, sep="/")
 metadata = read.csv(metadata_filepath, sep=sep_for_metadata)
-
+head(metadata)
 if (dataset == "Shendure" && tissue == "cerebrum") {
   metadata["sample_name"] = gsub("brain", "cerebrum", metadata[["sample_name"]])
 }
