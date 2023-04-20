@@ -199,7 +199,7 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile, nfrags_
                         dataset, tissue, cell_types, min_cells_per_cell_type, 
                         metadata) {
   cell_col_data = getCellColData(proj)
-  
+  head(metadata)
   if (tissue == "all") {
     tissue = "*"
   }
@@ -465,8 +465,9 @@ if (cluster) {
                                                     cell_type_col_in_metadata,
                                                     dataset)
     ArchR_proj@cellColData = cell_col_data
-    proj <- filter_proj(ArchR_proj, nfrags_filter, tss_filter, tss_percentile,
-                        dataset, "IC", "all", metadata)
+    # FIX 
+    # proj <- filter_proj(ArchR_proj, nfrags_filter, tss_filter, tss_percentile,
+    #                     dataset, "IC", "all", metadata)
     cell_col_data = getCellColData(proj)
     non_basal_proximal = cell_col_data[cell_col_data[["cell_type"]] != "Basal", ]
     non_basal_proximal = as.data.frame(non_basal_proximal["cell_type"])
