@@ -114,6 +114,7 @@ def get_relevant_backwards_elim_dirs(config):
                                                                    annotation,
                                                                    tissues_to_consider,
                                                                    ML_model))
+    print(backward_elim_dirs)
     return backward_elim_dirs
         # if (run_tissue_spec):
         #     backwards_elim_dir=f"models/{cancer_type}/scATAC_source_{scATAC_source}/" \
