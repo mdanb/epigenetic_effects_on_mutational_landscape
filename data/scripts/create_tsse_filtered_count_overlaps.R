@@ -377,8 +377,15 @@ load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/hg19.1Mb.rang
 ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/hg38ToHg19.over.chain")
 
 if (dataset == "Bingren") {
-  metadata = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE184462_metadata.tsv", sep="\t", 
+  if (annotation == "bingren_remove_same_celltype_indexing") {
+    metadata = read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/bingren_remove_same_celltype_indexing.csv", 
+                        sep=",", 
                         header=TRUE)
+  }
+  else {
+    metadata = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE184462_metadata.tsv", sep="\t", 
+                          header=TRUE)
+  }
   colnames(metadata)[grep("cell.type", colnames(metadata))] = "cell_type"
   files = setdiff(list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/", pattern=files_pattern,
                              full_names=TRUE),
