@@ -132,20 +132,20 @@ option_list <- list(
 #                       "--min_cells_per_cell_type=50")
 # )
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=4",
-                      "--dataset=Bingren",
-                      "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
-                      "--sep_for_metadata=\t",
-                      "--cell_type_col_in_metadata=cell.type",
-                      "--cell_name_col_in_metadata=cellID",
-                      "--column_to_color_by=cell.type",
-                      "--tissue=frontal_cortex",
-                      "--nfrags_filter=1000",
-                      "--tss_filter=4",
-                      "--cell_types=all",
-                      "--min_cells_per_cell_type=100")
-)
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=4",
+#                       "--dataset=Bingren",
+#                       "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell.type",
+#                       "--cell_name_col_in_metadata=cellID",
+#                       "--column_to_color_by=cell.type",
+#                       "--tissue=frontal_cortex",
+#                       "--nfrags_filter=1000",
+#                       "--tss_filter=4",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=100")
+# )
 # args = parse_args(OptionParser(option_list=option_list))
 
 
