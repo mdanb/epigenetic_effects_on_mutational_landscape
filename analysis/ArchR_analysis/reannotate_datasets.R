@@ -24,99 +24,114 @@ option_list <- list(
   make_option("--min_cells_per_cell_type", type="integer", default=NULL)
 )
 
-# Tsankov combined distal, proximal with epithelial gene markers
-args = parse_args(OptionParser(option_list=option_list), args=
-                  c("--cores=4",
-                    "--dataset=Tsankov",
-                    "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-                    "--sep_for_metadata=,",
-                    "--cell_type_col_in_metadata=celltypes",
-                    "--cell_name_col_in_metadata=X",
-                    "--column_to_color_by=NULL",
-                    "--tissue=all",
-                    "--nfrags_filter=1000",
-                    "--tss_filter=4",
-                    "--cell_types=all",
-                    "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,SCGB1A1,SCGB3A1,SCGB3A2,MUC5B"))
+# # Tsankov combined distal, proximal with epithelial gene markers
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                   c("--cores=4",
+#                     "--dataset=Tsankov",
+#                     "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                     "--sep_for_metadata=,",
+#                     "--cell_type_col_in_metadata=celltypes",
+#                     "--cell_name_col_in_metadata=X",
+#                     "--column_to_color_by=NULL",
+#                     "--tissue=all",
+#                     "--nfrags_filter=1000",
+#                     "--tss_filter=4",
+#                     "--cell_types=all",
+#                     "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,SCGB1A1,SCGB3A1,SCGB3A2,MUC5B"))
+# 
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=4",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--cell_name_col_in_metadata=X",
+#                       "--column_to_color_by=NULL",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,SCGB1A1,SCGB3A1,SCGB3A2,MUC5B"))
+# 
+# # Basal
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=4",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--cell_name_col_in_metadata=X",
+#                       "--column_to_color_by=NULL",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1000",
+#                       "--tss_filter=4",
+#                       "--cell_types=Basal",
+#                       "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,SCGB1A1,SCGB3A1,SCGB3A2,MUC5B"))
+#                       
+# # Shendure cerebellum
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=4",
+#                       "--dataset=Shendure",
+#                       "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--cell_name_col_in_metadata=cell",
+#                       "--column_to_color_by=cell_type",
+#                       "--tissue=cerebellum",
+#                       "--nfrags_filter=1000",
+#                       "--tss_percentile=0.25",
+#                       "--tss_filter=4",
+#                       "--cell_types=all")
+#                   )
+# 
+# # Shendure cerebrum
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=4",
+#                       "--dataset=Shendure",
+#                       "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--cell_name_col_in_metadata=cell",
+#                       "--column_to_color_by=cell_type",
+#                       "--tissue=cerebrum",
+#                       "--nfrags_filter=1000",
+#                       "--tss_percentile=0.1",
+#                       "--nfrags_percentile=0.1",
+#                       "--tss_filter=4",
+#                       "--cell_types=all",
+#                       "--marker_genes=AQP4,OLIG1,OLIG2")
+#                   )
+# 
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=4",
+#                       "--dataset=Shendure",
+#                       "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--cell_name_col_in_metadata=cell",
+#                       "--column_to_color_by=cell_type",
+#                       "--tissue=cerebrum",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=1",
+#                       "--cell_types=all")
+# )
+# 
+# # Bing Ren frontal cortex
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=4",
+#                       "--dataset=Bingren",
+#                       "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell.type",
+#                       "--cell_name_col_in_metadata=cellID",
+#                       "--column_to_color_by=cell.type",
+#                       "--tissue=frontal_cortex",
+#                       "--nfrags_filter=1000",
+#                       "--tss_filter=4",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=50")
+# )
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=4",
-                      "--dataset=Tsankov",
-                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-                      "--sep_for_metadata=,",
-                      "--cell_type_col_in_metadata=celltypes",
-                      "--cell_name_col_in_metadata=X",
-                      "--column_to_color_by=NULL",
-                      "--tissue=all",
-                      "--nfrags_filter=1",
-                      "--tss_filter=0",
-                      "--cell_types=all",
-                      "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,SCGB1A1,SCGB3A1,SCGB3A2,MUC5B"))
-
-# Basal
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=4",
-                      "--dataset=Tsankov",
-                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-                      "--sep_for_metadata=,",
-                      "--cell_type_col_in_metadata=celltypes",
-                      "--cell_name_col_in_metadata=X",
-                      "--column_to_color_by=NULL",
-                      "--tissue=all",
-                      "--nfrags_filter=1000",
-                      "--tss_filter=4",
-                      "--cell_types=Basal",
-                      "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,SCGB1A1,SCGB3A1,SCGB3A2,MUC5B"))
-                      
-# Shendure cerebellum
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=4",
-                      "--dataset=Shendure",
-                      "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-                      "--sep_for_metadata=\t",
-                      "--cell_type_col_in_metadata=cell_type",
-                      "--cell_name_col_in_metadata=cell",
-                      "--column_to_color_by=cell_type",
-                      "--tissue=cerebellum",
-                      "--nfrags_filter=1000",
-                      "--tss_percentile=0.25",
-                      "--tss_filter=4",
-                      "--cell_types=all")
-                  )
-
-# Shendure cerebrum
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=4",
-                      "--dataset=Shendure",
-                      "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-                      "--sep_for_metadata=\t",
-                      "--cell_type_col_in_metadata=cell_type",
-                      "--cell_name_col_in_metadata=cell",
-                      "--column_to_color_by=cell_type",
-                      "--tissue=cerebrum",
-                      "--nfrags_filter=1000",
-                      "--tss_percentile=0.1",
-                      "--nfrags_percentile=0.1",
-                      "--tss_filter=4",
-                      "--cell_types=all",
-                      "--marker_genes=AQP4,OLIG1,OLIG2")
-                  )
-
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=4",
-                      "--dataset=Shendure",
-                      "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-                      "--sep_for_metadata=\t",
-                      "--cell_type_col_in_metadata=cell_type",
-                      "--cell_name_col_in_metadata=cell",
-                      "--column_to_color_by=cell_type",
-                      "--tissue=cerebrum",
-                      "--nfrags_filter=1",
-                      "--tss_filter=1",
-                      "--cell_types=all")
-)
-
-# Bing Ren frontal cortex
 args = parse_args(OptionParser(option_list=option_list), args=
                     c("--cores=4",
                       "--dataset=Bingren",
@@ -129,7 +144,7 @@ args = parse_args(OptionParser(option_list=option_list), args=
                       "--nfrags_filter=1000",
                       "--tss_filter=4",
                       "--cell_types=all",
-                      "--min_cells_per_cell_type=50")
+                      "--min_cells_per_cell_type=100")
 )
 # args = parse_args(OptionParser(option_list=option_list))
 
@@ -220,7 +235,8 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile, nfrags_
                                                   cell_type_col_in_metadata,
                                                   dataset)
   proj = proj[!is.na(cell_col_data[["cell_type"]])]
-  proj@cellColData = cell_col_data 
+  proj@cellColData = cell_col_data[!is.na(cell_col_data[["cell_type"]]), ]
+  cell_col_data = getCellColData(proj)
   cell_type_filter = grepl(cell_types, cell_col_data[["cell_type"]])
   proj = proj[cell_type_filter]
   counts_per_cell_type = table(cell_col_data[["cell_type"]])
@@ -418,7 +434,9 @@ if (cluster) {
   if (!is.null(nfrags_percentile)) {
     fn = paste0(fn, "_nfrags_percentile_", nfrags_percentile)
   } 
-  
+  if (!is.null(min_cells_per_cell_type)) {
+    fn = paste0(fn, "_min_cells_per_cell_type_", min_cells_per_cell_type)
+  } 
   fn = paste0(fn, ".pdf")
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
   
