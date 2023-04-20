@@ -258,6 +258,7 @@ waddell_sarc_biph_tsankov_sarc_biph = args$waddell_sarc_biph_tsankov_sarc_biph
 tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
 ML_model = args$ML_model
 
+print(cancer_types)
 prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_importance_plots.py", 
                          "--datasets", 
                          paste(datasets, collapse=" "), 
