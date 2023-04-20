@@ -291,7 +291,8 @@ setting = paste0("ArchR", "_", "dataset", "_", dataset, "_", "tissue", "_",
                  tissue, "_", "cell_types", "_", cell_types, "_", 
                  "nfrags_filter", "_", nfrags_filter, "_", 
                  "tss_filter", "_", tss_filter, "_", "min_cells_per_cell_type", 
-                 "_", min_cells_per_cell_type)
+                 "_", min_cells_per_cell_type, "_", "metadata_file", "_", 
+                 metadata_for_celltype_fn)
 
 if (!is.null(tss_percentile)) {
   setting = paste0(setting, "_", "tss_percentile", "_", tss_percentile)
