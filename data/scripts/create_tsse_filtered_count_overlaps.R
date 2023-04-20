@@ -214,7 +214,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
     print("Migrating BED files...")
     migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
                                   mc.cores=cores)
-    sample_names = unlist(lapply(files, get_sample_name))
+    sample_names = unlist(lapply(files, get_sample_name, "Bingren"))
   }
   else if (dataset == "Shendure") {
     migrated_fragments = fragments
@@ -316,7 +316,7 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
                                   filter(cell_type %in% cell_types_to_consider)
   
   if (dataset == "Bingren") {
-    tissue_name = get_tissue_name(files[1])
+    tissue_name = get_tissue_name(files[1], "Bingren")
   }
   else if (dataset == "Shendure") {
     tissue_name = get_tissue_name_shendure(files[1])
@@ -389,6 +389,8 @@ if (dataset == "Bingren") {
     metadata = read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/bingren_remove_same_celltype_indexing.csv", 
                         sep=",", 
                         header=TRUE)
+    metadata[metadata["sample"] == "Human_brain_1_1", "sample"] = "Human_brain_1"
+    metadata[metadata["sample"] == "Human_brain_2_1", "sample"] = "Human_brain_2"
   }
   else {
     metadata = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE184462_metadata.tsv", sep="\t", 
