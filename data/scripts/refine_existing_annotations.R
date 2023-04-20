@@ -66,6 +66,8 @@ metadata[gluta_2_idx, "cell.type"] = "Glutaminergic Neuron"
 metadata = metadata[!panc_idx, ]
 
 write.table(metadata, 
-    "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/data/processed_data/bingren_remove_same_celltype_indexing.tsv")
+    "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/data/processed_data/bingren_remove_same_celltype_indexing.tsv",
+    sep="\t",
+    row.names = F)
 
 
