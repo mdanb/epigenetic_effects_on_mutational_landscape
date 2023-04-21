@@ -16,7 +16,8 @@ from ML_utils import load_scATAC, load_agg_mutations, filter_agg_data, \
                      filter_mutations_by_cancer, load_meso_mutations, load_sclc_mutations, \
                      load_subtyped_lung_mutations, load_woo_pcawg_mutations, \
                      load_histologically_subtyped_mutations, add_na_ranges, \
-                     load_de_novo_seurat_clustered_cancers, load_per_donor_mutations, load_CPTAC
+                     load_de_novo_seurat_clustered_cancers, load_per_donor_mutations, load_CPTAC, \
+                     load_combined_CPTAC_ICGC
 from xgboost import XGBRegressor
 from itertools import chain
 from natsort import natsorted
@@ -72,6 +73,7 @@ waddell_sarc_biph_tsankov_sarc_biph = config.waddell_sarc_biph_tsankov_sarc_biph
 annotation_dir = config.annotation_dir
 SCLC = config.SCLC
 CPTAC = config.CPTAC
+combined_CPTAC_ICGC = config.combined_CPTAC_ICGC
 tissues_to_consider = config.tissues_to_consider
 # tss_filtered = config.tss_filtered
 tss_fragment_filter = config.tss_fragment_filter
@@ -82,6 +84,7 @@ histologically_subtyped_mutations = config.histologically_subtyped_mutations
 de_novo_seurat_clustering = config.de_novo_seurat_clustering
 per_donor = config.per_donor
 donor_range = config.donor_range
+
 # bioRxiv_method = config.bioRxiv_method
 
 #### Helpers ####
@@ -319,8 +322,8 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
 def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                   waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
-                                  histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, per_donor,
-                                  donor_range, ML_model):
+                                  histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
+                                  per_donor, donor_range, ML_model):
     # waddell_sarc_biph_waddell_epith = config.waddell_sarc_biph_waddell_epith
     # waddell_sarc_waddell_epith = config.waddell_sarc_waddell_epith
     # waddell_sarc_tsankov_sarc_waddell_epith = config.waddell_sarc_tsankov_sarc_waddell_epith
@@ -352,6 +355,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
         mutations_df = load_de_novo_seurat_clustered_cancers(cancer_types)
     elif (CPTAC):
         mutations_df = load_CPTAC()
+    elif (combined_CPTAC_ICGC):
+        mutations_df = load_combined_CPTAC_ICGC()
     elif (per_donor):
         mutations_df = load_per_donor_mutations(cancer_types[0])
     else:
@@ -436,8 +441,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
 run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                               waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
                               tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
-                              histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, per_donor,
-                              donor_range, ML_model)
+                              histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
+                              per_donor, donor_range, ML_model)
 
 
     # run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec_cells,

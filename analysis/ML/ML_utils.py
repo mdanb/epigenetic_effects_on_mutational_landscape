@@ -19,6 +19,11 @@ def load_CPTAC():
                      index_col=0)
     return(df.loc[natsorted(df.index)])
 
+def load_combined_CPTAC_ICGC():
+    df = pd.read_csv(f"../../data/processed_data/combined_CPTAC_ICGC_mutations.csv",
+                     index_col=0)
+    return(df.loc[natsorted(df.index)])
+
 def load_agg_mutations():
     df = pd.read_csv("../../data/processed_data/mut_count_data.csv",
                        index_col=0)
