@@ -169,7 +169,7 @@ if (dataset == "Bingren") {
     metadata_bingren = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/GSE184462_metadata.tsv", 
                           sep="\t",
                           header=T)
-  else if (annotation == "bingren_remove_same_celltype_indexing") {
+  } else if (annotation == "bingren_remove_same_celltype_indexing") {
     metadata_bingren = read.table("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/bingren_remove_same_celltype_indexing.csv", 
                                   sep=",",
                                   header=T)
