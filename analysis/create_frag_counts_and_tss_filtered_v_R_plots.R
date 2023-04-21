@@ -418,8 +418,8 @@ combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path
       num_fragments = head(unlist(strsplit(num_fragments, split="[.]")), 1)
       
       count_overlaps = readRDS(file)
-      cell_type_col_idx = lapply(cell_type_for_grep, grep,
-                                 colnames(count_overlaps), ignore.case=T)
+      cell_type_col_idx = lapply(cell_type_for_grep, match,
+                                 colnames(count_overlaps))
 
       count_overlaps = count_overlaps[, unlist(cell_type_col_idx), drop=FALSE]
       if (length(count_overlaps) == 0) {
