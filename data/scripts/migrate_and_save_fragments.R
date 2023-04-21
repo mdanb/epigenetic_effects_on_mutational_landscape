@@ -33,17 +33,17 @@ helper <- function(files, migrated_filepaths, ch, cores) {
 }
 
 get_files_not_done <- function(files, dir_path) {
-  migrated_filepaths_bgz = paste(dir_path, gsub(".gz", ".bgz", 
-                                                lapply(strsplit(files, split = "/"), "[", 9)), 
-                                 sep = "/")
-  migrated_filepaths_tbi = paste(migrated_filepaths_bgz, "tbi", sep=".")
-  migrated_filepaths = paste(dir_path, gsub(".gz", "", 
-                                            lapply(strsplit(files, split = "/"), "[", 9)),
+  # migrated_filepaths_bgz = paste(dir_path, gsub(".gz", ".bgz", 
+  #                                               lapply(strsplit(files, split = "/"), "[", 9)), 
+  #                                sep = "/")
+  migrated_filepaths_tbi = paste(files, "tbi", sep=".")
+  migrated_filepaths = paste(dir_path, 
+                             lapply(strsplit(files, split = "/"), "[", 9),
                              sep = "/")
   files_not_done = c()
   migrated_filepaths_not_done = c()
   for (i in 1:length(migrated_filepaths)) {
-    bgz_file = migrated_filepaths_bgz[i]
+    bgz_file = files[i]
     tbi_file = migrated_filepaths_tbi[i]
     if (!file.exists(bgz_file) || !file.exists(tbi_file)) {
       migrated_filepaths_not_done = append(migrated_filepaths_not_done, 
@@ -58,7 +58,7 @@ if (dataset == "Bingren") {
   dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC/migrated_to_hg19"
   dir.create(dir_path)
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC",
-                     pattern="bed.gz",
+                     pattern="bed.bgz",
                      full.names=TRUE)
   
 } else if (dataset == "Tsankov") {
