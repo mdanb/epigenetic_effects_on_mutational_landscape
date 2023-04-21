@@ -12,15 +12,15 @@ get_per_cancer_mut_data <- function(all_mutations, interval_ranges) {
 }
 
 get_mutation_df_all_cancers <- function(mut, interval_ranges) {
-  if (!file.exists("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/processed_data/mut_count_data.csv")) {
+  if (!file.exists("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/data/processed_data/mut_count_data.csv")) {
     cancer_types_mut_data = get_per_cancer_mut_data(mut, interval_ranges)
     mut_count_data = as.data.frame(do.call(cbind, cancer_types_mut_data))
     colnames(mut_count_data) = colnames(mut)
     rownames(mut_count_data) = names(interval_ranges)
-    write.csv(mut_count_data, "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/processed_data/mut_count_data.csv")
+    write.csv(mut_count_data, "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/data/processed_data/mut_count_data.csv")
   }
   else {
-    mut_count_data = read.csv("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/processed_data/mut_count_data.csv")
+    mut_count_data = read.csv("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/data/processed_data/mut_count_data.csv")
   }
   return(mut_count_data)
 }
