@@ -21,7 +21,7 @@ option_list <- list(
   make_option("--nfrags_percentile", type="double", default=NULL),
   make_option("--cell_types", type="character", default="all"),
   make_option("--marker_genes", type="character", default=NULL),
-  make_option("--min_cells_per_cell_type", type="integer", default=NULL)
+  make_option("--min_cells_per_cell_type", type="integer", default=0)
 )
 
 # # Tsankov combined distal, proximal with epithelial gene markers
@@ -85,23 +85,23 @@ option_list <- list(
 #                   )
 # 
 # # Shendure cerebrum
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=4",
-#                       "--dataset=Shendure",
-#                       "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-#                       "--sep_for_metadata=\t",
-#                       "--cell_type_col_in_metadata=cell_type",
-#                       "--cell_name_col_in_metadata=cell",
-#                       "--column_to_color_by=cell_type",
-#                       "--tissue=cerebrum",
-#                       "--nfrags_filter=1000",
-#                       "--tss_percentile=0.1",
-#                       "--nfrags_percentile=0.1",
-#                       "--tss_filter=4",
-#                       "--cell_types=all",
-#                       "--marker_genes=AQP4,OLIG1,OLIG2")
-#                   )
-# 
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=4",
+                      "--dataset=Shendure",
+                      "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+                      "--sep_for_metadata=\t",
+                      "--cell_type_col_in_metadata=cell_type",
+                      "--cell_name_col_in_metadata=cell",
+                      "--column_to_color_by=cell_type",
+                      "--tissue=cerebrum",
+                      "--nfrags_filter=1000",
+                      "--tss_percentile=0.2",
+                      "--nfrags_percentile=0.2",
+                      "--tss_filter=4",
+                      "--cell_types=all")
+                  )
+# ,
+#                       "--marker_genes=AQP4,OLIG1,OLIG2"
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=4",
 #                       "--dataset=Shendure",
@@ -199,7 +199,6 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile, nfrags_
                         dataset, tissue, cell_types, min_cells_per_cell_type, 
                         metadata) {
   cell_col_data = getCellColData(proj)
-  print(colnames(metadata))
   if (tissue == "all") {
     tissue = "*"
   }
@@ -309,7 +308,7 @@ if (dir.exists(proj_dir)) {
 } else {
   dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj"
   ArchR_proj <- loadArchRProject(dir)
-  proj <- filter_proj(ArchR_proj, nfrags_filter, tss_filter, tss_percentile, 
+  proj <- filter_proj(proj = ArchR_proj, nfrags_filter, tss_filter, tss_percentile, 
                       nfrags_percentile, dataset, tissue, cell_types,
                       min_cells_per_cell_type, metadata)
   
