@@ -47,7 +47,7 @@ get_n_colors <- function(n, seed) {
 }
 
 load_mutation_data <- function() {
-  mut = readRDS('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/mutation_data/mutations.aggregated.PCAWG.RK.20181215.Rds')
+  mut = readRDS('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/mutations.aggregated.PCAWG.RK.20181215.Rds')
   # get all mutations, without distinctions e.g clonal vs subclonal 
   mut = mut[, 1:37]
   return(mut)
