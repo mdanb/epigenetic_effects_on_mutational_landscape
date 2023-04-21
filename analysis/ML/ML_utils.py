@@ -14,6 +14,11 @@ def load_per_donor_mutations(cancer_type):
                      index_col=0)
     return(df.loc[natsorted(df.index)])
 
+def load_CPTAC():
+    df = pd.read_csv(f"../../data/processed_data/CPTAC_mutations.csv",
+                     index_col=0)
+    return(df.loc[natsorted(df.index)])
+
 def load_agg_mutations():
     df = pd.read_csv("../../data/processed_data/mut_count_data.csv",
                        index_col=0)
