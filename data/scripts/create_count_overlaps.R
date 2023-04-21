@@ -18,10 +18,11 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-#args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=shendure",
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                  c("--dataset=Bingren",
 #                    "--cell_number_filter=1",
-#                    "--cores=1"))
+#                    "--cores=8",
+#                    "--annotation=bingren_remove_same_celltype_indexing"))
 
 cell_number_filter = args$cell_number_filter
 cores = args$cores
@@ -175,7 +176,7 @@ if (dataset == "Bingren") {
   }
   colnames(metadata_bingren)[grepl("cell.type", colnames(metadata_bingren))] = "cell_type"
   files_bingren = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC/migrated_to_hg19",
-                              pattern=".*fragments\\.bed\\.bgz")
+                              pattern=".*fragments\\.bed\\.bgz$")
   
   mclapply(files_bingren, create_count_overlaps_files,
            cell_number_filter=cell_number_filter,
