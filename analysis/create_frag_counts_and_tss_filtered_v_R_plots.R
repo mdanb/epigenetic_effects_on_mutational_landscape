@@ -19,7 +19,8 @@ option_list <- list(
               help="format: comma separated [CellType1]-[CellType2]-etc..., 
               order must correspond to tissue_for_tsse_filtered_cell_types"),
   make_option("--plot_filename", type="character"),
-  make_option("--plot_x_ticks", type="character")
+  make_option("--plot_x_ticks", type="character"),
+  make_option("--annotation", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -124,6 +125,16 @@ args = parse_args(OptionParser(option_list=option_list))
 #                       "--plot_filename=sarcomatoid_Tsankov_all_cell_types.png",
 #                       "--plot_x_ticks=1000,50000,100000,150000,250000,300000,400000,500000,1000000"))
 
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cancer_type=CNS-GBM",
+                      "--boxplot_cell_types=frontal cortex Astrocyte (BR);frontal cortex Blood Brain Barrier Endothelial Cell (BR);frontal cortex CNS,Enteric Neuron (BR);frontal_cortex GABAergic Neuron (BR);frontal_cortex Glutaminergic Neuron (BR);frontal_cortex Microglia (BR);frontal_cortex Oligodendrocyte (BR);frontal_cortex Oligodendrocyte Precursor (BR)",
+                      "--tsse_filtered_cell_types=Astrocyte;Blood Brain Barrier Endothelial Cell;CNS,Enteric Neuron;GABAergic Neuron;Glutaminergic Neuron;Microglia;Oligodendrocyte;Oligodendrocyte Precursor",
+                      "--tissue_for_tsse_filtered_cell_types=Bingren-Frontal Cortex",
+                      "--plot_filename=Bingren_frontal_cortex_relevant_cells.png",
+                      "--plot_x_ticks=1000,50000,100000,150000,250000,300000,400000,500000,1000000",
+                      "--annotation=bingren_remove_same_celltype_indexing"))
+
+annotation = args$annotation
 cancer_type = args$cancer_type
 boxplot_cell_types = unlist(strsplit(args$boxplot_cell_types, split = "/"))
 tissue_dataset_for_tsse_filtered_cell_types = unlist(strsplit(args$tissue_for_tsse_filtered_cell_types, 
@@ -392,7 +403,8 @@ prep_boxplots_per_cancer_type <- function(combined_count_overlaps,
 combine_tsse_filtered_count_overlaps_into_correlation_df <- function(folder_path,
                                                                      cancer_type,
                                                                      plot_x_ticks,
-                                                                     current_tsse_cell_types) {
+                                                                     current_tsse_cell_types,
+                                                                     mut_count_data) {
   cell_type_for_grep = lapply(current_tsse_cell_types, add_escape_if_necessary)
   count = 1
   tsse_filtered_correlations = tibble()
@@ -455,12 +467,11 @@ if (waddell_sarc_biph || waddell_sarc || waddell_sarc_tsankov_sarc ||
   mut_count_data = mut_count_data[, 2:length(colnames(mut_count_data))]
 }
 
-combined_data_path = "../data/processed_data/count_overlap_data/combined_count_overlaps/"
-
-combined_filepath = paste(combined_data_path,
-                          "Bingren_count_filter_",
-                          CELL_NUMBER_FILTER,
-                          "_combined_count_overlaps.rds", sep="")
+combined_data_path = "../data/processed_data/count_overlap_data/combined_count_overlaps"
+combined_data_path = paste(combined_data_path, annotation, sep="/")
+combined_filename = paste("Bingren_count_filter", CELL_NUMBER_FILTER, 
+                          "combined_count_overlaps.rds", sep="_")
+combined_filepath = paste(combined_data_path, combined_filename, sep="/")
 combined_count_overlaps = t(readRDS(combined_filepath))
 
 combined_filepath_shendure = paste(combined_data_path,
@@ -504,7 +515,8 @@ for (dataset_tissue in tissue_dataset_for_tsse_filtered_cell_types) {
       path,
       cancer_type, 
       plot_x_ticks,
-      current_tsse_cell_types)
+      current_tsse_cell_types, 
+      mut_count_data)
   if (dataset == "Bing Ren") {
     dataset_extension = "(BR)"
   }
