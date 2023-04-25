@@ -170,7 +170,7 @@ if (test_backward_selection_iter):
                                            annotation_dir, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                            waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
                                            histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                           CPTAC, combined_CPTAC_ICGC, per_donor)
+                                           CPTAC, combined_CPTAC_ICGC, per_donor, seed)
 else:
     run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                   waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
