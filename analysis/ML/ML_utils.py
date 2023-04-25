@@ -17,6 +17,36 @@ from xgboost import XGBRegressor
 
 
 # Load Data helpers
+def load_mutations(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+                   waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
+                   histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+                   CPTAC, combined_CPTAC_ICGC, per_donor):
+    if (waddell_sarc_biph or waddell_sarc or waddell_sarc_tsankov_sarc or
+        waddell_sarc_biph_tsankov_sarc_biph):
+        mutations_df = load_meso_mutations(waddell_sarc_biph,
+                                           waddell_sarc,
+                                           waddell_sarc_tsankov_sarc,
+                                           waddell_sarc_biph_tsankov_sarc_biph)
+    elif (SCLC):
+        mutations_df = load_sclc_mutations()
+    elif (lung_subtyped):
+        mutations_df = load_subtyped_lung_mutations()
+    elif (woo_pcawg):
+        mutations_df = load_woo_pcawg_mutations()
+    elif (histologically_subtyped_mutations):
+        mutations_df = load_histologically_subtyped_mutations()
+    elif (de_novo_seurat_clustering):
+        mutations_df = load_de_novo_seurat_clustered_cancers(cancer_types)
+    elif (CPTAC):
+        mutations_df = load_CPTAC()
+    elif (combined_CPTAC_ICGC):
+        mutations_df = load_combined_CPTAC_ICGC()
+    elif (per_donor):
+        mutations_df = load_per_donor_mutations(cancer_types[0])
+    else:
+        mutations_df = load_agg_mutations()
+    return(mutations_df)
+
 def load_scATAC(scATAC_path):
     scATAC_df = pyreadr.read_r(scATAC_path)
     scATAC_df = scATAC_df[None]
@@ -177,15 +207,6 @@ def get_train_test_split(X, y, test_size):
                                                         test_size=test_size, random_state=42)
     return X_train, X_test, y_train, y_test
 
-# Cross Validation helpers
-def grid_search(X_train, y_train, pipe, params, num_k_folds):
-    start_time = time.time()
-    grid_search_object = GridSearchCV(pipe, params, scoring="r2",
-                                      cv=KFold(num_k_folds), n_jobs=-1, verbose=100)
-    grid_search_object.fit(X_train, y_train)
-    print(f"--- {time.time() - start_time} seconds ---")
-    return grid_search_object
-
 # Feature Selection helpers
 def get_top_n_features(clf, n, features):
     feature_importances = clf.feature_importances_
@@ -235,14 +256,22 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n,
             print_and_save_top_features(top_n_feats, filepath=filepath)
 
 # Model train/val/test helpers
-def print_and_save_test_set_perf(X_test, y_test, model, filename):
+def grid_search(X_train, y_train, pipe, params, num_k_folds):
+    start_time = time.time()
+    grid_search_object = GridSearchCV(pipe, params, scoring="r2",
+                                      cv=KFold(num_k_folds), n_jobs=-1, verbose=100)
+    grid_search_object.fit(X_train, y_train)
+    print(f"--- {time.time() - start_time} seconds ---")
+    return grid_search_object
+
+def print_and_save_test_set_perf(X_test, y_test, model, filepath):
     test_preds = model.predict(X_test)
     test_set_performance = r2_score(y_test, test_preds)
-    with open(filename, "w") as f:
+    with open(filepath, "w") as f:
         f.write(str(test_set_performance))
     print(f"Test set performance: {test_set_performance}")
 
-def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_set_perf_filename, ML_model):
+def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_set_perf_filepath, ML_model):
     X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10)
 
     if (ML_model == "RF"):
@@ -284,4 +313,53 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_s
     backward_eliminate_features(X_train, y_train, best_model, n, params, 10, backwards_elim_dir, ML_model)
 
     #### Test Set Performance ####
-    print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filename)
+    print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filepath)
+
+def save_n_features_model_test_performance(n, datasets, cancer_type_or_donor_id, ML_model,
+                                           scATAC_cell_number_filter, tss_filter, annotation_dir, waddell_sarc_biph,
+                                           waddell_sarc, waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
+                                           SCLC, lung_subtyped, woo_pcawg, histologically_subtyped_mutations,
+                                           de_novo_seurat_clustering, cancer_types, CPTAC, combined_CPTAC_ICGC,
+                                           per_donor):
+    scATAC_sources = construct_scATAC_sources(datasets)
+    scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter,
+                                     annotation_dir, waddell_sarc_biph, waddell_sarc,
+                                     waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph)
+    filename = f"model_iteration_{n}.pkl"
+    backwards_elim_model_file = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+                                f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results/{filename}"
+    model = pickle.load(open(backwards_elim_model_file, "rb"))
+    scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
+    mutations_df = load_mutations(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+                                  waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
+                                  histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+                                  CPTAC, combined_CPTAC_ICGC, per_donor)
+
+    _, X_test, _, y_test = get_train_test_split(scATAC_df, mutations_df, 0.10)
+    test_set_perf_filepath = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+                            f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results/" \
+                            f"model_iteration_{n}_test_performance.txt"
+    print_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
+
+# Other
+def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
+                         waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+                         waddell_sarc_biph_tsankov_sarc_biph):
+
+    scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
+    if (tss_filter):
+        scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
+    scATAC_dir = append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+                                                     waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir)
+    scATAC_dir = scATAC_dir + f"_annotation_{annotation_dir}"
+    return(scATAC_dir)
+
+def construct_scATAC_sources(datasets):
+    scATAC_sources = ""
+
+    for idx, dataset in enumerate(datasets):
+        if (scATAC_sources == ""):
+            scATAC_sources = dataset
+        else:
+            scATAC_sources = "_".join((scATAC_sources, dataset))
+    return(scATAC_sources)

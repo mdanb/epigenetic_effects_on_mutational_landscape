@@ -39,6 +39,7 @@ parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
                     help='tss fragment filters to consider', default="")
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
 parser.add_argument("--ML_model", type=str, default="RF")
+parser.add_argument('--test_backward_selection_iter', type=int, default=None)
 
 config = parser.parse_args()
 
@@ -64,3 +65,4 @@ histologically_subtyped_mutations = config.histologically_subtyped_mutations
 de_novo_seurat_clustering = config.de_novo_seurat_clustering
 per_donor = config.per_donor
 donor_range = config.donor_range
+test_backward_selection_iter = config.test_backward_selection_iter
