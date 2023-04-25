@@ -98,10 +98,10 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
                 scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
                                                  annotation_dir, waddell_sarc_biph, waddell_sarc,
                                                  waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
-                                                  seed)
+                                                 seed)
                 run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
                                                      scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
-                                                     seed, ML_model)
+                                                     ML_model, seed)
     else:
         scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
                                          annotation_dir, waddell_sarc_biph, waddell_sarc,
@@ -111,7 +111,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
             if (idx in range(*donor_range)):
                 run_unclustered_data_analysis_helper(datasets, mutations_df, donor, scATAC_dir,
                                                      scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
-                                                     seed, ML_model)
+                                                     ML_model, seed)
         # if (bioRxiv_method):
         #     tissues = set(scATAC_df.columns.str.split().to_series().apply(lambda x: x[0]))
         #     for tissue in tissues:
