@@ -40,6 +40,7 @@ parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
 parser.add_argument("--ML_model", type=str, default="RF")
 parser.add_argument('--test_backward_selection_iter', type=int, default=None)
+parser.add_argument('--seed', type=int, default=42)
 
 config = parser.parse_args()
 
@@ -66,3 +67,4 @@ de_novo_seurat_clustering = config.de_novo_seurat_clustering
 per_donor = config.per_donor
 donor_range = config.donor_range
 test_backward_selection_iter = config.test_backward_selection_iter
+seed = config.seed

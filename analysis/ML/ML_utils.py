@@ -202,9 +202,9 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
 
 
 # Split Train/Test helpers
-def get_train_test_split(X, y, test_size):
+def get_train_test_split(X, y, test_size, seed):
     X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                        test_size=test_size, random_state=1)
+                                                        test_size=test_size, random_state=seed)
     return X_train, X_test, y_train, y_test
 
 # Feature Selection helpers
@@ -271,13 +271,14 @@ def print_and_save_test_set_perf(X_test, y_test, model, filepath):
         f.write(str(test_set_performance))
     print(f"Test set performance: {test_set_performance}")
 
-def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_set_perf_filepath, ML_model):
-    X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10)
+def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_set_perf_filepath,
+                   ML_model, seed):
+    X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10, seed)
 
     if (ML_model == "RF"):
         pipe = Pipeline([
             ('regressor', PipelineHelper([
-                ('rf', RandomForestRegressor(random_state=0)),
+                ('rf', RandomForestRegressor(random_state=seed)),
             ])),
         ])
 
@@ -288,7 +289,7 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_s
     elif (ML_model == "XGB"):
         pipe = Pipeline([
             ('regressor', PipelineHelper([
-                ('xgb', XGBRegressor(random_state=0)),
+                ('xgb', XGBRegressor(random_state=seed)),
             ])),
         ])
 

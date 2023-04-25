@@ -11,7 +11,7 @@ from natsort import natsorted
 
 def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_donor_id, scATAC_dir,
                                          scATAC_cell_number_filter, annotation_dir,
-                                         tissues_to_consider, ML_model, tss_filter=None):
+                                         tissues_to_consider, ML_model, seed, tss_filter=None):
     #### Filter data ####
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
@@ -37,7 +37,8 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
                        grid_search_filename,
                        backwards_elim_dir,
                        test_set_perf_filepath,
-                       ML_model)
+                       ML_model,
+                       seed)
 
     # Tissue Specific
     else:
@@ -61,13 +62,14 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
                        grid_search_filename,
                        backwards_elim_dir,
                        test_set_perf_filepath,
-                       ML_model)
+                       ML_model,
+                       seed)
 
 def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                   waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                                  per_donor, donor_range, ML_model):
+                                  per_donor, donor_range, ML_model, seed):
     # waddell_sarc_biph_waddell_epith = config.waddell_sarc_biph_waddell_epith
     # waddell_sarc_waddell_epith = config.waddell_sarc_waddell_epith
     # waddell_sarc_tsankov_sarc_waddell_epith = config.waddell_sarc_tsankov_sarc_waddell_epith
@@ -89,7 +91,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
                     # scATAC_dir = scATAC_dir_orig + "_tss_fragment_filter_" + tss_filter
                     run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
                                                          scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
-                                                         ML_model, tss_filter=tss_filter)
+                                                         ML_model, seed, tss_filter=tss_filter)
 
             else:
                 scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
@@ -97,7 +99,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
                                                  waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph)
                 run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
                                                      scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
-                                                     ML_model)
+                                                     seed, ML_model)
     else:
         scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
                                          annotation_dir, waddell_sarc_biph, waddell_sarc,
@@ -106,7 +108,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
             if (idx in range(*donor_range)):
                 run_unclustered_data_analysis_helper(datasets, mutations_df, donor, scATAC_dir,
                                                      scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
-                                                     ML_model)
+                                                     seed, ML_model)
         # if (bioRxiv_method):
         #     tissues = set(scATAC_df.columns.str.split().to_series().apply(lambda x: x[0]))
         #     for tissue in tissues:
@@ -171,7 +173,7 @@ else:
                                   waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                                  per_donor, donor_range, ML_model)
+                                  per_donor, donor_range, ML_model, seed)
 
 
 
