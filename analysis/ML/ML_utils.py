@@ -328,8 +328,10 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
         filename = f"model_iteration_{n}.pkl"
         backwards_elim_model_file = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
                                     f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
-        model = pickle.load(open(backwards_elim_model_file, "rb"))
+        gs = pickle.load(open(backwards_elim_model_file, "rb"))
+        model = gs.best_estimator_.get_params()['regressor__selected_model']
         scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
+        scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
         scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
         mutations_df = load_mutations(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                                       waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
