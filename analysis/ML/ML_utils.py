@@ -1,6 +1,20 @@
 import pyreadr
-import pandas as pd
 from natsort import natsorted
+from itertools import chain
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import KFold
+import time
+import pandas as pd
+import numpy as np
+import pickle
+import os
+from pipelinehelper import PipelineHelper
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score
+from xgboost import XGBRegressor
+
 
 # Load Data helpers
 def load_scATAC(scATAC_path):
@@ -98,8 +112,176 @@ def filter_mutations_by_cancer(mutations_df, cancer_type):
     cancer_specific_mutations = mutations_df.iloc[:, cancer_type_specific_mut_idx]
     return cancer_specific_mutations
 
+def filter_clustered_data(scATAC_df, mutations_df):
+    return pd.DataFrame(scATAC_df, index=mutations_df.index)
+
+# Dataframe curation helpers
 def add_na_ranges(mutations_df):
     full_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
     mutations_df = pd.merge(full_ranges, mutations_df, left_on = "x", right_index=True,
                             how="outer").set_index("x")
     return(mutations_df.loc[natsorted(mutations_df.index)])
+
+def add_dataset_origin_to_cell_types(df, dataset):
+    if (dataset == "Bingren"):
+        df.columns = [c + " BR" for c in df.columns]
+    elif (dataset == "Shendure"):
+        df.columns = [c + " SH" for c in df.columns]
+    elif (dataset == "Tsankov"):
+        df.columns = [c + " TS" for c in df.columns]
+    elif (dataset == "Greenleaf_brain"):
+        df.columns = [c + " GL_Br" for c in df.columns]
+    elif (dataset == "Greenleaf_pbmc_bm"):
+        df.columns = [c + " GL_BlBm" for c in df.columns]
+    elif (dataset == "Yang_kidney"):
+        df.columns = [c + " Y_K" for c in df.columns]
+    return(df)
+
+def append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+                                        waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir):
+    if (waddell_sarc_biph):
+        scATAC_dir = scATAC_dir + "_waddell_sarc_biph"
+    elif (waddell_sarc):
+        scATAC_dir = scATAC_dir + "_waddell_sarc"
+    elif (waddell_sarc_tsankov_sarc):
+        scATAC_dir = scATAC_dir + "_waddell_sarc_tsankov_sarc"
+    elif (waddell_sarc_biph_tsankov_sarc_biph):
+         scATAC_dir = scATAC_dir + "_waddell_sarc_biph_tsankov_sarc_biph"
+    return(scATAC_dir)
+
+def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir):
+    datasets_combined_count_overlaps = []
+    for dataset in datasets:
+        if (tss_filter):
+            tss_filtered_root = "../../data/processed_data/count_overlap_data/tsse_filtered"
+            chr_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
+            scATAC_df = load_scATAC(f"{tss_filtered_root}/{dataset}/combined/{annotation_dir}/" \
+                                    f"combined_{tss_filter}_fragments.rds").T
+            scATAC_df.index = chr_ranges["x"].values
+            datasets_combined_count_overlaps.append(scATAC_df)
+        else:
+            datasets_combined_count_overlaps.append(load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" \
+            f"/{annotation_dir}/{dataset}_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds"))
+
+    for idx, dataset in enumerate(datasets):
+        datasets_combined_count_overlaps[idx] = [add_dataset_origin_to_cell_types(datasets_combined_count_overlaps[idx],
+                                                 dataset)]
+
+    scATAC_df = pd.concat(chain(*datasets_combined_count_overlaps), axis=1)
+    return(scATAC_df)
+
+
+# Split Train/Test helpers
+def get_train_test_split(X, y, test_size):
+    X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                        test_size=test_size, random_state=42)
+    return X_train, X_test, y_train, y_test
+
+# Cross Validation helpers
+def grid_search(X_train, y_train, pipe, params, num_k_folds):
+    start_time = time.time()
+    grid_search_object = GridSearchCV(pipe, params, scoring="r2",
+                                      cv=KFold(num_k_folds), n_jobs=-1, verbose=100)
+    grid_search_object.fit(X_train, y_train)
+    print(f"--- {time.time() - start_time} seconds ---")
+    return grid_search_object
+
+# Feature Selection helpers
+def get_top_n_features(clf, n, features):
+    feature_importances = clf.feature_importances_
+    feat_importance_idx = np.argsort(feature_importances)[::-1]
+    top_n_feats = features[feat_importance_idx][:n]
+    return top_n_feats
+
+def print_and_save_top_features(top_features, filepath):
+    n = len(top_features)
+    print(f"Top {n} features")
+    f = open(filepath, "w")
+    for idx, feature in enumerate(top_features):
+        print(f"{idx+1}. {feature}")
+        f.write(f"{idx+1}. {feature}\n")
+
+def backward_eliminate_features(X_train, y_train, starting_clf, starting_n,
+                                params, num_k_folds, backwards_elim_dir, ML_model):
+    os.makedirs(backwards_elim_dir, exist_ok=True)
+    top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values)
+    all_feature_rankings = get_top_n_features(starting_clf, len(X_train.columns.values), X_train.columns.values)
+    print_and_save_top_features(all_feature_rankings, filepath=f"{backwards_elim_dir}/all_features_rankings.txt")
+    X_train = X_train.loc[:, top_n_feats]
+    print_and_save_top_features(top_n_feats,
+                                filepath=f"{backwards_elim_dir}/starter_model_top_features.txt")
+    for idx in range(1, len(top_n_feats)):
+        filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}.txt"
+        if (not os.path.exists(filepath)):
+            if (ML_model == "RF"):
+                pipe = Pipeline([
+                    ('regressor', PipelineHelper([
+                        ('rf', RandomForestRegressor(random_state=idx)),
+                    ])),
+                ])
+            elif (ML_model == "XGB"):
+                pipe = Pipeline([
+                    ('regressor', PipelineHelper([
+                        ('xgb', XGBRegressor(random_state=idx)),
+                    ])),
+                ])
+            grid_search_results = grid_search(X_train, y_train, pipe, params, num_k_folds)
+            pickle.dump(grid_search_results, open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'wb'))
+        grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
+        best_model = grid_search_results.best_estimator_.get_params()['regressor__selected_model']
+        top_n_feats = get_top_n_features(best_model, len(X_train.columns) - 1, X_train.columns)
+        X_train = X_train.loc[:, top_n_feats]
+        if (not os.path.exists(filepath)):
+            print_and_save_top_features(top_n_feats, filepath=filepath)
+
+# Model train/val/test helpers
+def print_and_save_test_set_perf(X_test, y_test, model, filename):
+    test_preds = model.predict(X_test)
+    test_set_performance = r2_score(y_test, test_preds)
+    with open(filename, "w") as f:
+        f.write(str(test_set_performance))
+    print(f"Test set performance: {test_set_performance}")
+
+def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_set_perf_filename, ML_model):
+    X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10)
+
+    if (ML_model == "RF"):
+        pipe = Pipeline([
+            ('regressor', PipelineHelper([
+                ('rf', RandomForestRegressor(random_state=0)),
+            ])),
+        ])
+
+        params_dict = {'rf__n_estimators':[10, 100, 1000]}
+        params = {
+            'regressor__selected_model': pipe.named_steps['regressor'].generate(params_dict)
+        }
+    elif (ML_model == "XGB"):
+        pipe = Pipeline([
+            ('regressor', PipelineHelper([
+                ('xgb', XGBRegressor(random_state=0)),
+            ])),
+        ])
+
+        params_dict = {'xgb__max_depth':[3, 6, 9],
+                       'xgb__eta':[0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]}
+        params = {
+            'regressor__selected_model': pipe.named_steps['regressor'].generate(params_dict)
+        }
+
+    if (not os.path.exists(cv_filename)):
+        grid_search_results = grid_search(X_train, y_train, pipe, params, 10)
+        pickle.dump(grid_search_results, open(cv_filename, 'wb'))
+
+    grid_search_results = pickle.load(open(cv_filename, 'rb'))
+    print(f"Best Score: {grid_search_results.best_score_}\n")
+    best_model = grid_search_results.best_estimator_.get_params()['regressor__selected_model']
+    n = 20
+    # top_n_feats = get_top_n_features(best_model, n, X_train.columns.values)
+    # top_n_feats_tissue_spec = get_top_n_features(best_model_tissue_spec, n, X_train_tissue_spec.columns.values)
+    #print_top_features(top_n_feats)
+
+    backward_eliminate_features(X_train, y_train, best_model, n, params, 10, backwards_elim_dir, ML_model)
+
+    #### Test Set Performance ####
+    print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filename)
