@@ -345,7 +345,7 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
         scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
         cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
 
-        _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10)
+        _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, seed)
         test_set_perf_filepath = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
                                  f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
                                  f"model_iteration_{n}_test_performance.txt"
