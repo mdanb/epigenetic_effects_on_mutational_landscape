@@ -315,31 +315,31 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_s
     #### Test Set Performance ####
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filepath)
 
-def save_n_features_model_test_performance(n, datasets, cancer_type_or_donor_id, ML_model,
-                                           scATAC_cell_number_filter, tss_filter, annotation_dir, waddell_sarc_biph,
-                                           waddell_sarc, waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
-                                           SCLC, lung_subtyped, woo_pcawg, histologically_subtyped_mutations,
-                                           de_novo_seurat_clustering, cancer_types, CPTAC, combined_CPTAC_ICGC,
-                                           per_donor):
-    scATAC_sources = construct_scATAC_sources(datasets)
-    scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter,
-                                     annotation_dir, waddell_sarc_biph, waddell_sarc,
-                                     waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph)
-    filename = f"model_iteration_{n}.pkl"
-    backwards_elim_model_file = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
-                                f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results/{filename}"
-    model = pickle.load(open(backwards_elim_model_file, "rb"))
-    scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
-    mutations_df = load_mutations(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-                                  waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
-                                  histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                  CPTAC, combined_CPTAC_ICGC, per_donor)
+def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_number_filter, tss_filter, annotation_dir,
+                                           waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+                                           waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
+                                           histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+                                           CPTAC, combined_CPTAC_ICGC, per_donor):
+    for cancer_type in cancer_types:
+        scATAC_sources = construct_scATAC_sources(datasets)
+        scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter,
+                                         annotation_dir, waddell_sarc_biph, waddell_sarc,
+                                         waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph)
+        filename = f"model_iteration_{n}.pkl"
+        backwards_elim_model_file = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+                                    f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
+        model = pickle.load(open(backwards_elim_model_file, "rb"))
+        scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
+        mutations_df = load_mutations(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+                                      waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
+                                      histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+                                      CPTAC, combined_CPTAC_ICGC, per_donor)
 
-    _, X_test, _, y_test = get_train_test_split(scATAC_df, mutations_df, 0.10)
-    test_set_perf_filepath = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
-                            f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results/" \
-                            f"model_iteration_{n}_test_performance.txt"
-    print_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
+        _, X_test, _, y_test = get_train_test_split(scATAC_df, mutations_df, 0.10)
+        test_set_perf_filepath = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+                                 f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
+                                 f"model_iteration_{n}_test_performance.txt"
+        print_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
 
 # Other
 def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
