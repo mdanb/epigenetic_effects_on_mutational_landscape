@@ -20,7 +20,7 @@ from xgboost import XGBRegressor
 def load_mutations(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
                    waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
                    histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                   CPTAC, combined_CPTAC_ICGC, per_donor):
+                   CPTAC, combined_CPTAC_ICGC, per_donor, mesomics):
     if (waddell_sarc_biph or waddell_sarc or waddell_sarc_tsankov_sarc or
         waddell_sarc_biph_tsankov_sarc_biph):
         mutations_df = load_meso_mutations(waddell_sarc_biph,
@@ -43,6 +43,8 @@ def load_mutations(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
         mutations_df = load_combined_CPTAC_ICGC()
     elif (per_donor):
         mutations_df = load_per_donor_mutations(cancer_types[0])
+    elif (mesomics):
+        mutations_df = load_mesomics()
     else:
         mutations_df = load_agg_mutations()
     return(mutations_df)
@@ -75,6 +77,11 @@ def load_agg_mutations():
 
 def load_woo_pcawg_mutations():
     df = pd.read_csv("../../data/processed_data/pcawg_agg_woo.csv",
+                       index_col=0)
+    return(df.loc[natsorted(df.index)])
+
+def load_mesomics():
+    df = pd.read_csv("../../data/processed_data/mesomics_mesothelioma.csv",
                        index_col=0)
     return(df.loc[natsorted(df.index)])
 # def load_meso_mutations(meso_waddell_and_biphasic, meso_waddell_only, meso_waddell_and_broad_only,

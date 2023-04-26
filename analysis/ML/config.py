@@ -32,6 +32,7 @@ parser.add_argument("--histologically_subtyped_mutations", action="store_true", 
 parser.add_argument("--de_novo_seurat_clustering", action="store_true", default=False)
 parser.add_argument("--per_donor", action="store_true", default=False)
 parser.add_argument("--CPTAC", action="store_true", default=False)
+parser.add_argument("--mesomics", action="store_true", default=False)
 parser.add_argument("--combined_CPTAC_ICGC", action="store_true", default=False)
 parser.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
                     default=None)
@@ -64,6 +65,7 @@ lung_subtyped = config.lung_subtyped
 woo_pcawg = config.woo_pcawg
 histologically_subtyped_mutations = config.histologically_subtyped_mutations
 de_novo_seurat_clustering = config.de_novo_seurat_clustering
+mesomics = config.mesomics
 per_donor = config.per_donor
 donor_range = config.donor_range
 test_backward_selection_iter = config.test_backward_selection_iter
