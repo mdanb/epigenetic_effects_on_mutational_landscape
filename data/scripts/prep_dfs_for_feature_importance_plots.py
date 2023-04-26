@@ -31,6 +31,7 @@ parser.add_argument('--ML_model', type=str)
 #                     help='obtain model which combined all scATACseq', default=False)
 parser.add_argument('--cell_number_filter', type=int)
 parser.add_argument('--num_iter_skips', type=int, default=5)
+parser.add_argument('--seed', type=int, default=42)
 parser.add_argument('--tss_fragment_filter', nargs="+", type=int, default=[-1])
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--waddell_sarc_biph', action="store_true",
