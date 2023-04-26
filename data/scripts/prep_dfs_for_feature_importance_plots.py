@@ -44,7 +44,7 @@ def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
                                  tss_fragment_filter, waddell_sarc_biph,
                                  waddell_sarc, waddell_sarc_tsankov_sarc,
                                  waddell_sarc_biph_tsankov_sarc_biph,
-                                 annotation, tissues_to_consider, ML_model):
+                                 annotation, tissues_to_consider, ML_model, seed):
     dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/{cancer_type}/scATAC_source_" \
           f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
     if (tss_fragment_filter != -1):
@@ -59,7 +59,7 @@ def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
     elif (waddell_sarc_biph_tsankov_sarc_biph):
         dir = dir + "_waddell_sarc_biph_tsankov_sarc_biph"
 
-    dir = dir + f"_annotation_{annotation}"
+    dir = dir + f"_annotation_{annotation}_seed_{seed}"
 
     if (tissues_to_consider == "all"):
         return f"{dir}/backwards_elimination_results/"
@@ -87,6 +87,7 @@ def get_relevant_backwards_elim_dirs(config):
     tissues_to_consider = "_".join(config.tissues_to_consider)
     annotation = config.annotation
     ML_model = config.ML_model
+    seed = config.seed
     backward_elim_dirs = []
 
     scATAC_sources = ""
@@ -116,7 +117,8 @@ def get_relevant_backwards_elim_dirs(config):
                                                                    waddell_sarc_biph_tsankov_sarc_biph,
                                                                    annotation,
                                                                    tissues_to_consider,
-                                                                   ML_model))
+                                                                   ML_model,
+                                                                   seed))
     print(backward_elim_dirs)
     return backward_elim_dirs
         # if (run_tissue_spec):
