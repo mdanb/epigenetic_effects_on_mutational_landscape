@@ -39,7 +39,7 @@ parser <- add_option(parser, c("--waddell_sarc_biph_tsankov_sarc_biph"),
                      action="store_true",
                      default=F)
 parser <- add_option(parser, c("--iters_dont_skip"), default="18")
-parser <- add_option(parser, c("--seed"), default=42)
+parser <- add_option(parser, c("--seed"), default="42")
 
 args = parse_args(parser)
 
@@ -274,7 +274,7 @@ prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_import
                          iters_dont_skip, "--tss_fragment_filter", 
                          paste(tss_fragment_filter, collapse = " "),
                          "--ML_model", ML_model,
-                         "--cancer_types", cancer_types)
+                         "--cancer_types", cancer_types, "--seed", seed)
 print(prep_dfs_command)
 if (waddell_sarc_biph) {
   prep_dfs_command = paste(prep_dfs_command, "--waddell_sarc_biph")
