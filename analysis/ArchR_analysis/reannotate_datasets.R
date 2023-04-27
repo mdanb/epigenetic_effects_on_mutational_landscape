@@ -51,7 +51,7 @@ option_list <- list(
 #                       "--nfrags_filter=1",
 #                       "--tss_filter=0",
 #                       "--cell_types=all",
-#                       "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,SCGB1A1,SCGB3A1,SCGB3A2,MUC5B"))
+#                       "--marker_genes=WT1"))
 # 
 # # Basal
 # args = parse_args(OptionParser(option_list=option_list), args=
@@ -85,21 +85,21 @@ option_list <- list(
 #                   )
 # 
 # # Shendure cerebrum
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=4",
-                      "--dataset=Shendure",
-                      "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-                      "--sep_for_metadata=\t",
-                      "--cell_type_col_in_metadata=cell_type",
-                      "--cell_name_col_in_metadata=cell",
-                      "--column_to_color_by=cell_type",
-                      "--tissue=cerebrum",
-                      "--nfrags_filter=1000",
-                      "--tss_percentile=0.2",
-                      "--nfrags_percentile=0.2",
-                      "--tss_filter=4",
-                      "--cell_types=all")
-                  )
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=4",
+#                       "--dataset=Shendure",
+#                       "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--cell_name_col_in_metadata=cell",
+#                       "--column_to_color_by=cell_type",
+#                       "--tissue=cerebrum",
+#                       "--nfrags_filter=1000",
+#                       "--tss_percentile=0.2",
+#                       "--nfrags_percentile=0.2",
+#                       "--tss_filter=4",
+#                       "--cell_types=all")
+#                   )
 # ,
 #                       "--marker_genes=AQP4,OLIG1,OLIG2"
 # args = parse_args(OptionParser(option_list=option_list), args=
@@ -133,17 +133,16 @@ args = parse_args(OptionParser(option_list=option_list), args=
 # )
 
 # args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=4",
+#                     c("--cores=8",
 #                       "--dataset=Bingren",
-#                       "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
-#                       "--sep_for_metadata=\t",
+#                       "--metadata_for_celltype_fn=bingren_remove_same_celltype_indexing.csv",
+#                       "--sep_for_metadata=,",
 #                       "--cell_type_col_in_metadata=cell.type",
 #                       "--cell_name_col_in_metadata=cellID",
 #                       "--column_to_color_by=cell.type",
 #                       "--tissue=frontal_cortex",
-#                       "--nfrags_filter=1000",
-#                       "--tss_filter=4",
 #                       "--cell_types=all",
+#                       "--marker_genes=OLIG1,OLIG2,AQP4,RBFOX3,EOMES",
 #                       "--min_cells_per_cell_type=100")
 # )
 # args = parse_args(OptionParser(option_list=option_list))
@@ -246,7 +245,7 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile, nfrags_
   return(proj)
 }
 
-args = parse_args(OptionParser(option_list=option_list))
+# args = parse_args(OptionParser(option_list=option_list))
 
 cores = args$cores
 dataset = args$dataset
@@ -389,6 +388,8 @@ if (!(is.null(marker_genes))) {
         axis.title.y=element_blank()
       ) 
   })
+  setting = paste0(setting, "_", "marker_genes", "_", paste(marker_genes, 
+                                                            collapse = "_"))
   path = "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/figures"
   fn = paste0("gene_marker_UMAPs_", setting, ".pdf")
   fp = paste(path, fn, sep="/")
