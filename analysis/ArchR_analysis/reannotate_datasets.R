@@ -39,19 +39,19 @@ option_list <- list(
 #                     "--cell_types=all",
 #                     "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,SCGB1A1,SCGB3A1,SCGB3A2,MUC5B"))
 # 
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=4",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--cell_name_col_in_metadata=X",
-#                       "--column_to_color_by=NULL",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--marker_genes=WT1"))
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=4",
+                      "--dataset=Tsankov",
+                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+                      "--sep_for_metadata=,",
+                      "--cell_type_col_in_metadata=celltypes",
+                      "--cell_name_col_in_metadata=X",
+                      "--column_to_color_by=NULL",
+                      "--tissue=all",
+                      "--nfrags_filter=1",
+                      "--tss_filter=0",
+                      "--cell_types=all",
+                      "--marker_genes=WT1"))
 # 
 # # Basal
 # args = parse_args(OptionParser(option_list=option_list), args=
@@ -172,6 +172,11 @@ add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
     metadata = metadata[metadata["Life.stage"] == "Adult", ]
     cell_id = unlist(lapply(strsplit(metadata[["cellID"]], "\\+"), 
                             "[", 2))
+  }
+  else if (dataset == "Tsankov") {
+    cell_id = unlist(lapply(strsplit(metadata[["X"]], "#"), 
+                            "[", 2))
+    
   }
   # else if (dataset == "Bingren") {
   #   temp = original_metadata[[cell_name_col_in_orig_metadata]]
