@@ -20,11 +20,11 @@ parser.add_argument('--scATAC_cell_number_filter', type=int,
 parser.add_argument('--annotation_dir', type=str,
                     help='name of annotation directory', default="default_annotation")
 group = parser.add_mutually_exclusive_group()
-group.add_argument('--waddell_sarc_biph', action="store_true",
-                    default=False)
-group.add_argument('--waddell_sarc', action="store_true", default=False)
-group.add_argument('--waddell_sarc_tsankov_sarc', action="store_true", default=False)
-group.add_argument('--waddell_sarc_biph_tsankov_sarc_biph', action="store_true", default=False)
+# group.add_argument('--waddell_sarc_biph', action="store_true",
+#                     default=False)
+# group.add_argument('--waddell_sarc', action="store_true", default=False)
+# group.add_argument('--waddell_sarc_tsankov_sarc', action="store_true", default=False)
+# group.add_argument('--waddell_sarc_biph_tsankov_sarc_biph', action="store_true", default=False)
 group.add_argument("--SCLC", action="store_true", default=False)
 group.add_argument("--lung_subtyped", action="store_true", default=False)
 parser.add_argument("--woo_pcawg", action="store_true", default=False)
@@ -32,7 +32,9 @@ parser.add_argument("--histologically_subtyped_mutations", action="store_true", 
 parser.add_argument("--de_novo_seurat_clustering", action="store_true", default=False)
 parser.add_argument("--per_donor", action="store_true", default=False)
 parser.add_argument("--CPTAC", action="store_true", default=False)
-parser.add_argument("--mesomics", action="store_true", default=False)
+# parser.add_argument("--mesomics", action="store_true", default=False)
+parser.add_argument("--meso", action="store_true", default=False)
+
 parser.add_argument("--combined_CPTAC_ICGC", action="store_true", default=False)
 parser.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
                     default=None)
@@ -49,10 +51,10 @@ cancer_types = config.cancer_types
 run_clustered_mutations = config.clustered_mutations
 datasets = sorted(config.datasets)
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
-waddell_sarc_biph = config.waddell_sarc_biph
-waddell_sarc = config.waddell_sarc
-waddell_sarc_tsankov_sarc = config.waddell_sarc_tsankov_sarc
-waddell_sarc_biph_tsankov_sarc_biph = config.waddell_sarc_biph_tsankov_sarc_biph
+# waddell_sarc_biph = config.waddell_sarc_biph
+# waddell_sarc = config.waddell_sarc
+# waddell_sarc_tsankov_sarc = config.waddell_sarc_tsankov_sarc
+# waddell_sarc_biph_tsankov_sarc_biph = config.waddell_sarc_biph_tsankov_sarc_biph
 annotation_dir = config.annotation_dir
 SCLC = config.SCLC
 CPTAC = config.CPTAC
@@ -65,7 +67,8 @@ lung_subtyped = config.lung_subtyped
 woo_pcawg = config.woo_pcawg
 histologically_subtyped_mutations = config.histologically_subtyped_mutations
 de_novo_seurat_clustering = config.de_novo_seurat_clustering
-mesomics = config.mesomics
+# mesomics = config.mesomics
+meso = config.meso
 per_donor = config.per_donor
 donor_range = config.donor_range
 test_backward_selection_iter = config.test_backward_selection_iter
