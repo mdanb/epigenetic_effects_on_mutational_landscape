@@ -44,7 +44,8 @@ group = parser.add_mutually_exclusive_group()
 def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
                                  tss_fragment_filter, annotation, tissues_to_consider,
                                  ML_model, seed):
-    dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/{cancer_type}/scATAC_source_" \
+    dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/" \
+          f"models/{ML_model}/{cancer_type}/scATAC_source_" \
           f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
     if (tss_fragment_filter != -1):
         dir = dir + f"_tss_fragment_filter_{tss_fragment_filter}"
@@ -109,7 +110,9 @@ def get_relevant_backwards_elim_dirs(config):
 
     for cancer_type in cancer_types:
         for tss_filter in tss_fragment_filter:
-            backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, scATAC_sources, cell_number_filter,
+            backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type,
+                                                                   scATAC_sources,
+                                                                   cell_number_filter,
                                                                    tss_filter,
                                                                    annotation,
                                                                    tissues_to_consider,
@@ -131,7 +134,8 @@ def get_relevant_backwards_elim_dirs(config):
         #             run_per_cluster_models(scATAC_df, cancer_type, cancer_hierarchical_dir, cluster_method_dir,
         #                                    threshold_dir)
 
-def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters_dont_skip, ML_model):
+def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters_dont_skip,
+                                      ML_model):
     for backwards_elim_dir in backwards_elim_dirs:
         df = pd.DataFrame(columns = ["features", "importance", "num_features", "score"])
 
@@ -153,12 +157,14 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
                 cv_score = gs.best_score_
                 features = model.feature_names_in_
                 feature_importances = model.feature_importances_
-                df_curr = pd.DataFrame((features, feature_importances, [len(features)] * len(features),
+                df_curr = pd.DataFrame((features, feature_importances,
+                                        [len(features)] * len(features),
                                         [cv_score] * len(features))).T
                 df_curr.columns = df.columns
                 df = pd.concat((df, df_curr))
         Path(figure_path).mkdir(parents=True, exist_ok=True)
-        df.to_csv(os.path.join(figure_path, "df_for_feature_importance_plots.csv"), index=False)
+        df.to_csv(os.path.join(figure_path, "df_for_feature_importance_plots.csv"),
+                  index=False)
         # import matplotlib.pyplot as plt
         # ax = df.plot.bar(x = "num_features", y = "importance", stacked=True)
         # fig = ax.get_figure()
@@ -188,7 +194,9 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
 
 config = parser.parse_args()
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
+print(backwards_elim_dirs)
 num_iter_skips = config.num_iter_skips
 iters_dont_skip = config.iters_dont_skip
 ML_model = config.ML_model
-prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters_dont_skip, ML_model)
+prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips,
+                                  iters_dont_skip, ML_model)
