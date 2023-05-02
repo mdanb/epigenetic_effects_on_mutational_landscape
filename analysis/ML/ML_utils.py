@@ -17,16 +17,11 @@ from xgboost import XGBRegressor
 
 
 # Load Data helpers
-def load_mutations(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-                   waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
+def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                    histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                   CPTAC, combined_CPTAC_ICGC, per_donor, mesomics):
-    if (waddell_sarc_biph or waddell_sarc or waddell_sarc_tsankov_sarc or
-        waddell_sarc_biph_tsankov_sarc_biph):
-        mutations_df = load_meso_mutations(waddell_sarc_biph,
-                                           waddell_sarc,
-                                           waddell_sarc_tsankov_sarc,
-                                           waddell_sarc_biph_tsankov_sarc_biph)
+                   CPTAC, combined_CPTAC_ICGC, per_donor):
+    if (meso):
+        mutations_df = load_meso()
     elif (SCLC):
         mutations_df = load_sclc_mutations()
     elif (lung_subtyped):
@@ -43,8 +38,6 @@ def load_mutations(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
         mutations_df = load_combined_CPTAC_ICGC()
     elif (per_donor):
         mutations_df = load_per_donor_mutations(cancer_types[0])
-    elif (mesomics):
-        mutations_df = load_mesomics()
     else:
         mutations_df = load_agg_mutations()
     return(mutations_df)
@@ -80,8 +73,8 @@ def load_woo_pcawg_mutations():
                        index_col=0)
     return(df.loc[natsorted(df.index)])
 
-def load_mesomics():
-    df = pd.read_csv("../../data/processed_data/mesomics_mesothelioma.csv",
+def load_meso():
+    df = pd.read_csv("../../data/processed_data/mesothelioma.csv",
                        index_col=0)
     return(df.loc[natsorted(df.index)])
 # def load_meso_mutations(meso_waddell_and_biphasic, meso_waddell_only, meso_waddell_and_broad_only,
@@ -174,17 +167,17 @@ def add_dataset_origin_to_cell_types(df, dataset):
         df.columns = [c + " Y_K" for c in df.columns]
     return(df)
 
-def append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-                                        waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir):
-    if (waddell_sarc_biph):
-        scATAC_dir = scATAC_dir + "_waddell_sarc_biph"
-    elif (waddell_sarc):
-        scATAC_dir = scATAC_dir + "_waddell_sarc"
-    elif (waddell_sarc_tsankov_sarc):
-        scATAC_dir = scATAC_dir + "_waddell_sarc_tsankov_sarc"
-    elif (waddell_sarc_biph_tsankov_sarc_biph):
-         scATAC_dir = scATAC_dir + "_waddell_sarc_biph_tsankov_sarc_biph"
-    return(scATAC_dir)
+# def append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+#                                         waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir):
+#     if (waddell_sarc_biph):
+#         scATAC_dir = scATAC_dir + "_waddell_sarc_biph"
+#     elif (waddell_sarc):
+#         scATAC_dir = scATAC_dir + "_waddell_sarc"
+#     elif (waddell_sarc_tsankov_sarc):
+#         scATAC_dir = scATAC_dir + "_waddell_sarc_tsankov_sarc"
+#     elif (waddell_sarc_biph_tsankov_sarc_biph):
+#          scATAC_dir = scATAC_dir + "_waddell_sarc_biph_tsankov_sarc_biph"
+#     return(scATAC_dir)
 
 def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir):
     datasets_combined_count_overlaps = []
@@ -324,15 +317,13 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_s
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filepath)
 
 def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                           waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-                                           waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
+                                           meso, SCLC, lung_subtyped, woo_pcawg,
                                            histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
                                            CPTAC, combined_CPTAC_ICGC, per_donor, seed):
     for cancer_type in cancer_types:
         scATAC_sources = construct_scATAC_sources(datasets)
         scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter,
-                                         annotation_dir, waddell_sarc_biph, waddell_sarc,
-                                         waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph, seed)
+                                         annotation_dir, seed)
         filename = f"model_iteration_{n}.pkl"
         backwards_elim_model_file = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
                                     f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
@@ -341,8 +332,7 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
         scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
         scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
         scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
-        mutations_df = load_mutations(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-                                      waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
+        mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                       histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
                                       CPTAC, combined_CPTAC_ICGC, per_donor)
 
@@ -360,14 +350,13 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
 
 # Other
 def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                         waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-                         waddell_sarc_biph_tsankov_sarc_biph, seed):
+                         seed):
 
     scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
     if (tss_filter):
         scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
-    scATAC_dir = append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-                                                     waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir)
+    # scATAC_dir = append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
+    #                                                  waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir)
     scATAC_dir = scATAC_dir + f"_annotation_{annotation_dir}_seed_{seed}"
     return(scATAC_dir)
 
