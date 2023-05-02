@@ -34,31 +34,29 @@ parser.add_argument('--num_iter_skips', type=int, default=5)
 parser.add_argument('--seed', type=int, default=42)
 parser.add_argument('--tss_fragment_filter', nargs="+", type=int, default=[-1])
 group = parser.add_mutually_exclusive_group()
-group.add_argument('--waddell_sarc_biph', action="store_true",
-                    default=False)
-group.add_argument('--waddell_sarc', action="store_true", default=False)
-group.add_argument('--waddell_sarc_tsankov_sarc', action="store_true", default=False)
-group.add_argument('--waddell_sarc_biph_tsankov_sarc_biph', action="store_true", default=False)
+# group.add_argument('--waddell_sarc_biph', action="store_true",
+#                     default=False)
+# group.add_argument('--waddell_sarc', action="store_true", default=False)
+# group.add_argument('--waddell_sarc_tsankov_sarc', action="store_true", default=False)
+# group.add_argument('--waddell_sarc_biph_tsankov_sarc_biph', action="store_true", default=False)
 
 
 def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
-                                 tss_fragment_filter, waddell_sarc_biph,
-                                 waddell_sarc, waddell_sarc_tsankov_sarc,
-                                 waddell_sarc_biph_tsankov_sarc_biph,
-                                 annotation, tissues_to_consider, ML_model, seed):
+                                 tss_fragment_filter, annotation, tissues_to_consider,
+                                 ML_model, seed):
     dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/{cancer_type}/scATAC_source_" \
           f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
     if (tss_fragment_filter != -1):
         dir = dir + f"_tss_fragment_filter_{tss_fragment_filter}"
 
-    if (waddell_sarc_biph):
-        dir = dir + "_waddell_sarc_biph"
-    elif (waddell_sarc):
-        dir = dir + "_waddell_sarc"
-    elif (waddell_sarc_tsankov_sarc):
-        dir = dir + "_waddell_sarc_tsankov_sarc"
-    elif (waddell_sarc_biph_tsankov_sarc_biph):
-        dir = dir + "_waddell_sarc_biph_tsankov_sarc_biph"
+    # if (waddell_sarc_biph):
+    #     dir = dir + "_waddell_sarc_biph"
+    # elif (waddell_sarc):
+    #     dir = dir + "_waddell_sarc"
+    # elif (waddell_sarc_tsankov_sarc):
+    #     dir = dir + "_waddell_sarc_tsankov_sarc"
+    # elif (waddell_sarc_biph_tsankov_sarc_biph):
+    #     dir = dir + "_waddell_sarc_biph_tsankov_sarc_biph"
 
     dir = dir + f"_annotation_{annotation}_seed_{seed}"
 
@@ -78,10 +76,10 @@ def get_relevant_backwards_elim_dirs(config):
     # shendure = config.shendure
     # tsankov = config.tsankov
     datasets = config.datasets
-    waddell_sarc_biph = config.waddell_sarc_biph
-    waddell_sarc = config.waddell_sarc
-    waddell_sarc_tsankov_sarc = config.waddell_sarc_tsankov_sarc
-    waddell_sarc_biph_tsankov_sarc_biph = config.waddell_sarc_biph_tsankov_sarc_biph
+    # waddell_sarc_biph = config.waddell_sarc_biph
+    # waddell_sarc = config.waddell_sarc
+    # waddell_sarc_tsankov_sarc = config.waddell_sarc_tsankov_sarc
+    # waddell_sarc_biph_tsankov_sarc_biph = config.waddell_sarc_biph_tsankov_sarc_biph
     # combined_datasets = config.combined_datasets
     cell_number_filter = config.cell_number_filter
     tss_fragment_filter = config.tss_fragment_filter
@@ -112,10 +110,7 @@ def get_relevant_backwards_elim_dirs(config):
     for cancer_type in cancer_types:
         for tss_filter in tss_fragment_filter:
             backward_elim_dirs.append(construct_backwards_elim_dir(cancer_type, scATAC_sources, cell_number_filter,
-                                                                   tss_filter, waddell_sarc_biph,
-                                                                   waddell_sarc,
-                                                                   waddell_sarc_tsankov_sarc,
-                                                                   waddell_sarc_biph_tsankov_sarc_biph,
+                                                                   tss_filter,
                                                                    annotation,
                                                                    tissues_to_consider,
                                                                    ML_model,
