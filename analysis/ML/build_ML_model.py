@@ -65,30 +65,26 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
                        ML_model,
                        seed)
 
-def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-                                  waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
+def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
-                                  histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                                  per_donor, donor_range, mesomics, ML_model, seed):
+                                  histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
+                                  combined_CPTAC_ICGC, meso, per_donor, donor_range, ML_model, seed):
     # waddell_sarc_biph_waddell_epith = config.waddell_sarc_biph_waddell_epith
     # waddell_sarc_waddell_epith = config.waddell_sarc_waddell_epith
     # waddell_sarc_tsankov_sarc_waddell_epith = config.waddell_sarc_tsankov_sarc_waddell_epith
     # waddell_sarc_biph_tsankov_sarc_biph = config.waddell_sarc_biph_tsankov_sarc_biph
     scATAC_sources = construct_scATAC_sources(datasets)
     # scATAC_dir_orig = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
-    mutations_df = load_mutations(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-                                  waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
+    mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                  CPTAC, combined_CPTAC_ICGC, per_donor, mesomics)
+                                  CPTAC, combined_CPTAC_ICGC, per_donor)
 
     if (not per_donor):
         for cancer_type in cancer_types:
             if (tss_fragment_filter):
                 for tss_filter in tss_fragment_filter:
                     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
-                                                      annotation_dir, waddell_sarc_biph, waddell_sarc,
-                                                      waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
-                                                      seed)
+                                                      annotation_dir, seed)
                     # scATAC_dir = scATAC_dir_orig + "_tss_fragment_filter_" + tss_filter
                     run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
                                                          scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
@@ -96,17 +92,13 @@ def run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, wad
 
             else:
                 scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
-                                                 annotation_dir, waddell_sarc_biph, waddell_sarc,
-                                                 waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
-                                                 seed)
+                                                 annotation_dir, seed)
                 run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
                                                      scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
                                                      ML_model, seed)
     else:
         scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
-                                         annotation_dir, waddell_sarc_biph, waddell_sarc,
-                                         waddell_sarc_tsankov_sarc, waddell_sarc_biph_tsankov_sarc_biph,
-                                         seed)
+                                         annotation_dir, seed)
         for idx, donor in enumerate(mutations_df.columns):
             if (idx in range(*donor_range)):
                 run_unclustered_data_analysis_helper(datasets, mutations_df, donor, scATAC_dir,
@@ -172,11 +164,10 @@ if (test_backward_selection_iter):
                                            histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
                                            CPTAC, combined_CPTAC_ICGC, per_donor, seed)
 else:
-    run_unclustered_data_analysis(datasets, cancer_types, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-                                  waddell_sarc_biph_tsankov_sarc_biph, scATAC_cell_number_filter, annotation_dir,
+    run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                                  per_donor, donor_range, mesomics, ML_model, seed)
+                                  meso, per_donor, donor_range, ML_model, seed)
 
 
 
