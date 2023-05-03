@@ -2,6 +2,7 @@
 from ML_utils import *
 from config import *
 from natsort import natsorted
+import subprocess
 
 # bioRxiv_method = config.bioRxiv_method
 # def run_unclustered_data_analysis(scATAC_df, run_all_cells, run_tissue_spec, cancer_types,
@@ -168,7 +169,15 @@ else:
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
                                   meso, per_donor, donor_range, ML_model, seed)
-
+    cancer_types = ",".join(cancer_types)
+    datasets = ",".join(datasets)
+    subprocess.call(["Rscript", "plot_top_features.R",
+                     f"--cancer_types={cancer_types}",
+                     f"--ML_model={ML_model}",
+                     f"--datasets={datasets}",
+                     f"--seed={seed}",
+                     f"--cell_number_filter={scATAC_cell_number_filter}",
+                     f"--annotation={annotation_dir}"])
 
 
 
