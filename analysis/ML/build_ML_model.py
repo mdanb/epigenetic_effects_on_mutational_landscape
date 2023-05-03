@@ -69,7 +69,7 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
 def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
-                                  combined_CPTAC_ICGC, meso, per_donor, donor_range, ML_model, seed):
+                                  combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model, seed):
     # waddell_sarc_biph_waddell_epith = config.waddell_sarc_biph_waddell_epith
     # waddell_sarc_waddell_epith = config.waddell_sarc_waddell_epith
     # waddell_sarc_tsankov_sarc_waddell_epith = config.waddell_sarc_tsankov_sarc_waddell_epith
@@ -78,7 +78,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
     # scATAC_dir_orig = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
     mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                  CPTAC, combined_CPTAC_ICGC, per_donor)
+                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
 
     if (not per_donor):
         for cancer_type in cancer_types:
@@ -168,7 +168,7 @@ else:
     run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                                  meso, per_donor, donor_range, ML_model, seed)
+                                  meso, RNA_subtyped, per_donor, donor_range, ML_model, seed)
     cancer_types = ",".join(cancer_types)
     datasets = ",".join(datasets)
     subprocess.call(["Rscript", "plot_top_features.R",

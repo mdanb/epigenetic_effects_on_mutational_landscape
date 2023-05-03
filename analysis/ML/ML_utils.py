@@ -19,7 +19,7 @@ from xgboost import XGBRegressor
 # Load Data helpers
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                    histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                   CPTAC, combined_CPTAC_ICGC, per_donor):
+                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor):
     if (meso):
         mutations_df = load_meso()
     elif (SCLC):
@@ -36,6 +36,8 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
         mutations_df = load_CPTAC()
     elif (combined_CPTAC_ICGC):
         mutations_df = load_combined_CPTAC_ICGC()
+    elif (RNA_subtyped):
+        mutations_df = load_RNA_subtyped_mutations()
     elif (per_donor):
         mutations_df = load_per_donor_mutations(cancer_types[0])
     else:
@@ -70,6 +72,11 @@ def load_agg_mutations():
 
 def load_woo_pcawg_mutations():
     df = pd.read_csv("../../data/processed_data/pcawg_agg_woo.csv",
+                       index_col=0)
+    return(df.loc[natsorted(df.index)])
+
+def load_RNA_subtyped_mutations():
+    df = pd.read_csv("../../data/processed_data/RNA_subtyped_cancers.csv",
                        index_col=0)
     return(df.loc[natsorted(df.index)])
 

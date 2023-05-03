@@ -38,6 +38,7 @@ parser.add_argument("--meso", action="store_true", default=False)
 parser.add_argument("--combined_CPTAC_ICGC", action="store_true", default=False)
 parser.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
                     default=None)
+parser.add_argument("--RNA_subtyped", action="store_true", default=False)
 parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
                     help='tss fragment filters to consider', default="")
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
@@ -69,6 +70,7 @@ histologically_subtyped_mutations = config.histologically_subtyped_mutations
 de_novo_seurat_clustering = config.de_novo_seurat_clustering
 # mesomics = config.mesomics
 meso = config.meso
+RNA_subtyped = config.RNA_subtyped
 per_donor = config.per_donor
 donor_range = config.donor_range
 test_backward_selection_iter = config.test_backward_selection_iter
