@@ -367,7 +367,8 @@ proj <- addIterativeLSI(
                         n.start = 10
                         ), 
   varFeatures = 25000, 
-  dimsToUse = 1:30
+  dimsToUse = 1:30,
+  force=T
 )
 
 proj <- saveArchRProject(ArchRProj = proj, 
@@ -377,7 +378,7 @@ proj <- saveArchRProject(ArchRProj = proj,
 proj <- addUMAP(ArchRProj = proj, 
                  reducedDims = "IterativeLSI", 
                  name = "UMAP", nNeighbors = 30, minDist = 0.5, 
-                 metric = "cosine")
+                 metric = "cosine", force=T)
 
 proj <- saveArchRProject(ArchRProj = proj, 
                          outputDirectory = proj_dir,
