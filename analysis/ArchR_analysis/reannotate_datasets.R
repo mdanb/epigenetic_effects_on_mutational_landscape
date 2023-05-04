@@ -266,6 +266,7 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile, nfrags_
 
 # args = parse_args(OptionParser(option_list=option_list))
 
+print("Collecting cmd line args")
 cores = args$cores
 dataset = args$dataset
 cluster = args$cluster
@@ -283,6 +284,8 @@ column_to_color_by = args$column_to_color_by
 cell_name_col_in_metadata = args$cell_name_col_in_metadata
 cell_type_col_in_metadata = args$cell_type_col_in_metadata
 min_cells_per_cell_type = args$min_cells_per_cell_type
+print("Done collecting cmd line args")
+
 addArchRThreads(threads = cores)
 addArchRGenome("hg19")
 set.seed(42)
