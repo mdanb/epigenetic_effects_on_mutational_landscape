@@ -5,13 +5,15 @@ source("count_overlaps_utils.R")
 
 option_list <- list(
   make_option("--dataset", type="character"),
-  make_option("--cores", type="integer")
+  make_option("--cores", type="integer"),
+  make_option("--tissue", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
 
 dataset = args$dataset
 cores = args$cores
+tissue = args$tissue
 ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/hg38ToHg19.over.chain")
 
 helper <- function(files, migrated_filepaths, ch, cores) {
@@ -60,7 +62,6 @@ if (dataset == "Bingren") {
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC",
                      pattern="bed.bgz",
                      full.names=TRUE)
-  
 } else if (dataset == "Tsankov") {
   dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/migrated_to_hg19"
   dir.create(dir_path)
@@ -81,6 +82,7 @@ if (dataset == "Bingren") {
                      full.names=TRUE)
 }
 
+files = files[grepl(tissue, files)]
 filepaths = get_files_not_done(files, dir_path)
 files = filepaths[[1]]
 migrated_filepaths = filepaths[[2]]
