@@ -39,19 +39,19 @@ option_list <- list(
 #                     "--cell_types=all",
 #                     "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,SCGB1A1,SCGB3A1,SCGB3A2,MUC5B"))
 # 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=4",
-                      "--dataset=Tsankov",
-                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-                      "--sep_for_metadata=,",
-                      "--cell_type_col_in_metadata=celltypes",
-                      "--cell_name_col_in_metadata=X",
-                      "--column_to_color_by=NULL",
-                      "--tissue=all",
-                      "--nfrags_filter=1",
-                      "--tss_filter=0",
-                      "--cell_types=all",
-                      "--marker_genes=WT1"))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=4",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=Tsankov_fibro-fibro+C12+fibro+C14.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--cell_name_col_in_metadata=X",
+#                       "--column_to_color_by=NULL",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--marker_genes=WT1"))
 # 
 # # Basal
 # args = parse_args(OptionParser(option_list=option_list), args=
@@ -157,6 +157,20 @@ args = parse_args(OptionParser(option_list=option_list), args=
 #   df[cell_id] = cell_id
 #   return(df[, c(cell_name_col_in_metadata, cell_type_col_in_metadata)])
 # }
+
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=8",
+                      "--dataset=Bingren",
+                      "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
+                      "--sep_for_metadata=\t",
+                      "--cell_type_col_in_metadata=cell.type",
+                      "--cell_name_col_in_metadata=cellID",
+                      "--column_to_color_by=cell.type",
+                      "--tissue=stomach",
+                      "--cell_types=all",
+                      "--marker_genes=MUC5AC,TFF1,MUC2,TFF3,ATP4A,GSII,MUC5B,CLCA1,KLF4",
+                      "--min_cells_per_cell_type=100")
+)
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
@@ -308,17 +322,22 @@ if (!is.null(nfrags_percentile)) {
 proj_dir = paste(root, setting, sep="/")
 
 if (dir.exists(proj_dir)) {
+  print("Loading existing project")
   proj <- loadArchRProject(proj_dir)
+  print("Done loading existing project")
 } else {
+  print("Creating new project")
   dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj"
   ArchR_proj <- loadArchRProject(dir)
   proj <- filter_proj(proj = ArchR_proj, nfrags_filter, tss_filter, tss_percentile, 
                       nfrags_percentile, dataset, tissue, cell_types,
                       min_cells_per_cell_type, metadata)
   
+  print("Saving new project")
   proj <- saveArchRProject(ArchRProj = proj, 
                            outputDirectory = proj_dir,
                            load = TRUE)
+  print("Done saving new project")
 }
 # tryCatch({
 # getMatrixFromProject(ArchR_proj_subset, useMatrix = "GeneScoreMatrix")
@@ -332,7 +351,7 @@ if (dir.exists(proj_dir)) {
 # ArchR_proj_subset <- addTileMatrix(ArchR_proj_subset, force=T)
 # })
 
-
+print("Running iterative LSI")
 proj <- addIterativeLSI(
   ArchRProj = proj,
   useMatrix = "TileMatrix", 
@@ -379,6 +398,9 @@ if (!(is.null(marker_genes))) {
   proj <- saveArchRProject(ArchRProj = proj, 
                            outputDirectory = proj_dir,
                            load = TRUE)
+  if (length(marker_genes) == 1) {
+    p = list(p)
+  }
   p2 <- lapply(p, function(x){
     x + guides(color = FALSE, fill = FALSE) + 
       theme_ArchR(baseSize = 3) +
