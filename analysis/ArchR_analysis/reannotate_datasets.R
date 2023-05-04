@@ -267,6 +267,7 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile, nfrags_
 # args = parse_args(OptionParser(option_list=option_list))
 
 print("Collecting cmd line args")
+args = parse_args(OptionParser(option_list=option_list))
 cores = args$cores
 dataset = args$dataset
 cluster = args$cluster
