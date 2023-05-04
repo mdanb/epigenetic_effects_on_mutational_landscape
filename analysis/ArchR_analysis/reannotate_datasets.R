@@ -158,19 +158,19 @@ option_list <- list(
 #   return(df[, c(cell_name_col_in_metadata, cell_type_col_in_metadata)])
 # }
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=8",
-                      "--dataset=Bingren",
-                      "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
-                      "--sep_for_metadata=\t",
-                      "--cell_type_col_in_metadata=cell.type",
-                      "--cell_name_col_in_metadata=cellID",
-                      "--column_to_color_by=cell.type",
-                      "--tissue=stomach",
-                      "--cell_types=all",
-                      "--marker_genes=MUC5AC,TFF1,MUC2,TFF3,ATP4A,GSII,MUC5B,CLCA1,KLF4",
-                      "--min_cells_per_cell_type=100")
-)
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Bingren",
+#                       "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell.type",
+#                       "--cell_name_col_in_metadata=cellID",
+#                       "--column_to_color_by=cell.type",
+#                       "--tissue=stomach",
+#                       "--cell_types=all",
+#                       "--marker_genes=MUC5AC,TFF1,MUC2,TFF3,ATP4A,GSII,MUC5B,CLCA1,KLF4",
+#                       "--min_cells_per_cell_type=100")
+# )
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
