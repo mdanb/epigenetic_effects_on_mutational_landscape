@@ -6,7 +6,7 @@ source("count_overlaps_utils.R")
 option_list <- list(
   make_option("--dataset", type="character"),
   make_option("--cores", type="integer"),
-  make_option("--tissue", type="character")
+  make_option("--tissue", type="character", default="all")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -82,6 +82,9 @@ if (dataset == "Bingren") {
                      full.names=TRUE)
 }
 
+if (tissue == "all") {
+   tissue = "*"
+}
 files = files[grepl(tissue, files)]
 filepaths = get_files_not_done(files, dir_path)
 files = filepaths[[1]]
