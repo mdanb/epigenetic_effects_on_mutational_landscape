@@ -30,12 +30,13 @@ dataset = args$dataset
 cores = args$cores
 annotation = args$annotation
 
-get_and_save_num_cells_per_sample <- function(sample, sample_file_name) {
+get_and_save_num_cells_per_sample <- function(sample, sample_file_name,
+                                              annotation) {
   sample_file_name = paste0("cell_counts_", file_path_sans_ext(sample_file_name, 
                                                                TRUE), ".rds")
   counts_per_cell_type = get_num_cells_per_sample(sample)
   path = "../processed_data/cell_counts_per_sample"
-  file_path = paste(path, sample_file_name, sep="/")
+  file_path = paste(path, annotation, sample_file_name, sep="/")
   saveRDS(counts_per_cell_type, file_path)
   return(counts_per_cell_type)
 }
