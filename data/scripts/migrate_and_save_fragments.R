@@ -6,7 +6,7 @@ source("count_overlaps_utils.R")
 option_list <- list(
   make_option("--dataset", type="character"),
   make_option("--cores", type="integer"),
-  make_option("--tissue", type="character")
+  make_option("--tissue", type="character", default="all")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -38,7 +38,7 @@ get_files_not_done <- function(files, dir_path) {
   # migrated_filepaths_bgz = paste(dir_path, gsub(".gz", ".bgz", 
   #                                               lapply(strsplit(files, split = "/"), "[", 9)), 
   #                                sep = "/")
-  migrated_filepaths_tbi = paste(files, "tbi", sep=".")
+  migrated_filepaths_tbi = paste(dir_path, paste(lapply(strsplit(files, split = "/"), "[", 9), "tbi", sep="."), sep="/")
   migrated_filepaths = paste(dir_path, 
                              lapply(strsplit(files, split = "/"), "[", 9),
                              sep = "/")
@@ -47,7 +47,7 @@ get_files_not_done <- function(files, dir_path) {
   for (i in 1:length(migrated_filepaths)) {
     bgz_file = files[i]
     tbi_file = migrated_filepaths_tbi[i]
-    if (!file.exists(bgz_file) || !file.exists(tbi_file)) {
+    if (!file.exists(migrated_filepaths[i]) || !file.exists(migrated_filepaths_tbi[i])) {
       migrated_filepaths_not_done = append(migrated_filepaths_not_done, 
                                            migrated_filepaths[i])
       files_not_done = append(files_not_done, files[i])
@@ -82,6 +82,9 @@ if (dataset == "Bingren") {
                      full.names=TRUE)
 }
 
+if (tissue == "all") {
+   tissue = "*"
+}
 files = files[grepl(tissue, files)]
 filepaths = get_files_not_done(files, dir_path)
 files = filepaths[[1]]
