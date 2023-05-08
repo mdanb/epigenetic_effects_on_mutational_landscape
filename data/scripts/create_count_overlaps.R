@@ -89,7 +89,8 @@ create_count_overlaps_files <- function(file, cell_number_filter, metadata,
       
       sample <- get_sample_cell_types(sample[[1]], sample_barcodes_in_metadata,
                                       filtered_metadata)
-      counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file)
+      counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file,
+                                                                annotation)
       sample <- filter_sample_by_cell_number(sample,
                                              counts_per_cell_type, 
                                              cell_number_filter)
