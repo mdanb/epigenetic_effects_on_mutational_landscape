@@ -191,26 +191,28 @@ option_list <- list(
 #                     )
 # )
 
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Shendure",
-#                       "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-#                       "--sep_for_metadata=\t",
-#                       "--cell_type_col_in_metadata=cell_type",
-#                       "--cell_name_col_in_metadata=cell",
-#                       "--column_to_color_by=cell_type",
-#                       "--tissue=stomach",
-#                       "--cell_types=all",
-#                       "--marker_genes=TFF1,MUC2,TFF3,ATP4A,MUC5B,CLCA1,KLF4,MUC6,FUT2,REG4,AGR2,SPDEF",
-#                       "--min_cells_per_cell_type=100")
-# )
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=8",
+                      "--dataset=Shendure",
+                      "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+                      "--sep_for_metadata=\t",
+                      "--cell_type_col_in_metadata=cell_type",
+                      "--cell_name_col_in_metadata=cell",
+                      "--column_to_color_by=cell_type",
+                      "--tissue=stomach",
+                      "--cell_types=all",
+                      "--marker_genes=TFF1,MUC2,TFF3,ATP4A,MUC5B,CLCA1,KLF4,MUC6,FUT2,REG4,AGR2,SPDEF",
+                      "--min_cells_per_cell_type=100")
+)
 
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
                                             dataset) {
   if (dataset == "Shendure") {
-    cell_id = metadata[["cell"]]
+    to_match = paste(metadata[["sample_name"]], metadata[["cell"]], sep="#")
+    rownames_archr = rownames(cell_col_data)
+    
     # cell_id = original_metadata[[cell_name_col_in_orig_metadata]]
     # archr_name = paste(original_metadata[["sample_name"]],
     #                    original_metadata[[cell_name_col_in_orig_metadata]],
