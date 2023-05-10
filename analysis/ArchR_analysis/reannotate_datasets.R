@@ -145,6 +145,24 @@ option_list <- list(
 #                       "--marker_genes=OLIG1,OLIG2,AQP4,RBFOX3,EOMES",
 #                       "--min_cells_per_cell_type=100")
 # )
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--cell_name_col_in_metadata=X",
+#                       "--column_to_color_by=NULL",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--cell_types=all",
+#                       "--marker_genes=OLIG1,OLIG2,AQP4,RBFOX3,EOMES",
+#                       "--min_cells_per_cell_type=100")
+# )
+
 # args = parse_args(OptionParser(option_list=option_list))
 
 
@@ -214,9 +232,8 @@ add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
     #                                     collapse = "_"))
   }
   else if (dataset == "Tsankov") {
-    cell_id = unlist(lapply(strsplit(metadata[["X"]], "#"), 
-                            "[", 2))
-    
+    rownames_archr = rownames(cell_col_data)
+    to_match = metadata[["X"]]
   }
   # else if (dataset == "Bingren") {
   #   temp = original_metadata[[cell_name_col_in_orig_metadata]]
