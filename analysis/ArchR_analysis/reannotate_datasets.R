@@ -158,19 +158,35 @@ option_list <- list(
 #   return(df[, c(cell_name_col_in_metadata, cell_type_col_in_metadata)])
 # }
 
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=8",
+                      "--dataset=Bingren",
+                      "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
+                      "--sep_for_metadata=\t",
+                      "--cell_type_col_in_metadata=cell.type",
+                      "--cell_name_col_in_metadata=cellID",
+                      "--column_to_color_by=cell.type",
+                      "--tissue=stomach",
+                      "--cell_types=all",
+                      "--marker_genes=TFF1,MUC2,TFF3,ATP4A,MUC5B,CLCA1,KLF4,MUC6,FUT2,REG4,AGR2,SPDEF",
+                      "--min_cells_per_cell_type=100"
+                    )
+)
+
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
-#                       "--dataset=Bingren",
-#                       "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
+#                       "--dataset=Shendure",
+#                       "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
 #                       "--sep_for_metadata=\t",
-#                       "--cell_type_col_in_metadata=cell.type",
-#                       "--cell_name_col_in_metadata=cellID",
-#                       "--column_to_color_by=cell.type",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--cell_name_col_in_metadata=cell",
+#                       "--column_to_color_by=cell_type",
 #                       "--tissue=stomach",
 #                       "--cell_types=all",
-#                       "--marker_genes=MUC5AC,TFF1,MUC2,TFF3,ATP4A,GSII,MUC5B,CLCA1,KLF4",
+#                       "--marker_genes=TFF1,MUC2,TFF3,ATP4A,MUC5B,CLCA1,KLF4,MUC6,FUT2,REG4,AGR2,SPDEF",
 #                       "--min_cells_per_cell_type=100")
 # )
+
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
@@ -184,8 +200,18 @@ add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
   }
   else if (dataset == "Bingren") {
     metadata = metadata[metadata["Life.stage"] == "Adult", ]
-    cell_id = unlist(lapply(strsplit(metadata[["cellID"]], "\\+"), 
-                            "[", 2))
+    metadata["cellID"] = gsub("\\+", "#", metadata[["cellID"]])
+    idx = str_locate(metadata[["cellID"]], "#")[, 1] 
+    to_match = unname(mapply(function(s, i, ins) {
+      paste0(substring(s, 1, i-1), ins, substring(s, i))
+    }, s = metadata[["cellID"]], i = idx-1, ins = "rep"))
+    rownames_archr = unlist(lapply(lapply(strsplit(rownames(cell_col_data), split="_"), 
+                         "[", 2:4), paste, collapse="_"))
+    # cell_id = unlist(lapply(strsplit(metadata[["cellID"]], "\\+"), 
+    #                           "[", 2))
+    # sample_to_match_archr_in_metadata = unlist(lapply(lapply(strsplit(cell_col_data[["Sample"]], 
+    #                                         split = "_"), "[", 2:3), paste,
+    #                                     collapse = "_"))
   }
   else if (dataset == "Tsankov") {
     cell_id = unlist(lapply(strsplit(metadata[["X"]], "#"), 
@@ -204,12 +230,14 @@ add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
   # else {
   #   archr_name = unlist(original_metadata[[cell_name_col_in_orig_metadata]])
   # }
-  archr_cells = unlist(lapply(strsplit(rownames(cell_col_data), "#"), "[", 2))
-  idx = match(archr_cells, cell_id)
-  cell_types = metadata[[cell_type_col_in_orig_metadata]][idx]
-  not_na_idx = !is.na(idx)
-  cell_types = cell_types[not_na_idx]
-  cell_col_data[not_na_idx, "cell_type"] = cell_types
+  # archr_cells = unlist(lapply(strsplit(rownames(cell_col_data), "#"), "[", 2))
+  
+  idx_cell_id = match(rownames_archr, to_match)
+  cell_types = metadata[[cell_type_col_in_orig_metadata]][idx_cell_id]
+  # not_na_idx = !is.na(idx)
+  # cell_types = cell_types[not_na_idx]
+  # cell_col_data[not_na_idx, "cell_type"] = cell_types
+  cell_col_data$cell_type = cell_types
   return(cell_col_data)
 }
 
@@ -247,8 +275,9 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile, nfrags_
                                "[", 1))
   tissue_filter = grepl(tissue, sample_names)
   proj = proj[frags_filter & tss_filter & dataset_filter & tissue_filter]
-  
   cell_col_data = getCellColData(proj)
+  # cell_col_data = cell_col_data[grepl("stomach_SM-CHLWL", rownames(cell_col_data)), ]
+  
   cell_col_data = add_cell_types_to_cell_col_data(cell_col_data, metadata, 
                                                   cell_type_col_in_metadata,
                                                   dataset)
@@ -267,7 +296,7 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile, nfrags_
 # args = parse_args(OptionParser(option_list=option_list))
 
 print("Collecting cmd line args")
-args = parse_args(OptionParser(option_list=option_list))
+# args = parse_args(OptionParser(option_list=option_list))
 cores = args$cores
 dataset = args$dataset
 cluster = args$cluster
