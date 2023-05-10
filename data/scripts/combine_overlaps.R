@@ -47,6 +47,7 @@ add_to_combined_dataframes <- function(count_overlaps, combined_count_overlaps,
                                        tissue_name, cell_types, cell_counts,
                                        combined_count_overlaps_metadata, 
                                        f) {
+
   if (nrow(count_overlaps) == 0) {
     print(paste(f, "has no count overlaps"), sep=" ")
     return(list(combined_count_overlaps, combined_count_overlaps_metadata))
@@ -54,17 +55,16 @@ add_to_combined_dataframes <- function(count_overlaps, combined_count_overlaps,
   for (i in 1:nrow(count_overlaps)) {
     count_overlaps_exists = rownames(count_overlaps)[i] %in%
                             rownames(combined_count_overlaps)
-    # tryCatch(
     if (count_overlaps_exists) {
       idx = match(rownames(count_overlaps)[i],
                   rownames(combined_count_overlaps))
       combined_count_overlaps[idx, ] = combined_count_overlaps[idx, ] +
                                        count_overlaps[i, ]
-      idx_tissue = which(combined_count_overlaps_metadata[, "tissue_name"] %in%
-                         tissue_name[1])
+      idx_tissue = which(combined_count_overlaps_metadata[, "tissue_name"] ==
+                         tissue_name)
           # match(tissue_name[1],
           #                combined_count_overlaps_metadata[, "tissue_name"])
-      idx_cell_type = match(cell_types[i],
+      idx_cell_type = which(cell_types[i] == 
                             combined_count_overlaps_metadata[, "cell_type"])
       num_cells = cell_counts[cell_counts["cell_type"] == cell_types[i], 
                               "n_cells"] %>% pull(n_cells)
@@ -76,7 +76,7 @@ add_to_combined_dataframes <- function(count_overlaps, combined_count_overlaps,
       combined_count_overlaps = rbind(combined_count_overlaps,
                                       count_overlaps[i, ])
       combined_count_overlaps_metadata[dim(combined_count_overlaps_metadata)[1] + 1, 
-                                       "tissue_name"] = tissue_name[1]
+                                       "tissue_name"] = tissue_name
       combined_count_overlaps_metadata[dim(combined_count_overlaps_metadata)[1], 
                                        "cell_type"] = cell_types[i]
       n_cells = cell_counts[cell_counts["cell_type"] == cell_types[i], 
@@ -84,10 +84,6 @@ add_to_combined_dataframes <- function(count_overlaps, combined_count_overlaps,
       combined_count_overlaps_metadata[dim(combined_count_overlaps_metadata)[1], 
                                        "num_cells"] = n_cells
     }
-      # },
-      # error = function(err) {
-      #   print(paste(f, "has no count overlaps"), sep=" ")
-      # })
   }
   return(list(combined_count_overlaps, combined_count_overlaps_metadata))
 }
