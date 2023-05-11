@@ -12,7 +12,7 @@ option_list <- list(
   make_option("--cell_type_col_in_metadata", type="character"),
   make_option("--cell_name_col_in_metadata", type="character"),
   make_option("--cluster", action="store_true", default=F),
-  make_option("--cluster_res", type="double", default=1.2),
+  make_option("--cluster_res", type="integer", default=1.2),
   make_option("--plot_cell_types", action="store_true", default=F),
   make_option("--tissue", type="character", default="all"),
   make_option("--nfrags_filter", type="integer", default=1),
@@ -420,7 +420,7 @@ if (dir.exists(proj_dir)) {
                            outputDirectory = proj_dir,
                            load = TRUE)
   proj <- addImputeWeights(proj)
-  proj <- saveArchRProject(ArchRProj = proj,
+  proj <- saveArchRProject(ArchRProj = proj, 
                            outputDirectory = proj_dir,
                            load = TRUE)
 }
@@ -437,7 +437,6 @@ if (dir.exists(proj_dir)) {
 # })
 
 if (!(is.null(marker_genes))) {
-  proj <- addGeneScoreMatrix(proj, force=T)
   marker_genes = unlist(strsplit(marker_genes, split=","))
   p <- plotEmbedding(
     ArchRProj = proj, 
@@ -492,7 +491,7 @@ if (cluster) {
   
   p <- plotEmbedding(
     ArchRProj = proj, 
-    colorBy = "Clusters", 
+    colorBy = "cellColData", 
     embedding = "UMAP",
     quantCut = c(0.01, 0.95))
   fn = paste0("clusters_UMAPs", "_", "dataset", "_", dataset, "_", "tissue", "_",

@@ -130,36 +130,6 @@ get_sample_cell_types <- function(fragments,
   return(as.tibble(fragments))
 }
 
-
-get_sample_cell_types_bingren <- function(fragments, 
-                                  sample_barcodes_in_metadata,
-                                  filtered_metadata) {
-  sample_idx_in_metadata = match(fragments$name, 
-                                 sample_barcodes_in_metadata)
-  fragments$cell_type = filtered_metadata[unlist(sample_idx_in_metadata), 
-                                           "cell.type"]
-  return(as.tibble(fragments))
-}
-
-get_sample_cell_types_shendure <- function(sample, 
-                                           sample_barcodes_in_metadata,
-                                           filtered_metadata) {
-  sample_idx_in_metadata = match(sample$name, sample_barcodes_in_metadata)
-  sample$cell_type = filtered_metadata[unlist(sample_idx_in_metadata), 
-                                       "cell_type"]
-  return(as.tibble(sample))
-}
-
-get_sample_cell_types_tsankov <- function(sample,
-                                          sample_barcodes_in_metadata,
-                                          metadata) {
-  sample_idx_in_metadata = match(sample$name, sample_barcodes_in_metadata)
-  sample$cell_type = metadata[unlist(sample_idx_in_metadata),
-                              "celltypes"]
-  return(as.tibble(sample))
-}
-
-
 load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 
 dir.create("../processed_data/count_overlap_data", recursive=TRUE)                                       
