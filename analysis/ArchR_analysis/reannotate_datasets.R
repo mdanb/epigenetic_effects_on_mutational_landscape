@@ -437,7 +437,7 @@ if (dir.exists(proj_dir)) {
 # })
 
 if (!(is.null(marker_genes))) {
-  proj <- addGeneScoreMatrix(proj)
+  proj <- addGeneScoreMatrix(proj, force=T)
   marker_genes = unlist(strsplit(marker_genes, split=","))
   p <- plotEmbedding(
     ArchRProj = proj, 
