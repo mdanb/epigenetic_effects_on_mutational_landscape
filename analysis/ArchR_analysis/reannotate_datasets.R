@@ -12,7 +12,7 @@ option_list <- list(
   make_option("--cell_type_col_in_metadata", type="character"),
   make_option("--cell_name_col_in_metadata", type="character"),
   make_option("--cluster", action="store_true", default=F),
-  make_option("--cluster_res", type="integer", default=1.2),
+  make_option("--cluster_res", type="double", default=1.2),
   make_option("--plot_cell_types", action="store_true", default=F),
   make_option("--tissue", type="character", default="all"),
   make_option("--nfrags_filter", type="integer", default=1),
