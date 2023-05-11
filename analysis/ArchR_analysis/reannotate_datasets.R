@@ -477,6 +477,7 @@ if (!(is.null(marker_genes))) {
     print("Trying to save gene marker figure")
     pdf(fp)
   }, error = function(err) {
+    dev.off()
     print("Filepath too long")
     print(paste("Saving", fp, "to temp.pdf"))
     fp = paste(path, "temp.pdf", sep="/")
