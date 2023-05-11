@@ -420,7 +420,7 @@ if (dir.exists(proj_dir)) {
                            outputDirectory = proj_dir,
                            load = TRUE)
   proj <- addImputeWeights(proj)
-  proj <- saveArchRProject(ArchRProj = proj, 
+  proj <- saveArchRProject(ArchRProj = proj,
                            outputDirectory = proj_dir,
                            load = TRUE)
 }
@@ -437,6 +437,7 @@ if (dir.exists(proj_dir)) {
 # })
 
 if (!(is.null(marker_genes))) {
+  proj <- addGeneScoreMatrix(proj)
   marker_genes = unlist(strsplit(marker_genes, split=","))
   p <- plotEmbedding(
     ArchRProj = proj, 
@@ -491,7 +492,7 @@ if (cluster) {
   
   p <- plotEmbedding(
     ArchRProj = proj, 
-    colorBy = "cellColData", 
+    colorBy = "Clusters", 
     embedding = "UMAP",
     quantCut = c(0.01, 0.95))
   fn = paste0("clusters_UMAPs", "_", "dataset", "_", dataset, "_", "tissue", "_",
