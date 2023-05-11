@@ -13,7 +13,7 @@ option_list <- list(
   make_option("--cell_name_col_in_metadata", type="character"),
   make_option("--cluster", action="store_true"),
   make_option("--cluster_res", type="integer", default=1.2),
-  make_option("--column_to_color_by", type="character"),
+  make_option("--plot_cell_types", action="store_true"),
   make_option("--tissue", type="character", default="all"),
   make_option("--nfrags_filter", type="integer", default=1),
   make_option("--tss_filter", type="integer", default=0),
@@ -328,8 +328,10 @@ tss_filter=args$tss_filter
 tss_percentile=args$tss_percentile
 nfrags_percentile=args$nfrags_percentile
 cell_types=args$cell_types
+plot_cell_types = args$plot_cell_types
 sep_for_metadata = args$sep_for_metadata
-column_to_color_by = args$column_to_color_by
+# column_to_color_by = args$column_to_color_by
+
 cell_name_col_in_metadata = args$cell_name_col_in_metadata
 cell_type_col_in_metadata = args$cell_type_col_in_metadata
 min_cells_per_cell_type = args$min_cells_per_cell_type
@@ -390,6 +392,37 @@ if (dir.exists(proj_dir)) {
                            outputDirectory = proj_dir,
                            load = TRUE)
   print("Done saving new project")
+  print("Running iterative LSI")
+  proj <- addIterativeLSI(
+    ArchRProj = proj,
+    useMatrix = "TileMatrix", 
+    name = "IterativeLSI", 
+    iterations = 2, 
+    clusterParams = list( #See Seurat::FindClusters
+      resolution = c(0.2), 
+      sampleCells = 10000, 
+      n.start = 10
+    ), 
+    varFeatures = 25000, 
+    dimsToUse = 1:30
+  )
+  
+  proj <- saveArchRProject(ArchRProj = proj, 
+                           outputDirectory = proj_dir,
+                           load = TRUE)
+  
+  proj <- addUMAP(ArchRProj = proj, 
+                  reducedDims = "IterativeLSI", 
+                  name = "UMAP", nNeighbors = 30, minDist = 0.5, 
+                  metric = "cosine")
+  
+  proj <- saveArchRProject(ArchRProj = proj, 
+                           outputDirectory = proj_dir,
+                           load = TRUE)
+  proj <- addImputeWeights(proj)
+  proj <- saveArchRProject(ArchRProj = proj, 
+                           outputDirectory = proj_dir,
+                           load = TRUE)
 }
 # tryCatch({
 # getMatrixFromProject(ArchR_proj_subset, useMatrix = "GeneScoreMatrix")
@@ -403,39 +436,7 @@ if (dir.exists(proj_dir)) {
 # ArchR_proj_subset <- addTileMatrix(ArchR_proj_subset, force=T)
 # })
 
-print("Running iterative LSI")
-proj <- addIterativeLSI(
-  ArchRProj = proj,
-  useMatrix = "TileMatrix", 
-  name = "IterativeLSI", 
-  iterations = 2, 
-  clusterParams = list( #See Seurat::FindClusters
-                        resolution = c(0.2), 
-                        sampleCells = 10000, 
-                        n.start = 10
-                        ), 
-  varFeatures = 25000, 
-  dimsToUse = 1:30
-)
-
-proj <- saveArchRProject(ArchRProj = proj, 
-                         outputDirectory = proj_dir,
-                         load = TRUE)
-
-proj <- addUMAP(ArchRProj = proj, 
-                 reducedDims = "IterativeLSI", 
-                 name = "UMAP", nNeighbors = 30, minDist = 0.5, 
-                 metric = "cosine")
-
-proj <- saveArchRProject(ArchRProj = proj, 
-                         outputDirectory = proj_dir,
-                         load = TRUE)
-
 if (!(is.null(marker_genes))) {
-  proj <- addImputeWeights(proj)
-  proj <- saveArchRProject(ArchRProj = proj, 
-                           outputDirectory = proj_dir,
-                           load = TRUE)
   marker_genes = unlist(strsplit(marker_genes, split=","))
   p <- plotEmbedding(
     ArchRProj = proj, 
@@ -486,29 +487,42 @@ if (cluster) {
                       resolution = cluster_res, 
                       force=T)
   cell_col_data = getCellColData(proj)
-
+  
+  p <- plotEmbedding(
+    ArchRProj = proj, 
+    colorBy = "cellColData", 
+    embedding = "UMAP",
+    quantCut = c(0.01, 0.95))
+  fn = paste0("clusters_UMAPs", "_", "dataset", "_", dataset, "_", "tissue", "_",
+              tissue, "_", "cell_types", "_", cell_types, "_", "cluster_res", "_", 
+              cluster_res, "_", "nfrags_filter", "_", nfrags_filter, "_",  
+              "tss_filter", "_", tss_filter)
+  if (!is.null(tss_percentile)) {
+    fn = paste0(fn, "_tss_percentile_", tss_percentile)
+  } 
+  if (!is.null(nfrags_percentile)) {
+    fn = paste0(fn, "_nfrags_percentile_", nfrags_percentile)
+  } 
+  if (!is.null(min_cells_per_cell_type)) {
+    fn = paste0(fn, "_min_cells_per_cell_type_", min_cells_per_cell_type)
+  } 
+  fn = paste0(fn, ".pdf")
+  plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
+}
   # if (dataset == "Tsankov") {
   #   write.csv(cell_col_data["Clusters"], 
   #   "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata/metadata_Tsankov_refined_fibroblasts.csv")
   # }
-  if (!is.null(column_to_color_by)) {
-    p <- plotEmbedding(
-          ArchRProj = proj, 
-          colorBy = "cellColData", 
-          name = "cell_type", 
-          embedding = "UMAP",
-          quantCut = c(0.01, 0.95))
-    } else {
-        p <- plotEmbedding(
-          ArchRProj = proj, 
-          colorBy = "cellColData", 
-          embedding = "UMAP",
-          quantCut = c(0.01, 0.95))
-    }
-  
-  fn = paste0("clusters_UMAPs", "_", "dataset", "_", dataset, "_", "tissue", "_",
-              tissue, "_", "cell_types", "_", cell_types, "_", "cluster_res", "_", 
-              cluster_res, "_", "nfrags_filter", "_", nfrags_filter, "_",  
+if (plot_cell_types) {
+  p <- plotEmbedding(
+        ArchRProj = proj, 
+        colorBy = "cellColData", 
+        name = "cell_type", 
+        embedding = "UMAP",
+        quantCut = c(0.01, 0.95))
+  fn = paste0("cell_type_UMAP", "_", "dataset", "_", dataset, "_", "tissue", "_",
+              tissue, "_", "cell_types", "_", cell_types, "_", 
+              "nfrags_filter", "_", nfrags_filter, "_",  
               "tss_filter", "_", tss_filter)
   
   if (!is.null(tss_percentile)) {
@@ -522,114 +536,114 @@ if (cluster) {
   } 
   fn = paste0(fn, ".pdf")
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
-  
-  # Post visual inspection
-  map <- function(x, mapping) mapping[[x]]
-  
-  if (dataset == "Tsankov" && tissue == "all" && nfrags_filter == 1000 && 
-      tss_filter == 4 && cell_types == "Basal") {
-    mapping = c("C1" = "Basal,Sec.SOX4", "C2" = "Basal.HES2", 
-                "C3" = "Basal.TP63,SOX2", "C4" = "Basal.TP63",
-                "C5" = "Basal.FOXA1")
+}
 
-    mapped_cells = unlist(lapply(cell_col_data[["Clusters"]], map, mapping))
-    new_annotation_df = data.frame(Sample = rownames(cell_col_data), 
-                                   celltypes = mapped_cells)
-    
-    dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj"
-    ArchR_proj <- loadArchRProject(dir)
-    cell_col_data = getCellColData(ArchR_proj)
-    cell_col_data = add_cell_types_to_cell_col_data(cell_col_data, metadata,
-                                                    cell_name_col_in_metadata,
-                                                    cell_type_col_in_metadata,
-                                                    dataset)
-    ArchR_proj@cellColData = cell_col_data
-    # FIX 
-    # proj <- filter_proj(ArchR_proj, nfrags_filter, tss_filter, tss_percentile,
-    #                     dataset, "IC", "all", metadata)
-    cell_col_data = getCellColData(proj)
-    non_basal_proximal = cell_col_data[cell_col_data[["cell_type"]] != "Basal", ]
-    non_basal_proximal = as.data.frame(non_basal_proximal["cell_type"])
-    colnames(non_basal_proximal) = "celltypes"
-    rownames(new_annotation_df) = new_annotation_df$Sample
-    new_annotation_df$Sample= NULL
-  
-    new_annotation_df = rbind(new_annotation_df, non_basal_proximal)
-    annotation_filename = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata", 
-                          paste0(setting, "_annotation.csv"), sep="/")
-    write.csv(new_annotation_df, annotation_filename)
-    
-    #-- Call peaks --#
-    cellGroup = "Clusters"
-    proj = addGroupCoverages(
-      ArchRProj = proj,
-      groupBy = cellGroup,
-      force = TRUE,
-      minCells= 20,
-      maxCells = 500,
-      minReplicates = 2,
-      sampleRatio = 0.8,
-      useLabels = TRUE)
-    
-    proj = addReproduciblePeakSet(
-      proj,
-      groupBy= cellGroup,
-      peakMethod = 'Macs2',
-      reproducibility = "2",
-      maxPeaks = 500000,
-      minCells=20, force=TRUE)
+# Post visual inspection
+map <- function(x, mapping) mapping[[x]]
 
-    proj = addPeakMatrix(proj)
-    
-    proj <- addMotifAnnotations(ArchRProj = proj, 
-                                motifSet = "cisbp", name = "Motif",
-                                force=TRUE)
-    proj <- addBgdPeaks(proj)
-    proj <- addDeviationsMatrix(
-      ArchRProj = proj, 
-      peakAnnotation = "Motif",
-      force = TRUE
-    )
-    saveArchRProject(ArchRProj = proj)
-    
-    markers = c("TP63", "SOX2", "HES2", "FOXA1", "SOX4", "NKX21")
-    markers_p = list() 
-    for (i in markers) {
-      markerMotifs = getFeatures (proj, select = paste0(i, "_"), 
-                                  useMatrix = "MotifMatrix")
-      markerMotifs2 = grep("z:", markerMotifs, value = TRUE)
-      markers_p[[i]] = plotEmbedding(ArchRProj = proj, 
-                                      colorBy = "MotifMatrix", 
-                                      name = markerMotifs2, 
-                                      embedding = "UMAP", 
-                                      size=1, 
-                                      baseSize=0, 
-                                      imputeWeights = getImputeWeights(proj), 
-                                      plotAs="points")
-    }
-    markers_p2 = lapply(1:length(markers_p), function(x){ 
-      markers_p[[x]] + guides(color = FALSE, fill = FALSE) + 
-        theme_ArchR(baseSize = 6) + 
-        theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) + 
-        theme(axis.text.x=element_blank(), 
-              axis.ticks.x=element_blank(), 
-              axis.text.y=element_blank(), 
-              axis.ticks.y=element_blank() 
-        )})
-    png(paste0(proj_dir, "/Plots/variable_motifs.png"), 
-        width=800, height=1000)
-    wrap_plots(markers_p2, ncol=6)
-    dev.off()
-    # dev = getMatrixFromProject(proj, useMatrix = "MotifMatrix")
-    # TF = 'z:PITX2_504'
-    # p <- plotGroups(ArchRProj = proj,
-    #                 groupBy = "Clusters", 
-    #                 colorBy = "MotifMatrix",
-    #                 name = TF,
-    #                 seqnames ='z',
-    #                 imputeWeights = getImputeWeights(proj)
-    #                )
+if (dataset == "Tsankov" && tissue == "all" && nfrags_filter == 1000 && 
+  tss_filter == 4 && cell_types == "Basal") {
+  mapping = c("C1" = "Basal,Sec.SOX4", "C2" = "Basal.HES2", 
+              "C3" = "Basal.TP63,SOX2", "C4" = "Basal.TP63",
+              "C5" = "Basal.FOXA1")
+  
+  mapped_cells = unlist(lapply(cell_col_data[["Clusters"]], map, mapping))
+  new_annotation_df = data.frame(Sample = rownames(cell_col_data), 
+                                 celltypes = mapped_cells)
+  
+  dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj"
+  ArchR_proj <- loadArchRProject(dir)
+  cell_col_data = getCellColData(ArchR_proj)
+  cell_col_data = add_cell_types_to_cell_col_data(cell_col_data, metadata,
+                                                  cell_name_col_in_metadata,
+                                                  cell_type_col_in_metadata,
+                                                  dataset)
+  ArchR_proj@cellColData = cell_col_data
+  # FIX 
+  # proj <- filter_proj(ArchR_proj, nfrags_filter, tss_filter, tss_percentile,
+  #                     dataset, "IC", "all", metadata)
+  cell_col_data = getCellColData(proj)
+  non_basal_proximal = cell_col_data[cell_col_data[["cell_type"]] != "Basal", ]
+  non_basal_proximal = as.data.frame(non_basal_proximal["cell_type"])
+  colnames(non_basal_proximal) = "celltypes"
+  rownames(new_annotation_df) = new_annotation_df$Sample
+  new_annotation_df$Sample= NULL
+  
+  new_annotation_df = rbind(new_annotation_df, non_basal_proximal)
+  annotation_filename = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/metadata", 
+                        paste0(setting, "_annotation.csv"), sep="/")
+  write.csv(new_annotation_df, annotation_filename)
+  
+  #-- Call peaks --#
+  cellGroup = "Clusters"
+  proj = addGroupCoverages(
+    ArchRProj = proj,
+    groupBy = cellGroup,
+    force = TRUE,
+    minCells= 20,
+    maxCells = 500,
+    minReplicates = 2,
+    sampleRatio = 0.8,
+    useLabels = TRUE)
+  
+  proj = addReproduciblePeakSet(
+    proj,
+    groupBy= cellGroup,
+    peakMethod = 'Macs2',
+    reproducibility = "2",
+    maxPeaks = 500000,
+    minCells=20, force=TRUE)
+  
+  proj = addPeakMatrix(proj)
+  
+  proj <- addMotifAnnotations(ArchRProj = proj, 
+                              motifSet = "cisbp", name = "Motif",
+                              force=TRUE)
+  proj <- addBgdPeaks(proj)
+  proj <- addDeviationsMatrix(
+    ArchRProj = proj, 
+    peakAnnotation = "Motif",
+    force = TRUE
+  )
+  saveArchRProject(ArchRProj = proj)
+  
+  markers = c("TP63", "SOX2", "HES2", "FOXA1", "SOX4", "NKX21")
+  markers_p = list() 
+  for (i in markers) {
+    markerMotifs = getFeatures (proj, select = paste0(i, "_"), 
+                                useMatrix = "MotifMatrix")
+    markerMotifs2 = grep("z:", markerMotifs, value = TRUE)
+    markers_p[[i]] = plotEmbedding(ArchRProj = proj, 
+                                    colorBy = "MotifMatrix", 
+                                    name = markerMotifs2, 
+                                    embedding = "UMAP", 
+                                    size=1, 
+                                    baseSize=0, 
+                                    imputeWeights = getImputeWeights(proj), 
+                                    plotAs="points")
   }
+  markers_p2 = lapply(1:length(markers_p), function(x){ 
+    markers_p[[x]] + guides(color = FALSE, fill = FALSE) + 
+      theme_ArchR(baseSize = 6) + 
+      theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) + 
+      theme(axis.text.x=element_blank(), 
+            axis.ticks.x=element_blank(), 
+            axis.text.y=element_blank(), 
+            axis.ticks.y=element_blank() 
+      )})
+  png(paste0(proj_dir, "/Plots/variable_motifs.png"), 
+      width=800, height=1000)
+  wrap_plots(markers_p2, ncol=6)
+  dev.off()
+  # dev = getMatrixFromProject(proj, useMatrix = "MotifMatrix")
+  # TF = 'z:PITX2_504'
+  # p <- plotGroups(ArchRProj = proj,
+  #                 groupBy = "Clusters", 
+  #                 colorBy = "MotifMatrix",
+  #                 name = TF,
+  #                 seqnames ='z',
+  #                 imputeWeights = getImputeWeights(proj)
+  #                )
 }
 
 saveArchRProject(ArchRProj = proj)
