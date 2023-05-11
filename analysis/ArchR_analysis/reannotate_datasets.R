@@ -480,6 +480,7 @@ if (!(is.null(marker_genes))) {
 
 if (cluster) {
 # if (!("Clusters" %in% colnames(cell_col_data))) {
+  print(paste0("clustering with clustering resolution = ", cluster_res))
   proj <- addClusters(input = proj,
                       reducedDims = "IterativeLSI",
                       method = "Seurat",
@@ -507,6 +508,7 @@ if (cluster) {
     fn = paste0(fn, "_min_cells_per_cell_type_", min_cells_per_cell_type)
   } 
   fn = paste0(fn, ".pdf")
+  print(paste("saving", fn))
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
 }
   # if (dataset == "Tsankov") {
