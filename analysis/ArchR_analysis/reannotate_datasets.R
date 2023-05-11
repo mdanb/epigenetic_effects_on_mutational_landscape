@@ -176,21 +176,21 @@ option_list <- list(
 #   return(df[, c(cell_name_col_in_metadata, cell_type_col_in_metadata)])
 # }
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=8",
-                      "--dataset=Bingren",
-                      "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
-                      "--sep_for_metadata=\t",
-                      "--cell_type_col_in_metadata=cell.type",
-                      "--cell_name_col_in_metadata=cellID",
-                      "--tissue=stomach",
-                      "--nfrags_percentile=0.2",
-                      "--tss_percentile=0.2",
-                      "--cell_types=all",
-                      "--marker_genes=AGR2,CLCA1,KLF4,MUC2,MUC5B,SPDEF,TFF3,ATP4A,FUT2,MUC6,REG4,TFF1",
-                      "--min_cells_per_cell_type=200"
-                    )
-)
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Bingren",
+#                       "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell.type",
+#                       "--cell_name_col_in_metadata=cellID",
+#                       "--tissue=stomach",
+#                       "--nfrags_percentile=0.2",
+#                       "--tss_percentile=0.2",
+#                       "--cell_types=all",
+#                       "--marker_genes=AGR2,CLCA1,KLF4,MUC2,MUC5B,SPDEF,TFF3,ATP4A,FUT2,MUC6,REG4,TFF1",
+#                       "--min_cells_per_cell_type=200"
+#                     )
+# )
 
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
