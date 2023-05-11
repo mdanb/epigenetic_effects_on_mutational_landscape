@@ -419,10 +419,6 @@ if (dir.exists(proj_dir)) {
   proj <- saveArchRProject(ArchRProj = proj, 
                            outputDirectory = proj_dir,
                            load = TRUE)
-  proj <- addImputeWeights(proj)
-  proj <- saveArchRProject(ArchRProj = proj, 
-                           outputDirectory = proj_dir,
-                           load = TRUE)
 }
 # tryCatch({
 # getMatrixFromProject(ArchR_proj_subset, useMatrix = "GeneScoreMatrix")
@@ -437,6 +433,10 @@ if (dir.exists(proj_dir)) {
 # })
 
 if (!(is.null(marker_genes))) {
+  proj <- addImputeWeights(proj)
+  proj <- saveArchRProject(ArchRProj = proj, 
+                           outputDirectory = proj_dir,
+                           load = TRUE)
   marker_genes = unlist(strsplit(marker_genes, split=","))
   p <- plotEmbedding(
     ArchRProj = proj, 
@@ -473,7 +473,15 @@ if (!(is.null(marker_genes))) {
   path = "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/figures"
   fn = paste0("gene_marker_UMAPs_", setting, ".pdf")
   fp = paste(path, fn, sep="/")
-  pdf(fp)
+  tryCatch({
+    print("Trying to save gene marker figure")
+    pdf(fp)
+  }, error = function(err) {
+    print("Filepath too long")
+    print(paste("Saving", fp, "to temp.pdf"))
+    fp = paste(path, "temp.pdf", sep="/")
+    pdf(fp)
+  })
   do.call(cowplot::plot_grid, c(list(ncol = 5), p2))
   dev.off()
 }
