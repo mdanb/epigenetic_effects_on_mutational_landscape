@@ -474,16 +474,12 @@ if (!(is.null(marker_genes))) {
   path = "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/figures"
   fn = paste0("gene_marker_UMAPs_", setting, ".pdf")
   fp = paste(path, fn, sep="/")
-  tryCatch({
-    print("Trying to save gene marker figure")
-    pdf(fp)
-  }, error = function(err) {
-    dev.off()
-    print("Filepath too long")
-    print(paste("Saving", fp, "to temp.pdf"))
-    fp = paste(path, "temp.pdf", sep="/")
-    pdf(fp)
-  })
+  if (length(marker_genes) > 3) {
+     fp = paste(path, "temp.pdf", sep="/")
+  }
+  print("Filepath too long")
+  print(paste("Saving", fp, "to temp.pdf"))
+  pdf(fp)
   do.call(cowplot::plot_grid, c(list(ncol = 5), p2))
   dev.off()
 }
@@ -660,6 +656,7 @@ if (dataset == "Tsankov" && tissue == "all" && nfrags_filter == 1000 &&
 }
 
 saveArchRProject(ArchRProj = proj)
+
 
 
 # out = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis", 
