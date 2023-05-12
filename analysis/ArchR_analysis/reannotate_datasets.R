@@ -177,22 +177,22 @@ option_list <- list(
 #   return(df[, c(cell_name_col_in_metadata, cell_type_col_in_metadata)])
 # }
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=8",
-                      "--dataset=Bingren",
-                      "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
-                      "--sep_for_metadata=\t",
-                      "--cell_type_col_in_metadata=cell.type",
-                      "--cell_name_col_in_metadata=cellID",
-                      "--tissue=stomach",
-                      "--nfrags_percentile=0.2",
-                      "--tss_percentile=0.2",
-                      "--cell_types=all",
-                      "--marker_genes=AGR2,CLCA1,KLF4,MUC2,MUC5B,SPDEF,TFF3,ATP4A,FUT2,MUC6,REG4,TFF1",
-                      "--min_cells_per_cell_type=200",
-                      "--percentiles_per_cell_type"
-                    )
-)
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Bingren",
+#                       "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell.type",
+#                       "--cell_name_col_in_metadata=cellID",
+#                       "--tissue=stomach",
+#                       "--nfrags_percentile=0.2",
+#                       "--tss_percentile=0.2",
+#                       "--cell_types=all",
+#                       "--marker_genes=AGR2,CLCA1,KLF4,MUC2,MUC5B,SPDEF,TFF3,ATP4A,FUT2,MUC6,REG4,TFF1",
+#                       "--min_cells_per_cell_type=200",
+#                       "--percentiles_per_cell_type"
+#                     )
+# )
 
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
@@ -391,7 +391,7 @@ nfrags_filter=args$nfrags_filter
 tss_filter=args$tss_filter
 tss_percentile=args$tss_percentile
 nfrags_percentile=args$nfrags_percentile
-percentiles_per_cell_type = args$percentiles_per_cell_type
+filter_per_cell_type = args$filter_per_cell_type
 cell_types=args$cell_types
 plot_cell_types = args$plot_cell_types
 sep_for_metadata = args$sep_for_metadata
