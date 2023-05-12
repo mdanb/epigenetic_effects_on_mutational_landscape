@@ -2,6 +2,7 @@ library(ArchR)
 library(optparse)
 library(BSgenome.Hsapiens.UCSC.hg19)
 library(stringr)
+library(dplyr)
 # make_option("--function_number_to_process_celltype", type="integer"),
 
 option_list <- list( 
@@ -449,9 +450,10 @@ if (dir.exists(proj_dir)) {
   proj <- loadArchRProject(proj_dir)
   print("Done loading existing project")
 } else {
-  print("Creating new project")
   dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj"
+  print("Loading full ArchR data object")
   ArchR_proj <- loadArchRProject(dir)
+  print("Creating new project")
   proj <- filter_proj(proj = ArchR_proj, nfrags_filter, tss_filter, tss_percentile, 
                       nfrags_percentile, percentiles_per_cell_type, 
                       dataset, tissue, cell_types,
