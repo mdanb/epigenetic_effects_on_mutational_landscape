@@ -19,6 +19,7 @@ option_list <- list(
   make_option("--tss_filter", type="integer", default=0),
   make_option("--tss_percentile", type="double", default=NULL),
   make_option("--nfrags_percentile", type="double", default=NULL),
+  make_option("--filter_per_cell_type", action="store_true", default=FALSE),
   make_option("--cell_types", type="character", default="all"),
   make_option("--marker_genes", type="character", default=NULL),
   make_option("--min_cells_per_cell_type", type="integer", default=0)
@@ -176,21 +177,22 @@ option_list <- list(
 #   return(df[, c(cell_name_col_in_metadata, cell_type_col_in_metadata)])
 # }
 
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Bingren",
-#                       "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
-#                       "--sep_for_metadata=\t",
-#                       "--cell_type_col_in_metadata=cell.type",
-#                       "--cell_name_col_in_metadata=cellID",
-#                       "--tissue=stomach",
-#                       "--nfrags_percentile=0.2",
-#                       "--tss_percentile=0.2",
-#                       "--cell_types=all",
-#                       "--marker_genes=AGR2,CLCA1,KLF4,MUC2,MUC5B,SPDEF,TFF3,ATP4A,FUT2,MUC6,REG4,TFF1",
-#                       "--min_cells_per_cell_type=200"
-#                     )
-# )
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=8",
+                      "--dataset=Bingren",
+                      "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
+                      "--sep_for_metadata=\t",
+                      "--cell_type_col_in_metadata=cell.type",
+                      "--cell_name_col_in_metadata=cellID",
+                      "--tissue=stomach",
+                      "--nfrags_percentile=0.2",
+                      "--tss_percentile=0.2",
+                      "--cell_types=all",
+                      "--marker_genes=AGR2,CLCA1,KLF4,MUC2,MUC5B,SPDEF,TFF3,ATP4A,FUT2,MUC6,REG4,TFF1",
+                      "--min_cells_per_cell_type=200",
+                      "--percentiles_per_cell_type"
+                    )
+)
 
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
@@ -261,7 +263,8 @@ add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
   return(cell_col_data)
 }
 
-filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile, nfrags_percentile,
+filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile,
+                        nfrags_percentile, percentiles_per_cell_type,
                         dataset, tissue, cell_types, min_cells_per_cell_type, 
                         metadata) {
   cell_col_data = getCellColData(proj)
@@ -274,42 +277,102 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile, nfrags_
   if (cell_types == "all") {
     cell_types = "*"
   }
-
-  if (!is.null(tss_percentile)) {
-    cutoff <- quantile(cell_col_data[["TSSEnrichment"]], tss_percentile)
-    tss_filter = cell_col_data[["TSSEnrichment"]] >= cutoff
-  } else {
-    tss_filter = cell_col_data[["TSSEnrichment"]] >= tss_filter
-  }
+  # cell_col_data = cell_col_data[grepl("stomach_SM-CHLWL", rownames(cell_col_data)), ]
   
-  if (!is.null(nfrags_percentile)) {
-    cutoff <- quantile(cell_col_data[["nFrags"]], tss_percentile)
-    frags_filter = cell_col_data[["nFrags"]] >= cutoff
-  } else {
-    frags_filter = cell_col_data[["nFrags"]] >= nfrags_filter
-  }
-  
+  # Filter by Dataset
   dataset_filter = grepl(dataset, cell_col_data[["dataset_per_cell"]])
+  proj = proj[dataset_filter]
+  cell_col_data = getCellColData(proj)
+  ##################
   
+  # Filter by Tissue
   sample_names = unlist(lapply(strsplit(rownames(cell_col_data), split="#"), 
                                "[", 1))
   tissue_filter = grepl(tissue, sample_names)
-  proj = proj[frags_filter & tss_filter & dataset_filter & tissue_filter]
+  proj = proj[tissue_filter]
   cell_col_data = getCellColData(proj)
-  # cell_col_data = cell_col_data[grepl("stomach_SM-CHLWL", rownames(cell_col_data)), ]
+  #################
   
+  # Add cell types to cell_col_data
   cell_col_data = add_cell_types_to_cell_col_data(cell_col_data, metadata, 
                                                   cell_type_col_in_metadata,
                                                   dataset)
   proj = proj[!is.na(cell_col_data[["cell_type"]])]
-  proj@cellColData = cell_col_data[!is.na(cell_col_data[["cell_type"]]), ]
-  cell_col_data = getCellColData(proj)
+  cell_col_data_with_celltypes = cell_col_data[!is.na(cell_col_data[["cell_type"]]), ]
+  proj@cellColData = cell_col_data_with_celltypes
+  cell_col_data = cell_col_data_with_celltypes
+  ################################
+  
+  # Filter by cell type
   cell_type_filter = grepl(cell_types, cell_col_data[["cell_type"]])
   proj = proj[cell_type_filter]
+  cell_col_data = getCellColData(proj)
+  #####################
+  
+  # Filter by cell number, and TSS/nFrags 
   counts_per_cell_type = table(cell_col_data[["cell_type"]])
   counts_per_cell_type_filter = counts_per_cell_type >= min_cells_per_cell_type
   cell_types_to_keep = names(counts_per_cell_type)[counts_per_cell_type_filter]
   proj = proj[cell_col_data[["cell_type"]] %in% cell_types_to_keep]
+  cell_col_data = getCellColData(proj)
+  
+  counts_per_cell_type = table(cell_col_data[["cell_type"]])
+  # if (!is.null(tss_percentile) & !is.null(nfrags_percentile)) {
+  #   if (percentiles_per_cell_type) {
+  cell_col_data = as.data.frame(cell_col_data)
+  if (filter_per_cell_type) {
+    cell_col_data = group_by(cell_col_data, cell_type)
+  }
+  
+  if (!is.null(nfrags_percentile)) {
+    temp1 = cell_col_data %>% 
+              mutate(throw_away = nFrags < quantile(nFrags, nfrags_percentile))
+  } else {
+    temp1 = cell_col_data %>% 
+      mutate(throw_away = nFrags < nfrags_filter)
+  }
+  
+  temp_frag_filter = temp1[c("throw_away", "cell_type")]
+  temp1 = select(temp1, -throw_away)
+  temp1 = temp1[!temp_frag_filter[["throw_away"]], ]
+  
+  if (!is.null(tss_percentile)) {
+    temp2 = cell_col_data %>% 
+              mutate(throw_away = 
+                     TSSEnrichment < quantile(TSSEnrichment, tss_percentile))
+  } else {
+    temp2 = cell_col_data %>% 
+              mutate(throw_away = nFrags < tss_filter)
+  }
+  
+  temp_tss_filter = temp2[c("throw_away", "cell_type")]
+  temp2 = select(temp2, -throw_away)
+  temp2 = temp2[!temp_tss_filter[["throw_away"]], ]
+  
+  temp3 = merge(temp1, temp2)
+  
+  counts_per_cell_type_after_filtering = table(temp3[["cell_type"]])
+  enough_cells = counts_per_cell_type_after_filtering >= min_cells_per_cell_type
+  cells_to_filter = names(enough_cells)[enough_cells]
+  proj_filter = !(temp_frag_filter["throw_away"] | temp_tss_filter["throw_away"] & 
+                 (cell_col_data[["cell_type"]] %in% cells_to_filter))
+  
+  proj = proj[proj_filter]
+  # if (!percentiles_per_cell_type) {
+  #   if (!is.null(tss_percentile)) {
+  #       cutoff <- quantile(cell_col_data[["TSSEnrichment"]], tss_percentile)
+  #       tss_filter = cell_col_data[["TSSEnrichment"]] >= cutoff
+  #     } else {
+  #       tss_filter = cell_col_data[["TSSEnrichment"]] >= tss_filter
+  #   }
+  #   if (!is.null(nfrags_percentile)) {
+  #       cutoff <- quantile(cell_col_data[["nFrags"]], nfrags_percentile)
+  #       frags_filter = cell_col_data[["nFrags"]] >= cutoff
+  #   } else {
+  #       frags_filter = cell_col_data[["nFrags"]] >= nfrags_filter
+  #   }
+  #   proj = proj[frags_filter & tss_filter]
+  # }
   return(proj)
 }
 
@@ -328,6 +391,7 @@ nfrags_filter=args$nfrags_filter
 tss_filter=args$tss_filter
 tss_percentile=args$tss_percentile
 nfrags_percentile=args$nfrags_percentile
+percentiles_per_cell_type = args$percentiles_per_cell_type
 cell_types=args$cell_types
 plot_cell_types = args$plot_cell_types
 sep_for_metadata = args$sep_for_metadata
@@ -385,7 +449,8 @@ if (dir.exists(proj_dir)) {
   dir = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj"
   ArchR_proj <- loadArchRProject(dir)
   proj <- filter_proj(proj = ArchR_proj, nfrags_filter, tss_filter, tss_percentile, 
-                      nfrags_percentile, dataset, tissue, cell_types,
+                      nfrags_percentile, percentiles_per_cell_type, 
+                      dataset, tissue, cell_types,
                       min_cells_per_cell_type, metadata)
   
   print("Saving new project")
@@ -435,9 +500,9 @@ if (dir.exists(proj_dir)) {
 
 if (!(is.null(marker_genes))) {
   proj <- addImputeWeights(proj)
-  proj <- saveArchRProject(ArchRProj = proj, 
-                           outputDirectory = proj_dir,
-                           load = TRUE)
+  # proj <- saveArchRProject(ArchRProj = proj, 
+  #                          outputDirectory = proj_dir,
+  #                          load = TRUE)
   marker_genes = unlist(strsplit(marker_genes, split=","))
   p <- plotEmbedding(
     ArchRProj = proj, 
@@ -447,18 +512,19 @@ if (!(is.null(marker_genes))) {
     imputeWeights = getImputeWeights(proj),
     quantCut = c(0.01, 0.95),
     height=10,
-    width=10
+    width=10,
+    baseSize=20
   )
-  proj <- saveArchRProject(ArchRProj = proj, 
-                           outputDirectory = proj_dir,
-                           load = TRUE)
+  # proj <- saveArchRProject(ArchRProj = proj, 
+  #                          outputDirectory = proj_dir,
+  #                          load = TRUE)
   if (length(marker_genes) == 1) {
     p = list(p)
   }
   p2 <- lapply(p, function(x){
     x + guides(color = FALSE, fill = FALSE) + 
       theme_ArchR(baseSize = 3) +
-      theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
+      theme(plot.margin = unit(c(0.5, 0, 0.5, 0), "cm")) +
       theme(
         axis.text.x=element_blank(), 
         axis.ticks.x=element_blank(), 
@@ -475,11 +541,11 @@ if (!(is.null(marker_genes))) {
   fn = paste0("gene_marker_UMAPs_", setting, ".pdf")
   fp = paste(path, fn, sep="/")
   if (length(marker_genes) > 3) {
-     fp = paste(path, "temp.pdf", sep="/")
+    print("Filepath too long")
+    print(paste("Saving", fn, "to temp.pdf"))
+    fp = paste(path, "temp.pdf", sep="/")
   }
-  print("Filepath too long")
-  print(paste("Saving", fp, "to temp.pdf"))
-  pdf(fp)
+  pdf(fp, width = 50, height = 50)
   do.call(cowplot::plot_grid, c(list(ncol = 5), p2))
   dev.off()
 }
