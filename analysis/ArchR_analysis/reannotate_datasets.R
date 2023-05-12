@@ -430,12 +430,16 @@ setting = paste0("ArchR", "_", "dataset", "_", dataset, "_", "tissue", "_",
                  "tss_filter", "_", tss_filter, "_", "min_cells_per_cell_type", 
                  "_", min_cells_per_cell_type, "_", "metadata_file", "_", 
                  metadata_for_celltype_fn)
-
 if (!is.null(tss_percentile)) {
   setting = paste0(setting, "_", "tss_percentile", "_", tss_percentile)
 }
 if (!is.null(nfrags_percentile)) {
   setting = paste0(setting, "_", "nfrags_percentile", "_", nfrags_percentile)
+}
+
+if (filter_per_cell_type) {
+  setting = paste0(setting, "_", "filter_per_cell_type", "_", 
+                   filter_per_cell_type)
 }
 
 proj_dir = paste(root, setting, sep="/")
