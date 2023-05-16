@@ -1,0 +1,788 @@
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+Error in file(filename, "r", encoding = encoding) : 
+  cannot open the connection
+Calls: source -> file
+In addition: Warning message:
+In file(filename, "r", encoding = encoding) :
+  cannot open file 'count_overlaps_utils.R': No such file or directory
+Execution halted
+
+                                                   / |
+                                                 /    \
+            .                                  /      |.
+            \\\                              /        |.
+              \\\                          /           `|.
+                \\\                      /              |.
+                  \                    /                |\
+                  \\#####\           /                  ||
+                ==###########>      /                   ||
+                 \\##==......\    /                     ||
+            ______ =       =|__ /__                     ||      \\\
+        ,--' ,----`-,__ ___/'  --,-`-===================##========>
+       \               '        ##_______ _____ ,--,__,=##,__   ///
+        ,    __==    ___,-,__,--'#'  ==='      `-'    | ##,-/
+        -,____,---'       \\####\\________________,--\\_##,/
+           ___      .______        ______  __    __  .______      
+          /   \     |   _  \      /      ||  |  |  | |   _  \     
+         /  ^  \    |  |_)  |    |  ,----'|  |__|  | |  |_)  |    
+        /  /_\  \   |      /     |  |     |   __   | |      /     
+       /  _____  \  |  |\  \\___ |  `----.|  |  |  | |  |\  \\___.
+      /__/     \__\ | _| `._____| \______||__|  |__| | _| `._____|
+    
+ArchR : Version 1.0.3
+For more information see our website : www.ArchRProject.com
+If you encounter a bug please report : https://github.com/GreenleafLab/ArchR/issues
+Loading Required Packages...
+	Loading Package : devtools v2.4.5
+	Loading Package : grid v4.1.3
+	Loading Package : gridExtra v2.3
+	Loading Package : gtools v3.9.4
+	Loading Package : gtable v0.3.1
+	Loading Package : ggplot2 v3.4.0
+	Loading Package : magrittr v2.0.3
+	Loading Package : plyr v1.8.8
+	Loading Package : stringr v1.5.0
+	Loading Package : data.table v1.14.6
+	Loading Package : matrixStats v0.63.0
+	Loading Package : sparseMatrixStats v1.6.0
+	Loading Package : S4Vectors v0.32.4
+	Loading Package : GenomicRanges v1.46.1
+	Loading Package : BiocGenerics v0.40.0
+	Loading Package : Matrix v1.5.3
+	Loading Package : Rcpp v1.0.10
+	Loading Package : RcppArmadillo v0.11.4.3.1
+	Loading Package : SummarizedExperiment v1.24.0
+	Loading Package : rhdf5 v2.38.1
+Setting default number of Parallel threads to 8.
+Setting default genome to Hg19.
+Using GeneAnnotation set by addArchRGenome(Hg19)!
+Using GeneAnnotation set by addArchRGenome(Hg19)!
+ArchR logging to : ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+If there is an issue, please report to github with logFile!
+subThreading Disabled since ArchRLocking is TRUE see `addArchRLocking`
+2023-02-08 05:50:32 : Batch Execution w/ safelapply!, 0 mins elapsed.
+2023-02-08 05:50:32 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 0.004 mins elapsed.
+2023-02-08 05:50:32 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Tabix Bed To Temporary File, 0.005 mins elapsed.
+2023-02-08 05:50:32 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 0.005 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Tabix Bed To Temporary File, 0.006 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 0.006 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Tabix Bed To Temporary File, 0.007 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 0.007 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Tabix Bed To Temporary File, 0.007 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 0.008 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Tabix Bed To Temporary File, 0.009 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 0.009 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Tabix Bed To Temporary File, 0.009 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 0.01 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 0.01 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Tabix Bed To Temporary File, 0.01 mins elapsed.
+2023-02-08 05:50:33 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Tabix Bed To Temporary File, 0.01 mins elapsed.
+2023-02-08 05:55:34 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading TabixFile 8 Percent, 5.022 mins elapsed.
+2023-02-08 05:56:06 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading TabixFile 8 Percent, 5.564 mins elapsed.
+2023-02-08 05:56:38 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading TabixFile 8 Percent, 6.104 mins elapsed.
+2023-02-08 05:57:19 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading TabixFile 8 Percent, 6.785 mins elapsed.
+2023-02-08 05:57:33 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading TabixFile 8 Percent, 7.007 mins elapsed.
+2023-02-08 05:57:53 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading TabixFile 8 Percent, 7.349 mins elapsed.
+2023-02-08 05:58:02 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading TabixFile 8 Percent, 7.505 mins elapsed.
+2023-02-08 05:58:17 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading TabixFile 8 Percent, 7.749 mins elapsed.
+2023-02-08 05:59:24 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading TabixFile 17 Percent, 8.859 mins elapsed.
+2023-02-08 06:00:43 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading TabixFile 17 Percent, 10.188 mins elapsed.
+2023-02-08 06:01:48 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading TabixFile 17 Percent, 11.272 mins elapsed.
+2023-02-08 06:01:52 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading TabixFile 17 Percent, 11.333 mins elapsed.
+2023-02-08 06:02:35 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading TabixFile 25 Percent, 12.045 mins elapsed.
+2023-02-08 06:02:41 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading TabixFile 17 Percent, 12.145 mins elapsed.
+2023-02-08 06:03:12 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading TabixFile 17 Percent, 12.666 mins elapsed.
+2023-02-08 06:03:32 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading TabixFile 17 Percent, 12.99 mins elapsed.
+2023-02-08 06:04:21 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading TabixFile 25 Percent, 13.821 mins elapsed.
+2023-02-08 06:04:27 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading TabixFile 17 Percent, 13.908 mins elapsed.
+2023-02-08 06:05:16 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading TabixFile 33 Percent, 14.73 mins elapsed.
+2023-02-08 06:05:48 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading TabixFile 25 Percent, 15.262 mins elapsed.
+2023-02-08 06:06:02 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading TabixFile 25 Percent, 15.493 mins elapsed.
+2023-02-08 06:06:49 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading TabixFile 25 Percent, 16.288 mins elapsed.
+2023-02-08 06:07:11 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading TabixFile 33 Percent, 16.653 mins elapsed.
+2023-02-08 06:08:01 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading TabixFile 42 Percent, 17.476 mins elapsed.
+2023-02-08 06:08:02 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading TabixFile 25 Percent, 17.494 mins elapsed.
+2023-02-08 06:08:25 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading TabixFile 25 Percent, 17.881 mins elapsed.
+2023-02-08 06:09:13 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading TabixFile 33 Percent, 18.686 mins elapsed.
+2023-02-08 06:09:44 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading TabixFile 33 Percent, 19.197 mins elapsed.
+2023-02-08 06:09:45 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading TabixFile 25 Percent, 19.221 mins elapsed.
+2023-02-08 06:09:55 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading TabixFile 42 Percent, 19.377 mins elapsed.
+2023-02-08 06:10:36 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading TabixFile 33 Percent, 20.068 mins elapsed.
+2023-02-08 06:10:42 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading TabixFile 50 Percent, 20.167 mins elapsed.
+2023-02-08 06:12:14 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading TabixFile 42 Percent, 21.689 mins elapsed.
+2023-02-08 06:12:14 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading TabixFile 33 Percent, 21.696 mins elapsed.
+2023-02-08 06:12:31 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading TabixFile 33 Percent, 21.983 mins elapsed.
+2023-02-08 06:12:34 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading TabixFile 50 Percent, 22.028 mins elapsed.
+2023-02-08 06:12:34 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading TabixFile 58 Percent, 22.031 mins elapsed.
+2023-02-08 06:13:20 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading TabixFile 42 Percent, 22.789 mins elapsed.
+2023-02-08 06:13:56 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading TabixFile 33 Percent, 23.4 mins elapsed.
+2023-02-08 06:14:22 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading TabixFile 42 Percent, 23.829 mins elapsed.
+2023-02-08 06:14:27 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading TabixFile 67 Percent, 23.912 mins elapsed.
+2023-02-08 06:14:47 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading TabixFile 58 Percent, 24.251 mins elapsed.
+2023-02-08 06:15:38 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading TabixFile 50 Percent, 25.104 mins elapsed.
+2023-02-08 06:15:57 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading TabixFile 42 Percent, 25.412 mins elapsed.
+2023-02-08 06:16:20 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading TabixFile 42 Percent, 25.801 mins elapsed.
+2023-02-08 06:16:33 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading TabixFile 75 Percent, 26.019 mins elapsed.
+2023-02-08 06:16:47 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading TabixFile 67 Percent, 26.242 mins elapsed.
+2023-02-08 06:16:55 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading TabixFile 50 Percent, 26.386 mins elapsed.
+2023-02-08 06:17:46 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading TabixFile 42 Percent, 27.232 mins elapsed.
+2023-02-08 06:17:56 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading TabixFile 58 Percent, 27.394 mins elapsed.
+2023-02-08 06:18:01 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading TabixFile 50 Percent, 27.488 mins elapsed.
+2023-02-08 06:18:25 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading TabixFile 83 Percent, 27.884 mins elapsed.
+2023-02-08 06:18:41 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading TabixFile 75 Percent, 28.153 mins elapsed.
+2023-02-08 06:19:33 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading TabixFile 58 Percent, 29.015 mins elapsed.
+2023-02-08 06:19:42 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading TabixFile 92 Percent, 29.166 mins elapsed.
+2023-02-08 06:19:48 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading TabixFile 50 Percent, 29.265 mins elapsed.
+2023-02-08 06:20:04 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading TabixFile 50 Percent, 29.533 mins elapsed.
+2023-02-08 06:20:07 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading TabixFile 67 Percent, 29.579 mins elapsed.
+2023-02-08 06:20:29 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading TabixFile 83 Percent, 29.949 mins elapsed.
+2023-02-08 06:20:34 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading TabixFile 58 Percent, 30.037 mins elapsed.
+2023-02-08 06:21:00 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Reading TabixFile 100 Percent, 30.468 mins elapsed.
+2023-02-08 06:21:05 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Successful creation of Temporary File, 30.546 mins elapsed.
+2023-02-08 06:21:05 : (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) Creating ArrowFile From Temporary File, 30.546 mins elapsed.
+2023-02-08 06:21:07 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 30.584 mins elapsed.
+2023-02-08 06:21:07 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Tabix Bed To Temporary File, 30.584 mins elapsed.
+2023-02-08 06:21:27 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading TabixFile 50 Percent, 30.917 mins elapsed.
+2023-02-08 06:21:48 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading TabixFile 92 Percent, 31.265 mins elapsed.
+2023-02-08 06:22:09 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading TabixFile 75 Percent, 31.619 mins elapsed.
+2023-02-08 06:22:11 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading TabixFile 67 Percent, 31.652 mins elapsed.
+2023-02-08 06:22:24 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading TabixFile 58 Percent, 31.87 mins elapsed.
+2023-02-08 06:22:51 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading TabixFile 58 Percent, 32.314 mins elapsed.
+2023-02-08 06:23:07 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading TabixFile 67 Percent, 32.586 mins elapsed.
+2023-02-08 06:23:29 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Reading TabixFile 100 Percent, 32.949 mins elapsed.
+2023-02-08 06:23:35 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Successful creation of Temporary File, 33.054 mins elapsed.
+2023-02-08 06:23:35 : (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) Creating ArrowFile From Temporary File, 33.055 mins elapsed.
+2023-02-08 06:23:38 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 33.092 mins elapsed.
+2023-02-08 06:23:38 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Tabix Bed To Temporary File, 33.092 mins elapsed.
+2023-02-08 06:23:58 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading TabixFile 83 Percent, 33.43 mins elapsed.
+2023-02-08 06:24:10 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading TabixFile 58 Percent, 33.635 mins elapsed.
+2023-02-08 06:24:47 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading TabixFile 75 Percent, 34.249 mins elapsed.
+2023-02-08 06:24:56 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading TabixFile 67 Percent, 34.399 mins elapsed.
+2023-02-08 06:25:21 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading TabixFile 92 Percent, 34.821 mins elapsed.
+2023-02-08 06:25:25 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading TabixFile 67 Percent, 34.873 mins elapsed.
+2023-02-08 06:25:43 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading TabixFile 8 Percent, 35.177 mins elapsed.
+2023-02-08 06:25:48 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading TabixFile 75 Percent, 35.263 mins elapsed.
+2023-02-08 06:26:48 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading TabixFile 67 Percent, 36.272 mins elapsed.
+2023-02-08 06:26:54 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Reading TabixFile 100 Percent, 36.359 mins elapsed.
+2023-02-08 06:26:59 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading TabixFile 83 Percent, 36.444 mins elapsed.
+2023-02-08 06:26:59 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Successful creation of Temporary File, 36.446 mins elapsed.
+2023-02-08 06:26:59 : (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) Creating ArrowFile From Temporary File, 36.447 mins elapsed.
+2023-02-08 06:27:01 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 36.485 mins elapsed.
+2023-02-08 06:27:01 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Tabix Bed To Temporary File, 36.485 mins elapsed.
+2023-02-08 06:27:36 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading TabixFile 75 Percent, 37.058 mins elapsed.
+2023-02-08 06:28:00 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading TabixFile 8 Percent, 37.472 mins elapsed.
+2023-02-08 06:28:01 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading TabixFile 75 Percent, 37.482 mins elapsed.
+2023-02-08 06:28:23 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading TabixFile 83 Percent, 37.852 mins elapsed.
+2023-02-08 06:28:29 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading TabixFile 92 Percent, 37.942 mins elapsed.
+2023-02-08 06:28:59 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading TabixFile 17 Percent, 38.44 mins elapsed.
+2023-02-08 06:29:19 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading TabixFile 75 Percent, 38.78 mins elapsed.
+2023-02-08 06:29:51 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Reading TabixFile 100 Percent, 39.32 mins elapsed.
+2023-02-08 06:29:53 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading TabixFile 92 Percent, 39.348 mins elapsed.
+2023-02-08 06:29:56 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Successful creation of Temporary File, 39.399 mins elapsed.
+2023-02-08 06:29:56 : (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) Creating ArrowFile From Temporary File, 39.399 mins elapsed.
+2023-02-08 06:29:58 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 39.437 mins elapsed.
+2023-02-08 06:29:58 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Tabix Bed To Temporary File, 39.437 mins elapsed.
+2023-02-08 06:30:12 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading TabixFile 83 Percent, 39.666 mins elapsed.
+2023-02-08 06:30:18 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading TabixFile 83 Percent, 39.767 mins elapsed.
+2023-02-08 06:31:10 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading TabixFile 17 Percent, 40.632 mins elapsed.
+2023-02-08 06:31:14 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading TabixFile 8 Percent, 40.702 mins elapsed.
+2023-02-08 06:31:15 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading TabixFile 83 Percent, 40.71 mins elapsed.
+2023-02-08 06:31:21 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Reading TabixFile 100 Percent, 40.816 mins elapsed.
+2023-02-08 06:31:25 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Successful creation of Temporary File, 40.888 mins elapsed.
+2023-02-08 06:31:25 : (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) Creating ArrowFile From Temporary File, 40.889 mins elapsed.
+2023-02-08 06:31:28 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 40.927 mins elapsed.
+2023-02-08 06:31:28 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Tabix Bed To Temporary File, 40.927 mins elapsed.
+2023-02-08 06:31:42 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading TabixFile 92 Percent, 41.17 mins elapsed.
+2023-02-08 06:31:53 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading TabixFile 92 Percent, 41.341 mins elapsed.
+2023-02-08 06:32:11 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading TabixFile 25 Percent, 41.64 mins elapsed.
+2023-02-08 06:32:40 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading TabixFile 92 Percent, 42.127 mins elapsed.
+2023-02-08 06:33:13 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Reading TabixFile 100 Percent, 42.679 mins elapsed.
+2023-02-08 06:33:16 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Reading TabixFile 100 Percent, 42.736 mins elapsed.
+2023-02-08 06:33:17 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Successful creation of Temporary File, 42.756 mins elapsed.
+2023-02-08 06:33:18 : (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) Creating ArrowFile From Temporary File, 42.756 mins elapsed.
+2023-02-08 06:33:19 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 42.784 mins elapsed.
+2023-02-08 06:33:19 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Tabix Bed To Temporary File, 42.785 mins elapsed.
+2023-02-08 06:33:21 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Successful creation of Temporary File, 42.81 mins elapsed.
+2023-02-08 06:33:21 : (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) Creating ArrowFile From Temporary File, 42.81 mins elapsed.
+2023-02-08 06:33:23 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 42.843 mins elapsed.
+2023-02-08 06:33:23 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Tabix Bed To Temporary File, 42.844 mins elapsed.
+2023-02-08 06:34:03 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading TabixFile 25 Percent, 43.518 mins elapsed.
+2023-02-08 06:34:07 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading TabixFile 8 Percent, 43.578 mins elapsed.
+2023-02-08 06:34:20 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading TabixFile 17 Percent, 43.791 mins elapsed.
+2023-02-08 06:34:21 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Reading TabixFile 100 Percent, 43.812 mins elapsed.
+2023-02-08 06:34:26 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Successful creation of Temporary File, 43.899 mins elapsed.
+2023-02-08 06:34:26 : (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) Creating ArrowFile From Temporary File, 43.9 mins elapsed.
+2023-02-08 06:34:28 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 43.935 mins elapsed.
+2023-02-08 06:34:28 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Tabix Bed To Temporary File, 43.936 mins elapsed.
+2023-02-08 06:34:53 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading TabixFile 33 Percent, 44.351 mins elapsed.
+2023-02-08 06:35:57 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading TabixFile 8 Percent, 45.414 mins elapsed.
+2023-02-08 06:36:44 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading TabixFile 33 Percent, 46.205 mins elapsed.
+2023-02-08 06:37:05 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading TabixFile 25 Percent, 46.543 mins elapsed.
+2023-02-08 06:37:25 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading TabixFile 8 Percent, 46.878 mins elapsed.
+2023-02-08 06:37:31 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading TabixFile 42 Percent, 46.975 mins elapsed.
+2023-02-08 06:37:34 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading TabixFile 17 Percent, 47.025 mins elapsed.
+2023-02-08 06:37:52 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading TabixFile 8 Percent, 47.335 mins elapsed.
+2023-02-08 06:38:47 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading TabixFile 8 Percent, 48.246 mins elapsed.
+2023-02-08 06:38:56 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading TabixFile 42 Percent, 48.4 mins elapsed.
+2023-02-08 06:38:57 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading TabixFile 17 Percent, 48.421 mins elapsed.
+2023-02-08 06:39:41 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading TabixFile 33 Percent, 49.148 mins elapsed.
+2023-02-08 06:40:17 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading TabixFile 50 Percent, 49.744 mins elapsed.
+2023-02-08 06:40:19 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading TabixFile 17 Percent, 49.777 mins elapsed.
+2023-02-08 06:40:30 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading TabixFile 25 Percent, 49.966 mins elapsed.
+2023-02-08 06:40:58 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading TabixFile 17 Percent, 50.436 mins elapsed.
+2023-02-08 06:41:22 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading TabixFile 50 Percent, 50.839 mins elapsed.
+2023-02-08 06:41:29 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading TabixFile 25 Percent, 50.953 mins elapsed.
+2023-02-08 06:41:50 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading TabixFile 17 Percent, 51.3 mins elapsed.
+2023-02-08 06:42:05 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading TabixFile 42 Percent, 51.555 mins elapsed.
+2023-02-08 06:42:19 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading TabixFile 58 Percent, 51.783 mins elapsed.
+2023-02-08 06:43:01 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading TabixFile 25 Percent, 52.476 mins elapsed.
+2023-02-08 06:43:09 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading TabixFile 58 Percent, 52.61 mins elapsed.
+2023-02-08 06:43:09 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading TabixFile 33 Percent, 52.613 mins elapsed.
+2023-02-08 06:43:37 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading TabixFile 25 Percent, 53.082 mins elapsed.
+2023-02-08 06:43:47 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading TabixFile 33 Percent, 53.245 mins elapsed.
+2023-02-08 06:44:21 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading TabixFile 67 Percent, 53.811 mins elapsed.
+2023-02-08 06:44:28 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading TabixFile 25 Percent, 53.934 mins elapsed.
+2023-02-08 06:44:34 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading TabixFile 50 Percent, 54.035 mins elapsed.
+2023-02-08 06:44:44 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading TabixFile 67 Percent, 54.203 mins elapsed.
+2023-02-08 06:45:30 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading TabixFile 33 Percent, 54.969 mins elapsed.
+2023-02-08 06:45:31 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading TabixFile 42 Percent, 54.983 mins elapsed.
+2023-02-08 06:46:02 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading TabixFile 33 Percent, 55.496 mins elapsed.
+2023-02-08 06:46:08 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading TabixFile 42 Percent, 55.6 mins elapsed.
+2023-02-08 06:46:20 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading TabixFile 75 Percent, 55.802 mins elapsed.
+2023-02-08 06:46:21 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading TabixFile 58 Percent, 55.822 mins elapsed.
+2023-02-08 06:46:28 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading TabixFile 75 Percent, 55.926 mins elapsed.
+2023-02-08 06:46:49 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading TabixFile 33 Percent, 56.277 mins elapsed.
+2023-02-08 06:47:49 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading TabixFile 83 Percent, 57.279 mins elapsed.
+2023-02-08 06:47:53 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading TabixFile 42 Percent, 57.35 mins elapsed.
+2023-02-08 06:47:59 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading TabixFile 50 Percent, 57.455 mins elapsed.
+2023-02-08 06:48:15 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading TabixFile 67 Percent, 57.716 mins elapsed.
+2023-02-08 06:48:21 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading TabixFile 50 Percent, 57.817 mins elapsed.
+2023-02-08 06:48:23 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading TabixFile 83 Percent, 57.853 mins elapsed.
+2023-02-08 06:48:25 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading TabixFile 42 Percent, 57.876 mins elapsed.
+2023-02-08 06:48:55 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading TabixFile 92 Percent, 58.383 mins elapsed.
+2023-02-08 06:49:09 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading TabixFile 42 Percent, 58.619 mins elapsed.
+2023-02-08 06:49:38 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading TabixFile 92 Percent, 59.103 mins elapsed.
+2023-02-08 06:49:48 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading TabixFile 58 Percent, 59.262 mins elapsed.
+2023-02-08 06:50:07 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading TabixFile 75 Percent, 59.583 mins elapsed.
+2023-02-08 06:50:12 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading TabixFile 50 Percent, 59.658 mins elapsed.
+2023-02-08 06:50:15 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading TabixFile 58 Percent, 59.712 mins elapsed.
+2023-02-08 06:50:20 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Reading TabixFile 100 Percent, 59.795 mins elapsed.
+2023-02-08 06:50:26 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Successful creation of Temporary File, 59.899 mins elapsed.
+2023-02-08 06:50:26 : (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) Creating ArrowFile From Temporary File, 59.9 mins elapsed.
+2023-02-08 06:50:28 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 59.937 mins elapsed.
+2023-02-08 06:50:28 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Tabix Bed To Temporary File, 59.938 mins elapsed.
+2023-02-08 06:50:53 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Reading TabixFile 100 Percent, 60.339 mins elapsed.
+2023-02-08 06:50:53 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading TabixFile 50 Percent, 60.348 mins elapsed.
+2023-02-08 06:50:58 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Successful creation of Temporary File, 60.433 mins elapsed.
+2023-02-08 06:50:58 : (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) Creating ArrowFile From Temporary File, 60.434 mins elapsed.
+2023-02-08 06:51:00 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 60.465 mins elapsed.
+2023-02-08 06:51:00 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Tabix Bed To Temporary File, 60.466 mins elapsed.
+2023-02-08 06:51:35 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading TabixFile 67 Percent, 61.054 mins elapsed.
+2023-02-08 06:51:41 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading TabixFile 50 Percent, 61.144 mins elapsed.
+2023-02-08 06:51:47 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading TabixFile 58 Percent, 61.254 mins elapsed.
+2023-02-08 06:51:48 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading TabixFile 83 Percent, 61.264 mins elapsed.
+2023-02-08 06:52:17 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading TabixFile 67 Percent, 61.747 mins elapsed.
+2023-02-08 06:52:50 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading TabixFile 58 Percent, 62.305 mins elapsed.
+2023-02-08 06:53:01 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading TabixFile 92 Percent, 62.48 mins elapsed.
+2023-02-08 06:53:16 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading TabixFile 75 Percent, 62.726 mins elapsed.
+2023-02-08 06:53:26 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading TabixFile 58 Percent, 62.89 mins elapsed.
+2023-02-08 06:53:33 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading TabixFile 67 Percent, 63.021 mins elapsed.
+2023-02-08 06:54:19 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading TabixFile 75 Percent, 63.782 mins elapsed.
+2023-02-08 06:54:20 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Reading TabixFile 100 Percent, 63.801 mins elapsed.
+2023-02-08 06:54:23 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading TabixFile 8 Percent, 63.848 mins elapsed.
+2023-02-08 06:54:26 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Successful creation of Temporary File, 63.89 mins elapsed.
+2023-02-08 06:54:26 : (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) Creating ArrowFile From Temporary File, 63.892 mins elapsed.
+2023-02-08 06:54:28 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 63.925 mins elapsed.
+2023-02-08 06:54:28 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Tabix Bed To Temporary File, 63.926 mins elapsed.
+2023-02-08 06:54:40 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading TabixFile 67 Percent, 64.122 mins elapsed.
+2023-02-08 06:54:55 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading TabixFile 83 Percent, 64.388 mins elapsed.
+2023-02-08 06:54:58 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading TabixFile 8 Percent, 64.43 mins elapsed.
+2023-02-08 06:55:15 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading TabixFile 67 Percent, 64.718 mins elapsed.
+2023-02-08 06:55:23 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading TabixFile 75 Percent, 64.849 mins elapsed.
+2023-02-08 06:56:02 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading TabixFile 83 Percent, 65.502 mins elapsed.
+2023-02-08 06:56:09 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading TabixFile 92 Percent, 65.616 mins elapsed.
+2023-02-08 06:56:36 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading TabixFile 75 Percent, 66.058 mins elapsed.
+2023-02-08 06:57:02 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading TabixFile 83 Percent, 66.493 mins elapsed.
+2023-02-08 06:57:07 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading TabixFile 75 Percent, 66.582 mins elapsed.
+2023-02-08 06:57:16 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading TabixFile 92 Percent, 66.723 mins elapsed.
+2023-02-08 06:57:17 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading TabixFile 17 Percent, 66.755 mins elapsed.
+2023-02-08 06:57:22 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Reading TabixFile 100 Percent, 66.831 mins elapsed.
+2023-02-08 06:57:27 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Successful creation of Temporary File, 66.917 mins elapsed.
+2023-02-08 06:57:27 : (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) Creating ArrowFile From Temporary File, 66.918 mins elapsed.
+2023-02-08 06:57:29 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 66.95 mins elapsed.
+2023-02-08 06:57:29 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Tabix Bed To Temporary File, 66.951 mins elapsed.
+2023-02-08 06:58:03 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading TabixFile 83 Percent, 67.521 mins elapsed.
+2023-02-08 06:58:10 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading TabixFile 17 Percent, 67.635 mins elapsed.
+2023-02-08 06:58:20 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading TabixFile 92 Percent, 67.795 mins elapsed.
+2023-02-08 06:58:24 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Reading TabixFile 100 Percent, 67.871 mins elapsed.
+2023-02-08 06:58:25 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading TabixFile 8 Percent, 67.88 mins elapsed.
+2023-02-08 06:58:30 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Successful creation of Temporary File, 67.967 mins elapsed.
+2023-02-08 06:58:30 : (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) Creating ArrowFile From Temporary File, 67.968 mins elapsed.
+2023-02-08 06:58:32 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 68.003 mins elapsed.
+2023-02-08 06:58:32 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Tabix Bed To Temporary File, 68.004 mins elapsed.
+2023-02-08 06:59:10 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading TabixFile 83 Percent, 68.636 mins elapsed.
+2023-02-08 06:59:17 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading TabixFile 92 Percent, 68.739 mins elapsed.
+2023-02-08 06:59:44 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Reading TabixFile 100 Percent, 69.201 mins elapsed.
+2023-02-08 06:59:50 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Successful creation of Temporary File, 69.295 mins elapsed.
+2023-02-08 06:59:50 : (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) Creating ArrowFile From Temporary File, 69.296 mins elapsed.
+2023-02-08 06:59:51 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading TabixFile 25 Percent, 69.314 mins elapsed.
+2023-02-08 06:59:52 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 69.332 mins elapsed.
+2023-02-08 06:59:52 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Tabix Bed To Temporary File, 69.333 mins elapsed.
+2023-02-08 07:00:24 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading TabixFile 92 Percent, 69.861 mins elapsed.
+2023-02-08 07:00:29 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Reading TabixFile 100 Percent, 69.94 mins elapsed.
+2023-02-08 07:00:34 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Successful creation of Temporary File, 70.032 mins elapsed.
+2023-02-08 07:00:34 : (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) Creating ArrowFile From Temporary File, 70.033 mins elapsed.
+2023-02-08 07:00:36 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 70.066 mins elapsed.
+2023-02-08 07:00:36 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Tabix Bed To Temporary File, 70.067 mins elapsed.
+2023-02-08 07:00:56 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading TabixFile 25 Percent, 70.399 mins elapsed.
+2023-02-08 07:01:04 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading TabixFile 17 Percent, 70.529 mins elapsed.
+2023-02-08 07:01:36 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading TabixFile 8 Percent, 71.059 mins elapsed.
+2023-02-08 07:01:38 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Reading TabixFile 100 Percent, 71.094 mins elapsed.
+2023-02-08 07:01:43 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Successful creation of Temporary File, 71.188 mins elapsed.
+2023-02-08 07:01:44 : (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) Creating ArrowFile From Temporary File, 71.189 mins elapsed.
+2023-02-08 07:01:46 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 71.225 mins elapsed.
+2023-02-08 07:01:46 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Tabix Bed To Temporary File, 71.226 mins elapsed.
+2023-02-08 07:02:11 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading TabixFile 8 Percent, 71.641 mins elapsed.
+2023-02-08 07:02:21 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading TabixFile 33 Percent, 71.811 mins elapsed.
+2023-02-08 07:03:18 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading TabixFile 33 Percent, 72.756 mins elapsed.
+2023-02-08 07:03:41 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading TabixFile 8 Percent, 73.146 mins elapsed.
+2023-02-08 07:03:45 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading TabixFile 25 Percent, 73.215 mins elapsed.
+2023-02-08 07:04:07 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading TabixFile 8 Percent, 73.573 mins elapsed.
+2023-02-08 07:04:38 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading TabixFile 42 Percent, 74.101 mins elapsed.
+2023-02-08 07:05:05 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading TabixFile 17 Percent, 74.546 mins elapsed.
+2023-02-08 07:05:40 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading TabixFile 8 Percent, 75.13 mins elapsed.
+2023-02-08 07:05:41 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading TabixFile 42 Percent, 75.144 mins elapsed.
+2023-02-08 07:05:41 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading TabixFile 17 Percent, 75.153 mins elapsed.
+2023-02-08 07:06:03 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading TabixFile 33 Percent, 75.516 mins elapsed.
+2023-02-08 07:06:52 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading TabixFile 17 Percent, 76.338 mins elapsed.
+2023-02-08 07:06:55 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading TabixFile 17 Percent, 76.374 mins elapsed.
+2023-02-08 07:07:09 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading TabixFile 50 Percent, 76.621 mins elapsed.
+2023-02-08 07:07:48 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading TabixFile 25 Percent, 77.263 mins elapsed.
+2023-02-08 07:08:06 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading TabixFile 50 Percent, 77.558 mins elapsed.
+2023-02-08 07:08:16 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading TabixFile 42 Percent, 77.731 mins elapsed.
+2023-02-08 07:08:48 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading TabixFile 17 Percent, 78.259 mins elapsed.
+2023-02-08 07:08:57 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading TabixFile 58 Percent, 78.418 mins elapsed.
+2023-02-08 07:08:59 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading TabixFile 25 Percent, 78.448 mins elapsed.
+2023-02-08 07:09:04 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading TabixFile 25 Percent, 78.527 mins elapsed.
+2023-02-08 07:09:43 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading TabixFile 25 Percent, 79.188 mins elapsed.
+2023-02-08 07:09:55 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading TabixFile 58 Percent, 79.387 mins elapsed.
+2023-02-08 07:10:11 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading TabixFile 33 Percent, 79.643 mins elapsed.
+2023-02-08 07:10:46 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading TabixFile 67 Percent, 80.228 mins elapsed.
+2023-02-08 07:10:47 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading TabixFile 50 Percent, 80.246 mins elapsed.
+2023-02-08 07:11:15 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading TabixFile 33 Percent, 80.709 mins elapsed.
+2023-02-08 07:11:21 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading TabixFile 25 Percent, 80.812 mins elapsed.
+2023-02-08 07:11:36 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading TabixFile 67 Percent, 81.069 mins elapsed.
+2023-02-08 07:11:59 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading TabixFile 33 Percent, 81.45 mins elapsed.
+2023-02-08 07:12:11 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading TabixFile 33 Percent, 81.646 mins elapsed.
+2023-02-08 07:12:14 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading TabixFile 42 Percent, 81.702 mins elapsed.
+2023-02-08 07:12:27 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading TabixFile 58 Percent, 81.918 mins elapsed.
+2023-02-08 07:12:34 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading TabixFile 75 Percent, 82.025 mins elapsed.
+2023-02-08 07:13:28 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading TabixFile 42 Percent, 82.937 mins elapsed.
+2023-02-08 07:13:34 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading TabixFile 75 Percent, 83.025 mins elapsed.
+2023-02-08 07:13:53 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading TabixFile 33 Percent, 83.339 mins elapsed.
+2023-02-08 07:14:03 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading TabixFile 67 Percent, 83.517 mins elapsed.
+2023-02-08 07:14:18 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading TabixFile 42 Percent, 83.761 mins elapsed.
+2023-02-08 07:14:19 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading TabixFile 50 Percent, 83.778 mins elapsed.
+2023-02-08 07:14:19 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading TabixFile 83 Percent, 83.779 mins elapsed.
+2023-02-08 07:14:32 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading TabixFile 42 Percent, 84.005 mins elapsed.
+2023-02-08 07:15:12 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading TabixFile 83 Percent, 84.671 mins elapsed.
+2023-02-08 07:15:23 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading TabixFile 92 Percent, 84.845 mins elapsed.
+2023-02-08 07:15:34 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading TabixFile 50 Percent, 85.033 mins elapsed.
+2023-02-08 07:15:55 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading TabixFile 58 Percent, 85.386 mins elapsed.
+2023-02-08 07:15:56 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading TabixFile 75 Percent, 85.392 mins elapsed.
+2023-02-08 07:16:13 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading TabixFile 42 Percent, 85.674 mins elapsed.
+2023-02-08 07:16:32 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Reading TabixFile 100 Percent, 85.996 mins elapsed.
+2023-02-08 07:16:33 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading TabixFile 92 Percent, 86.02 mins elapsed.
+2023-02-08 07:16:38 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Successful creation of Temporary File, 86.096 mins elapsed.
+2023-02-08 07:16:38 : (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) Creating ArrowFile From Temporary File, 86.096 mins elapsed.
+2023-02-08 07:16:40 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 86.138 mins elapsed.
+2023-02-08 07:16:40 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Tabix Bed To Temporary File, 86.139 mins elapsed.
+2023-02-08 07:16:47 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading TabixFile 50 Percent, 86.243 mins elapsed.
+2023-02-08 07:17:06 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading TabixFile 58 Percent, 86.562 mins elapsed.
+2023-02-08 07:17:20 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading TabixFile 50 Percent, 86.803 mins elapsed.
+2023-02-08 07:17:30 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading TabixFile 83 Percent, 86.967 mins elapsed.
+2023-02-08 07:17:35 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading TabixFile 67 Percent, 87.051 mins elapsed.
+2023-02-08 07:17:46 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Reading TabixFile 100 Percent, 87.226 mins elapsed.
+2023-02-08 07:17:50 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Successful creation of Temporary File, 87.305 mins elapsed.
+2023-02-08 07:17:50 : (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) Creating ArrowFile From Temporary File, 87.306 mins elapsed.
+2023-02-08 07:17:53 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 87.341 mins elapsed.
+2023-02-08 07:17:53 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Tabix Bed To Temporary File, 87.342 mins elapsed.
+2023-02-08 07:18:22 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading TabixFile 50 Percent, 87.829 mins elapsed.
+2023-02-08 07:18:33 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading TabixFile 58 Percent, 88.006 mins elapsed.
+2023-02-08 07:18:45 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading TabixFile 92 Percent, 88.216 mins elapsed.
+2023-02-08 07:18:49 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading TabixFile 67 Percent, 88.274 mins elapsed.
+2023-02-08 07:19:19 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading TabixFile 75 Percent, 88.773 mins elapsed.
+2023-02-08 07:19:24 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading TabixFile 58 Percent, 88.858 mins elapsed.
+2023-02-08 07:19:57 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading TabixFile 58 Percent, 89.414 mins elapsed.
+2023-02-08 07:20:07 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Reading TabixFile 100 Percent, 89.578 mins elapsed.
+2023-02-08 07:20:14 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Successful creation of Temporary File, 89.691 mins elapsed.
+2023-02-08 07:20:14 : (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) Creating ArrowFile From Temporary File, 89.692 mins elapsed.
+2023-02-08 07:20:16 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 89.726 mins elapsed.
+2023-02-08 07:20:16 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Tabix Bed To Temporary File, 89.727 mins elapsed.
+2023-02-08 07:20:21 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading TabixFile 67 Percent, 89.808 mins elapsed.
+2023-02-08 07:20:27 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading TabixFile 8 Percent, 89.909 mins elapsed.
+2023-02-08 07:20:34 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading TabixFile 75 Percent, 90.023 mins elapsed.
+2023-02-08 07:20:58 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading TabixFile 83 Percent, 90.435 mins elapsed.
+2023-02-08 07:21:06 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading TabixFile 67 Percent, 90.567 mins elapsed.
+2023-02-08 07:21:32 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading TabixFile 8 Percent, 90.998 mins elapsed.
+2023-02-08 07:21:38 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading TabixFile 67 Percent, 91.101 mins elapsed.
+2023-02-08 07:22:05 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading TabixFile 75 Percent, 91.547 mins elapsed.
+2023-02-08 07:22:08 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading TabixFile 92 Percent, 91.601 mins elapsed.
+2023-02-08 07:22:16 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading TabixFile 83 Percent, 91.726 mins elapsed.
+2023-02-08 07:22:49 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading TabixFile 75 Percent, 92.285 mins elapsed.
+2023-02-08 07:23:28 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading TabixFile 92 Percent, 92.927 mins elapsed.
+2023-02-08 07:23:28 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading TabixFile 75 Percent, 92.932 mins elapsed.
+2023-02-08 07:23:30 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Reading TabixFile 100 Percent, 92.971 mins elapsed.
+2023-02-08 07:23:35 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading TabixFile 8 Percent, 93.055 mins elapsed.
+2023-02-08 07:23:35 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Successful creation of Temporary File, 93.056 mins elapsed.
+2023-02-08 07:23:36 : (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) Creating ArrowFile From Temporary File, 93.056 mins elapsed.
+2023-02-08 07:23:37 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading TabixFile 83 Percent, 93.077 mins elapsed.
+2023-02-08 07:23:38 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 93.092 mins elapsed.
+2023-02-08 07:23:38 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Tabix Bed To Temporary File, 93.093 mins elapsed.
+2023-02-08 07:23:58 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading TabixFile 17 Percent, 93.436 mins elapsed.
+2023-02-08 07:24:14 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading TabixFile 17 Percent, 93.7 mins elapsed.
+2023-02-08 07:24:20 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading TabixFile 83 Percent, 93.794 mins elapsed.
+2023-02-08 07:24:45 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Reading TabixFile 100 Percent, 94.218 mins elapsed.
+2023-02-08 07:24:48 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading TabixFile 92 Percent, 94.259 mins elapsed.
+2023-02-08 07:24:50 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Successful creation of Temporary File, 94.296 mins elapsed.
+2023-02-08 07:24:50 : (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) Creating ArrowFile From Temporary File, 94.297 mins elapsed.
+2023-02-08 07:24:52 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 94.336 mins elapsed.
+2023-02-08 07:24:52 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Tabix Bed To Temporary File, 94.337 mins elapsed.
+2023-02-08 07:25:05 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading TabixFile 83 Percent, 94.55 mins elapsed.
+2023-02-08 07:25:31 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading TabixFile 92 Percent, 94.984 mins elapsed.
+2023-02-08 07:26:09 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Reading TabixFile 100 Percent, 95.61 mins elapsed.
+2023-02-08 07:26:10 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading TabixFile 92 Percent, 95.635 mins elapsed.
+2023-02-08 07:26:13 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Successful creation of Temporary File, 95.68 mins elapsed.
+2023-02-08 07:26:13 : (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) Creating ArrowFile From Temporary File, 95.681 mins elapsed.
+2023-02-08 07:26:15 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 95.72 mins elapsed.
+2023-02-08 07:26:15 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Tabix Bed To Temporary File, 95.721 mins elapsed.
+2023-02-08 07:26:30 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading TabixFile 8 Percent, 95.964 mins elapsed.
+2023-02-08 07:26:37 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading TabixFile 17 Percent, 96.077 mins elapsed.
+2023-02-08 07:26:44 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading TabixFile 25 Percent, 96.204 mins elapsed.
+2023-02-08 07:27:04 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading TabixFile 25 Percent, 96.535 mins elapsed.
+2023-02-08 07:27:08 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Reading TabixFile 100 Percent, 96.604 mins elapsed.
+2023-02-08 07:27:14 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Successful creation of Temporary File, 96.69 mins elapsed.
+2023-02-08 07:27:14 : (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) Creating ArrowFile From Temporary File, 96.691 mins elapsed.
+2023-02-08 07:27:16 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 96.725 mins elapsed.
+2023-02-08 07:27:16 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Tabix Bed To Temporary File, 96.726 mins elapsed.
+2023-02-08 07:27:20 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Reading TabixFile 100 Percent, 96.8 mins elapsed.
+2023-02-08 07:27:27 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Successful creation of Temporary File, 96.913 mins elapsed.
+2023-02-08 07:27:27 : (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) Creating ArrowFile From Temporary File, 96.914 mins elapsed.
+2023-02-08 07:27:29 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 96.946 mins elapsed.
+2023-02-08 07:27:29 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Tabix Bed To Temporary File, 96.946 mins elapsed.
+2023-02-08 07:28:12 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading TabixFile 8 Percent, 97.657 mins elapsed.
+2023-02-08 07:28:29 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading TabixFile 17 Percent, 97.948 mins elapsed.
+2023-02-08 07:29:04 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading TabixFile 25 Percent, 98.539 mins elapsed.
+2023-02-08 07:29:10 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading TabixFile 33 Percent, 98.628 mins elapsed.
+2023-02-08 07:29:14 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading TabixFile 8 Percent, 98.694 mins elapsed.
+2023-02-08 07:29:37 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading TabixFile 33 Percent, 99.073 mins elapsed.
+2023-02-08 07:30:30 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading TabixFile 8 Percent, 99.962 mins elapsed.
+2023-02-08 07:30:32 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading TabixFile 25 Percent, 99.995 mins elapsed.
+2023-02-08 07:30:49 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading TabixFile 8 Percent, 100.278 mins elapsed.
+2023-02-08 07:31:05 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading TabixFile 17 Percent, 100.549 mins elapsed.
+2023-02-08 07:31:13 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading TabixFile 42 Percent, 100.687 mins elapsed.
+2023-02-08 07:31:20 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading TabixFile 33 Percent, 100.801 mins elapsed.
+2023-02-08 07:31:34 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading TabixFile 17 Percent, 101.037 mins elapsed.
+2023-02-08 07:31:39 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading TabixFile 42 Percent, 101.118 mins elapsed.
+2023-02-08 07:32:24 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading TabixFile 33 Percent, 101.868 mins elapsed.
+2023-02-08 07:32:59 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading TabixFile 17 Percent, 102.449 mins elapsed.
+2023-02-08 07:33:15 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading TabixFile 50 Percent, 102.718 mins elapsed.
+2023-02-08 07:33:24 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading TabixFile 42 Percent, 102.868 mins elapsed.
+2023-02-08 07:33:26 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading TabixFile 17 Percent, 102.895 mins elapsed.
+2023-02-08 07:33:27 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading TabixFile 25 Percent, 102.91 mins elapsed.
+2023-02-08 07:33:45 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading TabixFile 25 Percent, 103.211 mins elapsed.
+2023-02-08 07:33:55 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading TabixFile 50 Percent, 103.385 mins elapsed.
+2023-02-08 07:34:10 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading TabixFile 42 Percent, 103.634 mins elapsed.
+2023-02-08 07:34:59 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading TabixFile 58 Percent, 104.44 mins elapsed.
+2023-02-08 07:35:08 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading TabixFile 25 Percent, 104.599 mins elapsed.
+2023-02-08 07:35:30 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading TabixFile 50 Percent, 104.962 mins elapsed.
+2023-02-08 07:35:38 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading TabixFile 33 Percent, 105.098 mins elapsed.
+2023-02-08 07:35:42 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading TabixFile 25 Percent, 105.157 mins elapsed.
+2023-02-08 07:35:42 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading TabixFile 33 Percent, 105.158 mins elapsed.
+2023-02-08 07:35:45 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading TabixFile 58 Percent, 105.209 mins elapsed.
+2023-02-08 07:36:05 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading TabixFile 50 Percent, 105.545 mins elapsed.
+2023-02-08 07:36:35 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading TabixFile 67 Percent, 106.044 mins elapsed.
+2023-02-08 07:37:11 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading TabixFile 33 Percent, 106.651 mins elapsed.
+2023-02-08 07:37:16 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading TabixFile 58 Percent, 106.731 mins elapsed.
+2023-02-08 07:37:17 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading TabixFile 67 Percent, 106.743 mins elapsed.
+2023-02-08 07:37:36 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading TabixFile 42 Percent, 107.067 mins elapsed.
+2023-02-08 07:37:40 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading TabixFile 58 Percent, 107.133 mins elapsed.
+2023-02-08 07:37:42 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading TabixFile 33 Percent, 107.168 mins elapsed.
+2023-02-08 07:37:44 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading TabixFile 42 Percent, 107.202 mins elapsed.
+2023-02-08 07:38:07 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading TabixFile 75 Percent, 107.577 mins elapsed.
+2023-02-08 07:38:36 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading TabixFile 75 Percent, 108.07 mins elapsed.
+2023-02-08 07:38:56 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading TabixFile 67 Percent, 108.399 mins elapsed.
+2023-02-08 07:39:01 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading TabixFile 42 Percent, 108.488 mins elapsed.
+2023-02-08 07:39:17 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading TabixFile 67 Percent, 108.747 mins elapsed.
+2023-02-08 07:39:27 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading TabixFile 50 Percent, 108.907 mins elapsed.
+2023-02-08 07:39:28 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading TabixFile 50 Percent, 108.934 mins elapsed.
+2023-02-08 07:39:32 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading TabixFile 83 Percent, 109.003 mins elapsed.
+2023-02-08 07:39:37 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading TabixFile 42 Percent, 109.088 mins elapsed.
+2023-02-08 07:39:58 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading TabixFile 83 Percent, 109.428 mins elapsed.
+2023-02-08 07:40:37 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading TabixFile 75 Percent, 110.082 mins elapsed.
+2023-02-08 07:40:39 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading TabixFile 92 Percent, 110.118 mins elapsed.
+2023-02-08 07:40:54 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading TabixFile 50 Percent, 110.356 mins elapsed.
+2023-02-08 07:40:56 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading TabixFile 75 Percent, 110.397 mins elapsed.
+2023-02-08 07:40:57 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading TabixFile 58 Percent, 110.418 mins elapsed.
+2023-02-08 07:40:58 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading TabixFile 92 Percent, 110.426 mins elapsed.
+2023-02-08 07:41:04 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading TabixFile 58 Percent, 110.525 mins elapsed.
+2023-02-08 07:41:24 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading TabixFile 50 Percent, 110.865 mins elapsed.
+2023-02-08 07:41:47 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Reading TabixFile 100 Percent, 111.243 mins elapsed.
+2023-02-08 07:41:52 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Successful creation of Temporary File, 111.332 mins elapsed.
+2023-02-08 07:41:52 : (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) Creating ArrowFile From Temporary File, 111.333 mins elapsed.
+2023-02-08 07:41:54 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 111.371 mins elapsed.
+2023-02-08 07:41:54 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Tabix Bed To Temporary File, 111.372 mins elapsed.
+2023-02-08 07:42:05 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading TabixFile 83 Percent, 111.541 mins elapsed.
+2023-02-08 07:42:13 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Reading TabixFile 100 Percent, 111.679 mins elapsed.
+2023-02-08 07:42:18 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Successful creation of Temporary File, 111.765 mins elapsed.
+2023-02-08 07:42:18 : (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) Creating ArrowFile From Temporary File, 111.766 mins elapsed.
+2023-02-08 07:42:19 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading TabixFile 58 Percent, 111.789 mins elapsed.
+2023-02-08 07:42:20 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 111.796 mins elapsed.
+2023-02-08 07:42:20 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Tabix Bed To Temporary File, 111.797 mins elapsed.
+2023-02-08 07:42:29 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading TabixFile 83 Percent, 111.943 mins elapsed.
+2023-02-08 07:42:33 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading TabixFile 67 Percent, 112.008 mins elapsed.
+2023-02-08 07:42:33 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading TabixFile 67 Percent, 112.012 mins elapsed.
+2023-02-08 07:42:56 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading TabixFile 58 Percent, 112.393 mins elapsed.
+2023-02-08 07:43:06 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading TabixFile 92 Percent, 112.563 mins elapsed.
+2023-02-08 07:43:45 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading TabixFile 92 Percent, 113.216 mins elapsed.
+2023-02-08 07:44:01 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading TabixFile 75 Percent, 113.489 mins elapsed.
+2023-02-08 07:44:05 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading TabixFile 67 Percent, 113.552 mins elapsed.
+2023-02-08 07:44:14 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading TabixFile 75 Percent, 113.7 mins elapsed.
+2023-02-08 07:44:18 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Reading TabixFile 100 Percent, 113.771 mins elapsed.
+2023-02-08 07:44:24 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Successful creation of Temporary File, 113.856 mins elapsed.
+2023-02-08 07:44:24 : (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) Creating ArrowFile From Temporary File, 113.857 mins elapsed.
+2023-02-08 07:44:26 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 113.896 mins elapsed.
+2023-02-08 07:44:26 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Tabix Bed To Temporary File, 113.896 mins elapsed.
+2023-02-08 07:44:28 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading TabixFile 67 Percent, 113.926 mins elapsed.
+2023-02-08 07:44:42 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading TabixFile 8 Percent, 114.165 mins elapsed.
+2023-02-08 07:44:53 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Reading TabixFile 100 Percent, 114.35 mins elapsed.
+2023-02-08 07:45:00 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Successful creation of Temporary File, 114.458 mins elapsed.
+2023-02-08 07:45:00 : (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) Creating ArrowFile From Temporary File, 114.459 mins elapsed.
+2023-02-08 07:45:02 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 114.493 mins elapsed.
+2023-02-08 07:45:02 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Tabix Bed To Temporary File, 114.493 mins elapsed.
+2023-02-08 07:45:05 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading TabixFile 8 Percent, 114.542 mins elapsed.
+2023-02-08 07:45:32 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading TabixFile 75 Percent, 114.993 mins elapsed.
+2023-02-08 07:45:34 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading TabixFile 83 Percent, 115.026 mins elapsed.
+2023-02-08 07:45:46 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading TabixFile 83 Percent, 115.231 mins elapsed.
+2023-02-08 07:45:53 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading TabixFile 75 Percent, 115.343 mins elapsed.
+2023-02-08 07:46:39 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading TabixFile 92 Percent, 116.108 mins elapsed.
+2023-02-08 07:46:44 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading TabixFile 92 Percent, 116.197 mins elapsed.
+2023-02-08 07:46:51 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading TabixFile 83 Percent, 116.316 mins elapsed.
+2023-02-08 07:47:05 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading TabixFile 8 Percent, 116.541 mins elapsed.
+2023-02-08 07:47:12 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading TabixFile 83 Percent, 116.661 mins elapsed.
+2023-02-08 07:47:13 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading TabixFile 17 Percent, 116.684 mins elapsed.
+2023-02-08 07:47:19 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading TabixFile 17 Percent, 116.779 mins elapsed.
+2023-02-08 07:47:45 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Reading TabixFile 100 Percent, 117.211 mins elapsed.
+2023-02-08 07:47:50 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Successful creation of Temporary File, 117.295 mins elapsed.
+2023-02-08 07:47:50 : (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) Creating ArrowFile From Temporary File, 117.295 mins elapsed.
+2023-02-08 07:47:52 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 117.33 mins elapsed.
+2023-02-08 07:47:52 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Tabix Bed To Temporary File, 117.33 mins elapsed.
+2023-02-08 07:47:52 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading TabixFile 92 Percent, 117.335 mins elapsed.
+2023-02-08 07:47:57 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Reading TabixFile 100 Percent, 117.421 mins elapsed.
+2023-02-08 07:48:00 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading TabixFile 8 Percent, 117.469 mins elapsed.
+2023-02-08 07:48:04 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Successful creation of Temporary File, 117.525 mins elapsed.
+2023-02-08 07:48:04 : (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) Creating ArrowFile From Temporary File, 117.525 mins elapsed.
+2023-02-08 07:48:05 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 117.553 mins elapsed.
+2023-02-08 07:48:05 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Tabix Bed To Temporary File, 117.553 mins elapsed.
+2023-02-08 07:48:14 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading TabixFile 92 Percent, 117.703 mins elapsed.
+2023-02-08 07:49:02 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Reading TabixFile 100 Percent, 118.492 mins elapsed.
+2023-02-08 07:49:08 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Successful creation of Temporary File, 118.592 mins elapsed.
+2023-02-08 07:49:08 : (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) Creating ArrowFile From Temporary File, 118.593 mins elapsed.
+2023-02-08 07:49:10 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 118.631 mins elapsed.
+2023-02-08 07:49:10 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Tabix Bed To Temporary File, 118.632 mins elapsed.
+2023-02-08 07:49:17 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading TabixFile 17 Percent, 118.745 mins elapsed.
+2023-02-08 07:49:19 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading TabixFile 25 Percent, 118.777 mins elapsed.
+2023-02-08 07:49:25 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Reading TabixFile 100 Percent, 118.874 mins elapsed.
+2023-02-08 07:49:26 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading TabixFile 25 Percent, 118.895 mins elapsed.
+2023-02-08 07:49:30 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Successful creation of Temporary File, 118.968 mins elapsed.
+2023-02-08 07:49:30 : (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) Creating ArrowFile From Temporary File, 118.968 mins elapsed.
+2023-02-08 07:49:32 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 119 mins elapsed.
+2023-02-08 07:49:32 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Tabix Bed To Temporary File, 119.001 mins elapsed.
+2023-02-08 07:50:23 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading TabixFile 17 Percent, 119.851 mins elapsed.
+2023-02-08 07:50:29 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading TabixFile 8 Percent, 119.948 mins elapsed.
+2023-02-08 07:50:30 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading TabixFile 8 Percent, 119.965 mins elapsed.
+2023-02-08 07:51:12 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading TabixFile 25 Percent, 120.664 mins elapsed.
+2023-02-08 07:51:16 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading TabixFile 33 Percent, 120.731 mins elapsed.
+2023-02-08 07:51:34 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading TabixFile 8 Percent, 121.031 mins elapsed.
+2023-02-08 07:51:34 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading TabixFile 8 Percent, 121.032 mins elapsed.
+2023-02-08 07:51:39 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading TabixFile 33 Percent, 121.12 mins elapsed.
+2023-02-08 07:52:24 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading TabixFile 17 Percent, 121.861 mins elapsed.
+2023-02-08 07:52:27 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading TabixFile 17 Percent, 121.909 mins elapsed.
+2023-02-08 07:52:27 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading TabixFile 25 Percent, 121.911 mins elapsed.
+2023-02-08 07:52:46 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading TabixFile 33 Percent, 122.237 mins elapsed.
+2023-02-08 07:52:52 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading TabixFile 42 Percent, 122.331 mins elapsed.
+2023-02-08 07:53:27 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading TabixFile 17 Percent, 122.919 mins elapsed.
+2023-02-08 07:53:32 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading TabixFile 42 Percent, 122.997 mins elapsed.
+2023-02-08 07:53:34 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading TabixFile 17 Percent, 123.038 mins elapsed.
+2023-02-08 07:54:11 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading TabixFile 25 Percent, 123.649 mins elapsed.
+2023-02-08 07:54:17 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading TabixFile 25 Percent, 123.74 mins elapsed.
+2023-02-08 07:54:28 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading TabixFile 33 Percent, 123.938 mins elapsed.
+2023-02-08 07:54:41 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading TabixFile 50 Percent, 124.14 mins elapsed.
+2023-02-08 07:54:41 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading TabixFile 42 Percent, 124.153 mins elapsed.
+2023-02-08 07:55:11 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading TabixFile 25 Percent, 124.649 mins elapsed.
+2023-02-08 07:55:14 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading TabixFile 25 Percent, 124.695 mins elapsed.
+2023-02-08 07:55:31 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading TabixFile 50 Percent, 124.974 mins elapsed.
+2023-02-08 07:55:54 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading TabixFile 33 Percent, 125.359 mins elapsed.
+2023-02-08 07:55:57 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading TabixFile 33 Percent, 125.417 mins elapsed.
+2023-02-08 07:56:08 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading TabixFile 58 Percent, 125.592 mins elapsed.
+2023-02-08 07:56:16 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading TabixFile 42 Percent, 125.734 mins elapsed.
+2023-02-08 07:56:23 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading TabixFile 50 Percent, 125.855 mins elapsed.
+2023-02-08 07:56:44 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading TabixFile 33 Percent, 126.192 mins elapsed.
+2023-02-08 07:56:51 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading TabixFile 33 Percent, 126.311 mins elapsed.
+2023-02-08 07:57:06 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading TabixFile 58 Percent, 126.562 mins elapsed.
+2023-02-08 07:57:21 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading TabixFile 42 Percent, 126.816 mins elapsed.
+2023-02-08 07:57:33 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading TabixFile 67 Percent, 127.021 mins elapsed.
+2023-02-08 07:57:35 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading TabixFile 42 Percent, 127.05 mins elapsed.
+2023-02-08 07:57:42 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading TabixFile 58 Percent, 127.169 mins elapsed.
+2023-02-08 07:58:03 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading TabixFile 50 Percent, 127.516 mins elapsed.
+2023-02-08 07:58:16 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading TabixFile 42 Percent, 127.738 mins elapsed.
+2023-02-08 07:58:20 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading TabixFile 42 Percent, 127.796 mins elapsed.
+2023-02-08 07:58:21 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading TabixFile 67 Percent, 127.822 mins elapsed.
+2023-02-08 07:59:02 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading TabixFile 75 Percent, 128.492 mins elapsed.
+2023-02-08 07:59:02 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading TabixFile 50 Percent, 128.496 mins elapsed.
+2023-02-08 07:59:09 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading TabixFile 50 Percent, 128.62 mins elapsed.
+2023-02-08 07:59:10 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading TabixFile 67 Percent, 128.626 mins elapsed.
+2023-02-08 07:59:32 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading TabixFile 58 Percent, 129.003 mins elapsed.
+2023-02-08 07:59:39 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading TabixFile 75 Percent, 129.107 mins elapsed.
+2023-02-08 07:59:46 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading TabixFile 50 Percent, 129.227 mins elapsed.
+2023-02-08 07:59:53 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading TabixFile 50 Percent, 129.346 mins elapsed.
+2023-02-08 08:00:19 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading TabixFile 58 Percent, 129.783 mins elapsed.
+2023-02-08 08:00:30 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading TabixFile 58 Percent, 129.964 mins elapsed.
+2023-02-08 08:00:33 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading TabixFile 83 Percent, 130.019 mins elapsed.
+2023-02-08 08:00:35 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading TabixFile 75 Percent, 130.046 mins elapsed.
+2023-02-08 08:00:53 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading TabixFile 83 Percent, 130.346 mins elapsed.
+2023-02-08 08:00:54 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading TabixFile 67 Percent, 130.369 mins elapsed.
+2023-02-08 08:01:02 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading TabixFile 58 Percent, 130.496 mins elapsed.
+2023-02-08 08:01:07 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading TabixFile 58 Percent, 130.583 mins elapsed.
+2023-02-08 08:01:37 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading TabixFile 92 Percent, 131.085 mins elapsed.
+2023-02-08 08:01:40 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading TabixFile 67 Percent, 131.129 mins elapsed.
+2023-02-08 08:01:52 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading TabixFile 67 Percent, 131.323 mins elapsed.
+2023-02-08 08:01:53 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading TabixFile 83 Percent, 131.345 mins elapsed.
+2023-02-08 08:01:54 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading TabixFile 92 Percent, 131.357 mins elapsed.
+2023-02-08 08:02:15 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading TabixFile 75 Percent, 131.718 mins elapsed.
+2023-02-08 08:02:19 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading TabixFile 67 Percent, 131.78 mins elapsed.
+2023-02-08 08:02:27 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading TabixFile 67 Percent, 131.907 mins elapsed.
+2023-02-08 08:02:37 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Reading TabixFile 100 Percent, 132.088 mins elapsed.
+2023-02-08 08:02:42 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Successful creation of Temporary File, 132.172 mins elapsed.
+2023-02-08 08:02:42 : (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) Creating ArrowFile From Temporary File, 132.172 mins elapsed.
+2023-02-08 08:02:45 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 132.207 mins elapsed.
+2023-02-08 08:02:45 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Tabix Bed To Temporary File, 132.208 mins elapsed.
+2023-02-08 08:02:58 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading TabixFile 92 Percent, 132.434 mins elapsed.
+2023-02-08 08:03:00 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Reading TabixFile 100 Percent, 132.456 mins elapsed.
+2023-02-08 08:03:02 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading TabixFile 75 Percent, 132.496 mins elapsed.
+2023-02-08 08:03:05 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Successful creation of Temporary File, 132.551 mins elapsed.
+2023-02-08 08:03:05 : (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) Creating ArrowFile From Temporary File, 132.552 mins elapsed.
+Attempting to index /broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC/migrated_to_hg19/GSM5589391_pancreas_SM-ADRUQ_rep1_fragments.bed.bgz as tabix..
+2023-02-08 08:03:09 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading TabixFile 75 Percent, 132.607 mins elapsed.
+[W::bgzf_read_block] EOF marker is absent. The input is probably truncated
+2023-02-08 08:03:29 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 132.942 mins elapsed.
+2023-02-08 08:03:29 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Tabix Bed To Temporary File, 132.943 mins elapsed.
+2023-02-08 08:03:29 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading TabixFile 83 Percent, 132.948 mins elapsed.
+2023-02-08 08:03:33 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading TabixFile 75 Percent, 133.008 mins elapsed.
+2023-02-08 08:03:39 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading TabixFile 75 Percent, 133.12 mins elapsed.
+2023-02-08 08:04:00 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Reading TabixFile 100 Percent, 133.471 mins elapsed.
+2023-02-08 08:04:06 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Successful creation of Temporary File, 133.563 mins elapsed.
+2023-02-08 08:04:06 : (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) Creating ArrowFile From Temporary File, 133.564 mins elapsed.
+Attempting to index /broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC/migrated_to_hg19/GSM5589390_ovary_SM-IOBHR_rep1_fragments.bed.bgz as tabix..
+2023-02-08 08:04:14 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading TabixFile 83 Percent, 133.704 mins elapsed.
+[W::bgzf_read_block] EOF marker is absent. The input is probably truncated
+2023-02-08 08:04:23 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading TabixFile 83 Percent, 133.839 mins elapsed.
+2023-02-08 08:04:23 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading In Fragments from inputFiles (readMethod = tabix), 133.839 mins elapsed.
+2023-02-08 08:04:23 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Tabix Bed To Temporary File, 133.84 mins elapsed.
+2023-02-08 08:04:25 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading TabixFile 92 Percent, 133.877 mins elapsed.
+2023-02-08 08:04:35 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading TabixFile 8 Percent, 134.048 mins elapsed.
+2023-02-08 08:04:44 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading TabixFile 83 Percent, 134.197 mins elapsed.
+2023-02-08 08:04:52 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading TabixFile 83 Percent, 134.323 mins elapsed.
+2023-02-08 08:05:13 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading TabixFile 92 Percent, 134.676 mins elapsed.
+2023-02-08 08:05:20 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading TabixFile 92 Percent, 134.792 mins elapsed.
+2023-02-08 08:05:29 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Reading TabixFile 100 Percent, 134.948 mins elapsed.
+2023-02-08 08:05:35 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Successful creation of Temporary File, 135.043 mins elapsed.
+2023-02-08 08:05:35 : (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) Creating ArrowFile From Temporary File, 135.044 mins elapsed.
+2023-02-08 08:05:39 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading TabixFile 92 Percent, 135.116 mins elapsed.
+2023-02-08 08:05:41 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading TabixFile 8 Percent, 135.154 mins elapsed.
+2023-02-08 08:05:50 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading TabixFile 92 Percent, 135.304 mins elapsed.
+2023-02-08 08:06:05 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading TabixFile 17 Percent, 135.542 mins elapsed.
+2023-02-08 08:06:11 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Reading TabixFile 100 Percent, 135.653 mins elapsed.
+2023-02-08 08:06:12 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading TabixFile 8 Percent, 135.661 mins elapsed.
+2023-02-08 08:06:15 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Successful creation of Temporary File, 135.714 mins elapsed.
+2023-02-08 08:06:15 : (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) Creating ArrowFile From Temporary File, 135.715 mins elapsed.
+2023-02-08 08:06:16 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Reading TabixFile 100 Percent, 135.732 mins elapsed.
+2023-02-08 08:06:21 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Successful creation of Temporary File, 135.811 mins elapsed.
+2023-02-08 08:06:21 : (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) Creating ArrowFile From Temporary File, 135.812 mins elapsed.
+2023-02-08 08:06:31 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Reading TabixFile 100 Percent, 135.977 mins elapsed.
+2023-02-08 08:06:34 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Successful creation of Temporary File, 136.032 mins elapsed.
+2023-02-08 08:06:34 : (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) Creating ArrowFile From Temporary File, 136.033 mins elapsed.
+2023-02-08 08:06:36 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Reading TabixFile 100 Percent, 136.058 mins elapsed.
+2023-02-08 08:06:38 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Successful creation of Temporary File, 136.1 mins elapsed.
+2023-02-08 08:06:38 : (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) Creating ArrowFile From Temporary File, 136.1 mins elapsed.
+2023-02-08 08:06:56 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading TabixFile 17 Percent, 136.398 mins elapsed.
+2023-02-08 08:06:57 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading TabixFile 17 Percent, 136.416 mins elapsed.
+2023-02-08 08:07:00 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading TabixFile 25 Percent, 136.457 mins elapsed.
+2023-02-08 08:07:29 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading TabixFile 25 Percent, 136.954 mins elapsed.
+2023-02-08 08:07:42 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading TabixFile 33 Percent, 137.164 mins elapsed.
+2023-02-08 08:07:44 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading TabixFile 25 Percent, 137.197 mins elapsed.
+2023-02-08 08:07:45 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading TabixFile 33 Percent, 137.209 mins elapsed.
+2023-02-08 08:07:56 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading TabixFile 33 Percent, 137.39 mins elapsed.
+2023-02-08 08:08:10 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading TabixFile 42 Percent, 137.631 mins elapsed.
+2023-02-08 08:08:18 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading TabixFile 50 Percent, 137.756 mins elapsed.
+2023-02-08 08:08:18 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading TabixFile 58 Percent, 137.77 mins elapsed.
+2023-02-08 08:08:24 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading TabixFile 42 Percent, 137.868 mins elapsed.
+2023-02-08 08:08:38 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading TabixFile 42 Percent, 138.091 mins elapsed.
+2023-02-08 08:08:43 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading TabixFile 67 Percent, 138.175 mins elapsed.
+2023-02-08 08:08:44 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading TabixFile 75 Percent, 138.189 mins elapsed.
+2023-02-08 08:08:44 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading TabixFile 83 Percent, 138.203 mins elapsed.
+2023-02-08 08:08:45 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading TabixFile 92 Percent, 138.217 mins elapsed.
+2023-02-08 08:09:07 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading TabixFile 50 Percent, 138.577 mins elapsed.
+2023-02-08 08:09:07 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading TabixFile 50 Percent, 138.581 mins elapsed.
+2023-02-08 08:09:08 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading TabixFile 58 Percent, 138.593 mins elapsed.
+2023-02-08 08:09:11 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Reading TabixFile 100 Percent, 138.646 mins elapsed.
+2023-02-08 08:09:11 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Successful creation of Temporary File, 138.647 mins elapsed.
+2023-02-08 08:09:11 : (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) Creating ArrowFile From Temporary File, 138.647 mins elapsed.
+2023-02-08 08:09:41 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading TabixFile 67 Percent, 139.15 mins elapsed.
+2023-02-08 08:09:43 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading TabixFile 58 Percent, 139.188 mins elapsed.
+2023-02-08 08:10:19 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading TabixFile 67 Percent, 139.774 mins elapsed.
+2023-02-08 08:10:19 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading TabixFile 75 Percent, 139.789 mins elapsed.
+2023-02-08 08:10:24 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading TabixFile 83 Percent, 139.861 mins elapsed.
+2023-02-08 08:10:49 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading TabixFile 92 Percent, 140.278 mins elapsed.
+2023-02-08 08:10:54 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading TabixFile 75 Percent, 140.361 mins elapsed.
+2023-02-08 08:11:15 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Reading TabixFile 100 Percent, 140.72 mins elapsed.
+2023-02-08 08:11:18 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Successful creation of Temporary File, 140.761 mins elapsed.
+2023-02-08 08:11:18 : (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) Creating ArrowFile From Temporary File, 140.762 mins elapsed.
+2023-02-08 08:11:27 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading TabixFile 83 Percent, 140.922 mins elapsed.
+2023-02-08 08:11:55 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading TabixFile 92 Percent, 141.373 mins elapsed.
+2023-02-08 08:12:23 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Reading TabixFile 100 Percent, 141.843 mins elapsed.
+2023-02-08 08:12:25 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Successful creation of Temporary File, 141.884 mins elapsed.
+2023-02-08 08:12:25 : (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) Creating ArrowFile From Temporary File, 141.884 mins elapsed.
+2023-02-08 08:12:25 : createArrowFiles has encountered an error, checking if any ArrowFiles completed..
+ArchR logging successful to : ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+Warning message:
+In mclapply(..., mc.cores = threads, mc.preschedule = preschedule) :
+  43 function calls resulted in an error

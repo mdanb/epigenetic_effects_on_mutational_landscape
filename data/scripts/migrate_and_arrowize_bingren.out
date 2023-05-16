@@ -1,0 +1,388 @@
+
+************************************************************
+2023-02-08 06:21:06 : ERROR Found in .tmpToArrow for (GSM5589350_artery_aorta_SM-C1PX3_rep1 : 8 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:23:37 : ERROR Found in .tmpToArrow for (GSM5589389_nerve_tibial_SM-IOBHQ_rep1 : 7 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:27:00 : ERROR Found in .tmpToArrow for (GSM5589374_heart_lv_SM-JF1NY_rep1 : 6 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:29:57 : ERROR Found in .tmpToArrow for (GSM5589366_esophagus_mucosa_SM-AZPYJ_rep1 : 4 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:31:27 : ERROR Found in .tmpToArrow for (GSM5589370_esophagus_muscularis_SM-IQYD1_rep1 : 5 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:33:18 : ERROR Found in .tmpToArrow for (GSM5589346_adipose_omentum_SM-CSSD4_rep1 : 3 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:33:22 : ERROR Found in .tmpToArrow for (GSM5589386_muscle_SM-JF1O9_rep1 : 2 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:34:27 : ERROR Found in .tmpToArrow for (GSM5589351_artery_aorta_SM-CR89M_rep1 : 1 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:50:27 : ERROR Found in .tmpToArrow for (GSM5589365_esophagus_mucosa_SM-A9VPA_rep1 : 10 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:50:59 : ERROR Found in .tmpToArrow for (GSM5589367_esophagus_muscularis_SM-A8CPH_rep1 : 9 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:54:27 : ERROR Found in .tmpToArrow for (GSM5589381_mammary_tissue_SM-JF1NV_rep1 : 11 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:57:28 : ERROR Found in .tmpToArrow for (GSM5589353_artery_tibial_SM-CHLWW_rep1 : 12 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:58:31 : ERROR Found in .tmpToArrow for (GSM5589382_muscle_SM-ADA6L_rep1 : 13 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 06:59:51 : ERROR Found in .tmpToArrow for (GSM5589352_artery_aorta_SM-JF1NU_rep1 : 14 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:00:35 : ERROR Found in .tmpToArrow for (GSM5589373_heart_lv_SM-IOBHO_rep1 : 15 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:01:45 : ERROR Found in .tmpToArrow for (GSM5589356_colon_sigmoid_SM-JF1O8_rep1 : 16 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:16:39 : ERROR Found in .tmpToArrow for (GSM5589354_artery_tibial_SM-IOBHK_rep1 : 17 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:17:52 : ERROR Found in .tmpToArrow for (GSM5589385_muscle_SM-IOBHP_rep1 : 18 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:20:15 : ERROR Found in .tmpToArrow for (GSM5589380_mammary_tissue_SM-IOBHL_rep1 : 19 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:23:37 : ERROR Found in .tmpToArrow for (GSM5589360_colon_transverse_SM-BZ2ZS_rep1 : 21 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:24:51 : ERROR Found in .tmpToArrow for (GSM5589355_colon_sigmoid_SM-AZPYO_rep1 : 23 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:26:14 : ERROR Found in .tmpToArrow for (GSM5589372_heart_atrial_appendage_SM-JF1NX_rep1 : 22 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:27:15 : ERROR Found in .tmpToArrow for (GSM5589388_nerve_tibial_SM-CP2V6_rep1 : 20 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:27:28 : ERROR Found in .tmpToArrow for (GSM5589384_muscle_SM-C1PWV_rep1 : 24 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:41:53 : ERROR Found in .tmpToArrow for (GSM5589376_lung_SM-A62E9_rep1 : 26 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:42:19 : ERROR Found in .tmpToArrow for (GSM5589378_lung_SM-ACCPU_rep1 : 25 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:44:25 : ERROR Found in .tmpToArrow for (GSM5589387_nerve_tibial_SM-CHLWU_rep1 : 27 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:45:01 : ERROR Found in .tmpToArrow for (GSM5589348_adrenal_gland_SM-A8WNO_rep1 : 28 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:47:51 : ERROR Found in .tmpToArrow for (GSM5589349_artery_aorta_SM-C1MLC_rep1 : 30 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:48:05 : ERROR Found in .tmpToArrow for (GSM5589344_adipose_omentum_SM-ADYHB_rep1 : 29 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:49:09 : ERROR Found in .tmpToArrow for (GSM5589379_lung_SM-JF1NZ_rep1 : 31 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 07:49:31 : ERROR Found in .tmpToArrow for (GSM5589371_heart_atrial_appendage_SM-IOBHN_rep1 : 32 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 08:02:44 : ERROR Found in .tmpToArrow for (GSM5589345_adipose_omentum_SM-CHZRM_rep1 : 34 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 08:03:06 : ERROR Found in .tmpToArrow for (GSM5589359_colon_transverse_SM-ACCQ1_rep1 : 33 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 08:04:07 : ERROR Found in .tmpToArrow for (GSM5589383_muscle_SM-C1MKW_rep1 : 35 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 08:05:36 : ERROR Found in .tmpToArrow for (GSM5589347_adipose_omentum_SM-IOBHJ_rep1 : 36 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 08:06:16 : ERROR Found in .tmpToArrow for (GSM5589357_colon_transverse_SM-A9HOW_rep1 : 38 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 08:06:22 : ERROR Found in .tmpToArrow for (GSM5589361_colon_transverse_SM-CSSDA_rep1 : 37 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 08:06:35 : ERROR Found in .tmpToArrow for (GSM5589377_lung_SM-A8WNH_rep1 : 40 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 08:06:38 : ERROR Found in .tmpToArrow for (GSM5589363_esophagus_ge_junction_SM-IOERG_rep1 : 39 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 08:09:11 : ERROR Found in .tmpToArrow for (GSM5589390_ovary_SM-IOBHR_rep1 : 43 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 08:11:18 : ERROR Found in .tmpToArrow for (GSM5589391_pancreas_SM-ADRUQ_rep1 : 42 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+
+************************************************************
+2023-02-08 08:12:25 : ERROR Found in .tmpToArrow for (GSM5589375_liver_SM-A8WNZ_rep1 : 41 of 43) 
+LogFile = ArchRLogs/ArchR-createArrows-de6660a094d-Date-2023-02-08_Time-05-50-32.log
+
+<simpleError in H5Fcreate(file): HDF5. File accessibility. Unable to open file.>
+
+************************************************************
+
+character(0)
