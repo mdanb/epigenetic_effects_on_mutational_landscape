@@ -439,8 +439,7 @@ if (!is.null(nfrags_percentile)) {
 }
 
 if (filter_per_cell_type) {
-  setting = paste0(setting, "_", "filter_per_cell_type", "_", 
-                   filter_per_cell_type)
+  setting = paste0(setting, "_", "filter_per_cell_type")
 }
 
 proj_dir = paste(root, setting, sep="/")
@@ -573,19 +572,20 @@ if (cluster) {
     name = "Clusters",
     embedding = "UMAP",
     quantCut = c(0.01, 0.95))
-  fn = paste0("clusters_UMAPs", "_", "dataset", "_", dataset, "_", "tissue", "_",
-              tissue, "_", "cell_types", "_", cell_types, "_", "cluster_res", "_", 
-              cluster_res, "_", "nfrags_filter", "_", nfrags_filter, "_",  
-              "tss_filter", "_", tss_filter)
-  if (!is.null(tss_percentile)) {
-    fn = paste0(fn, "_tss_percentile_", tss_percentile)
-  } 
-  if (!is.null(nfrags_percentile)) {
-    fn = paste0(fn, "_nfrags_percentile_", nfrags_percentile)
-  } 
-  if (!is.null(min_cells_per_cell_type)) {
-    fn = paste0(fn, "_min_cells_per_cell_type_", min_cells_per_cell_type)
-  } 
+  # fn = paste0("clusters_UMAPs", "_", "dataset", "_", dataset, "_", "tissue", "_",
+  #             tissue, "_", "cell_types", "_", cell_types, "_", "cluster_res", "_", 
+  #             cluster_res, "_", "nfrags_filter", "_", nfrags_filter, "_",  
+  #             "tss_filter", "_", tss_filter)
+  # if (!is.null(tss_percentile)) {
+  #   fn = paste0(fn, "_tss_percentile_", tss_percentile)
+  # } 
+  # if (!is.null(nfrags_percentile)) {
+  #   fn = paste0(fn, "_nfrags_percentile_", nfrags_percentile)
+  # } 
+  # if (!is.null(min_cells_per_cell_type)) {
+  #   fn = paste0(fn, "_min_cells_per_cell_type_", min_cells_per_cell_type)
+  # } 
+  fn = paste0("clusters_UMAPs", setting, sep="_")
   fn = paste0(fn, ".pdf")
   print(paste("saving", fn))
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
@@ -601,20 +601,21 @@ if (plot_cell_types) {
         name = "cell_type", 
         embedding = "UMAP",
         quantCut = c(0.01, 0.95))
-  fn = paste0("cell_type_UMAP", "_", "dataset", "_", dataset, "_", "tissue", "_",
-              tissue, "_", "cell_types", "_", cell_types, "_", 
-              "nfrags_filter", "_", nfrags_filter, "_",  
-              "tss_filter", "_", tss_filter)
-  
-  if (!is.null(tss_percentile)) {
-    fn = paste0(fn, "_tss_percentile_", tss_percentile)
-  } 
-  if (!is.null(nfrags_percentile)) {
-    fn = paste0(fn, "_nfrags_percentile_", nfrags_percentile)
-  } 
-  if (!is.null(min_cells_per_cell_type)) {
-    fn = paste0(fn, "_min_cells_per_cell_type_", min_cells_per_cell_type)
-  } 
+  # fn = paste0("cell_type_UMAP", "_", "dataset", "_", dataset, "_", "tissue", "_",
+  #             tissue, "_", "cell_types", "_", cell_types, "_", 
+  #             "nfrags_filter", "_", nfrags_filter, "_",  
+  #             "tss_filter", "_", tss_filter)
+  # 
+  # if (!is.null(tss_percentile)) {
+  #   fn = paste0(fn, "_tss_percentile_", tss_percentile)
+  # } 
+  # if (!is.null(nfrags_percentile)) {
+  #   fn = paste0(fn, "_nfrags_percentile_", nfrags_percentile)
+  # } 
+  # if (!is.null(min_cells_per_cell_type)) {
+  #   fn = paste0(fn, "_min_cells_per_cell_type_", min_cells_per_cell_type)
+  # } 
+  fn = paste("cell_type_UMAP", setting, sep="_")
   fn = paste0(fn, ".pdf")
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
 }

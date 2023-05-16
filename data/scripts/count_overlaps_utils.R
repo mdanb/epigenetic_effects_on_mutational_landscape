@@ -77,39 +77,36 @@ import_sample <- function(file, dataset) {
   return(sample)
 }
 
-get_sample_filename <- function(file, dataset, cell_number_filter) {
+get_sample_filename <- function(file, dataset) {
   if (dataset == "Bingren") {
-    filename = paste("Bingren_count_filter", cell_number_filter,  
-                     "count_overlaps", paste(file_path_sans_ext(file, TRUE),
+    filename = paste("Bingren_count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                              "rds", sep="."), sep="_")
   }
   else if (dataset == "Shendure") {
-    filename = paste("Shendure_count_filter", cell_number_filter,  
-                     "count_overlaps", paste(file_path_sans_ext(file, TRUE),
+    filename = paste("Shendure_count_overlaps", paste(file_path_sans_ext(file, TRUE),
                                              "rds", sep="."), sep="_")
   }
   else if (dataset == "Tsankov") {
     filename = paste(file_path_sans_ext(file, TRUE))
     filename = unlist(strsplit(filename, split = "_"))
     filename = paste(filename[1:length(filename) - 1], collapse="_")
-    filename = paste("Tsankov_count_filter", cell_number_filter,  
-                     "count_overlaps", filename, sep="_")
+    filename = paste("Tsankov_count_overlaps", filename, sep="_")
     filename = paste(filename, "rds", sep=".")
   }
   else if (dataset == "Greenleaf_brain") {
-    filename = paste("Greenleaf_brain_count_filter", cell_number_filter,  
-                     "count_overlaps", paste(file_path_sans_ext(file, TRUE),
-                                             "rds", sep="."), sep="_")
+    filename = paste("Greenleaf_brain_count_overlaps", 
+                     paste(file_path_sans_ext(file, TRUE),
+                     "rds", sep="."), sep="_")
   }
   else if (dataset == "Greenleaf_pbmc_bm") {
-    filename = paste("Greenleaf_pbmc_bm_count_filter", cell_number_filter,  
-                     "count_overlaps", paste(file_path_sans_ext(file, TRUE),
-                                             "rds", sep="."), sep="_")
+    filename = paste("Greenleaf_pbmc_bm_count_overlaps", 
+                     paste(file_path_sans_ext(file, TRUE),
+                     "rds", sep="."), sep="_")
   }
   else if (dataset == "Yang_kidney") {
-    filename = paste("Yang_kidney_count_filter", cell_number_filter,  
-                     "count_overlaps", paste(file_path_sans_ext(file, TRUE),
-                                             "rds", sep="."), sep="_")
+    filename = paste("Yang_kidney_count_overlaps",
+                     paste(file_path_sans_ext(file, TRUE),
+                     "rds", sep="."), sep="_")
   }
   return(filename)
 }

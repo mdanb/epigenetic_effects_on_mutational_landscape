@@ -50,6 +50,11 @@ def load_scATAC(scATAC_path):
     scATAC_df = scATAC_df.T
     return scATAC_df
 
+def load_scATAC_metadata(metadata_path):
+    metadata = pyreadr.read_r(metadata_path)
+    metadata = metadata[None]
+    return metadata
+
 def load_per_donor_mutations(cancer_type):
     df = pd.read_csv(f"../../data/processed_data/per_patient_mutations/{cancer_type}_per_donor.csv",
                      index_col=0)
@@ -152,6 +157,12 @@ def filter_mutations_by_cancer(mutations_df, cancer_type):
 def filter_clustered_data(scATAC_df, mutations_df):
     return pd.DataFrame(scATAC_df, index=mutations_df.index)
 
+def filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata):
+    metadata = metadata.loc[metadata["num_cells"] >= scATAC_cell_number_filter, :]
+    keep = [tissue + " " + cell_type for tissue, cell_type in zip(metadata["tissue_name"], metadata["cell_type"])]
+    scATAC_df = scATAC_df.loc[:, scATAC_df.columns.isin(keep)]
+    return(scATAC_df)
+
 # Dataframe curation helpers
 def add_na_ranges(mutations_df):
     full_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
@@ -197,13 +208,16 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             scATAC_df.index = chr_ranges["x"].values
             datasets_combined_count_overlaps.append(scATAC_df)
         else:
-            datasets_combined_count_overlaps.append(load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" \
-            f"/{annotation_dir}/{dataset}_count_filter_{scATAC_cell_number_filter}_combined_count_overlaps.rds"))
+            scATAC_df = load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" \
+            f"/{annotation_dir}/{dataset}_combined_count_overlaps.rds")
+            metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" \
+            f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds")
+            scATAC_df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
+            datasets_combined_count_overlaps.append(scATAC_df)
 
     for idx, dataset in enumerate(datasets):
         datasets_combined_count_overlaps[idx] = [add_dataset_origin_to_cell_types(datasets_combined_count_overlaps[idx],
                                                  dataset)]
-
     scATAC_df = pd.concat(chain(*datasets_combined_count_overlaps), axis=1)
     return(scATAC_df)
 
@@ -356,10 +370,9 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
         print_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
 
 # Other
-def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                         seed):
-
-    scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
+def construct_scATAC_dir(scATAC_sources, tss_filter, annotation_dir, seed):
+    # scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
+    scATAC_dir = f"scATAC_source_{scATAC_sources}"
     if (tss_filter):
         scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
     # scATAC_dir = append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,

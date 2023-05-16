@@ -12,7 +12,6 @@ source("count_overlaps_utils.R")
 option_list <- list( 
   make_option("--dataset", type="character"),
   make_option("--dataset_subsets", type="character", default=NULL),
-  make_option("--cell_number_filter", type="integer"),
   make_option("--cores", type="integer"),
   make_option("--annotation", type="character")
 )
@@ -24,7 +23,6 @@ args = parse_args(OptionParser(option_list=option_list))
 #                    "--cores=8",
 #                    "--annotation=bingren_remove_same_celltype_indexing"))
 
-cell_number_filter = args$cell_number_filter
 cores = args$cores
 dataset = args$dataset
 cores = args$cores
@@ -52,9 +50,9 @@ compute_count_overlaps <- function(sample, interval_ranges) {
   return(count_overlaps)
 }
 
-create_count_overlaps_files <- function(file, cell_number_filter, metadata,
-                                  interval_ranges, chain, dataset, annotation) {
-  filename = get_sample_filename(file, dataset, cell_number_filter)
+create_count_overlaps_files <- function(file, metadata, interval_ranges, chain, 
+                                        dataset, annotation) {
+  filename = get_sample_filename(file, dataset)
   dirpath = paste("../processed_data/count_overlap_data", annotation, sep="/")
   filepath = paste(dirpath, filename, sep="/")
   dir.create(dirpath)
@@ -91,9 +89,9 @@ create_count_overlaps_files <- function(file, cell_number_filter, metadata,
                                       filtered_metadata)
       counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file,
                                                                 annotation)
-      sample <- filter_sample_by_cell_number(sample,
-                                             counts_per_cell_type, 
-                                             cell_number_filter)
+      # sample <- filter_sample_by_cell_number(sample,
+      #                                        counts_per_cell_type, 
+      #                                        cell_number_filter)
       if (dataset == "Yang_kidney") {
         sample$seqnames = paste0("chr", sample$seqnames)
       }
@@ -102,16 +100,16 @@ create_count_overlaps_files <- function(file, cell_number_filter, metadata,
       saveRDS(count_overlaps, filepath)
     }
 }
-
-filter_sample_by_cell_number <- function(sample, 
-                                         counts_per_cell_type, 
-                                         cell_number_filter) {
-  cell_type_keep = counts_per_cell_type[counts_per_cell_type$n_cells >= 
-                                          cell_number_filter, ]$cell_type
-  sample = sample %>%                                             
-           filter(cell_type %in% cell_type_keep)
-  return(sample)
-}
+# 
+# filter_sample_by_cell_number <- function(sample, 
+#                                          counts_per_cell_type, 
+#                                          cell_number_filter) {
+#   cell_type_keep = counts_per_cell_type[counts_per_cell_type$n_cells >= 
+#                                           cell_number_filter, ]$cell_type
+#   sample = sample %>%                                             
+#            filter(cell_type %in% cell_type_keep)
+#   return(sample)
+# }
 
 get_num_cells_per_sample <- function(sample) {
   counts_per_cell_type = sample %>%                               
@@ -151,7 +149,6 @@ if (dataset == "Bingren") {
                               pattern=".*fragments\\.bed\\.bgz$")
   
   mclapply(files_bingren, create_count_overlaps_files,
-           cell_number_filter=cell_number_filter,
            metadata=metadata_bingren,
            interval_ranges=interval.ranges,
            chain=ch,
@@ -166,7 +163,6 @@ files_Shendure = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_
                             pattern = ".*fragments\\.txt\\.gz")
 
 mclapply(files_Shendure, create_count_overlaps_files,
-       cell_number_filter=cell_number_filter,
        metadata=metadata_Shendure,
        interval_ranges=interval.ranges,
        chain=ch,
@@ -222,7 +218,6 @@ mclapply(files_Shendure, create_count_overlaps_files,
   if ("proximal" %in% dataset_subsets) {
     mclapply(files_Tsankov_proximal, 
              create_count_overlaps_files,
-             cell_number_filter=cell_number_filter,
              metadata=metadata_tsankov_proximal,
              interval_ranges=interval.ranges,
              chain=ch,
@@ -234,7 +229,6 @@ mclapply(files_Shendure, create_count_overlaps_files,
   if ("distal" %in% dataset_subsets) {
     mclapply(files_Tsankov_distal,
              create_count_overlaps_files,
-              cell_number_filter=cell_number_filter,
               metadata=metadata_tsankov_distal,
               interval_ranges=interval.ranges,
               chain=ch,
@@ -282,7 +276,6 @@ mclapply(files_Shendure, create_count_overlaps_files,
   #          dataset=dataset,
   #          mc.cores=cores)
   mclapply(files_greenleaf_brain, create_count_overlaps_files,
-           cell_number_filter=cell_number_filter,
            metadata=metadata_greenleaf_brain,
            interval_ranges=interval.ranges,
            chain=ch,
@@ -309,7 +302,6 @@ mclapply(files_Shendure, create_count_overlaps_files,
                                          pattern=".*fragments\\.tsv\\.gz")
     mclapply(files_greenleaf_pbmc_bm, 
              create_count_overlaps_files,
-             cell_number_filter=cell_number_filter,
              metadata=metadata_greenleaf_pbmc_bm,
              interval_ranges=interval.ranges,
              chain=ch,
@@ -328,7 +320,6 @@ mclapply(files_Shendure, create_count_overlaps_files,
   metadata_Yang[metadata_Yang[3] == 2, "sample"] = "SRR13679157"
   
   mclapply(files_Yang, create_count_overlaps_files,
-           cell_number_filter=cell_number_filter,
            metadata=metadata_Yang,
            interval_ranges=interval.ranges,
            chain=ch,

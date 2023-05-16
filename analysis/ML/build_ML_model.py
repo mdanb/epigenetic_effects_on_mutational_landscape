@@ -84,7 +84,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
         for cancer_type in cancer_types:
             if (tss_fragment_filter):
                 for tss_filter in tss_fragment_filter:
-                    scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
+                    scATAC_dir = construct_scATAC_dir(scATAC_sources, tss_fragment_filter,
                                                       annotation_dir, seed)
                     # scATAC_dir = scATAC_dir_orig + "_tss_fragment_filter_" + tss_filter
                     run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
@@ -92,14 +92,12 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          ML_model, seed, tss_filter=tss_filter)
 
             else:
-                scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
-                                                 annotation_dir, seed)
+                scATAC_dir = construct_scATAC_dir(scATAC_sources, tss_fragment_filter, annotation_dir, seed)
                 run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
                                                      scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
                                                      ML_model, seed)
     else:
-        scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
-                                         annotation_dir, seed)
+        scATAC_dir = construct_scATAC_dir(scATAC_sources, tss_fragment_filter, annotation_dir, seed)
         for idx, donor in enumerate(mutations_df.columns):
             if (idx in range(*donor_range)):
                 run_unclustered_data_analysis_helper(datasets, mutations_df, donor, scATAC_dir,
