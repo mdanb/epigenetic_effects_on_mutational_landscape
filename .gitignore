@@ -1,6 +1,7 @@
 .*
 !/.gitignore
 
+random
 ArchRLogs
 data/*
 !data/scripts
