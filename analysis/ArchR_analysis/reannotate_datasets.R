@@ -10,7 +10,7 @@ option_list <- list(
   make_option("--metadata_for_celltype_fn", type="character"),
   make_option("--sep_for_metadata", type="character", default=","),
   make_option("--cell_type_col_in_metadata", type="character"),
-  make_option("--cell_name_col_in_metadata", type="character"),
+  # make_option("--cell_name_col_in_metadata", type="character"),
   make_option("--cluster", action="store_true", default=F),
   make_option("--cluster_res", type="double", default=1.2),
   make_option("--plot_cell_types", action="store_true", default=F),
@@ -24,6 +24,22 @@ option_list <- list(
   make_option("--marker_genes", type="character", default=NULL),
   make_option("--min_cells_per_cell_type", type="integer", default=0)
 )
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--filter_per_cell_type",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--cluster",
+#                       "--cluster_res=1",
+#                       "--tissue=RPL",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=1")
+# )
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
@@ -53,7 +69,7 @@ add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
 }
 
 filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile,
-                        nfrags_percentile, percentiles_per_cell_type,
+                        nfrags_percentile, filter_per_cell_type,
                         dataset, tissue, cell_types, min_cells_per_cell_type, 
                         metadata) {
   cell_col_data = getCellColData(proj)
@@ -148,7 +164,7 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile,
 }
 
 print("Collecting cmd line args")
-args = parse_args(OptionParser(option_list=option_list))
+# args = parse_args(OptionParser(option_list=option_list))
 cores = args$cores
 dataset = args$dataset
 cluster = args$cluster
@@ -164,7 +180,7 @@ filter_per_cell_type = args$filter_per_cell_type
 cell_types=args$cell_types
 plot_cell_types = args$plot_cell_types
 sep_for_metadata = args$sep_for_metadata
-cell_name_col_in_metadata = args$cell_name_col_in_metadata
+# cell_name_col_in_metadata = args$cell_name_col_in_metadata
 cell_type_col_in_metadata = args$cell_type_col_in_metadata
 min_cells_per_cell_type = args$min_cells_per_cell_type
 print("Done collecting cmd line args")
@@ -215,7 +231,7 @@ if (dir.exists(proj_dir)) {
   ArchR_proj <- loadArchRProject(dir)
   print("Creating new project")
   proj <- filter_proj(proj = ArchR_proj, nfrags_filter, tss_filter, tss_percentile, 
-                      nfrags_percentile, percentiles_per_cell_type, 
+                      nfrags_percentile, filter_per_cell_type, 
                       dataset, tissue, cell_types,
                       min_cells_per_cell_type, metadata)
   
@@ -354,7 +370,6 @@ if (dataset == "Tsankov" && tissue == "all" && nfrags_filter == 1000 &&
   ArchR_proj <- loadArchRProject(dir)
   cell_col_data = getCellColData(ArchR_proj)
   cell_col_data = add_cell_types_to_cell_col_data(cell_col_data, metadata,
-                                                  cell_name_col_in_metadata,
                                                   cell_type_col_in_metadata,
                                                   dataset)
   ArchR_proj@cellColData = cell_col_data
