@@ -1,6 +1,7 @@
 .*
 !/.gitignore
 
+get_top_feats_from_server.sh
 random
 ArchRLogs
 data/*
