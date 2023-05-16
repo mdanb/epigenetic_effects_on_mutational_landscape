@@ -16,7 +16,7 @@ source /broad/software/scripts/useuse
 use .anaconda3-5.3.1
 source activate /home/unix/bgiotti/conda/coo
 
-./software/cellranger-atac-2.1.0/cellranger-atac count \
+../../software/cellranger-atac-2.1.0/cellranger-atac count \
 --jobmode=local \
 --localcores=8 \
 --localmem=64 \
