@@ -19,5 +19,4 @@ tsse_filtered_run_commands
 analysis/ML/build_ML_models.sh
 analysis/ML/plot_top_features.sh
 analysis/create_frag_counts_and_tss_filtered_v_R_plots.sh
-analysis/ArchR_analysis/ArchR_dataset*
-analysis/ArchR_analysis/ArchR_proj
+analysis/ArchR_analysis/ArchR_projects/
