@@ -346,7 +346,7 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
         scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter,
                                          annotation_dir, seed)
         filename = f"model_iteration_{n}.pkl"
-        backwards_elim_model_file = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+        backwards_elim_model_file = f"analysis/ML/models/{ML_model}/" \
                                     f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
         gs = pickle.load(open(backwards_elim_model_file, "rb"))
         model = gs.best_estimator_.get_params()['regressor__selected_model']
@@ -364,7 +364,7 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
         cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
 
         _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, seed)
-        test_set_perf_filepath = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+        test_set_perf_filepath = f"analysis/ML/models/{ML_model}/" \
                                  f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
                                  f"model_iteration_{n}_test_performance.txt"
         print_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)

@@ -1,8 +1,8 @@
 library(ComplexHeatmap)
 library(RColorBrewer)
-chr_keep = read.csv("../data/processed_data/chr_keep.csv")[["chr"]]
-scatac_df = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Tsankov_separate_fibroblasts/Tsankov_count_filter_1_combined_count_overlaps.rds"))
-mutations_df = read.csv("../data/processed_data/mesothelioma.csv",
+chr_keep = read.csv("../processed_data/chr_keep.csv")[["chr"]]
+scatac_df = t(readRDS("../processed_data/count_overlap_data/combined_count_overlaps/Tsankov_separate_fibroblasts/Tsankov_count_filter_1_combined_count_overlaps.rds"))
+mutations_df = read.csv("../processed_data/mesothelioma.csv",
                         row.names = 1)
 scatac_df = scatac_df[rownames(scatac_df) %in% chr_keep, ]
 scatac_df = scatac_df[, !(colnames(scatac_df) == "distal lung Immune")]

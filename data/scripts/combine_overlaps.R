@@ -2,7 +2,7 @@ library(tidyverse)
 library(optparse)
 source("count_overlaps_utils.R")
 
-load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 
 option_list <- list(
   make_option("--datasets", type = "character"),

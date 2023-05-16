@@ -22,15 +22,15 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
     cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
 
-    os.makedirs(f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}",
+    os.makedirs(f"analysis/ML/models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}",
                 exist_ok=True)
 
     if (tissues_to_consider == "all"):
-        backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+        backwards_elim_dir=f"analysis/ML/models/{ML_model}/" \
                            f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results"
-        grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+        grid_search_filename = f"analysis/ML/models/{ML_model}/" \
                                f"{cancer_type_or_donor_id}/{scATAC_dir}/grid_search_results.pkl"
-        test_set_perf_filepath = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+        test_set_perf_filepath = f"analysis/ML/models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance.txt"
 
         # All Cells
@@ -44,11 +44,11 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
     # Tissue Specific
     else:
         tissues_string = "_".join(tissues_to_consider)
-        backwards_elim_dir=f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+        backwards_elim_dir=f"analysis/ML/models/{ML_model}/" \
                            f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results_{tissues_string}"
-        grid_search_filename = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+        grid_search_filename = f"analysis/ML/models/{ML_model}/" \
                                f"{cancer_type_or_donor_id}/{scATAC_dir}/grid_search_results_{tissues_string}.pkl"
-        test_set_perf_filepath = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{ML_model}/" \
+        test_set_perf_filepath = f"analysis/ML/models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance_{tissues_string}.txt"
 
         # tissue = cancer_type.split("-")[0]
@@ -117,7 +117,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
 
 # def run_clustered_data_analysis(scATAC_df, cancer_types):
 #     for cancer_type in cancer_types:
-#         os.makedirs(f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}", exist_ok=True)
+#         os.makedirs(f"analysis/ML/models/{cancer_type}", exist_ok=True)
 #         cancer_hierarchical_dir = f"../../data/processed_data/hierarchically_clustered_mutations/{cancer_type}"
 #         for cluster_method_dir in os.listdir(cancer_hierarchical_dir):
 #             for threshold_dir in os.listdir(f"{cancer_hierarchical_dir}/{cluster_method_dir}"):
@@ -129,7 +129,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
 #     for cluster_file in glob.glob(f"{cancer_hierarchical_dir}/{cluster_method_dir}/{threshold_dir}/aggregated*"):
 #         mutations_df = pd.read_csv(cluster_file, index_col=0)
 #         cluster_dir = cluster_file.split("/")[-1].split(".")[0]
-#         cluster_dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/models/{cancer_type}/{cluster_method_dir}/{threshold_dir}/{cluster_dir}/"
+#         cluster_dir = f"analysis/ML/models/{cancer_type}/{cluster_method_dir}/{threshold_dir}/{cluster_dir}/"
 #         os.makedirs(cluster_dir, exist_ok=True)
 #         backwards_elim_dir=f"{cluster_dir}/backwards_elimination_results"
 #         grid_search_filename = f"{cluster_dir}/grid_search_results.pkl"
