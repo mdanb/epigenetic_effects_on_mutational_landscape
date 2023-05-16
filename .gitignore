@@ -13,3 +13,8 @@ figures/
 tmp/
 __pycache__/
 .Rproj.user
+build_ml_commands_non_interactive_out
+tsse_filtered_run_commands
+analysis/ML/build_ML_models.sh
+analysis/ML/plot_top_features.sh
+analysis/create_frag_counts_and_tss_filtered_v_R_plots.sh
