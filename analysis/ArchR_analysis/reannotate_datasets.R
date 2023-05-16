@@ -269,6 +269,42 @@ if (dir.exists(proj_dir)) {
                            load = TRUE)
 }
 
+if (cluster) {
+  print(paste0("clustering with clustering resolution = ", cluster_res))
+  proj <- addClusters(input = proj,
+                      reducedDims = "IterativeLSI",
+                      method = "Seurat",
+                      name = "Clusters",
+                      resolution = cluster_res, 
+                      force=T)
+  cell_col_data = getCellColData(proj)
+  
+  p <- plotEmbedding(
+    ArchRProj = proj, 
+    colorBy = "cellColData", 
+    name = "Clusters",
+    embedding = "UMAP",
+    quantCut = c(0.01, 0.95))
+
+  fn = paste0("clusters_UMAPs", setting, sep="_")
+  fn = paste0(fn, ".pdf")
+  print(paste("saving", fn))
+  plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
+}
+
+if (plot_cell_types) {
+  p <- plotEmbedding(
+        ArchRProj = proj, 
+        colorBy = "cellColData", 
+        name = "cell_type", 
+        embedding = "UMAP",
+        quantCut = c(0.01, 0.95))
+
+  fn = paste("cell_type_UMAP", setting, sep="_")
+  fn = paste0(fn, ".pdf")
+  plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
+}
+
 if (!(is.null(marker_genes))) {
   proj <- addImputeWeights(proj)
   marker_genes = unlist(strsplit(marker_genes, split=","))
@@ -314,45 +350,6 @@ if (!(is.null(marker_genes))) {
   do.call(cowplot::plot_grid, c(list(ncol = 5), p2))
   dev.off()
 }
-
-if (cluster) {
-  print(paste0("clustering with clustering resolution = ", cluster_res))
-  proj <- addClusters(input = proj,
-                      reducedDims = "IterativeLSI",
-                      method = "Seurat",
-                      name = "Clusters",
-                      resolution = cluster_res, 
-                      force=T)
-  cell_col_data = getCellColData(proj)
-  
-  p <- plotEmbedding(
-    ArchRProj = proj, 
-    colorBy = "cellColData", 
-    name = "Clusters",
-    embedding = "UMAP",
-    quantCut = c(0.01, 0.95))
-
-  fn = paste0("clusters_UMAPs", setting, sep="_")
-  fn = paste0(fn, ".pdf")
-  print(paste("saving", fn))
-  plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
-}
-
-if (plot_cell_types) {
-  p <- plotEmbedding(
-        ArchRProj = proj, 
-        colorBy = "cellColData", 
-        name = "cell_type", 
-        embedding = "UMAP",
-        quantCut = c(0.01, 0.95))
-
-  fn = paste("cell_type_UMAP", setting, sep="_")
-  fn = paste0(fn, ".pdf")
-  plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
-}
-
-
-
 ########## Post visual inspection ##########
 map <- function(x, mapping) mapping[[x]]
 
