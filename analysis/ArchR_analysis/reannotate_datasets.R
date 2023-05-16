@@ -286,7 +286,7 @@ if (cluster) {
     embedding = "UMAP",
     quantCut = c(0.01, 0.95))
 
-  fn = paste0("clusters_UMAPs", setting, sep="_")
+  fn = paste("clusters_UMAPs", setting, sep="_")
   fn = paste0(fn, ".pdf")
   print(paste("saving", fn))
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
