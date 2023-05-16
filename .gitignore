@@ -1,9 +1,11 @@
 .*
 !/.gitignore
 
+ArchRLogs
 data/*
 !data/scripts
-data/scripts/ArchRLogs/
+temp
+Rplots.pdf
 models/
 software/
 figures/
