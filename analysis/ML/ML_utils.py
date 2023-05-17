@@ -89,30 +89,31 @@ def load_meso():
     df = pd.read_csv("../../data/processed_data/mesothelioma.csv",
                        index_col=0)
     return(df.loc[natsorted(df.index)])
+
 # def load_meso_mutations(meso_waddell_and_biphasic, meso_waddell_only, meso_waddell_and_broad_only,
 #                         meso_waddell_biph_786_846):
-def load_meso_mutations(waddell_sarc_biph,
-                        waddell_sarc,
-                        waddell_sarc_tsankov_sarc,
-                        waddell_sarc_biph_tsankov_sarc_biph):
-    if (waddell_sarc_biph):
-        # (waddell sarcomatoid + waddell biphasic = 5 samples) + waddell epithelioid
-        df = pd.read_csv("../../data/processed_data/meso_mut_count_data.csv",
-                           index_col=0)
-    elif (waddell_sarc):
-        # (just waddell sarcomatoid = 2 samples) + waddell epithelioid
-        df = pd.read_csv("../../data/processed_data/mesothelioma_epithelioid_sarcomatoid2_WGS_Waddell.csv",
-                           index_col=0)
-    elif (waddell_sarc_tsankov_sarc):
-        # (waddell sarcomatoid + tsankov sarcomatoid = 3 samples)
-        df = pd.read_csv("../../data/processed_data/mesothelioma_p786_waddell_sarco.csv",
-                           index_col=0)
-    elif (waddell_sarc_biph_tsankov_sarc_biph):
-         # (waddell sarcomatoid + waddell biphasic + tsankov sarcomatoid + tsankov biphasic
-         # = 7 samples) + waddell epithelioid
-         df = pd.read_csv("../../data/processed_data/mesothelioma_epithelioid_sarcomatoid_biphasic_WGS_Waddell_786_846.csv",
-                           index_col=0)
-    return(df.loc[natsorted(df.index)])
+# def load_meso_mutations(waddell_sarc_biph,
+#                         waddell_sarc,
+#                         waddell_sarc_tsankov_sarc,
+#                         waddell_sarc_biph_tsankov_sarc_biph):
+#     if (waddell_sarc_biph):
+#         # (waddell sarcomatoid + waddell biphasic = 5 samples) + waddell epithelioid
+#         df = pd.read_csv("../../data/processed_data/meso_mut_count_data.csv",
+#                            index_col=0)
+#     elif (waddell_sarc):
+#         # (just waddell sarcomatoid = 2 samples) + waddell epithelioid
+#         df = pd.read_csv("../../data/processed_data/mesothelioma_epithelioid_sarcomatoid2_WGS_Waddell.csv",
+#                            index_col=0)
+#     elif (waddell_sarc_tsankov_sarc):
+#         # (waddell sarcomatoid + tsankov sarcomatoid = 3 samples)
+#         df = pd.read_csv("../../data/processed_data/mesothelioma_p786_waddell_sarco.csv",
+#                            index_col=0)
+#     elif (waddell_sarc_biph_tsankov_sarc_biph):
+#          # (waddell sarcomatoid + waddell biphasic + tsankov sarcomatoid + tsankov biphasic
+#          # = 7 samples) + waddell epithelioid
+#          df = pd.read_csv("../../data/processed_data/mesothelioma_epithelioid_sarcomatoid_biphasic_WGS_Waddell_786_846.csv",
+#                            index_col=0)
+#     return(df.loc[natsorted(df.index)])
 
 def load_sclc_mutations():
     df = pd.read_csv("../../data/processed_data/sclc_count_overlaps.csv",
