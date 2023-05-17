@@ -6,7 +6,6 @@ load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 
 option_list <- list(
   make_option("--datasets", type = "character"),
-  make_option("--cell_number_filter", type="integer"),
   make_option("--annotation", type="character")
 )
 
@@ -62,8 +61,6 @@ add_to_combined_dataframes <- function(count_overlaps, combined_count_overlaps,
                                        count_overlaps[i, ]
       idx_tissue = which(combined_count_overlaps_metadata[, "tissue_name"] ==
                          tissue_name)
-          # match(tissue_name[1],
-          #                combined_count_overlaps_metadata[, "tissue_name"])
       idx_cell_type = which(cell_types[i] == 
                             combined_count_overlaps_metadata[, "cell_type"])
       num_cells = cell_counts[cell_counts["cell_type"] == cell_types[i], 
@@ -91,8 +88,6 @@ add_to_combined_dataframes <- function(count_overlaps, combined_count_overlaps,
 save_combined_overlaps <- function(filepaths,
                                    combined_filepath, 
                                    dataset, annotation) {
-  # unsquashed_overlaps_filepath=NULL,
-  # unsquashed_tissue_names_filepath=NULL) {
   combined_count_overlaps = data.frame()
   combined_count_overlaps_metadata = data.frame()
   for (f in filepaths) {
@@ -110,17 +105,6 @@ save_combined_overlaps <- function(filepaths,
                                      f)    
     combined_count_overlaps = dfs[[1]]
     combined_count_overlaps_metadata = dfs[[2]]
-    
-    # if (grepl("subdivided", f)) {
-    #   colnames(count_overlaps) = rep(colnames(count_overlaps), each=5)
-    # }
-    
-    # if (!is.null(unsquashed_overlaps_filepath)) {
-    #   unsquashed_tissue_names = append(unsquashed_tissue_names, rep(tissue_name,
-    #                                                     dim(count_overlaps)[1]))
-    #   unsquashed_count_overlaps = rbind(unsquashed_count_overlaps, 
-    #                                     count_overlaps)
-    # }
   }
   if (annotation == "Tsankov_separate_fibroblasts") {
     combined_count_overlaps = combined_count_overlaps[!(rownames(combined_count_overlaps) == 
@@ -160,13 +144,11 @@ for (dataset in datasets) {
   combined_filepath = paste(combined_data_path, annotation, sep="/")
   dir.create(combined_filepath)
   combined_filename = paste(dataset,
-                            "count_filter",
-                            cell_number_filter, 
                             "combined_count_overlaps.rds", sep="_")
   combined_filepath = paste(combined_filepath, combined_filename, sep="/")
   if (!file.exists(combined_filepath)) { # || 
       #!file.exists(unsquashed_overlaps_filepath)) {
-    pattern = paste(dataset, "count_filter", cell_number_filter, "count_overlaps", 
+    pattern = paste(dataset, "count_overlaps", 
                     sep="_")
     co_fp = paste("../processed_data/count_overlap_data", annotation,
                   sep = "/")
