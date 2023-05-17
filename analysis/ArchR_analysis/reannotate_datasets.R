@@ -350,7 +350,19 @@ if (!(is.null(marker_genes))) {
   do.call(cowplot::plot_grid, c(list(ncol = 5), p2))
   dev.off()
 }
+
+gsSE = getMatrixFromProject(proj, useMatrix = 'GeneScoreMatrix')
+gsSE = gsSE[, proj$cellNames]
+metaGroupName = "Clusters_H"
+DAG_list = getMarkerFeatures(ArchRProj = proj, 
+                             testMethod = "wilcoxon",
+                             binarize = FALSE, 
+                             useMatrix = "GeneScoreMatrix", 
+                             groupBy = metaGroupName)
+
 ########## Post visual inspection ##########
+############################################
+############################################
 map <- function(x, mapping) mapping[[x]]
 
 if (dataset == "Tsankov" && tissue == "all" && nfrags_filter == 1000 && 
