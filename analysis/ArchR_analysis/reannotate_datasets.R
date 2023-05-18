@@ -37,6 +37,8 @@ option_list <- list(
 #                       "--tissue=RPL",
 #                       "--nfrags_filter=1",
 #                       "--tss_filter=0",
+#                       "--tss_percentile=0.1", 
+#                       "--nfrags_percentile=0.1",
 #                       "--cell_types=all",
 #                       "--min_cells_per_cell_type=1")
 # )
@@ -286,7 +288,7 @@ if (cluster) {
     embedding = "UMAP",
     quantCut = c(0.01, 0.95))
 
-  fn = paste("clusters_UMAPs", setting, sep="_")
+  fn = paste("clusters_UMAPs_cluster_res", cluster_res, setting, sep="_")
   fn = paste0(fn, ".pdf")
   print(paste("saving", fn))
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
