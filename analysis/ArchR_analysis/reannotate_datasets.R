@@ -22,7 +22,8 @@ option_list <- list(
   make_option("--filter_per_cell_type", action="store_true", default=FALSE),
   make_option("--cell_types", type="character", default="all"),
   make_option("--marker_genes", type="character", default=NULL),
-  make_option("--min_cells_per_cell_type", type="integer", default=1)
+  make_option("--min_cells_per_cell_type", type="integer", default=1),
+  make_option("--plot_doublets", action="store_true", default=FALSE)
 )
 
 # args = parse_args(OptionParser(option_list=option_list), args=
@@ -30,17 +31,15 @@ option_list <- list(
 #                       "--dataset=Tsankov",
 #                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
 #                       "--sep_for_metadata=,",
-#                       "--filter_per_cell_type",
 #                       "--cell_type_col_in_metadata=celltypes",
 #                       "--cluster",
 #                       "--cluster_res=1",
 #                       "--tissue=RPL",
 #                       "--nfrags_filter=1",
 #                       "--tss_filter=0",
-#                       "--tss_percentile=0.1", 
-#                       "--nfrags_percentile=0.1",
 #                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1")
+#                       "--min_cells_per_cell_type=1",
+#                       "--plot_doublets")
 # )
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
@@ -185,6 +184,7 @@ sep_for_metadata = args$sep_for_metadata
 # cell_name_col_in_metadata = args$cell_name_col_in_metadata
 cell_type_col_in_metadata = args$cell_type_col_in_metadata
 min_cells_per_cell_type = args$min_cells_per_cell_type
+plot_doublets = args$plot_doublets
 print("Done collecting cmd line args")
 
 addArchRThreads(threads = cores)
@@ -269,6 +269,24 @@ if (dir.exists(proj_dir)) {
   proj <- saveArchRProject(ArchRProj = proj, 
                            outputDirectory = proj_dir,
                            load = TRUE)
+}
+
+if (plot_doublets) {
+  proj <- addDoubletScores(
+    input = proj,
+    useMatrix = "TileMatrix"
+  )
+    p <- plotEmbedding(
+      ArchRProj = proj, 
+      colorBy = "cellColData",
+      name = "DoubletEnrichment",
+      embedding = "UMAP",
+      quantCut = c(0.01, 0.95))
+    
+    fn = paste("doublets_plot", setting, sep="_")
+    fn = paste0(fn, ".pdf")
+    print(paste("saving", fn))
+    plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
 }
 
 if (cluster) {
@@ -462,7 +480,6 @@ if (dataset == "Tsankov" && tissue == "all" && nfrags_filter == 1000 &&
   dev.off()
 }
 
-saveArchRProject(ArchRProj = proj)
 
 
 
