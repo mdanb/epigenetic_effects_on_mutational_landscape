@@ -12,7 +12,7 @@ option_list <- list(
   make_option("--cell_type_col_in_metadata", type="character"),
   # make_option("--cell_name_col_in_metadata", type="character"),
   make_option("--cluster", action="store_true", default=F),
-  make_option("--cluster_res", type="double", default=1.2),
+  make_option("--cluster_res", type="double"),
   make_option("--plot_cell_types", action="store_true", default=F),
   make_option("--tissue", type="character", default="all"),
   make_option("--nfrags_filter", type="integer", default=1),
@@ -22,7 +22,7 @@ option_list <- list(
   make_option("--filter_per_cell_type", action="store_true", default=FALSE),
   make_option("--cell_types", type="character", default="all"),
   make_option("--marker_genes", type="character", default=NULL),
-  make_option("--min_cells_per_cell_type", type="integer", default=0)
+  make_option("--min_cells_per_cell_type", type="integer", default=1)
 )
 
 # args = parse_args(OptionParser(option_list=option_list), args=
@@ -353,14 +353,14 @@ if (!(is.null(marker_genes))) {
   dev.off()
 }
 
-gsSE = getMatrixFromProject(proj, useMatrix = 'GeneScoreMatrix')
-gsSE = gsSE[, proj$cellNames]
-metaGroupName = "Clusters_H"
-DAG_list = getMarkerFeatures(ArchRProj = proj, 
-                             testMethod = "wilcoxon",
-                             binarize = FALSE, 
-                             useMatrix = "GeneScoreMatrix", 
-                             groupBy = metaGroupName)
+# gsSE = getMatrixFromProject(proj, useMatrix = 'GeneScoreMatrix')
+# gsSE = gsSE[, proj$cellNames]
+# metaGroupName = "Clusters_H"
+# DAG_list = getMarkerFeatures(ArchRProj = proj, 
+#                              testMethod = "wilcoxon",
+#                              binarize = FALSE, 
+#                              useMatrix = "GeneScoreMatrix", 
+#                              groupBy = metaGroupName)
 
 ########## Post visual inspection ##########
 ############################################
