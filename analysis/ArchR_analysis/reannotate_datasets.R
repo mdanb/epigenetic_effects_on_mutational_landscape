@@ -23,24 +23,26 @@ option_list <- list(
   make_option("--cell_types", type="character", default="all"),
   make_option("--marker_genes", type="character", default=NULL),
   make_option("--min_cells_per_cell_type", type="integer", default=1),
-  make_option("--plot_doublets", action="store_true", default=FALSE)
+  make_option("--plot_doublet_scores", action="store_true", default=FALSE),
+  make_option("--filter_doublets", action="store_true", default=FALSE)
 )
 
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--cluster",
-#                       "--cluster_res=1",
-#                       "--tissue=RPL",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--plot_doublets")
-# )
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=8",
+                      "--dataset=Tsankov",
+                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+                      "--sep_for_metadata=,",
+                      "--cell_type_col_in_metadata=celltypes",
+                      "--cluster",
+                      "--cluster_res=1",
+                      "--tissue=RPL",
+                      "--nfrags_filter=1",
+                      "--tss_filter=0",
+                      "--cell_types=all",
+                      "--min_cells_per_cell_type=1",
+                      "--plot_doublet_scores",
+                      "--filter_per_cell_type")
+)
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
@@ -184,7 +186,7 @@ sep_for_metadata = args$sep_for_metadata
 # cell_name_col_in_metadata = args$cell_name_col_in_metadata
 cell_type_col_in_metadata = args$cell_type_col_in_metadata
 min_cells_per_cell_type = args$min_cells_per_cell_type
-plot_doublets = args$plot_doublets
+plot_doublet_scores = args$plot_doublet_scores
 print("Done collecting cmd line args")
 
 addArchRThreads(threads = cores)
@@ -219,6 +221,16 @@ if (!is.null(nfrags_percentile)) {
 
 if (filter_per_cell_type) {
   setting = paste0(setting, "_", "filter_per_cell_type")
+}
+
+if (filter_doublets) {
+  setting = paste0(setting, "_", "filter_doublets")
+  if (dataset == "Tsankov" && tissue=="RPL") {
+    cell_col_data = getCellColData(proj)
+    idx = cell_col_data[["cell_type"]] == "AT2"
+    idx_2 = cell_col_data[["DoubletEnrichment"]] > 8
+    proj = proj[!(idx & idx_2)]
+  }
 }
 
 proj_dir = paste("ArchR_projects", setting, sep="/")
@@ -271,22 +283,23 @@ if (dir.exists(proj_dir)) {
                            load = TRUE)
 }
 
-if (plot_doublets) {
+if (plot_doublet_scores) {
   proj <- addDoubletScores(
     input = proj,
     useMatrix = "TileMatrix"
   )
-    p <- plotEmbedding(
-      ArchRProj = proj, 
-      colorBy = "cellColData",
-      name = "DoubletEnrichment",
-      embedding = "UMAP",
-      quantCut = c(0.01, 0.95))
-    
-    fn = paste("doublets_plot", setting, sep="_")
-    fn = paste0(fn, ".pdf")
-    print(paste("saving", fn))
-    plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
+  saveArchRProject(ArchRProj = proj)
+  p <- plotEmbedding(
+    ArchRProj = proj, 
+    colorBy = "cellColData",
+    name = "DoubletEnrichment",
+    embedding = "UMAP",
+    quantCut = c(0.01, 0.95))
+  
+  fn = paste("doublets_plot", setting, sep="_")
+  fn = paste0(fn, ".pdf")
+  print(paste("saving", fn))
+  plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
 }
 
 if (cluster) {
@@ -319,7 +332,7 @@ if (plot_cell_types) {
         name = "cell_type", 
         embedding = "UMAP",
         quantCut = c(0.01, 0.95))
-
+  
   fn = paste("cell_type_UMAP", setting, sep="_")
   fn = paste0(fn, ".pdf")
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
