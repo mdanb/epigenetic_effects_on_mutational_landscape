@@ -27,22 +27,22 @@ option_list <- list(
   make_option("--filter_doublets", action="store_true", default=FALSE)
 )
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=8",
-                      "--dataset=Tsankov",
-                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-                      "--sep_for_metadata=,",
-                      "--cell_type_col_in_metadata=celltypes",
-                      "--cluster",
-                      "--cluster_res=1",
-                      "--tissue=RPL",
-                      "--nfrags_filter=1",
-                      "--tss_filter=0",
-                      "--cell_types=all",
-                      "--min_cells_per_cell_type=1",
-                      "--plot_doublet_scores",
-                      "--filter_per_cell_type")
-)
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--cluster",
+#                       "--cluster_res=1",
+#                       "--tissue=RPL",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=1",
+#                       "--plot_doublet_scores",
+#                       "--filter_per_cell_type")
+# )
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
@@ -228,7 +228,7 @@ if (filter_doublets) {
   if (dataset == "Tsankov" && tissue=="RPL") {
     cell_col_data = getCellColData(proj)
     idx = cell_col_data[["cell_type"]] == "AT2"
-    idx_2 = cell_col_data[["DoubletEnrichment"]] > 8
+    idx_2 = cell_col_data[["DoubletEnrichment"]] >= 8
     proj = proj[!(idx & idx_2)]
   }
 }
