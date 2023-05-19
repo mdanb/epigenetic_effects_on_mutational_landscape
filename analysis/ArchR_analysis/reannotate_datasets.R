@@ -27,22 +27,23 @@ option_list <- list(
   make_option("--filter_doublets", action="store_true", default=FALSE)
 )
 
-#args = parse_args(OptionParser(option_list=option_list), args=
-#                    c("--cores=8",
-#                      "--dataset=Tsankov",
-#                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                      "--sep_for_metadata=,",
-#                      "--cell_type_col_in_metadata=celltypes",
-#                      "--cluster",
-#                      "--cluster_res=1",
-#                      "--tissue=RPL",
-#                      "--nfrags_filter=1",
-#                      "--tss_filter=0",
-#                      "--cell_types=all",
-#                      "--min_cells_per_cell_type=1",
-#                      "--plot_doublet_scores",
-#                      "--filter_per_cell_type")
-#)
+args = parse_args(OptionParser(option_list=option_list), args=
+                   c("--cores=8",
+                     "--dataset=Tsankov",
+                     "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+                     "--sep_for_metadata=,",
+                     "--cell_type_col_in_metadata=celltypes",
+                     "--cluster",
+                     "--cluster_res=1",
+                     "--tissue=RPL",
+                     "--nfrags_filter=1",
+                     "--tss_filter=0",
+                     "--cell_types=all",
+                     "--min_cells_per_cell_type=1",
+                     "--plot_doublet_scores",
+                     "--filter_per_cell_type",
+                     "--filter_doublets")
+)
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
@@ -74,7 +75,7 @@ add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
 filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile,
                         nfrags_percentile, filter_per_cell_type,
                         dataset, tissue, cell_types, min_cells_per_cell_type, 
-                        metadata, filter_doublets) {
+                        metadata) {
   cell_col_data = getCellColData(proj)
   if (tissue == "all") {
     tissue = "*"
@@ -163,16 +164,6 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile,
                  (cell_col_data[["cell_type"]] %in% cells_to_filter))
   
   proj = proj[proj_filter]
-  
-  if (filter_doublets) {
-    if (dataset == "Tsankov" && tissue=="RPL") {
-      cell_col_data = getCellColData(proj)
-      idx = cell_col_data[["cell_type"]] == "AT2"
-      idx_2 = cell_col_data[["DoubletEnrichment"]] >= 8
-      proj = proj[!(idx & idx_2)]
-    }
-  }
-  
   return(proj)
 }
 
@@ -234,15 +225,19 @@ if (filter_per_cell_type) {
   setting = paste0(setting, "_", "filter_per_cell_type")
 }
 
-if (filter_doublets) {
-  setting = paste0(setting, "_", "filter_doublets")
-}
-
 proj_dir = paste("ArchR_projects", setting, sep="/")
 
 if (dir.exists(proj_dir)) {
   print("Loading existing project")
   proj <- loadArchRProject(proj_dir)
+  if (filter_doublets) {
+    if (dataset == "Tsankov" && tissue=="RPL") {
+      cell_col_data = getCellColData(proj)
+      idx = cell_col_data[["cell_type"]] == "AT2"
+      idx_2 = cell_col_data[["DoubletEnrichment"]] >= 8
+      proj = proj[!(idx & idx_2)]
+    }
+  }
   print("Done loading existing project")
 } else {
   dir = "ArchR_projects/ArchR_proj/"
@@ -252,7 +247,7 @@ if (dir.exists(proj_dir)) {
   proj <- filter_proj(proj = ArchR_proj, nfrags_filter, tss_filter, tss_percentile, 
                       nfrags_percentile, filter_per_cell_type, 
                       dataset, tissue, cell_types,
-                      min_cells_per_cell_type, metadata, filter_doublets)
+                      min_cells_per_cell_type, metadata)
   
   print("Saving new project")
   proj <- saveArchRProject(ArchRProj = proj, 
@@ -325,6 +320,9 @@ if (cluster) {
     quantCut = c(0.01, 0.95))
 
   fn = paste("clusters_UMAPs_cluster_res", cluster_res, setting, sep="_")
+  if (filter_doublets) {
+    fn = paste(fn, "filter_doublets", sep="_")
+  }
   fn = paste0(fn, ".pdf")
   print(paste("saving", fn))
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
@@ -339,6 +337,9 @@ if (plot_cell_types) {
         quantCut = c(0.01, 0.95))
   
   fn = paste("cell_type_UMAP", setting, sep="_")
+  if (filter_doublets) {
+    fn = paste(fn, "filter_doublets", sep="_")
+  }
   fn = paste0(fn, ".pdf")
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
 }
