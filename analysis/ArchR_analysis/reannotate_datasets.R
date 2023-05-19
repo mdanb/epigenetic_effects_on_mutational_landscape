@@ -74,7 +74,7 @@ add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
 filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile,
                         nfrags_percentile, filter_per_cell_type,
                         dataset, tissue, cell_types, min_cells_per_cell_type, 
-                        metadata) {
+                        metadata, filter_doublets) {
   cell_col_data = getCellColData(proj)
   if (tissue == "all") {
     tissue = "*"
@@ -163,6 +163,16 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile,
                  (cell_col_data[["cell_type"]] %in% cells_to_filter))
   
   proj = proj[proj_filter]
+  
+  if (filter_doublets) {
+    if (dataset == "Tsankov" && tissue=="RPL") {
+      cell_col_data = getCellColData(proj)
+      idx = cell_col_data[["cell_type"]] == "AT2"
+      idx_2 = cell_col_data[["DoubletEnrichment"]] >= 8
+      proj = proj[!(idx & idx_2)]
+    }
+  }
+  
   return(proj)
 }
 
@@ -226,12 +236,6 @@ if (filter_per_cell_type) {
 
 if (filter_doublets) {
   setting = paste0(setting, "_", "filter_doublets")
-  if (dataset == "Tsankov" && tissue=="RPL") {
-    cell_col_data = getCellColData(proj)
-    idx = cell_col_data[["cell_type"]] == "AT2"
-    idx_2 = cell_col_data[["DoubletEnrichment"]] >= 8
-    proj = proj[!(idx & idx_2)]
-  }
 }
 
 proj_dir = paste("ArchR_projects", setting, sep="/")
@@ -248,7 +252,7 @@ if (dir.exists(proj_dir)) {
   proj <- filter_proj(proj = ArchR_proj, nfrags_filter, tss_filter, tss_percentile, 
                       nfrags_percentile, filter_per_cell_type, 
                       dataset, tissue, cell_types,
-                      min_cells_per_cell_type, metadata)
+                      min_cells_per_cell_type, metadata, filter_doublets)
   
   print("Saving new project")
   proj <- saveArchRProject(ArchRProj = proj, 
