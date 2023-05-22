@@ -44,7 +44,7 @@ count_overlaps_and_save <- function(df, interval_ranges, cohort) {
                                       ranges=irange_patient_mutation)
     count_overlaps = as.data.frame(countOverlaps(interval_ranges, 
                                                  grange_patient_mutation))
-    regions_to_use = read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/regions_to_use.csv")["x"]
+    regions_to_use = read.csv("../mutation_data/regions_to_use.csv")["x"]
     count_overlaps = count_overlaps[rownames(count_overlaps) %in% regions_to_use[["x"]], ]
     # colnames(count_overlaps) <- "num_mutations"
     filename = paste0("binned_mutations_", unique(df["Donor_ID"]), ".csv")
@@ -56,7 +56,7 @@ count_overlaps_and_save <- function(df, interval_ranges, cohort) {
 }
 
 count_overlaps_and_save_helper <- function(cancer_cohort) {
-  root = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/icgc/per_cohort_mutations/"
+  root = "../mutation_data/icgc/per_cohort_mutations/"
   cohort_file = paste0(cancer_cohort, "_SNV_without_SEX.txt")
   cohort_df = as_tibble(read.csv(paste(root, cohort_file, sep="/"), sep="\t"))
   header = colnames(read.csv(paste(root, "maf_header.txt", sep="/"), sep="\t"))
@@ -66,7 +66,7 @@ count_overlaps_and_save_helper <- function(cancer_cohort) {
   #              list.files(filespath, full.names = TRUE),
   #              perl = TRUE, 
   #              value = TRUE)
-  dir_donors_with_WGS = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/icgc/MutPerBarcodeGroup"
+  dir_donors_with_WGS = "../mutation_data/icgc/MutPerBarcodeGroup"
   donors_with_WGS = read.csv(paste(dir_donors_with_WGS, paste0(cancer_cohort, "_SNV.txt"),
                                    sep="/"), sep="\t")
   cohort_df = cohort_df %>% filter(Donor_ID %in% donors_with_WGS[["DonorID"]])
@@ -74,7 +74,7 @@ count_overlaps_and_save_helper <- function(cancer_cohort) {
                 group_by(Donor_ID) %>%
                 group_split()
   dir.create(paste("../processed_data/per_patient_mutations", cancer_cohort, sep="/"))
-  load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+  load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
   lapply(cohort_df, count_overlaps_and_save, interval.ranges, cancer_cohort)
   # lapply(files, count_overlaps_and_save, filespath)
 }
