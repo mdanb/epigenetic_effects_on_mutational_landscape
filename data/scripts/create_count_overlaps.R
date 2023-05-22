@@ -156,19 +156,19 @@ if (dataset == "Bingren") {
            annotation=annotation,
            mc.cores=cores)
 } else if (dataset == "Shendure") {
-metadata_Shendure = read.table("../metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-                                sep="\t",
-                                header=TRUE)
-files_Shendure = list.files("../bed_files/JShendure_scATAC/",
-                            pattern = ".*fragments\\.txt\\.gz")
-
-mclapply(files_Shendure, create_count_overlaps_files,
-       metadata=metadata_Shendure,
-       interval_ranges=interval.ranges,
-       chain=ch,
-       dataset=dataset,
-       annotation=annotation,
-       mc.cores=cores)
+  metadata_Shendure = read.table("../metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+                                  sep="\t",
+                                  header=TRUE)
+  files_Shendure = list.files("../bed_files/JShendure_scATAC/",
+                              pattern = ".*fragments\\.txt\\.gz")
+  
+  mclapply(files_Shendure, create_count_overlaps_files,
+         metadata=metadata_Shendure,
+         interval_ranges=interval.ranges,
+         chain=ch,
+         dataset=dataset,
+         annotation=annotation,
+         mc.cores=cores)
 } else if (dataset == "Tsankov") {
   metadata_tsankov_proximal = 
     read.csv("../metadata/tsankov_lung_proximal_barcode_annotation.csv")

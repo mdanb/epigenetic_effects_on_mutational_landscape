@@ -3,6 +3,7 @@ library(optparse)
 library(BSgenome.Hsapiens.UCSC.hg19)
 library(stringr)
 library(dplyr)
+library(ComplexHeatmap)
 
 option_list <- list( 
   make_option("--cores", type="integer"),
@@ -24,26 +25,29 @@ option_list <- list(
   make_option("--marker_genes", type="character", default=NULL),
   make_option("--min_cells_per_cell_type", type="integer", default=1),
   make_option("--plot_doublet_scores", action="store_true", default=FALSE),
-  make_option("--filter_doublets", action="store_true", default=FALSE)
+  make_option("--filter_doublets", action="store_true", default=FALSE),
+  make_option("--save_clusters", action="store_true", default=FALSE),
+  make_option("--de_novo_marker_discovery", action="store_true", default=FALSE)
 )
 
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                    c("--cores=8",
-#                      "--dataset=Tsankov",
-#                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                      "--sep_for_metadata=,",
-#                      "--cell_type_col_in_metadata=celltypes",
-#                      "--cluster",
-#                      "--cluster_res=1",
-#                      "--tissue=RPL",
-#                      "--nfrags_filter=1",
-#                      "--tss_filter=0",
-#                      "--cell_types=all",
-#                      "--min_cells_per_cell_type=1",
-#                      "--plot_doublet_scores",
-#                      "--filter_per_cell_type",
-#                      "--filter_doublets")
-# )
+args = parse_args(OptionParser(option_list=option_list), args=
+                   c("--cores=8",
+                     "--dataset=Tsankov",
+                     "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+                     "--sep_for_metadata=,",
+                     "--cell_type_col_in_metadata=celltypes",
+                     "--cluster",
+                     "--cluster_res=0.5",
+                     "--tissue=RPL",
+                     "--nfrags_filter=1",
+                     "--tss_filter=0",
+                     "--cell_types=all",
+                     "--min_cells_per_cell_type=1",
+                     "--plot_doublet_scores",
+                     "--filter_per_cell_type",
+                     "--filter_doublets", 
+                     "--marker_genes=MMP10,KRT5,DLK2,IL33,TSLP,TP63,MKI67,TOP2A,SCGB1A1,SCGB3A1,FOXJ1,FOXN4,TMEM190,GSTA1,GSTA2,ASCL1,CHGA,FOXI1,POU2F3,ASCL2,ENO1,ANXA2,KRT17,AGER,EMP2,SFTPA1,KRT5,KRT17,KRT15,FOXJ1,CAPS,BPIFB1,PIGR,MUC5B,ASCL1,FOXI1,ITLN1,MYH11,COL1A1,COL1A2,ASPN,EPCAM,CALB2,MSLN,MUC1,KRT6A,PECAM1,PTPRC,CD163,LYZ,FCER1G,C1QA,C1QB,C1QC,APOC1,APOE,CD79B,CD3E,CD3D,IL32,CD2,CXCR4,NKG7,GATA4,GATA6,WT1")
+)
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
@@ -189,6 +193,8 @@ cell_type_col_in_metadata = args$cell_type_col_in_metadata
 min_cells_per_cell_type = args$min_cells_per_cell_type
 filter_doublets = args$filter_doublets
 plot_doublet_scores = args$plot_doublet_scores
+save_clusters = args$save_clusters
+de_novo_marker_discovery = args$de_novo_marker_discovery
 print("Done collecting cmd line args")
 
 addArchRThreads(threads = cores)
@@ -307,9 +313,12 @@ if (cluster) {
   proj <- addClusters(input = proj,
                       reducedDims = "IterativeLSI",
                       method = "Seurat",
-                      name = "Clusters",
+                      name = paste("Clusters", "res", cluster_res, sep="_"),
                       resolution = cluster_res, 
                       force=T)
+  if (save_clusters) {
+    proj = saveArchRProject(ArchRProj = proj)
+  }
   cell_col_data = getCellColData(proj)
   
   p <- plotEmbedding(
@@ -390,14 +399,87 @@ if (!(is.null(marker_genes))) {
   dev.off()
 }
 
-# gsSE = getMatrixFromProject(proj, useMatrix = 'GeneScoreMatrix')
-# gsSE = gsSE[, proj$cellNames]
-# metaGroupName = "Clusters_H"
-# DAG_list = getMarkerFeatures(ArchRProj = proj, 
-#                              testMethod = "wilcoxon",
-#                              binarize = FALSE, 
-#                              useMatrix = "GeneScoreMatrix", 
-#                              groupBy = metaGroupName)
+if (de_novo_marker_discovery) {
+    gsSE = getMatrixFromProject(proj, useMatrix = 'GeneScoreMatrix')
+    gsSE = gsSE[, proj$cellNames]
+    metaGroupName = paste("Clusters", "res", cluster_res, sep="_")
+    if (!file.exists(paste0(projdir, 'DAG_', metaGroupName, '.rds'))) {
+      DAG_list = getMarkerFeatures(ArchRProj = proj,
+                                   testMethod = "wilcoxon",
+                                   binarize = FALSE,
+                                   useMatrix = "GeneScoreMatrix",
+                                   groupBy = metaGroupName)
+      listnames = colnames(DAG_list)
+      DAG_list = lapply(1:ncol(DAG_list), function(x) 
+        {
+          df = DAG_list[, x]
+          df = do.call(cbind, (assays(df)))
+          colnames(df) = names(assays(DAG_list))
+          df$gene = rowData(DAG_list)$name
+          return(df)
+        })
+      names(DAG_list) = listnames
+      saveRDS(DAG_list, paste0(proj_dir, '/DAG_', metaGroupName,'.rds'))
+  } else {
+    DAG_list = readRDS(paste0(proj_dir,'/DAG_', metaGroupName,'.rds'))
+  }
+  FDR_threshold = 1e-2
+  lfc_threshold = 2
+  top_genes = 20
+  
+  DAG_top_list = DAG_list[sapply(DAG_list, function(x) {
+                                              nrow(x[x$FDR < FDR_threshold & 
+                                                       abs(x$Log2FC) > 
+                                                       lfc_threshold,]) > 0
+                                           })]
+                                  
+  DAG_top_list = lapply (seq_along(DAG_top_list), function(x) {
+    res = DAG_top_list[[x]]
+    res = na.omit(res)
+    res = res[res$FDR < FDR_threshold, ]
+    res = res[order(res$FDR), ]
+    res = res[abs(res$Log2FC) > lfc_threshold,]
+    res$comparison = names(DAG_top_list)[x]
+    if (nrow(res) < top_genes) { 
+      res 
+      } else { 
+        head(res, top_genes) 
+      }
+  })
+  DAG_df = Reduce(rbind, DAG_top_list)
+  
+  gsMat = assays (gsSE)[[1]]
+  rownames (gsMat) = rowData (gsSE)$name
+  gsMat_mg = gsMat[rownames (gsMat) %in% DAG_df$gene, ]
+  gsMat_mg = as.data.frame (t(gsMat_mg))
+  gsMat_mg$metaGroup = as.character(proj@cellColData[,metaGroupName])
+  gsMat_mg = aggregate (. ~ metaGroup, gsMat_mg, mean)
+  rownames(gsMat_mg) = gsMat_mg[, 1]
+  gsMat_mg = gsMat_mg[, -1]
+  gsMat_mg = gsMat_mg[names(table(proj@cellColData[, metaGroupName])[table 
+                                    (proj@cellColData[, metaGroupName]) > 50]),]
+  DAG_hm = Heatmap(t(scale(gsMat_mg)), 
+                    row_labels = colnames(gsMat_mg),
+                    column_title = paste('top', top_genes),
+                    clustering_distance_columns = 'euclidean',
+                    clustering_distance_rows = 'euclidean',
+                    cluster_rows = T,
+                    #col = pals_heatmap[[5]],
+                    cluster_columns=T,#col = pals_heatmap[[1]],
+                    row_names_gp = gpar(fontsize = 4),
+                    column_names_gp = gpar(fontsize = 4),
+                    rect_gp = gpar(col = "white", lwd = .5),
+                    border=TRUE
+                    #right_annotation = motif_ha
+  )
+  
+  DAG_grob = grid.grabExpr(draw(DAG_hm, column_title = 'DAG GeneScore2', 
+                                column_title_gp = gpar(fontsize = 16)))
+  pdf(paste0(proj_dir, '/Plots/DAG_clusters_', metaGroupName, '_heatmaps.pdf'), 
+       width = 4, height = 10)
+  DAG_hm
+  dev.off()
+}
 
 ########## Post visual inspection ##########
 ############################################

@@ -18,7 +18,8 @@ Heatmap(scale(corrs_pearson),
         column_names_gp = grid::gpar(fontsize = 8),
         row_names_gp = grid::gpar(fontsize = 8))
 
-meso_paper = corrs_pearson[, c("mesomics_top_r1_90th_perc", "mesomics_bottom_r1_10th_perc")]
+meso_paper = corrs_pearson[, c("mesomics_top_r1_90th_perc", 
+                               "mesomics_bottom_r1_10th_perc")]
 Heatmap(scale(meso_paper), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 8),
