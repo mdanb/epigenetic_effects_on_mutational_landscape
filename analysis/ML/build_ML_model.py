@@ -22,15 +22,15 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
     cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
 
-    os.makedirs(f"analysis/ML/models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}",
+    os.makedirs(f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}",
                 exist_ok=True)
 
     if (tissues_to_consider == "all"):
-        backwards_elim_dir=f"analysis/ML/models/{ML_model}/" \
+        backwards_elim_dir=f"models/{ML_model}/" \
                            f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results"
-        grid_search_filename = f"analysis/ML/models/{ML_model}/" \
+        grid_search_filename = f"models/{ML_model}/" \
                                f"{cancer_type_or_donor_id}/{scATAC_dir}/grid_search_results.pkl"
-        test_set_perf_filepath = f"analysis/ML/models/{ML_model}/" \
+        test_set_perf_filepath = f"models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance.txt"
 
         # All Cells
@@ -44,11 +44,11 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
     # Tissue Specific
     else:
         tissues_string = "_".join(tissues_to_consider)
-        backwards_elim_dir=f"analysis/ML/models/{ML_model}/" \
+        backwards_elim_dir=f"models/{ML_model}/" \
                            f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results_{tissues_string}"
-        grid_search_filename = f"analysis/ML/models/{ML_model}/" \
+        grid_search_filename = f"models/{ML_model}/" \
                                f"{cancer_type_or_donor_id}/{scATAC_dir}/grid_search_results_{tissues_string}.pkl"
-        test_set_perf_filepath = f"analysis/ML/models/{ML_model}/" \
+        test_set_perf_filepath = f"models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance_{tissues_string}.txt"
 
         # tissue = cancer_type.split("-")[0]
