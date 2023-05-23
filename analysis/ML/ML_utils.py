@@ -372,9 +372,8 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
         print_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
 
 # Other
-def construct_scATAC_dir(scATAC_sources, tss_filter, annotation_dir, seed):
-    # scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
-    scATAC_dir = f"scATAC_source_{scATAC_sources}"
+def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed):
+    scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
     if (tss_filter):
         scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
     # scATAC_dir = append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
