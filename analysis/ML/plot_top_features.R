@@ -180,6 +180,8 @@ construct_pie_charts <- function(args) {
     #   score = df[df$num_features == num_feats, ]$score[1]
     #   labels = append(labels, num_feats = score)
     # }
+    title = unlist(strsplit(dir, split ="/"))
+    title = title[length(title)]
     plot = ggplot(df, aes(x="", y=importance, fill=features)) +
                   facet_wrap(~num_features_f, nrow=1, 
                              labeller = as_labeller(to)) +
@@ -191,7 +193,7 @@ construct_pie_charts <- function(args) {
                         axis.ticks = element_blank(),
                         panel.grid  = element_blank()) +
                   scale_fill_manual(values=colors) +
-                  ggtitle(unlist(strsplit(dir, split ="/"))[11]) +
+                  ggtitle() +
                   # geom_text(aes(y = ypos, label = features), color = "white", size=1) +
                   theme(plot.title = element_text(hjust = 0.5))
     ggsave(paste(dir, "pie_chart.png", sep="/"), width = 20,
