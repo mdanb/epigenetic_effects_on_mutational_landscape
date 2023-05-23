@@ -82,8 +82,7 @@ construct_backwards_elim_dir <- function(cancer_type, scATAC_source,
   scATAC_source = paste(scATAC_source, "annotation", annotation, "seed", seed, 
                         sep="_")
   
-  dir = paste("/ahg", "regevdata", "projects", "ICA_Lung", "Mohamad", "cell_of_origin",
-              "figures", "models", ML_model, cancer_type, scATAC_source,
+  dir = paste("../../figures", "models", ML_model, cancer_type, scATAC_source,
               "backwards_elimination_results", sep="/")
   if (tissues_to_consider != "all") {
     dir = paste(dir, tissues_to_consider, sep="_")
