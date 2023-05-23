@@ -219,6 +219,8 @@ construct_bar_plots <- function(args) {
     names(to) <- from
     # df = df %>% group_by(num_features_f) %>% arrange(-importance, .by_group=T)
     print(paste("Plotting data in", dir))
+    title = unlist(strsplit(dir, split ="/"))
+    title = title[length(title)]
     plot = ggplot(df, aes(x=reorder_within(features, -importance, within=num_features_f,
                                            sep="."), 
                           y=importance, fill=features)) +
@@ -235,7 +237,7 @@ construct_bar_plots <- function(args) {
            scale_fill_manual(values=colors) +
            # ggtitle(paste0(unlist(strsplit(dir, split ="/"))[3], " (R^2=",
            #               as.character(round(unique(df$score*100), 1)), ")")) +
-           ggtitle(unlist(strsplit(dir, split ="/"))[11]) +
+           ggtitle(title) +
            theme(plot.title = element_text(hjust = 0.5))
     ggsave(paste(dir, "bar_plot.png", sep="/"), width = 20, height = 15, plot)
   }
