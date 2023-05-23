@@ -131,6 +131,7 @@ def load_histologically_subtyped_mutations():
     return(df.loc[natsorted(df.index)])
 
 def load_de_novo_seurat_clustered_cancers(cancer_types):
+    print("Loading De Novo Seurat clustered cancers")
     cancer_type = cancer_types[0].split("x")[0]
     seurat_cluster_settings = cancer_types[0].split("x")[1]
     df = pd.read_csv(f"../../data/processed_data/de_novo_seurat_clustered_mutations/{cancer_type}/"
