@@ -220,6 +220,7 @@ construct_bar_plots <- function(args) {
     # df = df %>% group_by(num_features_f) %>% arrange(-importance, .by_group=T)
     print(paste("Plotting data in", dir))
     title = unlist(strsplit(dir, split ="/"))
+    print(title)
     title = title[length(title)]
     plot = ggplot(df, aes(x=reorder_within(features, -importance, within=num_features_f,
                                            sep="."), 
