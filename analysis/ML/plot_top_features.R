@@ -182,6 +182,8 @@ construct_pie_charts <- function(args) {
     # }
     title = unlist(strsplit(dir, split ="/"))
     title = title[length(title)]
+    print("title: ")
+    print(title)
     plot = ggplot(df, aes(x="", y=importance, fill=features)) +
                   facet_wrap(~num_features_f, nrow=1, 
                              labeller = as_labeller(to)) +
