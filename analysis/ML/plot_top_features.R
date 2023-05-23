@@ -5,7 +5,7 @@ library(RColorBrewer)
 library(dplyr)
 library(optparse)
 library(stringr)
-source("/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/utils.R")
+source("../../utils.R")
 
 parser <- OptionParser() 
 # parser <- add_option(parser, c("--bing_ren"), action="store_true",
