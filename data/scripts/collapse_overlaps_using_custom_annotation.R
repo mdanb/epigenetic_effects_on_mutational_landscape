@@ -1,4 +1,5 @@
 library(optparse)
+
 ####### CUSTOM ANNOTATION OPTIONS ####### 
 ### Greenleaf pbmc bm
 # Greenleaf_pbmc_bm_CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm
@@ -6,23 +7,23 @@ library(optparse)
 ### Greenleaf brain
 # Greenleaf_brain_same+as+paper+but+Early+RG+Late+RG-RG_Unk-rm
 
+### Yang Kidney
+# Yang_kidney_remove_PT_distinctions
+
 option_list <- list( 
   make_option("--dataset", type="character"),
-  make_option("--annotation", type="character"),
-  make_option("--cell_number_filter", type="integer")
+  make_option("--annotation", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
 
-cell_number_filter = args$cell_number_filter
 dataset = args$dataset
 annotation = args$annotation
 
-save_collapsed_df <- function(df, dataset, annotation, cell_number_filter) {
+save_collapsed_df <- function(df, dataset, annotation) {
   save_dir = paste("../processed_data/count_overlap_data/combined_count_overlaps",
                    annotation, sep="/")
-  save_file = paste(dataset, "count_filter", cell_number_filter, 
-                    "combined_count_overlaps.rds", sep = "_")
+  save_file = paste(dataset, "combined_count_overlaps.rds", sep = "_")
   dir.create(save_dir)
   saveRDS(df, paste(save_dir, save_file, sep="/"))
 }
@@ -43,15 +44,12 @@ collapse_using_mapping <- function(mapping, df) {
 
 root = "../processed_data/count_overlap_data/combined_count_overlaps"
 if (dataset == "Greenleaf_pbmc_bm") {
-  default_annotation_fn = paste("Greenleaf_pbmc_bm_count_filter", 
-                                cell_number_filter, 
-                                "combined_count_overlaps.rds", sep="_")
+  default_annotation_fn = "Greenleaf_pbmc_bm_combined_count_overlaps.rds"
   default_annotation_fp = paste(root, "default_annotation", 
                                 default_annotation_fn, sep="/")
   default_combined_count_ovs = readRDS(default_annotation_fp)
   
   if (annotation == "Greenleaf_pbmc_bm_CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm") {
-    df = default_combined_count_ovs
     # pattern --> replacement (collapsing)
     mapping = list(
                 c("bonemarrow CD14.Mono", "bonemarrow Monocytes"),
@@ -64,17 +62,14 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df = collapse_using_mapping(mapping, default_combined_count_ovs,
                                 grep)
     df = df[-grep("Unk", rownames(df)), ]
-    save_collapsed_df(df, dataset, annotation, cell_number_filter)
+    save_collapsed_df(df, dataset, annotation)
   } 
 } else if (dataset == "Greenleaf_brain") {
-  lowest_level_annotation_fn = paste("Greenleaf_brain_count_filter", 
-                                cell_number_filter, 
-                                "combined_count_overlaps.rds", sep="_")
+  lowest_level_annotation_fn = "Greenleaf_brain_count_filter_combined_count_overlaps.rds"
   lowest_level_annotation_fp = paste(root, "Greenleaf_brain_lowest_level_annotation", 
                                      lowest_level_annotation_fn, sep="/")
   lowest_level_combined_count_ovs = readRDS(lowest_level_annotation_fp)
   if (annotation == "Greenleaf_brain_same+as+paper+but+Early+RG+Late+RG-RG_Unk-rm") {
-    df = lowest_level_combined_count_ovs
     # pattern --> replacement (collapsing)
     mapping = list(
       c("brain (c0$|c1$|c2$|c5|c6|c7|c13|c14)", "brain GluN"),
@@ -89,6 +84,20 @@ if (dataset == "Greenleaf_pbmc_bm") {
 
     df = collapse_using_mapping(mapping, lowest_level_combined_count_ovs)
     df = df[-grep("c18", rownames(df)), ]
-    save_collapsed_df(df, dataset, annotation, cell_number_filter)
+    save_collapsed_df(df, dataset, annotation)
+  }
+} else if (dataset == "Yang_kidney") {
+  default_annotation_fn = "Yang_kidney_combined_count_overlaps.rds"
+  default_annotation_fp = paste(root, "default_annotation", 
+                                default_annotation_fn, sep="/")
+  default_combined_count_ovs = readRDS(default_annotation_fp)
+  
+  if (annotation == "Yang_kidney_remove_PT_distinctions") {
+    df = default_combined_count_ovs
+    # pattern --> replacement (collapsing)
+    mapping = list(
+      c("kidney (PT1|PT2|PT3|PT4|PT5|PT6|PT7)", "kidney PT"))
+    df = collapse_using_mapping(mapping, default_combined_count_ovs)
+    save_collapsed_df(df, dataset, annotation)
   }
 }

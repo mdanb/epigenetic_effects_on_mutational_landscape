@@ -30,25 +30,89 @@ option_list <- list(
   make_option("--de_novo_marker_discovery", action="store_true", default=FALSE)
 )
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                   c("--cores=8",
-                     "--dataset=Tsankov",
-                     "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-                     "--sep_for_metadata=,",
-                     "--cell_type_col_in_metadata=celltypes",
-                     "--cluster",
-                     "--cluster_res=0.5",
-                     "--tissue=RPL",
-                     "--nfrags_filter=1",
-                     "--tss_filter=0",
-                     "--cell_types=all",
-                     "--min_cells_per_cell_type=1",
-                     "--plot_doublet_scores",
-                     "--filter_per_cell_type",
-                     "--filter_doublets", 
-                     "--marker_genes=MMP10,KRT5,DLK2,IL33,TSLP,TP63,MKI67,TOP2A,SCGB1A1,SCGB3A1,FOXJ1,FOXN4,TMEM190,GSTA1,GSTA2,ASCL1,CHGA,FOXI1,POU2F3,ASCL2,ENO1,ANXA2,KRT17,AGER,EMP2,SFTPA1,KRT5,KRT17,KRT15,FOXJ1,CAPS,BPIFB1,PIGR,MUC5B,ASCL1,FOXI1,ITLN1,MYH11,COL1A1,COL1A2,ASPN,EPCAM,CALB2,MSLN,MUC1,KRT6A,PECAM1,PTPRC,CD163,LYZ,FCER1G,C1QA,C1QB,C1QC,APOC1,APOE,CD79B,CD3E,CD3D,IL32,CD2,CXCR4,NKG7,GATA4,GATA6,WT1")
-)
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                    c("--cores=8",
+#                      "--dataset=Tsankov",
+#                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                      "--sep_for_metadata=,",
+#                      "--cell_type_col_in_metadata=celltypes",
+#                      "--cluster",
+#                      "--cluster_res=0.5",
+#                      "--tissue=RPL",
+#                      "--nfrags_filter=1",
+#                      "--tss_filter=0",
+#                      "--cell_types=all",
+#                      "--min_cells_per_cell_type=1",
+#                      "--filter_per_cell_type",
+#                      "--filter_doublets", 
+#                      "--marker_genes=MMP10,KRT5,DLK2,IL33,TSLP,TP63,MKI67,TOP2A,SCGB1A1,SCGB3A1,FOXJ1,FOXN4,TMEM190,GSTA1,GSTA2,ASCL1,CHGA,FOXI1,POU2F3,ASCL2,ENO1,ANXA2,KRT17,AGER,EMP2,SFTPA1,KRT5,KRT17,KRT15,FOXJ1,CAPS,BPIFB1,PIGR,MUC5B,ASCL1,FOXI1,ITLN1,MYH11,COL1A1,COL1A2,ASPN,EPCAM,CALB2,MSLN,MUC1,KRT6A,PECAM1,PTPRC,CD163,LYZ,FCER1G,C1QA,C1QB,C1QC,APOC1,APOE,CD79B,CD3E,CD3D,IL32,CD2,CXCR4,NKG7,GATA4,GATA6,WT1")
+# )
 
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--cluster",
+#                       "--cluster_res=0.5",
+#                       "--tissue=IC",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=1",
+#                       "--marker_genes=MMP10,KRT5,DLK2,IL33,TSLP,TP63,MKI67,TOP2A,SCGB1A1,SCGB3A1,FOXJ1,FOXN4,TMEM190,GSTA1,GSTA2,ASCL1,CHGA,FOXI1,POU2F3,ASCL2,ENO1,ANXA2,KRT17,AGER,EMP2,SFTPA1,KRT5,KRT17,KRT15,FOXJ1,CAPS,BPIFB1,PIGR,MUC5B,ASCL1,FOXI1,ITLN1,MYH11,COL1A1,COL1A2,ASPN,EPCAM,CALB2,MSLN,MUC1,KRT6A,PECAM1,PTPRC,CD163,LYZ,FCER1G,C1QA,C1QB,C1QC,APOC1,APOE,CD79B,CD3E,CD3D,IL32,CD2,CXCR4,NKG7,GATA4,GATA6,WT1")
+# )
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--cluster",
+#                       "--cluster_res=0.5",
+#                       "--tissue=IC",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=1",
+#                       "--marker_genes=ACTA2,COL1A1,COL1A2,VIM,CD44,CD73,CD90,CD105")
+# )
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--cluster",
+#                       "--cluster_res=0.5",
+#                       "--tissue=IC",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=1",
+#                       "--marker_genes=CD3D,CD3E,CD3G,CD247,CD4,CD8A,CD8B,IL2RA,FOXP3,IL7R,PTPRC,MS4A1,CD19,NCAM1,ITGAM,CD14,FCGR3A,FCGR3B,FCGR2A,FCGR2B")
+# )
+
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=8",
+                      "--dataset=Tsankov",
+                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+                      "--sep_for_metadata=,",
+                      "--cell_type_col_in_metadata=celltypes",
+                      "--cluster",
+                      "--cluster_res=0.5",
+                      "--tissue=RPL",
+                      "--nfrags_filter=1",
+                      "--tss_filter=0",
+                      "--cell_types=all",
+                      "--min_cells_per_cell_type=1",
+                      "--filter_doublets",
+                      "--filter_per_cell_type",
+                      "--marker_genes=MUC5B,SCGB1A1,FOXA3,FOXJ1,DNAI1,TUBA1A,DNAH5")
+)
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
                                             dataset) {
@@ -365,14 +429,14 @@ if (!(is.null(marker_genes))) {
     quantCut = c(0.01, 0.95),
     height=10,
     width=10,
-    baseSize=20
+    baseSize=100
   )
   if (length(marker_genes) == 1) {
     p = list(p)
   }
   p2 <- lapply(p, function(x){
     x + guides(color = FALSE, fill = FALSE) + 
-      theme_ArchR(baseSize = 3) +
+      theme_ArchR(baseSize = 10) +
       theme(plot.margin = unit(c(0.5, 0, 0.5, 0), "cm")) +
       theme(
         axis.text.x=element_blank(), 
@@ -394,7 +458,7 @@ if (!(is.null(marker_genes))) {
     print(paste("Saving", fn, "to temp.pdf"))
     fp = paste(path, "temp.pdf", sep="/")
   }
-  pdf(fp, width = 50, height = 50)
+  pdf(fp, width = 20, height = 20)
   do.call(cowplot::plot_grid, c(list(ncol = 5), p2))
   dev.off()
 }
