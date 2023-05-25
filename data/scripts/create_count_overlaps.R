@@ -266,8 +266,8 @@ if (dataset == "Bingren") {
     }
   
   colnames(metadata_greenleaf_brain)[grepl("Sample.ID", colnames(metadata_greenleaf_brain))] = "sample"
-  files_greenleaf_brain = list.files("../bed_files/greenleaf_brain_scATAC/", 
-                                     pattern=".*fragments\\.tsv\\.gz")
+  files_greenleaf_brain = list.files("../bed_files/greenleaf_brain_scATAC/migrated_to_hg19", 
+                                     pattern=".*fragments\\.tsv\\.bgz$")
   # mclapply(files_greenleaf_brain, create_count_overlaps_files,
   #          cell_number_filter=cell_number_filter,
   #          metadata=metadata_greenleaf_brain,
