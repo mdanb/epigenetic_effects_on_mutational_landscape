@@ -47,8 +47,7 @@ import_sample <- function(file, dataset) {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", 
                           "data", "bed_files", "JShendure_scATAC", 
-                          "migrated_to_hg19", file, 
-                          sep="/"), format="bed")
+                          file, sep="/"), format="bed")
   }
   else if (dataset == "Tsankov") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
@@ -71,41 +70,46 @@ import_sample <- function(file, dataset) {
   else if (dataset == "Yang_kidney") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", "data", "bed_files",
-                          "migrated_to_hg19", "yang_kidney_scATAC", 
+                          "yang_kidney_scATAC", 
                           file, sep="/"), format="bed")
   }
   return(sample)
 }
 
+remove_extension <- function(path) {
+  return(gsub("\\.tsv\\.b*gz$", "", path))
+}
+
 get_sample_filename <- function(file, dataset) {
   if (dataset == "Bingren") {
-    filename = paste("Bingren_count_overlaps", paste(file_path_sans_ext(file, TRUE),
-                                             "rds", sep="."), sep="_")
+    filename = paste(paste("Bingren_count_overlaps", remove_extension(file),
+                           sep="_"),
+                           "rds", sep=".")
   }
   else if (dataset == "Shendure") {
-    filename = paste("Shendure_count_overlaps", paste(file_path_sans_ext(file, TRUE),
-                                             "rds", sep="."), sep="_")
+    filename = paste(paste("Shendure_count_overlaps", remove_extension(file),
+                           sep="_"),
+                           "rds", sep=".")
   }
   else if (dataset == "Tsankov") {
-    filename = paste(file_path_sans_ext(file, TRUE))
+    filename = paste(remove_extension(file))
     filename = unlist(strsplit(filename, split = "_"))
     filename = paste(filename[1:length(filename) - 1], collapse="_")
     filename = paste("Tsankov_count_overlaps", filename, sep="_")
     filename = paste(filename, "rds", sep=".")
   }
   else if (dataset == "Greenleaf_brain") {
-    filename = paste("Greenleaf_brain_count_overlaps", 
-                     paste(file_path_sans_ext(file, TRUE),
-                     "rds", sep="."), sep="_")
+    filename = paste(paste("Greenleaf_brain_count_overlaps", 
+                     remove_extension(file), sep="_"), "rds", sep = ".")
   }
   else if (dataset == "Greenleaf_pbmc_bm") {
     filename = paste("Greenleaf_pbmc_bm_count_overlaps", 
-                     paste(file_path_sans_ext(file, TRUE),
+                     paste(remove_extension(file, TRUE),
                      "rds", sep="."), sep="_")
   }
   else if (dataset == "Yang_kidney") {
     filename = paste("Yang_kidney_count_overlaps",
-                     paste(file_path_sans_ext(file, TRUE),
+                     paste(remove_extension(file, TRUE),
                      "rds", sep="."), sep="_")
   }
   return(filename)
