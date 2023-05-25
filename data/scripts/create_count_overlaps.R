@@ -251,13 +251,13 @@ if (dataset == "Bingren") {
                 "../metadata/GSE162170_atac_cell_metadata_with_cell_names.txt")
     }
     else {
-      if (annotation == "Greenleaf_brain_lowest_level") {
+      if (annotation == "Greenleaf_brain_lowest_level_annotation") {
         metadata_greenleaf_brain =
           read.csv("../metadata/GSE162170_atac_cell_metadata.txt.gz",
                    sep="\t")
         colnames(metadata_greenleaf_brain)[grepl("Iterative.LSI.Clusters", 
                               colnames(metadata_greenleaf_brain))] = "cell_type"
-        dir.create("../processed_data/count_overlap_data/Greenleaf_lowest_level")
+        dir.create("../processed_data/count_overlap_data/Greenleaf_brain_lowest_level_annotation")
       } 
       else {
           metadata_greenleaf_brain =
