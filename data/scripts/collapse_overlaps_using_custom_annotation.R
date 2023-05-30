@@ -1,5 +1,7 @@
 library(optparse)
-
+library(dplyr)
+library(magrittr)
+library(tibble)
 ####### CUSTOM ANNOTATION OPTIONS ####### 
 ### Greenleaf pbmc bm
 # Greenleaf_pbmc_bm_CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm
@@ -34,12 +36,9 @@ save_collapsed_df <- function(df, df_metadata, dataset, annotation) {
 
 collapse_using_mapping <- function(mapping, df, df_metadata) {
   for (pattern_replacement in mapping) {
-    print(paste("Replacing", pattern_replacement[1], 
-                "with", pattern_replacement[2]))
     idxs = grep(pattern_replacement[1], rownames(df))
-    idxs_metadata = grep(pattern_replacement[1],
-                         paste(df_metadata[["tissue_name"]],
-                               df_metadata[["cell_type"]]))
+    idxs_metadata = grep(pattern_replacement[1], paste(df_metadata[["tissue_name"]], 
+                                                       df_metadata[["cell_type"]]))
     collapsed_co = rep(0, length(colnames(df)))
     collapsed_counts = sum(as.numeric(df_metadata[idxs_metadata, "num_cells"]))
     
@@ -50,24 +49,13 @@ collapse_using_mapping <- function(mapping, df, df_metadata) {
 
     df = df[-idxs, ]
     df_metadata = df_metadata[-idxs_metadata, ]
-    if (pattern_replacement[[2]] %in% rownames(df)) {
-      df[pattern_replacement[[2]], ] = collapsed_co + df[pattern_replacement[[2]], ]
-    } else {
-      df[pattern_replacement[[2]], ] = collapsed_co
-    }
+    df[pattern_replacement[[2]], ] = collapsed_co
     temp = unlist(strsplit(pattern_replacement[[2]], split=" "))
     tissue = temp[1]
     cell_type = paste(temp[2:length(temp)], collapse=" ")
-    # if (cell_type %in% df_metadata[["cell_type"]]) {
-    #   df_metadata[]
-    # } else {
-    #   df_metadata = rbind(df_metadata, c(tissue, cell_type, collapsed_counts))
-    # }
     df_metadata = rbind(df_metadata, c(tissue, cell_type, collapsed_counts))
-    # df_metadata[pattern_replacement[[2]], ] = collapsed_counts
   }
   return(list(df, df_metadata))
-  # return(list(df, df_metadata))
 }
 
 root = "../processed_data/count_overlap_data/combined_count_overlaps"
@@ -93,10 +81,17 @@ if (dataset == "Greenleaf_pbmc_bm") {
     save_collapsed_df(df, dataset, annotation)
   } 
 } else if (dataset == "Greenleaf_brain") {
-  lowest_level_annotation_fn = "Greenleaf_brain_count_filter_combined_count_overlaps.rds"
+  lowest_level_annotation_fn = "Greenleaf_brain_combined_count_overlaps.rds"
   lowest_level_annotation_fp = paste(root, "Greenleaf_brain_lowest_level_annotation", 
                                      lowest_level_annotation_fn, sep="/")
   lowest_level_combined_count_ovs = readRDS(lowest_level_annotation_fp)
+  
+  lowest_level_annotation_metadata_fn = "Greenleaf_brain_combined_count_overlaps_metadata.rds"
+  lowest_level_annotation_metadata_fp = paste(root, "Greenleaf_brain_lowest_level_annotation", 
+                                         lowest_level_annotation_metadata_fn, sep="/")
+  
+  lowest_level_annotation_combined_metadata = readRDS(lowest_level_annotation_metadata_fp)
+  
   if (annotation == "Greenleaf_brain_same+as+paper+but+Early+RG+Late+RG-RG_Unk-rm") {
     # pattern --> replacement (collapsing)
     mapping = list(
@@ -109,10 +104,14 @@ if (dataset == "Greenleaf_pbmc_bm") {
       c("brain c17", "brain Peric"),
       c("brain c19", "brain MG"),
       c("brain c21", "brain EC"))
-
-    df = collapse_using_mapping(mapping, lowest_level_combined_count_ovs)
+    l = collapse_using_mapping(mapping, lowest_level_combined_count_ovs, 
+                               lowest_level_annotation_combined_metadata)
+    
+    df = l[[1]]
     df = df[-grep("c18", rownames(df)), ]
-    save_collapsed_df(df, dataset, annotation)
+    df_metadata = l[[2]]
+    df_metadata = df_metadata[-grep("c18", df_metadata[["cell_type"]]), ]
+    save_collapsed_df(df, df_metadata, dataset, annotation)
   }
 } else if (dataset == "Yang_kidney") {
   default_annotation_fn = "Yang_kidney_combined_count_overlaps.rds"
@@ -138,23 +137,64 @@ if (dataset == "Greenleaf_pbmc_bm") {
     save_collapsed_df(df, df_metadata, dataset, annotation)
   }
 } else if (dataset == "Bingren") {
-  default_annotation_fn = "Bingren_combined_count_overlaps.rds"
-  default_annotation_fp = paste(root, "default_annotation", 
-                                default_annotation_fn, sep="/")
-  default_combined_count_ovs = readRDS(default_annotation_fp)
-  cell_types = rownames(default_combined_count_ovs)
-  last_chars <- substr(cell_types, nchar(cell_types), nchar(cell_types))
-  is_numbered = grepl("\\d+", last_chars)
-  original_string_numbered = cell_types[is_numbered]
-  no_numbers = gsub(" \\d+", "", original_string_numbered)
-  mapping = unname(mapply(c, original_string_numbered, no_numbers, SIMPLIFY = FALSE))
-  default_annotation_metadata_fn = "Bingren_combined_count_overlaps_metadata.rds"
-  default_annotation_metadata_fp = paste(root, "default_annotation", 
-                                         default_annotation_metadata_fn, sep="/")
-  default_combined_metadata = readRDS(default_annotation_metadata_fp)
-  l = collapse_using_mapping(mapping, default_combined_count_ovs, 
-                             default_combined_metadata)
-  df = l[[1]]
-  df_metadata = l[[2]]
-  save_collapsed_df(df, df_metadata, dataset, annotation)
+  if (annotation == "Bingren_remove_same_celltype_indexing") {
+    default_annotation_fn = "Bingren_combined_count_overlaps.rds"
+    default_annotation_fp = paste(root, "default_annotation", 
+                                  default_annotation_fn, sep="/")
+    default_combined_count_ovs = readRDS(default_annotation_fp)
+    cell_types = gsub(" \\d+", "", rownames(default_combined_count_ovs))
+    default_combined_count_ovs = as_tibble(default_combined_count_ovs) %>%
+                                    add_column(cell_types, .before=1)
+    default_combined_count_ovs = default_combined_count_ovs %>% 
+                                    group_by(cell_types) %>%
+                                    summarise_all(sum)
+    cell_types = default_combined_count_ovs[["cell_types"]]
+    default_combined_count_ovs = as.data.frame(default_combined_count_ovs)[, 
+                                                2:ncol(default_combined_count_ovs)]
+    rownames(default_combined_count_ovs) = cell_types
+    default_annotation_metadata_fn = "Bingren_combined_count_overlaps_metadata.rds"
+    default_annotation_metadata_fp = paste(root, "default_annotation", 
+                                           default_annotation_metadata_fn, sep="/")
+    default_combined_metadata = readRDS(default_annotation_metadata_fp)
+    prev_tissue = default_combined_metadata[["tissue_name"]]
+    prev_cell_type = default_combined_metadata[["cell_type"]]
+    df_metadata = default_combined_metadata
+    df_metadata["cell_type"] = paste(prev_tissue,
+                                                   prev_cell_type)
+    df_metadata = df_metadata[, 2:3]
+    df_metadata["cell_type"] = gsub(" \\d+", "", 
+                                    df_metadata[["cell_type"]])
+    df_metadata = df_metadata %>% 
+                       group_by(cell_type) %>%
+                        summarise_all(sum)
+    temp = strsplit(df_metadata[["cell_type"]], split = " ")
+    tissue = unlist(lapply(temp, "[", 1))
+    cell_type = lapply(temp, function(x) x[2:length(x)])
+    cell_type = unlist(lapply(cell_type, paste, collapse = " "))
+    df_metadata["cell_type"] = cell_type
+    df_metadata["tissue"] = tissue
+    save_collapsed_df(default_combined_count_ovs, df_metadata, dataset, annotation)
+  }
+} else if (dataset == "Shendure") {
+  if (annotation == "Shendure_remove_unknown_unsure") {
+    default_annotation_fn = "Shendure_combined_count_overlaps.rds"
+    default_annotation_fp = paste(root, "default_annotation", 
+                                  default_annotation_fn, sep="/")
+    default_combined_count_ovs = readRDS(default_annotation_fp)
+    combined_count_ovs = default_combined_count_ovs[!grepl("Unknown", 
+                                        rownames(default_combined_count_ovs)), ]
+    combined_count_ovs = combined_count_ovs[!grepl("\\?", 
+                                        rownames(combined_count_ovs)), ]
+    
+    default_annotation_metadata_fn = "Shendure_combined_count_overlaps_metadata.rds"
+    default_annotation_metadata_fp = paste(root, "default_annotation", 
+                                           default_annotation_metadata_fn, sep="/")
+    default_combined_metadata = readRDS(default_annotation_metadata_fp)
+    combined_metadata = default_combined_metadata[!grepl("Unknown", 
+                                    default_combined_metadata[["cell_type"]]), ]
+    combined_metadata = combined_metadata[!grepl("\\?", 
+                                          combined_metadata[["cell_type"]]), ]
+    save_collapsed_df(combined_count_ovs, combined_metadata, 
+                      dataset, annotation)
+  }
 }

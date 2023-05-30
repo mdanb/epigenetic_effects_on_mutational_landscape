@@ -1,14 +1,8 @@
 library(optparse)
 library(tidyverse)
 
-dir.create("tsse_filtered_run_commands/for_ML_input")
-dir.create("tsse_filtered_run_commands/for_ML_input/log_dir")
-
 option_list <- list( 
-  make_option("--bing_ren", action="store_true", default = FALSE),
-  make_option("--shendure", action="store_true", default = FALSE),
-  make_option("--tsankov", action="store_true", default = FALSE),
-  make_option("--fragment_count_range", type="character")
+  
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -95,9 +89,9 @@ create_and_submit_job_scipts <- function(bing_ren, shendure, tsankov,
                                 full.names = FALSE))
       num_files = length(files)
       cell_types = metadata %>% 
-                   filter(files_pattern == pattern) %>%
-                   select(cell_type)
-                      
+        filter(files_pattern == pattern) %>%
+        select(cell_type)
+      
       cell_types = unique(cell_types)
       job_script_filename = paste(paste(pattern, dataset, sep="_"), "sh", 
                                   sep=".")
@@ -135,10 +129,11 @@ create_and_submit_job_scipts <- function(bing_ren, shendure, tsankov,
                    "#$ -l h_rt=24:00:00", 
                    "#$ -l os=RedHat7", 
                    "#$ -pe smp 1", 
-                   mem_req, job_name, 
+                   "#$ -l h_vmem=8G",
+                   job_name, 
                    output_log_filename, 
                    error_log_filename, 
-                   "#$ -binding linear:1",
+                   "#$ -binding linear:8",
                    "#$ -M bgiotti@broadinstitute.org",
                    "#$ -m bea",
                    "",
@@ -147,11 +142,11 @@ create_and_submit_job_scipts <- function(bing_ren, shendure, tsankov,
                    "source activate /home/unix/bgiotti/conda/coo",
                    "",
                    rscript_command), 
-                file_conn)
-      system(paste("qsub", job_script_path))
+                 file_conn)
+      # system(paste("qsub", job_script_path))
     }
     idx = idx + 1
   }
 }
 
-create_and_submit_job_scipts(bing_ren, shendure, tsankov, fragment_count_range)
+create_and_submit_job_scipts()
