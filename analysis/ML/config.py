@@ -11,8 +11,8 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--cancer_types', nargs="+", type=str,
                     help='which cancer types to analyze', default=None)
-parser.add_argument('--clustered_mutations', action="store_true",
-                    help='run model on hierarchically clustered mutations', default=False)
+# parser.add_argument('--clustered_mutations', action="store_true",
+#                     help='run model on hierarchically clustered mutations', default=False)
 parser.add_argument('--datasets', nargs="+", type=str,
                     help='which sc-ATACseq datasets to analyze', required=True)
 parser.add_argument('--scATAC_cell_number_filter', type=int,
@@ -42,14 +42,14 @@ group.add_argument("--RNA_subtyped", action="store_true", default=False)
 parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
                     help='tss fragment filters to consider', default="")
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
-parser.add_argument("--ML_model", type=str, default="RF")
+parser.add_argument("--ML_model", type=str, default="XGB")
 parser.add_argument('--test_backward_selection_iter', type=int, default=None)
-parser.add_argument('--seed', type=int, default=42)
+parser.add_argument('--seed_range', type=str)
 
 config = parser.parse_args()
 
 cancer_types = config.cancer_types
-run_clustered_mutations = config.clustered_mutations
+# run_clustered_mutations = config.clustered_mutations
 datasets = sorted(config.datasets)
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
 # waddell_sarc_biph = config.waddell_sarc_biph
@@ -74,4 +74,4 @@ RNA_subtyped = config.RNA_subtyped
 per_donor = config.per_donor
 donor_range = config.donor_range
 test_backward_selection_iter = config.test_backward_selection_iter
-seed = config.seed
+seed_range = config.seed_range

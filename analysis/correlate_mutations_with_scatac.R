@@ -1,24 +1,52 @@
 library(ComplexHeatmap)
 library(RColorBrewer)
+library(tidyverse)
 
 chr_keep = read.csv("../data/processed_data/chr_keep.csv")[["chr"]]
 chr_ranges = unlist(read.csv("../data/processed_data/chr_ranges.csv"))
 
-#### Meso ####
-scatac_df = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Tsankov_separate_fibroblasts/Tsankov_count_filter_1_combined_count_overlaps.rds"))
+#################
+scatac_df_br = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Bingren_remove_same_celltype_indexing/Bingren_combined_count_overlaps.rds"))
+scatac_df_sh = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Shendure_remove_unknown_unsure/Shendure_combined_count_overlaps.rds"))
+colnames(scatac_df_sh) = paste(colnames(scatac_df_sh), "SH")
+colnames(scatac_df_br) = paste(colnames(scatac_df_br), "BR")
+scatac_df = cbind(scatac_df_sh, scatac_df_br)
 scatac_df = scatac_df[rownames(scatac_df) %in% chr_keep, ]
+
+create_cell_fun = function(corrs = NULL, fs) {
+  function(j, i, x, y, w, h, fill) {
+    grid::grid.text(sprintf("%.2f", corrs[i, j]), x, y, 
+                    gp = grid::gpar(col = "black", fontsize = fs))
+  }
+}
+
+plot_count_distribution <- function(mutation_df, save_filename) {
+  mutation_df <- mutation_df %>%
+                    gather(key = "column", value = "value") 
+  count_distribution <- mutation_df %>%
+    group_by(column, value) %>%
+    summarise(count = n(), .groups="keep")
+  
+  ggplot(count_distribution, aes(x = value, y = count)) +
+    geom_bar(stat = "identity") +
+    theme_minimal() +
+    facet_wrap(~column, scales = "free") +
+    labs(x = "Number of Mutations", y = "Count", 
+         title = "Count Distribution of Mutations per Bin per Patient")
+  ggsave(save_filename, height=30, width=30)
+}
+#################
+
+#### Meso ####
+scatac_df_lung = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Tsankov_separate_fibroblasts/Tsankov_count_filter_1_combined_count_overlaps.rds"))
+scatac_df_lung = scatac_df_lung[rownames(scatac_df_lung) %in% chr_keep, ]
 
 mutations_df_meso = read.csv("../data/processed_data/mesothelioma.csv",
                              row.names = 1)
-scatac_df = scatac_df[, !(colnames(scatac_df) == "distal lung Immune")]
+scatac_df_lung = scatac_df_lung[, !(colnames(scatac_df_lung) == "distal lung Immune")]
 
 mutations_df_meso = mutations_df_meso[rownames(mutations_df_meso) %in% chr_keep, ]
-corrs_spearman = cor(scatac_df, mutations_df_meso, method = "spearman")
-corrs_pearson = cor(scatac_df, mutations_df_meso)
-Heatmap(scale(corrs_spearman), 
-        col = RColorBrewer::brewer.pal(9, "RdBu"),
-        column_names_gp = grid::gpar(fontsize = 8),
-        row_names_gp = grid::gpar(fontsize = 8))
+corrs_pearson = cor(scatac_df_lung, mutations_df_meso)
 Heatmap(scale(corrs_pearson), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 8),
@@ -34,13 +62,13 @@ Heatmap(scale(meso_paper),
         name = "Pearson's r, \nscaled per column")
 
 df_top_fibroblast = data.frame(muts = mutations_df_meso["mesomics_top_r1_90th_perc"],
-                                scatac = scatac_df[, "distal lung Mesothelium"])
+                                scatac = scatac_df_lung[, "distal lung Mesothelium"])
 df_bottom_mesothelium = data.frame(muts = mutations_df_meso["mesomics_bottom_r1_10th_perc"],
-                                scatac = scatac_df[, "distal lung"])
+                                scatac = scatac_df_lung[, "distal lung"])
 df_top_fibroblast = data.frame(muts = mutations_df_meso["mesomics_top_r1_90th_perc"],
-                                scatac = scatac_df)
+                                scatac = scatac_df_lung)
 df_bottom_mesothelium = data.frame(muts = mutations_df_meso["mesomics_bottom_r1_10th_perc"],
-                                   scatac = scatac_df)
+                                   scatac = scatac_df_lung)
 
 mutations_df_meso_biphasic = read.csv("../data/processed_data/Mesothelioma_MMB_MutCountperBin.txt",
                                       sep="\t")[4:28]
@@ -61,8 +89,8 @@ rownames(subtypes_df) <- colnames(meso_individuals)
 
 rownames(meso_individuals) = chr_ranges
 meso_individuals = meso_individuals[rownames(meso_individuals) %in% chr_keep, ]
-scatac_df = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Tsankov_separate_fibroblasts/Tsankov_count_filter_1_combined_count_overlaps.rds"))
-scatac_df = scatac_df[rownames(scatac_df) %in% chr_keep, ]
+scatac_df_lung = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Tsankov_separate_fibroblasts/Tsankov_count_filter_1_combined_count_overlaps.rds"))
+scatac_df_lung = scatac_df_lung[rownames(scatac_df_lung) %in% chr_keep, ]
 
 subtype_colors <- c(
   "Biphasic" = "red",
@@ -72,21 +100,54 @@ subtype_colors <- c(
 
 ha <- HeatmapAnnotation(subtype = subtypes, col = list(subtype = subtype_colors))
 
-corrs_pearson = cor(scatac_df, meso_individuals)
+lung_cells_to_keep = c("proximal lung Basal", 
+                        "proximal lung Ciliated",
+                        "proximal lung Ionocytes",
+                        "proximal lung Neuroendocrine",
+                        "proximal lung Secretory", 
+                        "proximal lung Tuft.like",
+                        "distal lung AT1",
+                        "distal lung AT2",
+                        "distal lung Ciliated",
+                        "distal lung Secretory",
+                        "distal lung Fibroblasts_C12",
+                        "distal lung Fibroblasts_C14",
+                        "distal lung Mesothelium")
+scatac_df_lung = scatac_df_lung[, colnames(scatac_df_lung) %in% lung_cells_to_keep]
+corrs_pearson = cor(scatac_df_lung, meso_individuals)
 Heatmap(scale(corrs_pearson), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 4),
         row_names_gp = grid::gpar(fontsize = 8),
         top_annotation = ha)
 
-scatac_df = scatac_df[, !(colnames(scatac_df) == "distal lung Immune")]
-corrs_pearson = cor(scatac_df, meso_individuals)
+top_predictors = c("distal lung Fibroblasts_C14", 
+                   "proximal lung Ionocytes",
+                   "proximal lung Neuroendocrine",
+                   "distal lung AT2",
+                   "proximal lung Ciliated",
+                   "distal lung Mesothelium",
+                   "distal lung SmoothMuscle")
 
+scatac_df_lung = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Tsankov_separate_fibroblasts/Tsankov_count_filter_1_combined_count_overlaps.rds"))
+scatac_df_lung = scatac_df_lung[rownames(scatac_df_lung) %in% chr_keep, ]
+scatac_df_lung = scatac_df_lung[, colnames(scatac_df_lung) %in% top_predictors]
+corrs_pearson = cor(scatac_df_lung, meso_individuals)
 Heatmap(scale(corrs_pearson), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 4),
         row_names_gp = grid::gpar(fontsize = 8),
         top_annotation = ha)
+
+plot_count_distribution(meso_individuals, "meso_counts.pdf")
+# scatac_df = scatac_df[, !(colnames(scatac_df) == "distal lung Immune")]
+# corrs_pearson = cor(scatac_df, meso_individuals)
+# 
+# Heatmap(scale(corrs_pearson), 
+#         col = RColorBrewer::brewer.pal(9, "RdBu"),
+#         column_names_gp = grid::gpar(fontsize = 4),
+#         row_names_gp = grid::gpar(fontsize = 8),
+#         top_annotation = ha)
 
 get_filtered_cells <- function(cell_num_filter, annotation, dataset,
                                tissue_col_name=NULL, tissue=NULL) {
@@ -111,6 +172,17 @@ get_filtered_cells <- function(cell_num_filter, annotation, dataset,
 }
 
 #### Lung-AdenoCA ####
+lung_cells_to_keep = c("proximal lung Basal", 
+                       "proximal lung Ciliated",
+                       "proximal lung Ionocytes",
+                       "proximal lung Neuroendocrine",
+                       "proximal lung Secretory", 
+                       "proximal lung Tuft.like",
+                       "distal lung AT1",
+                       "distal lung AT2",
+                       "distal lung Ciliated",
+                       "distal lung Secretory")
+
 scatac_df_lung = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Tsankov_separate_fibroblasts/Tsankov_count_filter_1_combined_count_overlaps.rds"))
 scatac_df_lung = scatac_df_lung[rownames(scatac_df_lung) %in% chr_keep, ]
 lung_adenoca = read.csv("../data/mutation_data/Lung-AdenoCA.txt",
@@ -141,14 +213,54 @@ subtype_colors <- c(
   "Mesenchymal" = "yellow" 
 )
 
-scatac_df_lung = scatac_df_lung[, !(colnames(scatac_df_lung) == "distal lung Immune")]
+# scatac_df_lung = scatac_df_lung[, !(colnames(scatac_df_lung) == "distal lung Immune")]
+
+scatac_df_lung = scatac_df_lung[, colnames(scatac_df_lung) %in% 
+                                  lung_cells_to_keep]
 corrs_pearson = cor(scatac_df_lung, lung_adenoca)
 ha <- HeatmapAnnotation(subtype = adeno_subtypes, col = list(subtype = subtype_colors))
 Heatmap(scale(corrs_pearson), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 2),
         row_names_gp = grid::gpar(fontsize = 8),
-        top_annotation = ha)
+        top_annotation = ha,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
+
+scatac_df_lung_no_AT1 = as.data.frame(scatac_df_lung) %>% select(-`distal lung AT1`)
+corrs_pearson = cor(scatac_df_lung_no_AT1, lung_adenoca)
+ha <- HeatmapAnnotation(subtype = adeno_subtypes, col = list(subtype = subtype_colors))
+Heatmap(scale(corrs_pearson), 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        top_annotation = ha,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
+
+scatac_df_top_5 = scatac_df[, c("lung Ciliated epithelial cells SH",
+                                "colon_transverse Small Intestinal Enterocyte BR")]
+scatac_df_top_5 = cbind(scatac_df_top_5, scatac_df_lung[, c("distal lung AT2",
+                                                            "distal lung Secretory",
+                                                            "proximal lung Ciliated")])
+corrs_pearson = cor(scatac_df_top_5, lung_adenoca)
+ha <- HeatmapAnnotation(subtype = adeno_subtypes, col = list(subtype = subtype_colors))
+Heatmap(scale(corrs_pearson), 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        top_annotation = ha,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
+
+scatac_df_top_5 = as.data.frame(scatac_df_top_5) %>% select(-`colon_transverse Small Intestinal Enterocyte BR`)
+corrs_pearson = cor(scatac_df_top_5, lung_adenoca)
+ha <- HeatmapAnnotation(subtype = adeno_subtypes, col = list(subtype = subtype_colors))
+Heatmap(scale(corrs_pearson), 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        top_annotation = ha,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
+
+plot_count_distribution(lung_adenoca, "lung_adeno_counts.pdf")
 
 subtype_colors <- c(
   "AT.NKX2-1" = "red",
@@ -160,21 +272,39 @@ subtype_colors <- c(
 )
 
 corrs_pearson = cor(scatac_df_lung, lung_squamous)
-ha <- HeatmapAnnotation(subtype = lung_subtypes, col = list(subtype = subtype_colors))
+ha <- HeatmapAnnotation(subtype = squamous_subtypes, col = list(subtype = subtype_colors))
 Heatmap(scale(corrs_pearson), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 2),
         row_names_gp = grid::gpar(fontsize = 8),
-        top_annotation = ha)
+        top_annotation = ha,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
 
-####################
+scatac_df_lung = as.data.frame(scatac_df_lung) %>% select(-`distal lung AT1`)
+corrs_pearson = cor(scatac_df_lung, lung_squamous)
+ha <- HeatmapAnnotation(subtype = squamous_subtypes, col = list(subtype = subtype_colors))
+Heatmap(scale(corrs_pearson), 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        top_annotation = ha,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
 
-scatac_df_br = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Bingren_remove_same_celltype_indexing/Bingren_combined_count_overlaps.rds"))
-scatac_df_sh = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Shendure_remove_unknown_unsure/Shendure_combined_count_overlaps.rds"))
-colnames(scatac_df_sh) = paste(colnames(scatac_df_sh), "SH")
-colnames(scatac_df_br) = paste(colnames(scatac_df_br), "BR")
-scatac_df = cbind(scatac_df_sh, scatac_df_br)
-scatac_df = scatac_df[rownames(scatac_df) %in% chr_keep, ]
+scatac_df_top_5 = scatac_df[, c("lung Bronchiolar and alveolar epithelial cells SH",
+                                "lung Ciliated epithelial cells SH")]
+scatac_df_top_5 = cbind(scatac_df_top_5, scatac_df_lung[, c("proximal lung Basal",
+                                                            "proximal lung Tuft.like",
+                                                            "proximal lung Ciliated")])
+corrs_pearson = cor(scatac_df_top_5, lung_squamous)
+ha <- HeatmapAnnotation(subtype = squamous_subtypes, col = list(subtype = subtype_colors))
+Heatmap(scale(corrs_pearson), 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        top_annotation = ha,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3))
+plot_count_distribution(lung_squamous, "lung_squamous_counts.pdf")
+
 
 #### Pancreas-AdenoCA ####
 pancreas_adenoca = read.csv("../data/mutation_data/Panc-AdenoCA.txt",
@@ -261,22 +391,31 @@ combined_colors = list(subtype = subtype_colors, dataset = dataset_colors,
                        rna_subtype = rna_subtype_colors)
 # ha <- HeatmapAnnotation(subtype = donor_to_subtype, col = list(subtype = subtype_colors))
 ha <- HeatmapAnnotation(df = data.frame(combined_annotation), col = combined_colors)
-
 column_order <- order(scale(corrs_pearson)["stomach Goblet cells SH", ])
+pdf("goblet.pdf", width=45, height=10)
 Heatmap(scale(corrs_pearson), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 2),
         row_names_gp = grid::gpar(fontsize = 8),
-        top_annotation = ha,
-        column_order = column_order)
-column_order <- order(scale(corrs_pearson)["stomach Foveolar Cell BR", ])
-Heatmap(scale(corrs_pearson), 
-        col = RColorBrewer::brewer.pal(9, "RdBu"),
-        column_names_gp = grid::gpar(fontsize = 2),
-        row_names_gp = grid::gpar(fontsize = 8),
-        top_annotation = ha,
-        column_order = column_order)
+        # top_annotation = ha,
+        column_order = column_order,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
+        show_heatmap_legend = F)
+dev.off()
 
+column_order <- order(scale(corrs_pearson)["stomach Foveolar Cell BR", ])
+pdf("foveolar.pdf", width=45, height=10)
+Heatmap(scale(corrs_pearson), 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        # top_annotation = ha,
+        column_order = column_order,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
+        show_heatmap_legend = F)
+dev.off()
+
+plot_count_distribution(pancreas_adenoca, "panc_adenoca_counts.pdf")
 
 #### ColoRect-AdenoCA ####
 dataset = "Bingren"
@@ -319,33 +458,48 @@ colon_adenoca = colon_adenoca[chr_ranges %in% chr_keep, ]
 colon_adenoca = colon_adenoca[, 4:ncol(colon_adenoca)]
 
 corrs_pearson = cor(colon_intestine_scatac_df, colon_adenoca)
-column_order <- order(scale(corrs_pearson["stomach Foveolar Cell BR", ]))
+column_order <- order(scale(corrs_pearson)["stomach Foveolar Cell BR", ])
 Heatmap(scale(corrs_pearson), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 2),
         row_names_gp = grid::gpar(fontsize = 8),
-        column_order = column_order)
+        column_order = column_order,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
 
-column_order <- order(corrs_pearson["stomach Goblet cells SH", ])
+column_order <- order(scale(corrs_pearson)["stomach Goblet cells SH", ])
 Heatmap(scale(corrs_pearson), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 2),
         row_names_gp = grid::gpar(fontsize = 8),
-        column_order = column_order)
+        column_order = column_order,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
 
-column_order <- order(corrs_pearson["intestine Intestinal epithelial cells SH", ])
+column_order <- order(scale(corrs_pearson)["intestine Intestinal epithelial cells SH", ])
 Heatmap(scale(corrs_pearson), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 2),
         row_names_gp = grid::gpar(fontsize = 8),
-        column_order = column_order)
+        column_order = column_order,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
 
-column_order <- order(corrs_pearson["colon_transverse Colonic Goblet Cell BR", ])
+column_order <- order(scale(corrs_pearson)["colon_transverse Colonic Goblet Cell BR", ])
 Heatmap(scale(corrs_pearson), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 2),
         row_names_gp = grid::gpar(fontsize = 8),
-        column_order = column_order)
+        column_order = column_order,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
+
+column_order <- order(scale(corrs_pearson)["intestine Intestinal epithelial cells SH", ])
+Heatmap(scale(corrs_pearson), 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        column_order = column_order,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
+
+plot_count_distribution(colon_adenoca, "colorect_adenoca_counts.pdf")
+
 #### Brain ####
 scatac_df_gl = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Greenleaf_brain_same+as+paper+but+Early+RG+Late+RG-RG_Unk-rm/Greenleaf_brain_combined_count_overlaps.rds"))
 colnames(scatac_df_gl) = paste(colnames(scatac_df_gl), "GL_Br")
