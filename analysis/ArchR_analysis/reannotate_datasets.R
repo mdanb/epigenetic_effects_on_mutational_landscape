@@ -96,22 +96,46 @@ option_list <- list(
 #                       "--marker_genes=CD3D,CD3E,CD3G,CD247,CD4,CD8A,CD8B,IL2RA,FOXP3,IL7R,PTPRC,MS4A1,CD19,NCAM1,ITGAM,CD14,FCGR3A,FCGR3B,FCGR2A,FCGR2B")
 # )
 
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=1",
+#                       "--marker_genes=SCGB3A1,SCGB3A2,TP63,KRT5")
+# )
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=1",
+#                       "--marker_genes=CD3D,CD3E,CD3G,CD247,CD4,CD8A,CD8B,IL2RA,FOXP3,IL7R,PTPRC,MS4A1,CD19,NCAM1,ITGAM,CD14,FCGR3A,FCGR3B,FCGR2A,FCGR2B")
+# )
+
 args = parse_args(OptionParser(option_list=option_list), args=
                     c("--cores=8",
                       "--dataset=Tsankov",
                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
                       "--sep_for_metadata=,",
                       "--cell_type_col_in_metadata=celltypes",
-                      "--cluster",
-                      "--cluster_res=0.5",
-                      "--tissue=RPL",
+                      "--tissue=all",
                       "--nfrags_filter=1",
                       "--tss_filter=0",
                       "--cell_types=all",
                       "--min_cells_per_cell_type=1",
-                      "--filter_doublets",
-                      "--filter_per_cell_type",
-                      "--marker_genes=MUC5B,SCGB1A1,FOXA3,FOXJ1,DNAI1,TUBA1A,DNAH5")
+                      "--marker_genes=KIT,FCER1A,TPSAB1,TPSB2,CPA3,CMA1,HNMT,HRH1")
 )
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
@@ -402,6 +426,17 @@ if (cluster) {
 }
 
 if (plot_cell_types) {
+  if (dataset == "Tsankov") {
+    cell_col_data[grepl("Sec-Ciliated", cell_col_data[["cell_type"]]), 
+                  "cell_type"] = "proximal Ciliated"
+    cell_col_data[grepl("IC", rownames(cell_col_data)), "cell_type"] =
+      paste("proximal", cell_col_data[grepl("IC", rownames(cell_col_data)), 
+                                      "cell_type"])
+    cell_col_data[grepl("RPL", rownames(cell_col_data)), "cell_type"] =
+      paste("distal", cell_col_data[grepl("RPL", rownames(cell_col_data)), 
+                                      "cell_type"])
+    proj@cellColData = cell_col_data
+  }
   p <- plotEmbedding(
         ArchRProj = proj, 
         colorBy = "cellColData", 
