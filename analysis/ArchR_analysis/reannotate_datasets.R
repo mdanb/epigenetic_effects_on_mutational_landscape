@@ -124,6 +124,20 @@ option_list <- list(
 #                       "--marker_genes=CD3D,CD3E,CD3G,CD247,CD4,CD8A,CD8B,IL2RA,FOXP3,IL7R,PTPRC,MS4A1,CD19,NCAM1,ITGAM,CD14,FCGR3A,FCGR3B,FCGR2A,FCGR2B")
 # )
 
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=1",
+#                       "--marker_genes=KIT,FCER1A,TPSAB1,TPSB2,CPA3,CMA1,HNMT,HRH1")
+# )
+# 
 args = parse_args(OptionParser(option_list=option_list), args=
                     c("--cores=8",
                       "--dataset=Tsankov",
@@ -135,8 +149,11 @@ args = parse_args(OptionParser(option_list=option_list), args=
                       "--tss_filter=0",
                       "--cell_types=all",
                       "--min_cells_per_cell_type=1",
-                      "--marker_genes=KIT,FCER1A,TPSAB1,TPSB2,CPA3,CMA1,HNMT,HRH1")
+                      "--de_novo_marker_discovery",
+                      "--cluster_res=0.5",
+                      "--filter_doublets")
 )
+
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
                                             dataset) {
@@ -325,10 +342,10 @@ if (dir.exists(proj_dir)) {
   print("Loading existing project")
   proj <- loadArchRProject(proj_dir)
   if (filter_doublets) {
-    if (dataset == "Tsankov" && tissue=="RPL") {
+    if (dataset == "Tsankov") {
       cell_col_data = getCellColData(proj)
-      idx = cell_col_data[["cell_type"]] == "AT2"
-      idx_2 = cell_col_data[["DoubletEnrichment"]] >= 8
+      idx = cell_col_data[["cell_type"]] == "distal AT2"
+      idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
       proj = proj[!(idx & idx_2)]
     }
   }
@@ -405,7 +422,7 @@ if (cluster) {
                       resolution = cluster_res, 
                       force=T)
   if (save_clusters) {
-    proj = saveArchRProject(ArchRProj = proj)
+    proj = saveArchRProject(ArchRProj = proj, load=T)
   }
   cell_col_data = getCellColData(proj)
   
@@ -453,7 +470,14 @@ if (plot_cell_types) {
 }
 
 if (!(is.null(marker_genes))) {
-  proj <- addImputeWeights(proj)
+  impute_weights_dir = paste(proj_dir, "ImputeWeights", sep="/")
+  if (!dir.exists(impute_weights_dir)) {
+    proj <- addImputeWeights(proj)
+    proj <- saveArchRProject(ArchRProj = proj, 
+                             outputDirectory = proj_dir,
+                             load = TRUE)
+  }
+  
   marker_genes = unlist(strsplit(marker_genes, split=","))
   p <- plotEmbedding(
     ArchRProj = proj, 
@@ -499,6 +523,15 @@ if (!(is.null(marker_genes))) {
 }
 
 if (de_novo_marker_discovery) {
+    tryCatch({
+      gsSE = getMatrixFromProject(proj, useMatrix = 'GeneScoreMatrix')
+    }, error = function(e) {
+      proj = addGeneScoreMatrix(proj)
+      proj = saveArchRProject(ArchRProj = proj, 
+                               outputDirectory = proj_dir,
+                               load = TRUE)
+    })
+    proj = addGeneScoreMatrix(proj)
     gsSE = getMatrixFromProject(proj, useMatrix = 'GeneScoreMatrix')
     gsSE = gsSE[, proj$cellNames]
     metaGroupName = paste("Clusters", "res", cluster_res, sep="_")
@@ -547,12 +580,12 @@ if (de_novo_marker_discovery) {
   })
   DAG_df = Reduce(rbind, DAG_top_list)
   
-  gsMat = assays (gsSE)[[1]]
-  rownames (gsMat) = rowData (gsSE)$name
-  gsMat_mg = gsMat[rownames (gsMat) %in% DAG_df$gene, ]
-  gsMat_mg = as.data.frame (t(gsMat_mg))
+  gsMat = assays(gsSE)[[1]]
+  rownames(gsMat) = rowData(gsSE)$name
+  gsMat_mg = gsMat[rownames(gsMat) %in% DAG_df$gene, ]
+  gsMat_mg = as.data.frame(t(gsMat_mg))
   gsMat_mg$metaGroup = as.character(proj@cellColData[,metaGroupName])
-  gsMat_mg = aggregate (. ~ metaGroup, gsMat_mg, mean)
+  gsMat_mg = aggregate(. ~ metaGroup, gsMat_mg, mean)
   rownames(gsMat_mg) = gsMat_mg[, 1]
   gsMat_mg = gsMat_mg[, -1]
   gsMat_mg = gsMat_mg[names(table(proj@cellColData[, metaGroupName])[table 
@@ -653,8 +686,8 @@ if (dataset == "Tsankov" && tissue == "all" && nfrags_filter == 1000 &&
   markers = c("TP63", "SOX2", "HES2", "FOXA1", "SOX4", "NKX21")
   markers_p = list() 
   for (i in markers) {
-    markerMotifs = getFeatures (proj, select = paste0(i, "_"), 
-                                useMatrix = "MotifMatrix")
+    markerMotifs = getFeatures(proj, select = paste0(i, "_"), 
+                               useMatrix = "MotifMatrix")
     markerMotifs2 = grep("z:", markerMotifs, value = TRUE)
     markers_p[[i]] = plotEmbedding(ArchRProj = proj, 
                                     colorBy = "MotifMatrix", 
