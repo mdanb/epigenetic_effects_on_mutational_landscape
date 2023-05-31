@@ -13,8 +13,8 @@ parser.add_argument('--annotation_dir', type=str,
 parser.add_argument('--seed_ranges', type=str)
 
 config = parser.parse_args()
-cancer_types = config.cancer_types
-datasets = sorted(config.datasets)
+cancer_types = " ".join(config.cancer_types)
+datasets = " ".join(sorted(config.datasets))
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
 annotation_dir = config.annotation_dir
 
