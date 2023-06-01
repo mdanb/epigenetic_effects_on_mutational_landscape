@@ -9,14 +9,11 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
-from pipelinehelper import PipelineHelper
-from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
-from xgboost import XGBRegressor
+from xgboost import XGBRegressor, DMatrix
+import optuna
 
-
-# Load Data helpers
+### Load Data helpers ###
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                    histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
                    CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor):
@@ -90,31 +87,6 @@ def load_meso():
                        index_col=0)
     return(df.loc[natsorted(df.index)])
 
-# def load_meso_mutations(meso_waddell_and_biphasic, meso_waddell_only, meso_waddell_and_broad_only,
-#                         meso_waddell_biph_786_846):
-# def load_meso_mutations(waddell_sarc_biph,
-#                         waddell_sarc,
-#                         waddell_sarc_tsankov_sarc,
-#                         waddell_sarc_biph_tsankov_sarc_biph):
-#     if (waddell_sarc_biph):
-#         # (waddell sarcomatoid + waddell biphasic = 5 samples) + waddell epithelioid
-#         df = pd.read_csv("../../data/processed_data/meso_mut_count_data.csv",
-#                            index_col=0)
-#     elif (waddell_sarc):
-#         # (just waddell sarcomatoid = 2 samples) + waddell epithelioid
-#         df = pd.read_csv("../../data/processed_data/mesothelioma_epithelioid_sarcomatoid2_WGS_Waddell.csv",
-#                            index_col=0)
-#     elif (waddell_sarc_tsankov_sarc):
-#         # (waddell sarcomatoid + tsankov sarcomatoid = 3 samples)
-#         df = pd.read_csv("../../data/processed_data/mesothelioma_p786_waddell_sarco.csv",
-#                            index_col=0)
-#     elif (waddell_sarc_biph_tsankov_sarc_biph):
-#          # (waddell sarcomatoid + waddell biphasic + tsankov sarcomatoid + tsankov biphasic
-#          # = 7 samples) + waddell epithelioid
-#          df = pd.read_csv("../../data/processed_data/mesothelioma_epithelioid_sarcomatoid_biphasic_WGS_Waddell_786_846.csv",
-#                            index_col=0)
-#     return(df.loc[natsorted(df.index)])
-
 def load_sclc_mutations():
     df = pd.read_csv("../../data/processed_data/sclc_count_overlaps.csv",
                        index_col=0)
@@ -136,16 +108,10 @@ def load_de_novo_seurat_clustered_cancers(cancer_types):
     seurat_cluster_settings = cancer_types[0].split("x")[1]
     df = pd.read_csv(f"../../data/processed_data/de_novo_seurat_clustered_mutations/{cancer_type}/"
                      f"{seurat_cluster_settings}.csv", index_col=0)
-    # df = pd.read_csv("../../data/processed_data/de_novo_clustered_panc_adeno_mutations.csv",
-    #                    index_col=0)
     return(df.loc[natsorted(df.index)])
 
-# Filter Data Helpers
+#### Filter Data Helpers ####
 def filter_agg_data(scATAC_df, mutations_df):
-    # if (meso):
-    #     idx_select = scATAC_df.index.isin(mutations_df.index)
-    #     scATAC_df = scATAC_df[idx_select]
-    # else:
     idx_select = ~pd.isnull(mutations_df).any(axis=1)
     scATAC_df = scATAC_df.loc[idx_select]
     mutations_df = mutations_df[idx_select]
@@ -165,7 +131,7 @@ def filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_fil
     scATAC_df = scATAC_df.loc[:, scATAC_df.columns.isin(keep)]
     return(scATAC_df)
 
-# Dataframe curation helpers
+#### Dataframe curation helpers ####
 def add_na_ranges(mutations_df):
     full_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
     mutations_df = pd.merge(full_ranges, mutations_df, left_on = "x", right_index=True,
@@ -186,18 +152,6 @@ def add_dataset_origin_to_cell_types(df, dataset):
     elif (dataset == "Yang_kidney"):
         df.columns = [c + " Y_K" for c in df.columns]
     return(df)
-
-# def append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-#                                         waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir):
-#     if (waddell_sarc_biph):
-#         scATAC_dir = scATAC_dir + "_waddell_sarc_biph"
-#     elif (waddell_sarc):
-#         scATAC_dir = scATAC_dir + "_waddell_sarc"
-#     elif (waddell_sarc_tsankov_sarc):
-#         scATAC_dir = scATAC_dir + "_waddell_sarc_tsankov_sarc"
-#     elif (waddell_sarc_biph_tsankov_sarc_biph):
-#          scATAC_dir = scATAC_dir + "_waddell_sarc_biph_tsankov_sarc_biph"
-#     return(scATAC_dir)
 
 def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir):
     datasets_combined_count_overlaps = []
@@ -224,13 +178,13 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
     return(scATAC_df)
 
 
-# Split Train/Test helpers
+#### Split Train/Test helpers ####
 def get_train_test_split(X, y, test_size, seed):
     X_train, X_test, y_train, y_test = train_test_split(X, y,
                                                         test_size=test_size, random_state=seed)
     return X_train, X_test, y_train, y_test
 
-# Feature Selection helpers
+#### Feature Selection helpers ####
 def get_top_n_features(clf, n, features):
     feature_importances = clf.feature_importances_
     feat_importance_idx = np.argsort(feature_importances)[::-1]
@@ -257,18 +211,12 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n,
     for idx in range(1, len(top_n_feats)):
         filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}.txt"
         if (not os.path.exists(filepath)):
-            if (ML_model == "RF"):
-                pipe = Pipeline([
-                    ('regressor', PipelineHelper([
-                        ('rf', RandomForestRegressor(random_state=idx)),
-                    ])),
-                ])
-            elif (ML_model == "XGB"):
-                pipe = Pipeline([
-                    ('regressor', PipelineHelper([
-                        ('xgb', XGBRegressor(random_state=idx)),
-                    ])),
-                ])
+            if (ML_model == "XGB"):
+
+            # 3. Create a study object and optimize the objective function.
+            study = optuna.create_study(direction='maximize')
+            study.optimize(objective, n_trials=100)
+
             grid_search_results = grid_search(X_train, y_train, pipe, params, num_k_folds)
             pickle.dump(grid_search_results, open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'wb'))
         grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
@@ -278,7 +226,7 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n,
         if (not os.path.exists(filepath)):
             print_and_save_top_features(top_n_feats, filepath=filepath)
 
-# Model train/val/test helpers
+#### Model train/val/test helpers ####
 def grid_search(X_train, y_train, pipe, params, num_k_folds):
     start_time = time.time()
     grid_search_object = GridSearchCV(pipe, params, scoring="r2",
@@ -286,6 +234,26 @@ def grid_search(X_train, y_train, pipe, params, num_k_folds):
     grid_search_object.fit(X_train, y_train)
     print(f"--- {time.time() - start_time} seconds ---")
     return grid_search_object
+
+def optuna_objective(trial, ML_model):
+    kfold = KFold(n_splits=10, shuffle=True)
+
+    param = {
+        'silent': 1,
+        'objective': 'binary:logistic',
+        'booster': trial.suggest_categorical('booster', ['gbtree', 'gblinear', 'dart']),
+        'lambda': trial.suggest_float('lambda', 1e-8, 1.0, log=True),
+        'alpha': trial.suggest_float('alpha', 1e-8, 1.0, log=True),
+        'max_depth': trial.suggest_int('max_depth', 3, 10),
+        'eta': trial.suggest_float('eta', 1e-8, 1.0, log=True),
+        'subsample': trial.suggest_float('subsample', 0.1, 1.0),
+        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
+        'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
+    }
+
+    cv_results = xgb.cv(param, dtrain=data, num_boost_round=5000, nfold=5, metrics="error", as_pandas=True, seed=123)
+    mean_error = cv_results["test-error-mean"].min()
+    return mean_error
 
 def print_and_save_test_set_perf(X_test, y_test, model, filepath):
     test_preds = model.predict(X_test)
@@ -298,31 +266,9 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_s
                    ML_model, seed):
     X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10, seed)
 
-    if (ML_model == "RF"):
-        pipe = Pipeline([
-            ('regressor', PipelineHelper([
-                ('rf', RandomForestRegressor(random_state=seed)),
-            ])),
-        ])
+    if ML_model == "XGB":
 
-        params_dict = {'rf__n_estimators':[10, 100, 1000]}
-        params = {
-            'regressor__selected_model': pipe.named_steps['regressor'].generate(params_dict)
-        }
-    elif (ML_model == "XGB"):
-        pipe = Pipeline([
-            ('regressor', PipelineHelper([
-                ('xgb', XGBRegressor(random_state=seed)),
-            ])),
-        ])
-
-        params_dict = {'xgb__max_depth':[3, 6, 9],
-                       'xgb__eta':[0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]}
-        params = {
-            'regressor__selected_model': pipe.named_steps['regressor'].generate(params_dict)
-        }
-
-    if (not os.path.exists(cv_filename)):
+    if not os.path.exists(cv_filename):
         grid_search_results = grid_search(X_train, y_train, pipe, params, 10)
         pickle.dump(grid_search_results, open(cv_filename, 'wb'))
 
@@ -330,13 +276,8 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_s
     print(f"Best Score: {grid_search_results.best_score_}\n")
     best_model = grid_search_results.best_estimator_.get_params()['regressor__selected_model']
     n = 20
-    # top_n_feats = get_top_n_features(best_model, n, X_train.columns.values)
-    # top_n_feats_tissue_spec = get_top_n_features(best_model_tissue_spec, n, X_train_tissue_spec.columns.values)
-    #print_top_features(top_n_feats)
-
     backward_eliminate_features(X_train, y_train, best_model, n, params, 10, backwards_elim_dir, ML_model)
-
-    #### Test Set Performance ####
+    # Test Set Performance
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filepath)
 
 def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_number_filter, tss_filter, annotation_dir,
@@ -359,7 +300,7 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
                                       histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
                                       CPTAC, combined_CPTAC_ICGC, per_donor)
 
-        if (not pd.isna(mutations_df).any().any()):
+        if not pd.isna(mutations_df).any().any():
             # for compatibility
             mutations_df = add_na_ranges(mutations_df)
         scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
@@ -371,13 +312,11 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
                                  f"model_iteration_{n}_test_performance.txt"
         print_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
 
-# Other
+#### Other ####
 def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed):
     scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
     if (tss_filter):
         scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
-    # scATAC_dir = append_meso_to_dirname_as_necessary(waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-    #                                                  waddell_sarc_biph_tsankov_sarc_biph, scATAC_dir)
     scATAC_dir = scATAC_dir + f"_annotation_{annotation_dir}_seed_{seed}"
     return(scATAC_dir)
 
