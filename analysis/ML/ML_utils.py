@@ -3,14 +3,15 @@ from natsort import natsorted
 from itertools import chain
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import KFold
 import time
 import pandas as pd
 import numpy as np
 import pickle
 import os
 from sklearn.metrics import r2_score
-from xgboost import XGBRegressor, DMatrix
+from xgboost import XGBRegressor
+from sklearn.model_selection import cross_val_score
+from xgboost import DMatrix
 import optuna
 
 ### Load Data helpers ###
@@ -235,24 +236,24 @@ def grid_search(X_train, y_train, pipe, params, num_k_folds):
     print(f"--- {time.time() - start_time} seconds ---")
     return grid_search_object
 
-def optuna_objective(trial, ML_model):
-    kfold = KFold(n_splits=10, shuffle=True)
+def optuna_objective(trial, ML_model, seed):
+    if ML_model == "XGB":
+        param = {
+            'silent': 1,
+            'objective': 'binary:logistic',
+            'booster': trial.suggest_categorical('booster', ['gbtree', 'gblinear', 'dart']),
+            'lambda': trial.suggest_float('lambda', 1e-8, 1.0, log=True),
+            'alpha': trial.suggest_float('alpha', 1e-8, 1.0, log=True),
+            'max_depth': trial.suggest_int('max_depth', 3, 10),
+            'eta': trial.suggest_float('eta', 1e-8, 1.0, log=True),
+            'subsample': trial.suggest_float('subsample', 0.1, 1.0),
+            'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
+            'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
+        }
 
-    param = {
-        'silent': 1,
-        'objective': 'binary:logistic',
-        'booster': trial.suggest_categorical('booster', ['gbtree', 'gblinear', 'dart']),
-        'lambda': trial.suggest_float('lambda', 1e-8, 1.0, log=True),
-        'alpha': trial.suggest_float('alpha', 1e-8, 1.0, log=True),
-        'max_depth': trial.suggest_int('max_depth', 3, 10),
-        'eta': trial.suggest_float('eta', 1e-8, 1.0, log=True),
-        'subsample': trial.suggest_float('subsample', 0.1, 1.0),
-        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
-        'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
-    }
-
-    cv_results = xgb.cv(param, dtrain=data, num_boost_round=5000, nfold=5, metrics="error", as_pandas=True, seed=123)
-    mean_error = cv_results["test-error-mean"].min()
+        cv_results = xgb.cv(param, dtrain=data, num_boost_round=5000, nfold=10, metrics="error", as_pandas=True,
+                            seed=seed)
+        mean_error = cv_results["test-error-mean"].min()
     return mean_error
 
 def print_and_save_test_set_perf(X_test, y_test, model, filepath):
