@@ -151,8 +151,7 @@ args = parse_args(OptionParser(option_list=option_list), args=
                       "--min_cells_per_cell_type=1",
                       "--de_novo_marker_discovery",
                       "--cluster_res=0.5",
-                      "--filter_doublets")
-)
+                      "--filter_doublets"))
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
@@ -524,18 +523,20 @@ if (!(is.null(marker_genes))) {
 
 if (de_novo_marker_discovery) {
     tryCatch({
+      print("Trying to load GeneScoreMatrix")
       gsSE = getMatrixFromProject(proj, useMatrix = 'GeneScoreMatrix')
+      print("Done loading GeneScoreMatrix")
     }, error = function(e) {
+      print("GeneScoreMatrix not found")
+      print("Creating GeneScoreMatrix")
       proj = addGeneScoreMatrix(proj)
       proj = saveArchRProject(ArchRProj = proj, 
                                outputDirectory = proj_dir,
                                load = TRUE)
     })
-    proj = addGeneScoreMatrix(proj)
-    gsSE = getMatrixFromProject(proj, useMatrix = 'GeneScoreMatrix')
     gsSE = gsSE[, proj$cellNames]
     metaGroupName = paste("Clusters", "res", cluster_res, sep="_")
-    if (!file.exists(paste0(projdir, 'DAG_', metaGroupName, '.rds'))) {
+    if (!file.exists(paste0(proj_dir, 'DAG_', metaGroupName, '.rds'))) {
       DAG_list = getMarkerFeatures(ArchRProj = proj,
                                    testMethod = "wilcoxon",
                                    binarize = FALSE,
@@ -557,7 +558,7 @@ if (de_novo_marker_discovery) {
   }
   FDR_threshold = 1e-2
   lfc_threshold = 2
-  top_genes = 20
+  top_genes = 50
   
   DAG_top_list = DAG_list[sapply(DAG_list, function(x) {
                                               nrow(x[x$FDR < FDR_threshold & 
@@ -598,7 +599,7 @@ if (de_novo_marker_discovery) {
                     cluster_rows = T,
                     #col = pals_heatmap[[5]],
                     cluster_columns=T,#col = pals_heatmap[[1]],
-                    row_names_gp = gpar(fontsize = 4),
+                    row_names_gp = gpar(fontsize = 2),
                     column_names_gp = gpar(fontsize = 4),
                     rect_gp = gpar(col = "white", lwd = .5),
                     border=TRUE
@@ -606,7 +607,7 @@ if (de_novo_marker_discovery) {
   )
   
   DAG_grob = grid.grabExpr(draw(DAG_hm, column_title = 'DAG GeneScore2', 
-                                column_title_gp = gpar(fontsize = 16)))
+                                column_title_gp = gpar(fontsize = 13)))
   pdf(paste0(proj_dir, '/Plots/DAG_clusters_', metaGroupName, '_heatmaps.pdf'), 
        width = 4, height = 10)
   DAG_hm
