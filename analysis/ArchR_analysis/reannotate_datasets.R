@@ -524,18 +524,20 @@ if (!(is.null(marker_genes))) {
 
 if (de_novo_marker_discovery) {
     tryCatch({
+      print("Trying to load GeneScoreMatrix")
       gsSE = getMatrixFromProject(proj, useMatrix = 'GeneScoreMatrix')
+      print("Done loading GeneScoreMatrix")
     }, error = function(e) {
+      print("GeneScoreMatrix not found")
+      print("Creating GeneScoreMatrix")
       proj = addGeneScoreMatrix(proj)
       proj = saveArchRProject(ArchRProj = proj, 
                                outputDirectory = proj_dir,
                                load = TRUE)
     })
-    proj = addGeneScoreMatrix(proj)
-    gsSE = getMatrixFromProject(proj, useMatrix = 'GeneScoreMatrix')
     gsSE = gsSE[, proj$cellNames]
     metaGroupName = paste("Clusters", "res", cluster_res, sep="_")
-    if (!file.exists(paste0(projdir, 'DAG_', metaGroupName, '.rds'))) {
+    if (!file.exists(paste0(proj_dir, 'DAG_', metaGroupName, '.rds'))) {
       DAG_list = getMarkerFeatures(ArchRProj = proj,
                                    testMethod = "wilcoxon",
                                    binarize = FALSE,
@@ -598,7 +600,7 @@ if (de_novo_marker_discovery) {
                     cluster_rows = T,
                     #col = pals_heatmap[[5]],
                     cluster_columns=T,#col = pals_heatmap[[1]],
-                    row_names_gp = gpar(fontsize = 4),
+                    row_names_gp = gpar(fontsize = 2),
                     column_names_gp = gpar(fontsize = 4),
                     rect_gp = gpar(col = "white", lwd = .5),
                     border=TRUE
@@ -606,7 +608,7 @@ if (de_novo_marker_discovery) {
   )
   
   DAG_grob = grid.grabExpr(draw(DAG_hm, column_title = 'DAG GeneScore2', 
-                                column_title_gp = gpar(fontsize = 16)))
+                                column_title_gp = gpar(fontsize = 13)))
   pdf(paste0(proj_dir, '/Plots/DAG_clusters_', metaGroupName, '_heatmaps.pdf'), 
        width = 4, height = 10)
   DAG_hm
