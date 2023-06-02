@@ -6,29 +6,29 @@ parser.add_argument('--cancer_types', nargs="+", type=str,
                     help='which cancer types to analyze', default=None)
 parser.add_argument('--datasets', nargs="+", type=str,
                     help='which sc-ATACseq datasets to analyze', required=True)
-parser.add_argument('--scATAC_cell_number_filter', type=int,
+parser.add_argument('--scATAC_cell_number_filter', type=str,
                     help='minimum number of cells per cell type in scATAC', default=100)
 parser.add_argument('--annotation_dir', type=str,
                     help='name of annotation directory', default="default_annotation")
 parser.add_argument('--seed_ranges', type=str)
 
 config = parser.parse_args()
-cancer_types = " ".join(config.cancer_types)
-datasets = " ".join(sorted(config.datasets))
+cancer_types = config.cancer_types
+datasets = sorted(config.datasets)
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
 annotation_dir = config.annotation_dir
 
 ranges = config.seed_ranges.split(',')
 
 for seed_range in ranges:
-    script_filename = "_".join(["cancer_types", cancer_types,
-                                "datasets", datasets,
+    script_filename = "_".join(["cancer_types", "_".join(cancer_types),
+                                "datasets", "_".join(datasets),
                                 "scATAC_cell_number_filter", scATAC_cell_number_filter,
                                 "annotation_dir", annotation_dir,
                                 "seed_range", seed_range])
     script_filename = f"{script_filename}.sh"
-    command_args = " ".join(["--cancer_types", cancer_types,
-                             "--datasets", datasets,
+    command_args = " ".join(["--cancer_types", " ".join(cancer_types),
+                             "--datasets", " ".join(datasets),
                              "--scATAC_cell_number_filter", scATAC_cell_number_filter,
                              "--annotation_dir", annotation_dir,
                              "--seed_range", seed_range])

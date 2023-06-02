@@ -104,12 +104,12 @@ get_sample_filename <- function(file, dataset) {
   }
   else if (dataset == "Greenleaf_pbmc_bm") {
     filename = paste("Greenleaf_pbmc_bm_count_overlaps", 
-                     paste(remove_extension(file, TRUE),
+                     paste(remove_extension(file),
                      "rds", sep="."), sep="_")
   }
   else if (dataset == "Yang_kidney") {
     filename = paste("Yang_kidney_count_overlaps",
-                     paste(remove_extension(file, TRUE),
+                     paste(remove_extension(file),
                      "rds", sep="."), sep="_")
   }
   return(filename)
