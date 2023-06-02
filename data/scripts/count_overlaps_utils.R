@@ -31,7 +31,7 @@ filter_samples_to_contain_only_cells_in_metadata <- function(i,
                                                              samples,
                                                              sample_barcodes_in_metadatas) {
   samples[[i]] = samples[[i]][samples[[i]]$name %in% 
-                              sample_barcodes_in_metadatas[[i]]]
+                                sample_barcodes_in_metadatas[[i]]]
   return(samples[[i]])
 }
 
@@ -51,15 +51,15 @@ import_sample <- function(file, dataset) {
   }
   else if (dataset == "Tsankov") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
-                                 "BingRen_scATAC_atlas", "data", "bed_files",
-                                 "Tsankov_scATAC", "migrated_to_hg19",
-                                 file, sep="/"), format="bed")
+                          "BingRen_scATAC_atlas", "data", "bed_files",
+                          "Tsankov_scATAC", "migrated_to_hg19",
+                          file, sep="/"), format="bed")
   }
   else if (dataset == "Greenleaf_brain") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
-                                 "BingRen_scATAC_atlas", "data", "bed_files",
-                                 "greenleaf_brain_scATAC", "migrated_to_hg19",
-                                 file, sep="/"), format="bed")
+                          "BingRen_scATAC_atlas", "data", "bed_files",
+                          "greenleaf_brain_scATAC", "migrated_to_hg19",
+                          file, sep="/"), format="bed")
   }
   else if (dataset == "Greenleaf_pbmc_bm") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
@@ -77,19 +77,19 @@ import_sample <- function(file, dataset) {
 }
 
 remove_extension <- function(path) {
-  return(gsub("\\.tsv\\.b*gz$", "", path))
+  return(gsub("\\.(tsv|txt)\\.b*gz$", "", path))
 }
 
 get_sample_filename <- function(file, dataset) {
   if (dataset == "Bingren") {
     filename = paste(paste("Bingren_count_overlaps", remove_extension(file),
                            sep="_"),
-                           "rds", sep=".")
+                     "rds", sep=".")
   }
   else if (dataset == "Shendure") {
     filename = paste(paste("Shendure_count_overlaps", remove_extension(file),
                            sep="_"),
-                           "rds", sep=".")
+                     "rds", sep=".")
   }
   else if (dataset == "Tsankov") {
     filename = paste(remove_extension(file))
@@ -100,17 +100,17 @@ get_sample_filename <- function(file, dataset) {
   }
   else if (dataset == "Greenleaf_brain") {
     filename = paste(paste("Greenleaf_brain_count_overlaps", 
-                     remove_extension(file), sep="_"), "rds", sep = ".")
+                           remove_extension(file), sep="_"), "rds", sep = ".")
   }
   else if (dataset == "Greenleaf_pbmc_bm") {
     filename = paste("Greenleaf_pbmc_bm_count_overlaps", 
                      paste(remove_extension(file, TRUE),
-                     "rds", sep="."), sep="_")
+                           "rds", sep="."), sep="_")
   }
   else if (dataset == "Yang_kidney") {
     filename = paste("Yang_kidney_count_overlaps",
                      paste(remove_extension(file, TRUE),
-                     "rds", sep="."), sep="_")
+                           "rds", sep="."), sep="_")
   }
   return(filename)
 }
@@ -124,16 +124,16 @@ get_fragments_by_cell_barcode <- function(i, sample_idx, fragments,
 get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
   if (dataset == "Bingren") {
     sample_barcodes_in_metadata = get_sample_barcodes_in_metadata_helper(filtered_metadata,
-                                                                  "cellID",
-                                                                  "\\+")
+                                                                         "cellID",
+                                                                         "\\+")
   }
   else if (dataset == "Shendure") {
     sample_barcodes_in_metadata = filtered_metadata[["cell"]]
   }
   else if (dataset == "Tsankov") {
     sample_barcodes_in_metadata = get_sample_barcodes_in_metadata_helper(filtered_metadata, 
-                                                                  "sample",
-                                                                  "#")
+                                                                         "sample",
+                                                                         "#")
     sample_barcodes_in_metadata = substr(sample_barcodes_in_metadata, 1, 16)
   }
   else if (dataset == "Greenleaf_pbmc_bm" || dataset == "Yang_kidney") {
@@ -151,7 +151,7 @@ get_sample_barcodes_in_metadata_helper <- function(metadata, cellID_col_name,
                                                    separator_char) {
   sample_barcodes_in_metadata = unlist(lapply(metadata[[cellID_col_name]],
                                               function(x) unlist(strsplit(x,
-                                                           separator_char))[2]))
+                                                                          separator_char))[2]))
   return(sample_barcodes_in_metadata)
 }
 
@@ -193,6 +193,9 @@ get_sample_name_bingren <- function(file) {
 
 get_sample_name_shendure <- function(file) {
   sample_name = unlist(strsplit(file, split="\\."))[1]
+  if (grepl("cerebrum", file)) {
+    sample_name = gsub("cerebrum", "brain", sample_name)
+  }
   return(sample_name)
 }
 
