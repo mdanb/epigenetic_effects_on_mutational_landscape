@@ -11,8 +11,8 @@ import os
 from sklearn.metrics import r2_score
 from xgboost import XGBRegressor
 from sklearn.model_selection import cross_val_score
-from xgboost import DMatrix
 import optuna
+
 
 ### Load Data helpers ###
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
@@ -200,8 +200,8 @@ def print_and_save_top_features(top_features, filepath):
         print(f"{idx+1}. {feature}")
         f.write(f"{idx+1}. {feature}\n")
 
-def backward_eliminate_features(X_train, y_train, starting_clf, starting_n,
-                                params, num_k_folds, backwards_elim_dir, ML_model):
+def backward_eliminate_features(X_train, y_train, starting_clf, starting_n, backwards_elim_dir,
+                                ML_model, scATAC_dir, seed):
     os.makedirs(backwards_elim_dir, exist_ok=True)
     top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values)
     all_feature_rankings = get_top_n_features(starting_clf, len(X_train.columns.values), X_train.columns.values)
@@ -211,50 +211,45 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n,
                                 filepath=f"{backwards_elim_dir}/starter_model_top_features.txt")
     for idx in range(1, len(top_n_feats)):
         filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}.txt"
-        if (not os.path.exists(filepath)):
-            if (ML_model == "XGB"):
+        if not os.path.exists(filepath):
+            study = optimize_optuna_study(study_name=scATAC_dir, ML_model=ML_model, X_train=X_train, y_train=y_train,
+                                          seed=seed)
+        best_params = study.best_params
+        if ML_model == "XGB":
+            best_model = XGBRegressor(**best_params)
 
-            # 3. Create a study object and optimize the objective function.
-            study = optuna.create_study(direction='maximize')
-            study.optimize(objective, n_trials=100)
-
-            grid_search_results = grid_search(X_train, y_train, pipe, params, num_k_folds)
-            pickle.dump(grid_search_results, open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'wb'))
-        grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
-        best_model = grid_search_results.best_estimator_.get_params()['regressor__selected_model']
+        # grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
         top_n_feats = get_top_n_features(best_model, len(X_train.columns) - 1, X_train.columns)
         X_train = X_train.loc[:, top_n_feats]
         if (not os.path.exists(filepath)):
             print_and_save_top_features(top_n_feats, filepath=filepath)
 
 #### Model train/val/test helpers ####
-def grid_search(X_train, y_train, pipe, params, num_k_folds):
-    start_time = time.time()
-    grid_search_object = GridSearchCV(pipe, params, scoring="r2",
-                                      cv=KFold(num_k_folds), n_jobs=-1, verbose=100)
-    grid_search_object.fit(X_train, y_train)
-    print(f"--- {time.time() - start_time} seconds ---")
-    return grid_search_object
+def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed):
+    study = optuna.create_study(direction="maximize",
+                                storage="sqlite:///db.sqlite3",
+                                study_name=study_name)
 
-def optuna_objective(trial, ML_model, seed):
+    study.optimize(lambda trial: optuna_objective(trial, ML_model=ML_model, X=X_train, y=y_train,
+                                                  seed=seed), n_trials=100)
+    return study
+
+def optuna_objective(trial, ML_model, X, y, seed):
     if ML_model == "XGB":
         param = {
-            'silent': 1,
-            'objective': 'binary:logistic',
-            'booster': trial.suggest_categorical('booster', ['gbtree', 'gblinear', 'dart']),
-            'lambda': trial.suggest_float('lambda', 1e-8, 1.0, log=True),
-            'alpha': trial.suggest_float('alpha', 1e-8, 1.0, log=True),
+            'n_estimators': trial.suggest_int('n_estimators', 100, 500),
             'max_depth': trial.suggest_int('max_depth', 3, 10),
-            'eta': trial.suggest_float('eta', 1e-8, 1.0, log=True),
+            'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
             'subsample': trial.suggest_float('subsample', 0.1, 1.0),
             'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
             'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
+            'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
+            'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
         }
+        model = XGBRegressor(**param, random_state=seed)
 
-        cv_results = xgb.cv(param, dtrain=data, num_boost_round=5000, nfold=10, metrics="error", as_pandas=True,
-                            seed=seed)
-        mean_error = cv_results["test-error-mean"].min()
-    return mean_error
+    score = cross_val_score(model, X=X, y=y, scoring="r2_score", n_jobs=-1, cv=10, verbose=100)
+    return score
 
 def print_and_save_test_set_perf(X_test, y_test, model, filepath):
     test_preds = model.predict(X_test)
@@ -263,21 +258,15 @@ def print_and_save_test_set_perf(X_test, y_test, model, filepath):
         f.write(str(test_set_performance))
     print(f"Test set performance: {test_set_performance}")
 
-def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_set_perf_filepath,
-                   ML_model, seed):
+def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filepath,
+                   ML_model, seed, scATAC_dir):
     X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10, seed)
-
+    study = optimize_optuna_study(study_name=scATAC_dir, ML_model=ML_model, X_train=X_train, y_train=y_train, seed=seed)
+    best_params = study.best_params
     if ML_model == "XGB":
-
-    if not os.path.exists(cv_filename):
-        grid_search_results = grid_search(X_train, y_train, pipe, params, 10)
-        pickle.dump(grid_search_results, open(cv_filename, 'wb'))
-
-    grid_search_results = pickle.load(open(cv_filename, 'rb'))
-    print(f"Best Score: {grid_search_results.best_score_}\n")
-    best_model = grid_search_results.best_estimator_.get_params()['regressor__selected_model']
+        best_model = XGBRegressor(**best_params)
     n = 20
-    backward_eliminate_features(X_train, y_train, best_model, n, params, 10, backwards_elim_dir, ML_model)
+    backward_eliminate_features(X_train, y_train, best_model, n, backwards_elim_dir, ML_model, scATAC_dir, seed)
     # Test Set Performance
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filepath)
 

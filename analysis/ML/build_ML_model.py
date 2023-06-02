@@ -33,7 +33,8 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
                        backwards_elim_dir,
                        test_set_perf_filepath,
                        ML_model,
-                       seed)
+                       seed,
+                       scATAC_dir)
 
     # Tissue Specific
     else:
