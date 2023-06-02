@@ -160,7 +160,7 @@ def filter_clustered_data(scATAC_df, mutations_df):
     return pd.DataFrame(scATAC_df, index=mutations_df.index)
 
 def filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata):
-    metadata = metadata.loc[metadata["num_cells"] >= scATAC_cell_number_filter, :]
+    metadata = metadata.loc[metadata["num_cells"] >= int(scATAC_cell_number_filter), :]
     try:
         keep = [tissue + " " + cell_type for tissue, cell_type in zip(metadata["tissue_name"], metadata["cell_type"])]
     except KeyError:
