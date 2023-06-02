@@ -4,7 +4,7 @@ library(BSgenome.Hsapiens.UCSC.hg19)
 library(stringr)
 library(dplyr)
 library(ComplexHeatmap)
-
+source("../../utils.R")
 option_list <- list( 
   make_option("--cores", type="integer"),
   make_option("--dataset", type="character", default="all"),
@@ -150,8 +150,9 @@ args = parse_args(OptionParser(option_list=option_list), args=
                       "--cell_types=all",
                       "--min_cells_per_cell_type=1",
                       "--de_novo_marker_discovery",
-                      "--cluster_res=0.5",
-                      "--filter_doublets")
+                      "--cluster_res=0.6",
+                      "--filter_doublets",
+                      "--marker_genes=CEBPE,GFI1,IRF1,GNL2,ELANE,PPARG,BHLHE41,EGR2,FABP4,HBA1,MARCO,MME,F13A1,SLC40A1,SELP,STAB1,FOLR2,CD1C,CD1A,FCER1A,HLA-DQA1,CLEC10A,PKIB,CLEC9A,GCSAM,BATF3,WDFY4,LILRA4,GZMB,IL3RX,LAMP3,CCR7,FSCN1,CCL22,MARCKSL1,EBI3,IDO1,S100A8,S100A9,S100A12,FCN1,CD14,VCAN,PTX3,LRG1,LYPD2,LST1,LILRB2,FCGR3A,NKG7,NCR1,SPON2,KLRD1,GNLY,KLRC1,KLRF1,FGFBP2,KIT,TPSAB1,CPA3,CTSG,BACH2,ITGA2B,GP1BA,VWF,FLI1,MS4A1,SDC1,KLK1,EBF1,CD79A,CD79B,PAX5,VPREB3,POU2AF1,MZB1,XBP1,CD3D,LEF1,TCF7,TCF3,IL7R,CD8A,CD4,BCL11B,FOXP3,IL2RA,TNFRSF4,TNFRSF18,CTLA4,EPCAM,CLU,CLDN18,HNF1B,PECAM1,KDR,PLVAP,MCAM,COL1A1,COL1A2,SPARCL1,PDGFRA,NEUROG1,OLIG2,RFX2,NOTO,POU2F1,RFX5,C1QA,C1QC,CD68,CD163,THBS1,FN1,C5AR2")
 )
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
@@ -341,14 +342,6 @@ proj_dir = paste("ArchR_projects", setting, sep="/")
 if (dir.exists(proj_dir)) {
   print("Loading existing project")
   proj <- loadArchRProject(proj_dir)
-  if (filter_doublets) {
-    if (dataset == "Tsankov") {
-      cell_col_data = getCellColData(proj)
-      idx = cell_col_data[["cell_type"]] == "distal AT2"
-      idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
-      proj = proj[!(idx & idx_2)]
-    }
-  }
   print("Done loading existing project")
 } else {
   dir = "ArchR_projects/ArchR_proj/"
@@ -429,7 +422,7 @@ if (cluster) {
   p <- plotEmbedding(
     ArchRProj = proj, 
     colorBy = "cellColData", 
-    name = "Clusters",
+    name = paste("Clusters_res", cluster_res, sep="_"),
     embedding = "UMAP",
     quantCut = c(0.01, 0.95))
 
@@ -442,28 +435,101 @@ if (cluster) {
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
 }
 
-if (plot_cell_types) {
-  if (dataset == "Tsankov") {
-    cell_col_data[grepl("Sec-Ciliated", cell_col_data[["cell_type"]]), 
-                  "cell_type"] = "proximal Ciliated"
-    cell_col_data[grepl("IC", rownames(cell_col_data)), "cell_type"] =
-      paste("proximal", cell_col_data[grepl("IC", rownames(cell_col_data)), 
-                                      "cell_type"])
-    cell_col_data[grepl("RPL", rownames(cell_col_data)), "cell_type"] =
-      paste("distal", cell_col_data[grepl("RPL", rownames(cell_col_data)), 
-                                      "cell_type"])
+if (reannotate) {
+  if (dataset == "Tsankov" && cluster_res==0.6) {
+   cell_col_data = getCellColData(proj)
+   if (filter_doublets) {
+       idx = cell_col_data[["cell_type"]] == "AT2"
+       idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
+       proj = proj[!(idx & idx_2)]
+   }
+   cell_col_data["new_annotation"] = cell_col_data["cell_type"]
+   cell_col_data[grepl("Sec-Ciliated", cell_col_data[["new_annotation"]]), 
+                  "new_annotation"] = "proximal Ciliated"
+   distal_idx = grepl("RPL", rownames(cell_col_data)) 
+   proximal_idx = !distal_idx
+   ciliated_idx = grepl("Ciliated", cell_col_data[["cell_type"]])
+   secretory_idx = grepl("Secretory", cell_col_data[["cell_type"]])
+   cell_col_data[distal_idx & ciliated_idx, "new_annotation"] = "distal_lung Ciliated"
+   cell_col_data[proximal_idx & ciliated_idx, "new_annotation"] = "proximal Ciliated"
+   cell_col_data[distal_idx & secretory_idx, "new_annotation"] = "distal_lung Secretory"
+   cell_col_data[proximal_idx & secretory_idx, "new_annotation"] = "proximal Secretory"
+   
+    # all_except_idx = !grepl("(proximal|distal) (Ciliated|Secretory)", 
+    #                         cell_col_data[["new_annotation"]])
+    # cell_col_data[all_except_idx, "new_annotation"] = gsub("(proximal|distal) ", 
+    #                                                        "", 
+    #                                                        cell_col_data[["new_annotation"]][all_except_idx])
+    cell_col_data[grepl("Neuroendocrine", cell_col_data[["new_annotation"]]), 
+                  "new_annotation"] = "Neuroendocrine.MKI67+"
+    cell_col_data[cell_col_data[["cell_type"]] == "Fibroblasts", 
+                  "new_annotation"] = "Fibroblast.WT1-"
+    cell_col_data[cell_col_data[["cell_type"]] == "B_cells", 
+                  "new_annotation"] = "B.cells"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C5", 
+                  "new_annotation"] = "T.cells"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C4", 
+                  "new_annotation"] = "B.cells"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C17", 
+                  "new_annotation"] = "Fibroblast.WT1+"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C18", 
+                  "new_annotation"] = "Fibroblast.WT1-"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C2", 
+                  "new_annotation"] = "Macrophages"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C3", 
+                  "new_annotation"] = "Monocytes"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C1", 
+                  "new_annotation"] = "Neuroendocrine.MKI67-"
     proj@cellColData = cell_col_data
+    
+      keep_cells = !(cell_col_data[["new_annotation"]] == "Immune" |
+                       cell_col_data[["new_annotation"]] == "Myeloid" |
+                       cell_col_data[["new_annotation"]] == "Stromal")
+    proj = proj[keep_cells, ]
   }
-  p <- plotEmbedding(
-        ArchRProj = proj, 
-        colorBy = "cellColData", 
-        name = "cell_type", 
-        embedding = "UMAP",
-        quantCut = c(0.01, 0.95))
-  
+}
+
+if (plot_cell_types) {
+  # if (dataset == "Tsankov") {
+  #   cell_col_data[grepl("Sec-Ciliated", cell_col_data[["cell_type"]]), 
+  #                 "cell_type"] = "proximal Ciliated"
+  #   cell_col_data[grepl("IC", rownames(cell_col_data)), "cell_type"] =
+  #     paste("proximal", cell_col_data[grepl("IC", rownames(cell_col_data)), 
+  #                                     "cell_type"])
+  #   cell_col_data[grepl("RPL", rownames(cell_col_data)), "cell_type"] =
+  #     paste("distal", cell_col_data[grepl("RPL", rownames(cell_col_data)), 
+  #                                     "cell_type"])
+  #   proj@cellColData = cell_col_data
+  # }
+  if (reannotated) {
+    p <- plotEmbedding(
+          ArchRProj = proj, 
+          colorBy = "cellColData", 
+          name = "new_annotation", 
+          embedding = "UMAP",
+          quantCut = c(0.01, 0.95))
+  } else {
+    p <- plotEmbedding(
+      ArchRProj = proj, 
+      colorBy = "cellColData", 
+      name = "cell_type", 
+      embedding = "UMAP",
+      quantCut = c(0.01, 0.95))
+  }
+  cols <- c("#e6194B", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
+            "#911eb4", "#42d4f4", "#f032e6", "#bfef45", "#fabed4",
+            "#469990", "#dcbeff", "#9A6324", "#fffac8", "#800000",
+            "#aaffc3", "#808000", "#ffd8b1", "#000075", "#000000")
+  p <- p + 
+      scale_color_manual(values = cols,
+                         guide = guide_legend(override.aes = 
+                         list(shape = 15)))  
   fn = paste("cell_type_UMAP", setting, sep="_")
   if (filter_doublets) {
     fn = paste(fn, "filter_doublets", sep="_")
+  }
+  if (reannotate) {
+    fn = paste(fn, "reannotated", sep="_")
   }
   fn = paste0(fn, ".pdf")
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
@@ -517,7 +583,7 @@ if (!(is.null(marker_genes))) {
     print(paste("Saving", fn, "to temp.pdf"))
     fp = paste(path, "temp.pdf", sep="/")
   }
-  pdf(fp, width = 20, height = 20)
+  pdf(fp, width = 50, height = 50)
   do.call(cowplot::plot_grid, c(list(ncol = 5), p2))
   dev.off()
 }
@@ -557,7 +623,7 @@ if (de_novo_marker_discovery) {
   }
   FDR_threshold = 1e-2
   lfc_threshold = 2
-  top_genes = 20
+  top_genes = 50
   
   DAG_top_list = DAG_list[sapply(DAG_list, function(x) {
                                               nrow(x[x$FDR < FDR_threshold & 
