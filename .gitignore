@@ -16,6 +16,7 @@ __pycache__/
 .Rproj.user
 *.pdf
 *.rds
+*.png
 build_ml_commands_non_interactive_out
 tsse_filtered_run_commands
 analysis/ML/build_ML_models.sh
