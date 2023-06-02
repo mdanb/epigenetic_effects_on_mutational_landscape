@@ -22,14 +22,11 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
     if (tissues_to_consider == "all"):
         backwards_elim_dir=f"models/{ML_model}/" \
                            f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results"
-        grid_search_filename = f"models/{ML_model}/" \
-                               f"{cancer_type_or_donor_id}/{scATAC_dir}/grid_search_results.pkl"
         test_set_perf_filepath = f"models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance.txt"
 
         # All Cells
         train_val_test(scATAC_df, cancer_specific_mutations,
-                       grid_search_filename,
                        backwards_elim_dir,
                        test_set_perf_filepath,
                        ML_model,
@@ -41,8 +38,6 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
         tissues_string = "_".join(tissues_to_consider)
         backwards_elim_dir=f"models/{ML_model}/" \
                            f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results_{tissues_string}"
-        grid_search_filename = f"models/{ML_model}/" \
-                               f"{cancer_type_or_donor_id}/{scATAC_dir}/grid_search_results_{tissues_string}.pkl"
         test_set_perf_filepath = f"models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance_{tissues_string}.txt"
 
@@ -55,7 +50,6 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
         per_tissue_df = scATAC_df.loc[:, tissue_specific_cell_types]
         train_val_test(per_tissue_df,
                        cancer_specific_mutations,
-                       grid_search_filename,
                        backwards_elim_dir,
                        test_set_perf_filepath,
                        ML_model,
