@@ -138,21 +138,21 @@ option_list <- list(
 #                       "--marker_genes=KIT,FCER1A,TPSAB1,TPSB2,CPA3,CMA1,HNMT,HRH1")
 # )
 # 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=8",
-                      "--dataset=Tsankov",
-                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-                      "--sep_for_metadata=,",
-                      "--cell_type_col_in_metadata=celltypes",
-                      "--tissue=all",
-                      "--nfrags_filter=1",
-                      "--tss_filter=0",
-                      "--cell_types=all",
-                      "--min_cells_per_cell_type=1",
-                      "--de_novo_marker_discovery",
-                      "--cluster_res=0.5",
-                      "--filter_doublets")
-)
+#args = parse_args(OptionParser(option_list=option_list), args=
+#                    c("--cores=8",
+#                      "--dataset=Tsankov",
+#                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                      "--sep_for_metadata=,",
+#                      "--cell_type_col_in_metadata=celltypes",
+#                      "--tissue=all",
+#                      "--nfrags_filter=1",
+#                      "--tss_filter=0",
+#                      "--cell_types=all",
+#                      "--min_cells_per_cell_type=1",
+#                      "--de_novo_marker_discovery",
+#                      "--cluster_res=0.5",
+#                      "--filter_doublets")
+#)
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
@@ -470,12 +470,12 @@ if (plot_cell_types) {
 }
 
 if (!(is.null(marker_genes))) {
-  impute_weights_dir = paste(proj_dir, "ImputeWeights", sep="/")
-  if (!dir.exists(impute_weights_dir)) {
-    proj <- addImputeWeights(proj)
-    proj <- saveArchRProject(ArchRProj = proj, 
-                             outputDirectory = proj_dir,
-                             load = TRUE)
+  #impute_weights_dir = paste(proj_dir, "ImputeWeights", sep="/")
+  #if (!dir.exists(impute_weights_dir)) {
+  proj <- addImputeWeights(proj)
+  #  proj <- saveArchRProject(ArchRProj = proj, 
+  #                           outputDirectory = proj_dir,
+  #                           load = TRUE)
   }
   
   marker_genes = unlist(strsplit(marker_genes, split=","))
@@ -557,7 +557,7 @@ if (de_novo_marker_discovery) {
   }
   FDR_threshold = 1e-2
   lfc_threshold = 2
-  top_genes = 20
+  top_genes = 50
   
   DAG_top_list = DAG_list[sapply(DAG_list, function(x) {
                                               nrow(x[x$FDR < FDR_threshold & 
