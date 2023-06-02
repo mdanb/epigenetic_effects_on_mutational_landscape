@@ -77,7 +77,7 @@ import_sample <- function(file, dataset) {
 }
 
 remove_extension <- function(path) {
-  return(gsub("\\.tsv\\.b*gz$", "", path))
+  return(gsub("\\.(tsv|txt)\\.b*gz$", "", path))
 }
 
 get_sample_filename <- function(file, dataset) {
@@ -193,6 +193,9 @@ get_sample_name_bingren <- function(file) {
 
 get_sample_name_shendure <- function(file) {
   sample_name = unlist(strsplit(file, split="\\."))[1]
+  if (grepl("cerebrum", file)) {
+    sample_name = gsub("cerebrum", "brain", sample_name)
+  }
   return(sample_name)
 }
 
