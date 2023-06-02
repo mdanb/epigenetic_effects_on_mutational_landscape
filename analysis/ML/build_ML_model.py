@@ -30,8 +30,8 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
                        backwards_elim_dir,
                        test_set_perf_filepath,
                        ML_model,
-                       seed,
-                       scATAC_dir)
+                       scATAC_dir,
+                       seed)
 
     # Tissue Specific
     else:
@@ -52,8 +52,8 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
                        cancer_specific_mutations,
                        backwards_elim_dir,
                        test_set_perf_filepath,
-                       ML_model,
-                       seed)
+                       seed,
+                       ML_model)
 
 def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
