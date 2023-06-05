@@ -6,6 +6,30 @@ chr_keep = read.csv("../data/processed_data/chr_keep.csv")[["chr"]]
 chr_ranges = unlist(read.csv("../data/processed_data/chr_ranges.csv"))
 
 #################
+get_filtered_cells <- function(cell_num_filter, annotation, dataset,
+                               tissue_col_name=NULL, tissue=NULL) {
+  root = "../data/processed_data/count_overlap_data/combined_count_overlaps"
+  fn = paste(dataset, "combined_count_overlaps_metadata.rds", sep = "_")
+  fp = paste(root, annotation, fn, sep = "/")
+  metadata = readRDS(fp)
+  if (!is.null(tissue_col_name)) {
+    metadata = metadata[metadata[[tissue_col_name]] == tissue, ]
+  }
+  metadata = metadata[as.numeric(metadata[["num_cells"]]) >= cell_num_filter, ]
+  if (dataset == "Bingren") {
+    metadata["cell_type"] = paste(metadata[["cell_type"]], "BR")
+  }
+  else if (dataset == "Shendure") {
+    metadata["cell_type"] = paste(metadata[["cell_type"]], "SH")
+  }
+  else if (dataset == "Greenleaf_brain") {
+    metadata["cell_type"] = paste(metadata[["cell_type"]], "GL_Br")
+  }
+  return(metadata)
+}
+
+
+
 scatac_df_br = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Bingren_remove_same_celltype_indexing/Bingren_combined_count_overlaps.rds"))
 scatac_df_sh = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Shendure_remove_unknown_unsure/Shendure_combined_count_overlaps.rds"))
 colnames(scatac_df_sh) = paste(colnames(scatac_df_sh), "SH")
@@ -148,28 +172,6 @@ plot_count_distribution(meso_individuals, "meso_counts.pdf")
 #         column_names_gp = grid::gpar(fontsize = 4),
 #         row_names_gp = grid::gpar(fontsize = 8),
 #         top_annotation = ha)
-
-get_filtered_cells <- function(cell_num_filter, annotation, dataset,
-                               tissue_col_name=NULL, tissue=NULL) {
-  root = "../data/processed_data/count_overlap_data/combined_count_overlaps"
-  fn = paste(dataset, "combined_count_overlaps_metadata.rds", sep = "_")
-  fp = paste(root, annotation, fn, sep = "/")
-  metadata = readRDS(fp)
-  if (!is.null(tissue_col_name)) {
-    metadata = metadata[metadata[[tissue_col_name]] == tissue, ]
-  }
-  metadata = metadata[as.numeric(metadata[["num_cells"]]) >= cell_num_filter, ]
-  if (dataset == "Bingren") {
-    metadata["cell_type"] = paste(metadata[["cell_type"]], "BR")
-  }
-  else if (dataset == "Shendure") {
-    metadata["cell_type"] = paste(metadata[["cell_type"]], "SH")
-  }
-  else if (dataset == "Greenleaf_brain") {
-    metadata["cell_type"] = paste(metadata[["cell_type"]], "GL_Br")
-  }
-  return(metadata)
-}
 
 #### Lung-AdenoCA ####
 lung_cells_to_keep = c("proximal lung Basal", 
@@ -392,16 +394,27 @@ combined_colors = list(subtype = subtype_colors, dataset = dataset_colors,
 # ha <- HeatmapAnnotation(subtype = donor_to_subtype, col = list(subtype = subtype_colors))
 ha <- HeatmapAnnotation(df = data.frame(combined_annotation), col = combined_colors)
 column_order <- order(scale(corrs_pearson)["stomach Goblet cells SH", ])
-pdf("goblet.pdf", width=45, height=10)
+pdf("goblet.pdf", width=10, height=10)
 Heatmap(scale(corrs_pearson), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 2),
         row_names_gp = grid::gpar(fontsize = 8),
         # top_annotation = ha,
-        column_order = column_order,
-        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
+        # column_order = column_order,
+        # cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
         show_heatmap_legend = F)
 dev.off()
+
+mat = t(scale(corrs_pearson))
+column_hclust <- hclust(dist(mat))
+k <- 2  # number of clusters
+col_clusters <- cutree(column_hclust, k)
+delta_gamma_cluster = names(col_clusters)[col_clusters == 2]
+delta_gamma_cluster = pancreas_adenoca[, delta_gamma_cluster]
+delta_gamma_cluster = as.data.frame(rowSums(delta_gamma_cluster))
+rownames(delta_gamma_cluster) = chr_keep
+colnames(delta_gamma_cluster) = "pancreas_delta_gamma"
+write.csv(delta_gamma_cluster, file = "../data/processed_data/hierarchically_clustered_mutations.csv")
 
 column_order <- order(scale(corrs_pearson)["stomach Foveolar Cell BR", ])
 pdf("foveolar.pdf", width=45, height=10)

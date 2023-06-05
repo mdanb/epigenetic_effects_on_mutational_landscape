@@ -19,7 +19,7 @@ from xgboost import XGBRegressor
 # Load Data helpers
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                    histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor):
+                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, hierarchically_clustered):
     if (meso):
         mutations_df = load_meso()
     elif (SCLC):
@@ -40,6 +40,8 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
         mutations_df = load_RNA_subtyped_mutations()
     elif (per_donor):
         mutations_df = load_per_donor_mutations(cancer_types[0])
+    elif (hierarchically_clustered):
+        mutations_df = load_hierarchically_clustered_mutations()
     else:
         mutations_df = load_agg_mutations()
     return(mutations_df)
@@ -140,7 +142,12 @@ def load_de_novo_seurat_clustered_cancers(cancer_types):
     #                    index_col=0)
     return(df.loc[natsorted(df.index)])
 
-# Filter Data Helpers
+def load_hierarchically_clustered_mutations():
+    df = pd.read_csv("../../data/processed_data/hierarchically_clustered_mutations.csv",
+                       index_col=0)
+    return(df.loc[natsorted(df.index)])
+
+#### Filter Data Helpers ####
 def filter_agg_data(scATAC_df, mutations_df):
     # if (meso):
     #     idx_select = scATAC_df.index.isin(mutations_df.index)
@@ -345,7 +352,8 @@ def train_val_test(scATAC_df, mutations, cv_filename, backwards_elim_dir, test_s
 def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_number_filter, tss_filter, annotation_dir,
                                            meso, SCLC, lung_subtyped, woo_pcawg,
                                            histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                           CPTAC, combined_CPTAC_ICGC, per_donor, seed):
+                                           CPTAC, combined_CPTAC_ICGC, per_donor, hierarchically_clustered,
+                                           seed):
     for cancer_type in cancer_types:
         scATAC_sources = construct_scATAC_sources(datasets)
         scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter,
@@ -360,7 +368,7 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
         scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
         mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                       histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                      CPTAC, combined_CPTAC_ICGC, per_donor)
+                                      CPTAC, combined_CPTAC_ICGC, per_donor, hierarchically_clustered)
 
         if (not pd.isna(mutations_df).any().any()):
             # for compatibility

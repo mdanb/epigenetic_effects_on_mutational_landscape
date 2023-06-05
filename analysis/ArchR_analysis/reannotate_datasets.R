@@ -138,21 +138,39 @@ option_list <- list(
 #                       "--marker_genes=KIT,FCER1A,TPSAB1,TPSB2,CPA3,CMA1,HNMT,HRH1")
 # )
 # 
-#args = parse_args(OptionParser(option_list=option_list), args=
-#                    c("--cores=8",
-#                      "--dataset=Tsankov",
-#                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                      "--sep_for_metadata=,",
-#                      "--cell_type_col_in_metadata=celltypes",
-#                      "--tissue=all",
-#                      "--nfrags_filter=1",
-#                      "--tss_filter=0",
-#                      "--cell_types=all",
-#                      "--min_cells_per_cell_type=1",
-#                      "--de_novo_marker_discovery",
-#                      "--cluster_res=0.5",
-#                      "--filter_doublets")
-#)
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=1",
+#                       "--de_novo_marker_discovery",
+#                       "--cluster_res=0.6",
+#                       "--filter_doublets",
+#                       "--marker_genes=CEBPE,GFI1,IRF1,GNL2,ELANE,PPARG,BHLHE41,EGR2,FABP4,HBA1,MARCO,MME,F13A1,SLC40A1,SELP,STAB1,FOLR2,CD1C,CD1A,FCER1A,HLA-DQA1,CLEC10A,PKIB,CLEC9A,GCSAM,BATF3,WDFY4,LILRA4,GZMB,IL3RX,LAMP3,CCR7,FSCN1,CCL22,MARCKSL1,EBI3,IDO1,S100A8,S100A9,S100A12,FCN1,CD14,VCAN,PTX3,LRG1,LYPD2,LST1,LILRB2,FCGR3A,NKG7,NCR1,SPON2,KLRD1,GNLY,KLRC1,KLRF1,FGFBP2,KIT,TPSAB1,CPA3,CTSG,BACH2,ITGA2B,GP1BA,VWF,FLI1,MS4A1,SDC1,KLK1,EBF1,CD79A,CD79B,PAX5,VPREB3,POU2AF1,MZB1,XBP1,CD3D,LEF1,TCF7,TCF3,IL7R,CD8A,CD4,BCL11B,FOXP3,IL2RA,TNFRSF4,TNFRSF18,CTLA4,EPCAM,CLU,CLDN18,HNF1B,PECAM1,KDR,PLVAP,MCAM,COL1A1,COL1A2,SPARCL1,PDGFRA,NEUROG1,OLIG2,RFX2,NOTO,POU2F1,RFX5,C1QA,C1QC,CD68,CD163,THBS1,FN1,C5AR2")
+# )
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=8",
+                      "--dataset=Tsankov",
+                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+                      "--sep_for_metadata=,",
+                      "--cell_type_col_in_metadata=celltypes",
+                      "--tissue=all",
+                      "--nfrags_filter=1",
+                      "--tss_filter=0",
+                      "--cell_types=all",
+                      "--min_cells_per_cell_type=1",
+                      "--de_novo_marker_discovery",
+                      "--cluster_res=0.6",
+                      "--filter_doublets",
+                      "--marker_genes=RBFOX3,ASCL1,CALCA,CHGA,GRP,SCG5,TPSB2,TPSAB1,CPA3,HPGDS")
+)
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
@@ -442,6 +460,60 @@ if (cluster) {
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
 }
 
+<<<<<<< Updated upstream
+=======
+if (reannotate) {
+  if (dataset == "Tsankov" && cluster_res==0.6) {
+   cell_col_data = getCellColData(proj)
+   if (filter_doublets) {
+       idx = cell_col_data[["cell_type"]] == "AT2"
+       idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
+       proj = proj[!(idx & idx_2)]
+   }
+   cell_col_data["new_annotation"] = cell_col_data["cell_type"]
+   cell_col_data[grepl("Sec-Ciliated", cell_col_data[["new_annotation"]]), 
+                  "new_annotation"] = "proximal Ciliated"
+   distal_idx = grepl("RPL", rownames(cell_col_data)) 
+   proximal_idx = !distal_idx
+   ciliated_idx = grepl("Ciliated", cell_col_data[["cell_type"]])
+   secretory_idx = grepl("Secretory", cell_col_data[["cell_type"]])
+   cell_col_data[distal_idx & ciliated_idx, "new_annotation"] = "distal_lung Ciliated"
+   cell_col_data[proximal_idx & ciliated_idx, "new_annotation"] = "proximal Ciliated"
+   cell_col_data[distal_idx & secretory_idx, "new_annotation"] = "distal_lung Secretory"
+   cell_col_data[proximal_idx & secretory_idx, "new_annotation"] = "proximal Secretory"
+   
+    # all_except_idx = !grepl("(proximal|distal) (Ciliated|Secretory)", 
+    #                         cell_col_data[["new_annotation"]])
+    # cell_col_data[all_except_idx, "new_annotation"] = gsub("(proximal|distal) ", 
+    #                                                        "", 
+    #                                                        cell_col_data[["new_annotation"]][all_except_idx])
+    cell_col_data[cell_col_data[["cell_type"]] == "Fibroblasts", 
+                  "new_annotation"] = "Fibroblast.WT1-"
+    cell_col_data[cell_col_data[["cell_type"]] == "B_cells", 
+                  "new_annotation"] = "B.cells"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C5", 
+                  "new_annotation"] = "T.cells"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C4", 
+                  "new_annotation"] = "B.cells"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C17", 
+                  "new_annotation"] = "Fibroblast.WT1+"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C18", 
+                  "new_annotation"] = "Fibroblast.WT1-"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C2", 
+                  "new_annotation"] = "Myeloid"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C3", 
+                  "new_annotation"] = "Myeloid"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C1", 
+                  "new_annotation"] = "Neuronal"
+    proj@cellColData = cell_col_data
+    
+      keep_cells = !(cell_col_data[["new_annotation"]] == "Immune" |
+                       cell_col_data[["new_annotation"]] == "Stromal")
+    proj = proj[keep_cells, ]
+  }
+}
+
+>>>>>>> Stashed changes
 if (plot_cell_types) {
   if (dataset == "Tsankov") {
     cell_col_data[grepl("Sec-Ciliated", cell_col_data[["cell_type"]]), 
@@ -470,6 +542,7 @@ if (plot_cell_types) {
 }
 
 if (!(is.null(marker_genes))) {
+<<<<<<< Updated upstream
   #impute_weights_dir = paste(proj_dir, "ImputeWeights", sep="/")
   #if (!dir.exists(impute_weights_dir)) {
   proj <- addImputeWeights(proj)
@@ -477,6 +550,15 @@ if (!(is.null(marker_genes))) {
   #                           outputDirectory = proj_dir,
   #                           load = TRUE)
   }
+=======
+  # impute_weights_dir = paste(proj_dir, "ImputeWeights", sep="/")
+  # if (!dir.exists(impute_weights_dir)) {
+  proj <- addImputeWeights(proj)
+  proj <- saveArchRProject(ArchRProj = proj, 
+                           outputDirectory = proj_dir,
+                           load = TRUE)
+  # }
+>>>>>>> Stashed changes
   
   marker_genes = unlist(strsplit(marker_genes, split=","))
   p <- plotEmbedding(

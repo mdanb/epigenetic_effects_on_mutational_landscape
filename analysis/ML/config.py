@@ -34,7 +34,7 @@ group.add_argument("--per_donor", action="store_true", default=False)
 group.add_argument("--CPTAC", action="store_true", default=False)
 # parser.add_argument("--mesomics", action="store_true", default=False)
 group.add_argument("--meso", action="store_true", default=False)
-
+group.add_argument("--hierarchically_clustered", action="store_true", default=False)
 group.add_argument("--combined_CPTAC_ICGC", action="store_true", default=False)
 group.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
                     default=None)
@@ -75,3 +75,4 @@ per_donor = config.per_donor
 donor_range = config.donor_range
 test_backward_selection_iter = config.test_backward_selection_iter
 seed_range = config.seed_range
+hierarchically_clustered = config.hierarchically_clustered

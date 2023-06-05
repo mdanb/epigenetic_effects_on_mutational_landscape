@@ -63,15 +63,15 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
 def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
-                                  combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model,
-                                  seed_range):
+                                  combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range,
+                                  hierarchically_clustered, ML_model, seed_range):
     start, end = map(int, seed_range.split(':'))
     seed_range = range(start, end + 1)
     for seed in seed_range:
         scATAC_sources = construct_scATAC_sources(datasets)
         mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                       histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                      CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
+                                      CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, hierarchically_clustered)
         if (not per_donor):
             for cancer_type in cancer_types:
                 if (tss_fragment_filter):
@@ -121,7 +121,8 @@ else:
     run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                                  meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range)
+                                  meso, RNA_subtyped, per_donor, donor_range, hierarchically_clustered,
+                                  ML_model, seed_range)
 
 
 
