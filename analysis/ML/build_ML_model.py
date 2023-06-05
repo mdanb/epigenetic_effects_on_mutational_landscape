@@ -97,12 +97,10 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
                                                          ML_model, seed)
 
-        cancer_types = ",".join(cancer_types)
-        datasets = ",".join(datasets)
         subprocess.call(["Rscript", "plot_top_features.R",
-                         f"--cancer_types={cancer_types}",
+                         f"--cancer_types={','.join(cancer_types)}",
                          f"--ML_model={ML_model}",
-                         f"--datasets={datasets}",
+                         f"--datasets={','.join(datasets)}",
                          f"--seed={seed}",
                          f"--cell_number_filter={scATAC_cell_number_filter}",
                          f"--annotation={annotation_dir}"])
