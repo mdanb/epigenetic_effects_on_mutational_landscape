@@ -17,6 +17,7 @@ create_binned_atac <- function(file, interval_ranges, chr_ranges) {
   filename = unlist(strsplit(file, split="/"))[4]
   filename = gsub("\\.insertions\\.bw", "", filename)
   filename = paste(filename, "rds", sep=".")
+  dirpath = "../processed_data/binned_atac"
   file_path = paste(dirpath, filename, sep="/")
   
   if (!file.exists(file_path)) {
@@ -37,7 +38,6 @@ create_binned_atac <- function(file, interval_ranges, chr_ranges) {
     binned_overlaps = data.frame(counts = rep(0, 2998))
     rownames(binned_overlaps) = chr_ranges[["x"]]
     binned_overlaps[overlaps[["bin"]], "counts"] = overlaps[["counts"]]
-    dirpath = "../processed_data/binned_atac"
     saveRDS(binned_overlaps, file_path)
   }
 }
