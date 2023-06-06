@@ -1,5 +1,5 @@
 #python3 build_ML_model.py --cancer_types biphasic_mesomics epithelioid_waddell_mesomics sarcomatoid_waddell_mesomics --datasets Bingren Greenleaf_brain Shendure Yang_kidney --scATAC_cell_number_filter=1 --annotation_dir=Tsankov_separate_fibroblasts --meso --ML_model=XGB --seed=42
 
-python3 build_ML_model.py --cancer_types CNS-GBM --datasets Greenleaf_brain Bingren --scATAC_cell_number_filter=1 --annotation_dir=finalized_annotation --ML_model=XGB --seed=42:42
+python3 build_ML_model.py --cancer_types CNS-GBM --datasets Greenleaf_brain Bingren Shendure Tsankov --scATAC_cell_number_filter=1 --annotation_dir=finalized_annotation --ML_model=XGB --seed=42:42
 
 #python3 build_ML_model.py --cancer_types Colorectalxtop_2000-no_bottom_0_samples-scale_TRUE-norm_by_mut_counts_TRUE-pca_n_components_30-dims_for_dim_reduction_1to15-regress_by_counts_FALSE_clustering_res_0.84xcluster_0 Colorectalxtop_2000-no_bottom_0_samples-scale_TRUE-norm_by_mut_counts_TRUE-pca_n_components_30-dims_for_dim_reduction_1to15-regress_by_counts_FALSE_clustering_res_0.84xcluster_1 --de_novo_seurat_clustering --datasets Shendure --scATAC_cell_number_filter=1 --annotation_dir=default_annotation --ML_model=XGB --seed=42
