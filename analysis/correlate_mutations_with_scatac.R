@@ -1,7 +1,7 @@
 library(ComplexHeatmap)
 library(RColorBrewer)
 library(tidyverse)
-
+library(circlize)
 chr_keep = read.csv("../data/processed_data/chr_keep.csv")[["chr"]]
 chr_ranges = unlist(read.csv("../data/processed_data/chr_ranges.csv"))
 
@@ -313,7 +313,9 @@ pancreas_adenoca = read.csv("../data/mutation_data/Panc-AdenoCA.txt",
                             sep="\t")
 pancreas_adenoca = pancreas_adenoca[chr_ranges %in% chr_keep, ]
 pancreas_adenoca = pancreas_adenoca[, 4:ncol(pancreas_adenoca)]
-
+per_patient_density = log(colSums(pancreas_adenoca))
+# lowest = per_patient_density == min(per_patient_density)
+# pancreas_adenoca = pancreas_adenoca[, !lowest]
 subtype_colors <- c(
   "Pancreatic ductal carcinoma" = "red",
   "Invasive carcinoma arising in IPMN" = "green",
@@ -387,12 +389,23 @@ rna_subtype_colors <- c(
   "Endocrine" = "pink",
   "Neuroendocrine" = "yellow"
 )
-combined_annotation = cbind(subtype = donor_to_subtype, dataset = dataset_annotation,
-                            rna_subtype = pancreas_rna_subtypes)
+
+per_patient_density = log(colSums(pancreas_adenoca))
+continuous_color_palette = colorRamp2(c(min(per_patient_density), 
+                                      max(per_patient_density)),
+                                      c("white", "red"))
+# per_patient_density_colors = continuous_color_palette(per_patient_density)
+# combined_annotation = cbind(subtype = donor_to_subtype, dataset = dataset_annotation,
+#                             rna_subtype = pancreas_rna_subtypes, 
+#                             per_patient_density = per_patient_density)
 combined_colors = list(subtype = subtype_colors, dataset = dataset_colors,
-                       rna_subtype = rna_subtype_colors)
+                       rna_subtype = rna_subtype_colors, 
+                       per_patient_density = continuous_color_palette)
 # ha <- HeatmapAnnotation(subtype = donor_to_subtype, col = list(subtype = subtype_colors))
-ha <- HeatmapAnnotation(df = data.frame(combined_annotation), col = combined_colors)
+
+ha <- HeatmapAnnotation(subtype = donor_to_subtype, dataset = dataset_annotation,
+                        rna_subtype = pancreas_rna_subtypes, 
+                        per_patient_density = per_patient_density, col = combined_colors)
 column_order <- order(scale(corrs_pearson)["stomach Goblet cells SH", ])
 pdf("goblet.pdf", width=10, height=10)
 Heatmap(scale(corrs_pearson), 
@@ -427,6 +440,16 @@ Heatmap(scale(corrs_pearson),
         cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
         show_heatmap_legend = F)
 dev.off()
+
+Heatmap(scale(corrs_pearson)[grepl("goblet|acinar|ductal", rownames(corrs_pearson),
+                                   ignore.case = T), ], 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        top_annotation = ha,
+        # column_order = column_order,
+        # cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
+        show_heatmap_legend = F)
 
 plot_count_distribution(pancreas_adenoca, "panc_adenoca_counts.pdf")
 

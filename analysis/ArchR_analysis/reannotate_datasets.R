@@ -359,14 +359,14 @@ proj_dir = paste("ArchR_projects", setting, sep="/")
 if (dir.exists(proj_dir)) {
   print("Loading existing project")
   proj <- loadArchRProject(proj_dir)
-  if (filter_doublets) {
-    if (dataset == "Tsankov") {
-      cell_col_data = getCellColData(proj)
-      idx = cell_col_data[["cell_type"]] == "distal AT2"
-      idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
-      proj = proj[!(idx & idx_2)]
-    }
-  }
+  # if (filter_doublets) {
+  #   if (dataset == "Tsankov") {
+  #     cell_col_data = getCellColData(proj)
+  #     idx = cell_col_data[["cell_type"]] == "distal AT2"
+  #     idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
+  #     proj = proj[!(idx & idx_2)]
+  #   }
+  # }
   print("Done loading existing project")
 } else {
   dir = "ArchR_projects/ArchR_proj/"
@@ -417,7 +417,11 @@ if (plot_doublet_scores) {
     input = proj,
     useMatrix = "TileMatrix"
   )
-  saveArchRProject(ArchRProj = proj)
+  
+  # if (dataset == "Tsankov") {
+  #   
+  # }
+  proj = saveArchRProject(ArchRProj = proj, load=TRUE)
   p <- plotEmbedding(
     ArchRProj = proj, 
     colorBy = "cellColData",
@@ -460,8 +464,6 @@ if (cluster) {
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
 }
 
-<<<<<<< Updated upstream
-=======
 if (reannotate) {
   if (dataset == "Tsankov" && cluster_res==0.6) {
    cell_col_data = getCellColData(proj)
@@ -507,31 +509,39 @@ if (reannotate) {
                   "new_annotation"] = "Neuronal"
     proj@cellColData = cell_col_data
     
-      keep_cells = !(cell_col_data[["new_annotation"]] == "Immune" |
-                       cell_col_data[["new_annotation"]] == "Stromal")
+    keep_cells = !(cell_col_data[["new_annotation"]] == "Immune" |
+                     cell_col_data[["new_annotation"]] == "Stromal")
     proj = proj[keep_cells, ]
   }
 }
 
->>>>>>> Stashed changes
 if (plot_cell_types) {
-  if (dataset == "Tsankov") {
-    cell_col_data[grepl("Sec-Ciliated", cell_col_data[["cell_type"]]), 
-                  "cell_type"] = "proximal Ciliated"
-    cell_col_data[grepl("IC", rownames(cell_col_data)), "cell_type"] =
-      paste("proximal", cell_col_data[grepl("IC", rownames(cell_col_data)), 
-                                      "cell_type"])
-    cell_col_data[grepl("RPL", rownames(cell_col_data)), "cell_type"] =
-      paste("distal", cell_col_data[grepl("RPL", rownames(cell_col_data)), 
-                                      "cell_type"])
-    proj@cellColData = cell_col_data
-  }
+  # if (dataset == "Tsankov") {
+  #   cell_col_data[grepl("Sec-Ciliated", cell_col_data[["cell_type"]]), 
+  #                 "cell_type"] = "proximal Ciliated"
+  #   cell_col_data[grepl("IC", rownames(cell_col_data)), "cell_type"] =
+  #     paste("proximal", cell_col_data[grepl("IC", rownames(cell_col_data)), 
+  #                                     "cell_type"])
+  #   cell_col_data[grepl("RPL", rownames(cell_col_data)), "cell_type"] =
+  #     paste("distal", cell_col_data[grepl("RPL", rownames(cell_col_data)), 
+  #                                     "cell_type"])
+  #   proj@cellColData = cell_col_data
+  # }
   p <- plotEmbedding(
         ArchRProj = proj, 
         colorBy = "cellColData", 
         name = "cell_type", 
         embedding = "UMAP",
         quantCut = c(0.01, 0.95))
+  
+  if (dataset == "Tsankov" && reannotate) {
+    p <- plotEmbedding(
+      ArchRProj = proj, 
+      colorBy = "cellColData", 
+      name = "new_annotation", 
+      embedding = "UMAP",
+      quantCut = c(0.01, 0.95))
+  }
   
   fn = paste("cell_type_UMAP", setting, sep="_")
   if (filter_doublets) {
@@ -542,15 +552,6 @@ if (plot_cell_types) {
 }
 
 if (!(is.null(marker_genes))) {
-<<<<<<< Updated upstream
-  #impute_weights_dir = paste(proj_dir, "ImputeWeights", sep="/")
-  #if (!dir.exists(impute_weights_dir)) {
-  proj <- addImputeWeights(proj)
-  #  proj <- saveArchRProject(ArchRProj = proj, 
-  #                           outputDirectory = proj_dir,
-  #                           load = TRUE)
-  }
-=======
   # impute_weights_dir = paste(proj_dir, "ImputeWeights", sep="/")
   # if (!dir.exists(impute_weights_dir)) {
   proj <- addImputeWeights(proj)
@@ -558,8 +559,7 @@ if (!(is.null(marker_genes))) {
                            outputDirectory = proj_dir,
                            load = TRUE)
   # }
->>>>>>> Stashed changes
-  
+
   marker_genes = unlist(strsplit(marker_genes, split=","))
   p <- plotEmbedding(
     ArchRProj = proj, 
