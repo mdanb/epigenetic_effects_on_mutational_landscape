@@ -152,8 +152,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
         files = natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))
         for idx, file in enumerate(files):
             if (idx % num_iter_skips == 0 or idx in iters_dont_skip):
-                gs = pickle.load(open(file, "rb"))
-                model = gs.best_estimator_.get_params()['regressor__selected_model']
+                model = pickle.load(open(file, "rb"))
                 cv_score = gs.best_score_
                 features = model.feature_names_in_
                 feature_importances = model.feature_importances_
