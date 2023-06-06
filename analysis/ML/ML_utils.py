@@ -215,7 +215,6 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n, back
     for idx in range(1, len(top_n_feats)):
         filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}.txt"
         if not os.path.exists(filepath):
-
             study = optimize_optuna_study(study_name=f"iter_{idx}_{scATAC_dir}", ML_model=ML_model, X_train=X_train,
                                           y_train=y_train,
                                           seed=seed)
