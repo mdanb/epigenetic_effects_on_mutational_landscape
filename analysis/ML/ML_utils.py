@@ -221,6 +221,7 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n, back
         if ML_model == "XGB":
             best_model = XGBRegressor(**best_params)
 
+        best_model.fit(X=X_train, y=y_train)
         # grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
         top_n_feats = get_top_n_features(best_model, len(X_train.columns) - 1, X_train.columns)
         X_train = X_train.loc[:, top_n_feats]
@@ -270,6 +271,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
     if ML_model == "XGB":
         best_model = XGBRegressor(**best_params)
     n = 20
+    best_model.fit(X=X_train, y=y_train)
     backward_eliminate_features(X_train, y_train, best_model, n, backwards_elim_dir, ML_model, scATAC_dir, seed)
     # Test Set Performance
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filepath)
