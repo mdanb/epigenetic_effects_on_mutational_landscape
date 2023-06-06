@@ -170,72 +170,87 @@ if (dataset == "Bingren") {
          annotation=annotation,
          mc.cores=cores)
 } else if (dataset == "Tsankov") {
-  metadata_tsankov_proximal = 
-    read.csv("../metadata/tsankov_lung_proximal_barcode_annotation.csv")
-  metadata_tsankov_distal = 
-    read.csv("../metadata/tsankov_lung_distal_barcode_annotation.csv")
-  
-  if (annotation == "Tsankov_separate_fibroblasts") {
-    if (!file.exists("../metadata/Tsankov_fibro-fibro+C12+fibro+C14.csv")) {
-      refined_annotation = as_tibble(read.csv("../metadata/metadata_Tsankov_refined_fibroblasts.csv"))
-      refined_annotation = refined_annotation %>% 
-                           filter(Clusters %in% c("C12", "C14"))
-      refined_annotation["Clusters"] = paste("Fibroblasts",
-                                             refined_annotation[["Clusters"]],
-                                             sep="_")
-      idx = match(refined_annotation[["X"]], metadata_tsankov_distal[["X"]])
-      idx_idx = seq(1, length(idx))
-      idx_idx = idx_idx[!is.na(idx)]
-      idx = idx[!is.na(idx)]
-      metadata_tsankov_distal[idx, "celltypes"] = refined_annotation[idx_idx, 
-                                                                     "Clusters"]
-      write.csv(metadata_tsankov_distal, 
-                "../metadata/Tsankov_fibro-fibro+C12+fibro+C14.csv")
-    } else {
-      metadata_tsankov_distal = 
-        read.csv("../metadata/Tsankov_fibro-fibro+C12+fibro+C14.csv")
-    }
-  }
-  else if (annotation == "Tsankov_de_novo_Basal_nfrags_filter_1000_tss_filter_4") {
-    metadata_tsankov_proximal = 
-      read.csv("../metadata/ArchR_dataset_Tsankov_tissue_all_cell_types_Basal_nfrags_filter_1000_tss_filter_4_annotation.csv")
-  }
-  colnames(metadata_tsankov_proximal)[grepl("celltypes",
-                                            colnames(metadata_tsankov_proximal))] = "cell_type"
-  colnames(metadata_tsankov_proximal)[grepl("Sample",
-                                            colnames(metadata_tsankov_proximal))] = "sample"
-  colnames(metadata_tsankov_distal)[grepl("celltypes",
-                                            colnames(metadata_tsankov_distal))] = "cell_type"
-  colnames(metadata_tsankov_distal)[grepl("Sample",
-                                            colnames(metadata_tsankov_distal))] = "sample"
-  
-
-  files_Tsankov_distal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
-                                    pattern="RPL.*bgz$")
-  files_Tsankov_proximal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
-                                      pattern="IC.*bgz$")
-  dataset_subsets = unlist(strsplit(args$dataset_subsets, ","))
-  if ("proximal" %in% dataset_subsets) {
-    mclapply(files_Tsankov_proximal, 
+  # metadata_tsankov_proximal = 
+  #   read.csv("../metadata/tsankov_lung_proximal_barcode_annotation.csv")
+  # metadata_tsankov_distal = 
+  #   read.csv("../metadata/tsankov_lung_distal_barcode_annotation.csv")
+  if (annotation == "Tsankov_refined") {
+    metadata = read.csv("../metadata/tsankov_refined_annotation.csv")
+    colnames(metadata) = c("sample", "cell_type")
+    files_Tsankov_distal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
+                                      pattern="RPL.*bgz$")
+    files_Tsankov_proximal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
+                                        pattern="IC.*bgz$")
+    files = c(files_Tsankov_distal, files_Tsankov_proximal)
+    mclapply(files, 
              create_count_overlaps_files,
-             metadata=metadata_tsankov_proximal,
+             metadata=metadata,
              interval_ranges=interval.ranges,
              chain=ch,
              dataset=dataset,
              annotation=annotation,
              mc.cores=cores)
   }
-  
-  if ("distal" %in% dataset_subsets) {
-    mclapply(files_Tsankov_distal,
-             create_count_overlaps_files,
-              metadata=metadata_tsankov_distal,
-              interval_ranges=interval.ranges,
-              chain=ch,
-              dataset=dataset,
-              annotation=annotation,
-              mc.cores=cores)
-  }
+  # if (annotation == "Tsankov_separate_fibroblasts") {
+  #   if (!file.exists("../metadata/Tsankov_fibro-fibro+C12+fibro+C14.csv")) {
+  #     refined_annotation = as_tibble(read.csv("../metadata/metadata_Tsankov_refined_fibroblasts.csv"))
+  #     refined_annotation = refined_annotation %>% 
+  #                          filter(Clusters %in% c("C12", "C14"))
+  #     refined_annotation["Clusters"] = paste("Fibroblasts",
+  #                                            refined_annotation[["Clusters"]],
+  #                                            sep="_")
+  #     idx = match(refined_annotation[["X"]], metadata_tsankov_distal[["X"]])
+  #     idx_idx = seq(1, length(idx))
+  #     idx_idx = idx_idx[!is.na(idx)]
+  #     idx = idx[!is.na(idx)]
+  #     metadata_tsankov_distal[idx, "celltypes"] = refined_annotation[idx_idx, 
+  #                                                                    "Clusters"]
+  #     write.csv(metadata_tsankov_distal, 
+  #               "../metadata/Tsankov_fibro-fibro+C12+fibro+C14.csv")
+  #   } else {
+  #     metadata_tsankov_distal = 
+  #       read.csv("../metadata/Tsankov_fibro-fibro+C12+fibro+C14.csv")
+  #   }
+  # }
+  # else if (annotation == "Tsankov_de_novo_Basal_nfrags_filter_1000_tss_filter_4") {
+  #   metadata_tsankov_proximal = 
+  #     read.csv("../metadata/ArchR_dataset_Tsankov_tissue_all_cell_types_Basal_nfrags_filter_1000_tss_filter_4_annotation.csv")
+  # }
+  # colnames(metadata_tsankov_proximal)[grepl("celltypes",
+  #                                           colnames(metadata_tsankov_proximal))] = "cell_type"
+  # colnames(metadata_tsankov_proximal)[grepl("Sample",
+  #                                           colnames(metadata_tsankov_proximal))] = "sample"
+  # colnames(metadata_tsankov_distal)[grepl("celltypes",
+  #                                           colnames(metadata_tsankov_distal))] = "cell_type"
+  # colnames(metadata_tsankov_distal)[grepl("Sample",
+  #                                           colnames(metadata_tsankov_distal))] = "sample"
+  # 
+  # 
+  # files_Tsankov_distal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
+  #                                   pattern="RPL.*bgz$")
+  # files_Tsankov_proximal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
+  #                                     pattern="IC.*bgz$")
+  # dataset_subsets = unlist(strsplit(args$dataset_subsets, ","))
+  # if ("proximal" %in% dataset_subsets) {
+  #   mclapply(files_Tsankov_proximal, 
+  #            create_count_overlaps_files,
+  #            metadata=metadata_tsankov_proximal,
+  #            interval_ranges=interval.ranges,
+  #            chain=ch,
+  #            dataset=dataset,
+  #            annotation=annotation,
+  #            mc.cores=cores)
+  # }
+  # if ("distal" %in% dataset_subsets) {
+  #   mclapply(files_Tsankov_distal,
+  #            create_count_overlaps_files,
+  #             metadata=metadata_tsankov_distal,
+  #             interval_ranges=interval.ranges,
+  #             chain=ch,
+  #             dataset=dataset,
+  #             annotation=annotation,
+  #             mc.cores=cores)
+  # }
 } else if (dataset == "Greenleaf_brain") {
     if (!(file.exists("../metadata/GSE162170_atac_cell_metadata_with_cell_names.txt"))) {
       metadata_greenleaf_brain =
