@@ -549,6 +549,12 @@ if (plot_cell_types) {
   }
   fn = paste0(fn, ".pdf")
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
+  
+  if (dataset == "Tsankov") {
+    refined_annotation = cell_col_data["new_annotation"]
+    write.csv(refined_annotation,
+              "../../data/metadata/tsankov_refined_annotation.csv")
+  }
 }
 
 if (!(is.null(marker_genes))) {
