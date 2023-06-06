@@ -223,6 +223,7 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n, back
             best_model = XGBRegressor(**best_params)
 
         best_model.fit(X=X_train, y=y_train)
+        pickle.dump(best_model, open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'wb'))
         # grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
         top_n_feats = get_top_n_features(best_model, len(X_train.columns) - 1, X_train.columns)
         X_train = X_train.loc[:, top_n_feats]
