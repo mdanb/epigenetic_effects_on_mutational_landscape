@@ -512,40 +512,40 @@ if (reannotate) {
     keep_cells = !(cell_col_data[["new_annotation"]] == "Immune" |
                      cell_col_data[["new_annotation"]] == "Stromal")
     proj = proj[keep_cells, ]
+    proj = saveArchRProject(ArchRProj = proj, load=T)
   }
 }
 
 if (plot_cell_types) {
-  # if (dataset == "Tsankov") {
-  #   cell_col_data[grepl("Sec-Ciliated", cell_col_data[["cell_type"]]), 
-  #                 "cell_type"] = "proximal Ciliated"
-  #   cell_col_data[grepl("IC", rownames(cell_col_data)), "cell_type"] =
-  #     paste("proximal", cell_col_data[grepl("IC", rownames(cell_col_data)), 
-  #                                     "cell_type"])
-  #   cell_col_data[grepl("RPL", rownames(cell_col_data)), "cell_type"] =
-  #     paste("distal", cell_col_data[grepl("RPL", rownames(cell_col_data)), 
-  #                                     "cell_type"])
-  #   proj@cellColData = cell_col_data
-  # }
-  p <- plotEmbedding(
-        ArchRProj = proj, 
-        colorBy = "cellColData", 
-        name = "cell_type", 
-        embedding = "UMAP",
-        quantCut = c(0.01, 0.95))
-  
-  if (dataset == "Tsankov" && reannotate) {
+  if (reannotated) {
     p <- plotEmbedding(
       ArchRProj = proj, 
       colorBy = "cellColData", 
       name = "new_annotation", 
       embedding = "UMAP",
       quantCut = c(0.01, 0.95))
+  } else {
+    p <- plotEmbedding(
+      ArchRProj = proj, 
+      colorBy = "cellColData", 
+      name = "cell_type", 
+      embedding = "UMAP",
+      quantCut = c(0.01, 0.95))
   }
-  
+  cols <- c("#e6194B", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
+            "#911eb4", "#42d4f4", "#f032e6", "#bfef45", "#fabed4",
+            "#469990", "#dcbeff", "#9A6324", "#fffac8", "#800000",
+            "#aaffc3", "#808000", "#ffd8b1", "#000075", "#000000")
+  p <- p + 
+    scale_color_manual(values = cols,
+                       guide = guide_legend(override.aes = 
+                                              list(shape = 15)))  
   fn = paste("cell_type_UMAP", setting, sep="_")
   if (filter_doublets) {
     fn = paste(fn, "filter_doublets", sep="_")
+  }
+  if (reannotate) {
+    fn = paste(fn, "reannotated", sep="_")
   }
   fn = paste0(fn, ".pdf")
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
