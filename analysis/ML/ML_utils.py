@@ -235,7 +235,7 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed):
     study = optuna.create_study(direction="maximize",
                                 storage="sqlite:///db.sqlite3",
                                 study_name=study_name,
-                                load_if_exists=True)
+                                load_if_exists=False)
 
     study.optimize(lambda trial: optuna_objective(trial, ML_model=ML_model, X=X_train, y=y_train,
                                                   seed=seed), n_trials=3)
