@@ -253,7 +253,7 @@ def optuna_objective(trial, ML_model, X, y, seed):
         model = XGBRegressor(**param, random_state=seed)
 
     score = cross_val_score(model, X=X, y=y, scoring="r2", n_jobs=-1, cv=10, verbose=100)
-    return score
+    return score.mean()
 
 def print_and_save_test_set_perf(X_test, y_test, model, filepath):
     test_preds = model.predict(X_test)
