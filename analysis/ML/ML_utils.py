@@ -235,7 +235,7 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed):
                                 load_if_exists=True)
 
     study.optimize(lambda trial: optuna_objective(trial, ML_model=ML_model, X=X_train, y=y_train,
-                                                  seed=seed), n_trials=100)
+                                                  seed=seed), n_trials=3)
     return study
 
 def optuna_objective(trial, ML_model, X, y, seed):
