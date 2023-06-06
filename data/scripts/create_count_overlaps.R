@@ -130,8 +130,10 @@ get_sample_cell_types <- function(fragments,
 
 load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 
-dir.create("../processed_data/count_overlap_data", recursive=TRUE)                                       
-dir.create("../processed_data/cell_counts_per_sample")                                       
+dir.create("../processed_data/count_overlap_data", recursive=TRUE)   
+cell_counts_dir = paste("../processed_data/cell_counts_per_sample", 
+                        annotation, sep = "/")
+dir.create(cell_counts_dir)
 ch = import.chain("../hg38ToHg19.over.chain")
 
 if (dataset == "Bingren") {
