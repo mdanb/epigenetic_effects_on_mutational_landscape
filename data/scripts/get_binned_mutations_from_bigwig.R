@@ -13,11 +13,11 @@ option_list <- list(
   make_option("--cores", type="integer")
 )
 
-create_binned_atac <- function(file, interval_ranges, chr_ranges) {
+create_binned_atac <- function(file, interval_ranges, chr_ranges, cohort) {
   filename = unlist(strsplit(file, split="/"))[4]
   filename = gsub("\\.insertions\\.bw", "", filename)
   filename = paste(filename, "rds", sep=".")
-  dirpath = "../processed_data/binned_atac"
+  dirpath = paste("../processed_data/binned_atac", cohort, sep="/")
   file_path = paste(dirpath, filename, sep="/")
   
   if (!file.exists(file_path)) {
@@ -45,12 +45,27 @@ create_binned_atac <- function(file, interval_ranges, chr_ranges) {
 args = parse_args(OptionParser(option_list=option_list))
 cores = args$cores
 cohort = args$cohort
-files = list.files(paste0("../bigwig/", cohort), full.names = T)
+files = list.files(paste0("../bigwig", cohort, sep="/"), full.names = T)
 
-  
 mclapply(files, create_binned_atac,
          interval_ranges=interval.ranges,
          chr_ranges=chr_ranges,
          mc.cores=cores)
+
+sample_names = c()
+samples = list()
+for (file in list.files(paste("../processed_data/binned_atac", 
+                               cohort, sep="/"), full.names = T)) {
+  counts = readRDS(file)
+  sample_name = gsub("\\.rds", "", unlist(strsplit(file, split="/"))[5])
+  sample_names = append(sample_names, sample_name)
+  samples = append(samples, counts["counts"])
+}
+
+df = do.call(cbind, samples)
+colnames(df) = sample_names
+rownames(df) = chr_ranges[["x"]]
+write.csv(df, paste0("../processed_data/binned_atac/", "binned_atac_", cohort, 
+                     ".csv"))
 
 
