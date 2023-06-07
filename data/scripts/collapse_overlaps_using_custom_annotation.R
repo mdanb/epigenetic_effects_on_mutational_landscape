@@ -180,7 +180,8 @@ if (dataset == "Greenleaf_pbmc_bm") {
     cell_type = unlist(lapply(cell_type, paste, collapse = " "))
     df_metadata["cell_type"] = cell_type
     df_metadata["tissue"] = tissue
-    save_collapsed_df(default_combined_count_ovs, df_metadata, dataset, annotation)
+    save_collapsed_df(default_combined_count_ovs, df_metadata, dataset, 
+                      annotation)
   }
 } else if (dataset == "Shendure") {
   if (annotation == "Shendure_remove_unknown_unsure") {
