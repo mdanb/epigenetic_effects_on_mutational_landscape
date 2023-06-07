@@ -5,7 +5,7 @@ from natsort import natsorted
 import pandas as pd
 import os
 from pathlib import Path
-import sqlite3
+import optuna
 
 parser = argparse.ArgumentParser()
 
@@ -155,13 +155,14 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
             if (idx % num_iter_skips == 0 or idx in iters_dont_skip):
                 model = pickle.load(open(file, "rb"))
                 # cv_score = gs.best_score_
-                conn = sqlite3.connect('db.sqlite3')
-                cursor = conn.cursor()
+                study = optuna.load_study(study_name="my_study", storage="sqlite:///db.sqlite3")
+                best_trial = study.best_trial
+                best_cv_score = best_trial.value
                 features = model.feature_names_in_
                 feature_importances = model.feature_importances_
                 df_curr = pd.DataFrame((features, feature_importances,
                                         [len(features)] * len(features),
-                                        [cv_score] * len(features))).T
+                                        [best_cv_score] * len(features))).T
                 df_curr.columns = df.columns
                 df = pd.concat((df, df_curr))
         Path(figure_path).mkdir(parents=True, exist_ok=True)
