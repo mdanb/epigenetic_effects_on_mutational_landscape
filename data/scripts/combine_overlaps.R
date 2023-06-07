@@ -89,7 +89,8 @@ add_to_combined_dataframes <- function(count_overlaps, combined_count_overlaps,
 
 save_combined_overlaps <- function(filepaths,
                                    combined_filepath, 
-                                   dataset, annotation) {
+                                   dataset, annotation,
+                                   which_interval_ranges) {
   combined_count_overlaps = data.frame()
   combined_count_overlaps_metadata = data.frame()
   for (f in filepaths) {
@@ -116,6 +117,10 @@ save_combined_overlaps <- function(filepaths,
   temp = unlist(strsplit(combined_filepath, "/"))[6]
   metadata_filename = paste(unlist(strsplit(temp, "[.]"))[1], "metadata.rds", 
                             sep="_")
+  if (which_interval_ranges != "polak") {
+    metadata_filename = paste("interval_ranges", metadata_filename, sep="_")
+  }
+  
   metadata_filepath = paste("..", "processed_data", "count_overlap_data", 
                             "combined_count_overlaps", annotation, 
                             metadata_filename, sep="/")
@@ -165,6 +170,7 @@ for (dataset in datasets) {
     filepaths = list.files(co_fp, 
                            pattern = pattern, 
                            full.names = TRUE)
-    save_combined_overlaps(filepaths, combined_filepath, dataset, annotation)
+    save_combined_overlaps(filepaths, combined_filepath, dataset, annotation,
+                           which_interval_ranges)
   }
 }
