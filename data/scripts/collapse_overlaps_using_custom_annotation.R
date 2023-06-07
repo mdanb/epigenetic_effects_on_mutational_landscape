@@ -114,7 +114,12 @@ if (dataset == "Greenleaf_pbmc_bm") {
     save_collapsed_df(df, df_metadata, dataset, annotation)
   }
 } else if (dataset == "Yang_kidney") {
-  default_annotation_fn = "Yang_kidney_combined_count_overlaps.rds"
+  if (which_interval_ranges != "polak") {
+    default_annotation_fn = "interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"
+  }
+  else {
+    default_annotation_fn = "Yang_kidney_combined_count_overlaps.rds"
+  }
   default_annotation_fp = paste(root, "default_annotation", 
                                 default_annotation_fn, sep="/")
   default_combined_count_ovs = readRDS(default_annotation_fp)
