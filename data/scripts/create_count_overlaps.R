@@ -14,7 +14,7 @@ option_list <- list(
   make_option("--dataset_subsets", type="character", default=NULL),
   make_option("--cores", type="integer"),
   make_option("--annotation", type="character"),
-  make_option("--which_interval_ranges", "character")
+  make_option("--which_interval_ranges", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
