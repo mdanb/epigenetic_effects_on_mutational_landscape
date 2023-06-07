@@ -13,7 +13,8 @@ option_list <- list(
   make_option("--dataset", type="character"),
   make_option("--dataset_subsets", type="character", default=NULL),
   make_option("--cores", type="integer"),
-  make_option("--annotation", type="character")
+  make_option("--annotation", type="character"),
+  make_option("--which_interval_ranges", "character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -25,8 +26,9 @@ args = parse_args(OptionParser(option_list=option_list))
 
 cores = args$cores
 dataset = args$dataset
-cores = args$cores
+dataset_subsets = args$dataset_subsets
 annotation = args$annotation
+which_interval_ranges = args$which_interval_ranges
 
 get_and_save_num_cells_per_sample <- function(sample, sample_file_name,
                                               annotation) {
@@ -51,8 +53,13 @@ compute_count_overlaps <- function(sample, interval_ranges) {
 }
 
 create_count_overlaps_files <- function(file, metadata, interval_ranges, chain, 
-                                        dataset, annotation) {
+                                        dataset, annotation, which_interval_ranges) {
   filename = get_sample_filename(file, dataset)
+  if (which_interval_ranges != "polak") {
+    filename = paste("interval_ranges", which_interval_ranges, filename,
+                     sep = "_")
+  }
+  
   dirpath = paste("../processed_data/count_overlap_data", annotation, sep="/")
   filepath = paste(dirpath, filename, sep="/")
   dir.create(dirpath)
@@ -128,7 +135,11 @@ get_sample_cell_types <- function(fragments,
   return(as.tibble(fragments))
 }
 
-load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+if (which_interval_ranges == "polak") {
+  load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+} else if (which_interval_ranges == "yang") {
+  load("../peak_set_yang.Rdata")
+}
 
 dir.create("../processed_data/count_overlap_data", recursive=TRUE)   
 cell_counts_dir = paste("../processed_data/cell_counts_per_sample", 
