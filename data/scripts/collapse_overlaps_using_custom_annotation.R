@@ -14,13 +14,15 @@ library(tibble)
 
 option_list <- list( 
   make_option("--dataset", type="character"),
-  make_option("--annotation", type="character")
+  make_option("--annotation", type="character"),
+  make_option("--which_interval_ranges", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
 
 dataset = args$dataset
 annotation = args$annotation
+which_interval_ranges = args$which_interval_ranges
 
 save_collapsed_df <- function(df, df_metadata, dataset, annotation) {
   save_dir = paste("../processed_data/count_overlap_data/combined_count_overlaps",
