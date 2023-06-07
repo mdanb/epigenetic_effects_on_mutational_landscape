@@ -6,7 +6,8 @@ load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 
 option_list <- list(
   make_option("--datasets", type = "character"),
-  make_option("--annotation", type="character")
+  make_option("--annotation", type="character"),
+  make_option("--which_interval_ranges", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -18,6 +19,7 @@ args = parse_args(OptionParser(option_list=option_list))
 annotation = args$annotation
 cell_number_filter = args$cell_number_filter
 datasets = unlist(strsplit(args$datasets, split = ","))
+which_interval_ranges = args$which_interval_ranges
 
 get_cell_counts_df <- function(count_overlaps_filename, annotation) {
   cell_counts_filename = unlist(strsplit(unlist(
@@ -145,11 +147,19 @@ for (dataset in datasets) {
   dir.create(combined_filepath)
   combined_filename = paste(dataset,
                             "combined_count_overlaps.rds", sep="_")
+  if (which_interval_ranges != "polak") {
+    combined_filename = paste("interval_ranges", which_interval_ranges, 
+                              combined_filename, sep="_")
+  }
   combined_filepath = paste(combined_filepath, combined_filename, sep="/")
   if (!file.exists(combined_filepath)) { # || 
       #!file.exists(unsquashed_overlaps_filepath)) {
     pattern = paste(dataset, "count_overlaps", 
                     sep="_")
+    if (which_interval_ranges != "polak") {
+      pattern = paste("interval_ranges", which_interval_ranges, 
+                      pattern, sep="_")
+    }
     co_fp = paste("../processed_data/count_overlap_data", annotation,
                   sep = "/")
     filepaths = list.files(co_fp, 
