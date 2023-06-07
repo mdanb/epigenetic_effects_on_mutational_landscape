@@ -536,6 +536,23 @@ Heatmap(scale(corrs_pearson),
 
 plot_count_distribution(colon_adenoca, "colorect_adenoca_counts.pdf")
 
+
+cancer_samples_atac = read.csv("../data/processed_data/binned_atac/binned_atac_COAD-US.csv",
+                                row.names = 1)
+cancer_samples_atac = cancer_samples_atac[chr_keep, ]
+colon_intestine_scatac_df = colon_intestine_scatac_df[, colnames(colon_intestine_scatac_df) !=
+                                                        "colon_transverse Enterochromaffin Cell BR"]
+colon_intestine_scatac_df = colon_intestine_scatac_df[, colnames(colon_intestine_scatac_df) !=
+                                                        "colon_transverse Colonic Goblet Cell BR"]
+
+corrs_pearson = cor(colon_intestine_scatac_df, cancer_samples_atac)
+pdf("colon_atac_corrs.pdf", width=15, height=10)
+Heatmap(corrs_pearson, 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3))
+dev.off()
 #### Brain ####
 scatac_df_gl = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Greenleaf_brain_same+as+paper+but+Early+RG+Late+RG-RG_Unk-rm/Greenleaf_brain_combined_count_overlaps.rds"))
 colnames(scatac_df_gl) = paste(colnames(scatac_df_gl), "GL_Br")
@@ -639,3 +656,19 @@ Heatmap(scale(corrs_pearson),
         column_names_gp = grid::gpar(fontsize = 2),
         row_names_gp = grid::gpar(fontsize = 8),
         top_annotation = ha)
+
+##### Kidney #####
+scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/Yang_kidney_combined_count_overlaps.rds"))
+scatac_df_yang = scatac_df_yang[chr_keep, ]
+cancer_samples_atac = read.csv("../data/processed_data/binned_atac/binned_atac_KIRP-US.csv",
+                               row.names = 1)
+cancer_samples_atac = cancer_samples_atac[chr_keep, ]
+
+corrs_pearson = cor(scatac_df_yang, cancer_samples_atac)
+pdf("kidney_atac_corrs.pdf", width=15, height=10)
+Heatmap(corrs_pearson, 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3))
+dev.off()
