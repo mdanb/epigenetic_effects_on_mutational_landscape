@@ -1,11 +1,39 @@
 library(ComplexHeatmap)
 library(RColorBrewer)
 library(tidyverse)
+library(circlize)
+library(edgeR)
+library(preprocessCore)
+library(Seurat)
 
 chr_keep = read.csv("../data/processed_data/chr_keep.csv")[["chr"]]
 chr_ranges = unlist(read.csv("../data/processed_data/chr_ranges.csv"))
 
 #################
+get_filtered_cells <- function(cell_num_filter, annotation, dataset,
+                               tissue_col_name=NULL, tissue=NULL) {
+  root = "../data/processed_data/count_overlap_data/combined_count_overlaps"
+  fn = paste(dataset, "combined_count_overlaps_metadata.rds", sep = "_")
+  fp = paste(root, annotation, fn, sep = "/")
+  metadata = readRDS(fp)
+  if (!is.null(tissue_col_name)) {
+    metadata = metadata[metadata[[tissue_col_name]] == tissue, ]
+  }
+  metadata = metadata[as.numeric(metadata[["num_cells"]]) >= cell_num_filter, ]
+  if (dataset == "Bingren") {
+    metadata["cell_type"] = paste(metadata[["cell_type"]], "BR")
+  }
+  else if (dataset == "Shendure") {
+    metadata["cell_type"] = paste(metadata[["cell_type"]], "SH")
+  }
+  else if (dataset == "Greenleaf_brain") {
+    metadata["cell_type"] = paste(metadata[["cell_type"]], "GL_Br")
+  }
+  return(metadata)
+}
+
+
+
 scatac_df_br = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Bingren_remove_same_celltype_indexing/Bingren_combined_count_overlaps.rds"))
 scatac_df_sh = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Shendure_remove_unknown_unsure/Shendure_combined_count_overlaps.rds"))
 colnames(scatac_df_sh) = paste(colnames(scatac_df_sh), "SH")
@@ -149,28 +177,6 @@ plot_count_distribution(meso_individuals, "meso_counts.pdf")
 #         row_names_gp = grid::gpar(fontsize = 8),
 #         top_annotation = ha)
 
-get_filtered_cells <- function(cell_num_filter, annotation, dataset,
-                               tissue_col_name=NULL, tissue=NULL) {
-  root = "../data/processed_data/count_overlap_data/combined_count_overlaps"
-  fn = paste(dataset, "combined_count_overlaps_metadata.rds", sep = "_")
-  fp = paste(root, annotation, fn, sep = "/")
-  metadata = readRDS(fp)
-  if (!is.null(tissue_col_name)) {
-    metadata = metadata[metadata[[tissue_col_name]] == tissue, ]
-  }
-  metadata = metadata[as.numeric(metadata[["num_cells"]]) >= cell_num_filter, ]
-  if (dataset == "Bingren") {
-    metadata["cell_type"] = paste(metadata[["cell_type"]], "BR")
-  }
-  else if (dataset == "Shendure") {
-    metadata["cell_type"] = paste(metadata[["cell_type"]], "SH")
-  }
-  else if (dataset == "Greenleaf_brain") {
-    metadata["cell_type"] = paste(metadata[["cell_type"]], "GL_Br")
-  }
-  return(metadata)
-}
-
 #### Lung-AdenoCA ####
 lung_cells_to_keep = c("proximal lung Basal", 
                        "proximal lung Ciliated",
@@ -311,7 +317,9 @@ pancreas_adenoca = read.csv("../data/mutation_data/Panc-AdenoCA.txt",
                             sep="\t")
 pancreas_adenoca = pancreas_adenoca[chr_ranges %in% chr_keep, ]
 pancreas_adenoca = pancreas_adenoca[, 4:ncol(pancreas_adenoca)]
-
+per_patient_density = log(colSums(pancreas_adenoca))
+# lowest = per_patient_density == min(per_patient_density)
+# pancreas_adenoca = pancreas_adenoca[, !lowest]
 subtype_colors <- c(
   "Pancreatic ductal carcinoma" = "red",
   "Invasive carcinoma arising in IPMN" = "green",
@@ -385,23 +393,45 @@ rna_subtype_colors <- c(
   "Endocrine" = "pink",
   "Neuroendocrine" = "yellow"
 )
-combined_annotation = cbind(subtype = donor_to_subtype, dataset = dataset_annotation,
-                            rna_subtype = pancreas_rna_subtypes)
+
+per_patient_density = log(colSums(pancreas_adenoca))
+continuous_color_palette = colorRamp2(c(min(per_patient_density), 
+                                      max(per_patient_density)),
+                                      c("white", "red"))
+# per_patient_density_colors = continuous_color_palette(per_patient_density)
+# combined_annotation = cbind(subtype = donor_to_subtype, dataset = dataset_annotation,
+#                             rna_subtype = pancreas_rna_subtypes, 
+#                             per_patient_density = per_patient_density)
 combined_colors = list(subtype = subtype_colors, dataset = dataset_colors,
-                       rna_subtype = rna_subtype_colors)
+                       rna_subtype = rna_subtype_colors, 
+                       per_patient_density = continuous_color_palette)
 # ha <- HeatmapAnnotation(subtype = donor_to_subtype, col = list(subtype = subtype_colors))
-ha <- HeatmapAnnotation(df = data.frame(combined_annotation), col = combined_colors)
+
+ha <- HeatmapAnnotation(subtype = donor_to_subtype, dataset = dataset_annotation,
+                        rna_subtype = pancreas_rna_subtypes, 
+                        per_patient_density = per_patient_density, col = combined_colors)
 column_order <- order(scale(corrs_pearson)["stomach Goblet cells SH", ])
-pdf("goblet.pdf", width=45, height=10)
+pdf("goblet.pdf", width=10, height=10)
 Heatmap(scale(corrs_pearson), 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
         column_names_gp = grid::gpar(fontsize = 2),
         row_names_gp = grid::gpar(fontsize = 8),
         # top_annotation = ha,
-        column_order = column_order,
-        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
+        # column_order = column_order,
+        # cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
         show_heatmap_legend = F)
 dev.off()
+
+mat = t(scale(corrs_pearson))
+column_hclust <- hclust(dist(mat))
+k <- 2  # number of clusters
+col_clusters <- cutree(column_hclust, k)
+delta_gamma_cluster = names(col_clusters)[col_clusters == 2]
+delta_gamma_cluster = pancreas_adenoca[, delta_gamma_cluster]
+delta_gamma_cluster = as.data.frame(rowSums(delta_gamma_cluster))
+rownames(delta_gamma_cluster) = chr_keep
+colnames(delta_gamma_cluster) = "pancreas_delta_gamma"
+write.csv(delta_gamma_cluster, file = "../data/processed_data/hierarchically_clustered_mutations.csv")
 
 column_order <- order(scale(corrs_pearson)["stomach Foveolar Cell BR", ])
 pdf("foveolar.pdf", width=45, height=10)
@@ -414,6 +444,16 @@ Heatmap(scale(corrs_pearson),
         cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
         show_heatmap_legend = F)
 dev.off()
+
+Heatmap(scale(corrs_pearson)[grepl("goblet|acinar|ductal", rownames(corrs_pearson),
+                                   ignore.case = T), ], 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        top_annotation = ha,
+        # column_order = column_order,
+        # cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
+        show_heatmap_legend = F)
 
 plot_count_distribution(pancreas_adenoca, "panc_adenoca_counts.pdf")
 
@@ -500,6 +540,23 @@ Heatmap(scale(corrs_pearson),
 
 plot_count_distribution(colon_adenoca, "colorect_adenoca_counts.pdf")
 
+
+cancer_samples_atac = read.csv("../data/processed_data/binned_atac/binned_atac_COAD-US.csv",
+                                row.names = 1)
+cancer_samples_atac = cancer_samples_atac[chr_keep, ]
+colon_intestine_scatac_df = colon_intestine_scatac_df[, colnames(colon_intestine_scatac_df) !=
+                                                        "colon_transverse Enterochromaffin Cell BR"]
+colon_intestine_scatac_df = colon_intestine_scatac_df[, colnames(colon_intestine_scatac_df) !=
+                                                        "colon_transverse Colonic Goblet Cell BR"]
+
+corrs_pearson = cor(colon_intestine_scatac_df, cancer_samples_atac)
+pdf("colon_atac_corrs.pdf", width=15, height=10)
+Heatmap(corrs_pearson, 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3))
+dev.off()
 #### Brain ####
 scatac_df_gl = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Greenleaf_brain_same+as+paper+but+Early+RG+Late+RG-RG_Unk-rm/Greenleaf_brain_combined_count_overlaps.rds"))
 colnames(scatac_df_gl) = paste(colnames(scatac_df_gl), "GL_Br")
@@ -603,3 +660,58 @@ Heatmap(scale(corrs_pearson),
         column_names_gp = grid::gpar(fontsize = 2),
         row_names_gp = grid::gpar(fontsize = 8),
         top_annotation = ha)
+
+##### Kidney #####
+# scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/Yang_kidney_combined_count_overlaps.rds"))
+# scatac_df_yang = scatac_df_yang[chr_keep, ]
+# cancer_samples_atac = read.csv("../data/processed_data/binned_atac/binned_atac_KIRP-US.csv",
+#                                row.names = 1)
+# cancer_samples_atac = cancer_samples_atac[chr_keep, ]
+
+if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
+  cancer_samples_atac = readRDS("../data/normalized_atac_pan_peak_set.rds")
+  features=rownames(cancer_samples_atac)
+  cancer_samples_atac = cancer_samples_atac[, grepl("KIRP", colnames(cancer_samples_atac))]
+  seurat_data = CreateSeuratObject(counts = cancer_samples_atac)
+  seurat_data = FindVariableFeatures(seurat_data, nfeatures = 50000,
+                                     selection.method="vst")
+  var_features <- VariableFeatures(seurat_data)
+  var_features = gsub("-", "_", var_features)
+  cancer_samples_atac = cancer_samples_atac[var_features, ]
+  saveRDS(cancer_samples_atac, "../data/processed_data/cancer_atac_50k_var_features.rds")
+} else {
+  cancer_samples_atac = readRDS("../data/processed_data/cancer_atac_50k_var_features.rds")
+}
+
+if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
+  scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"))
+  cell_types = colnames(scatac_df_yang)
+  scatac_df_yang = cpm(scatac_df_yang, log=T, prior.count=5)
+  scatac_df_yang = normalize.quantiles(scatac_df_yang)
+  colnames(scatac_df_yang) = cell_types
+  rownames(scatac_df_yang) = features
+  seurat_data = CreateSeuratObject(counts = scatac_df_yang)
+  seurat_data = FindVariableFeatures(seurat_data, nfeatures = 50000,
+                                     selection.method="vst")
+  var_features <- VariableFeatures(seurat_data)
+  var_features = gsub("-", "_", var_features)
+  scatac_df_yang = scatac_df_yang[var_features, ]
+  saveRDS(scatac_df_yang, "../data/processed_data/scatac_50k_var_features.rds")
+} else {
+  scatac_df_yang = readRDS("../data/processed_data/scatac_50k_var_features.rds")
+}
+
+features_keep = intersect(rownames(scatac_df_yang), rownames(cancer_samples_atac))
+scatac_df_yang = scatac_df_yang[features_keep, ]
+cancer_samples_atac = cancer_samples_atac[features_keep, ]
+corrs_pearson = cor(scatac_df_yang, cancer_samples_atac)
+
+pdf("kidney_atac_corrs.pdf", width=15, height=10)
+Heatmap(corrs_pearson, 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 2),
+        row_names_gp = grid::gpar(fontsize = 8),
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3))
+dev.off()
+
+
