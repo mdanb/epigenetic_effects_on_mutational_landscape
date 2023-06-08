@@ -8,7 +8,8 @@ from pathlib import Path
 import optuna
 import sys
 
-sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML')
+# sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML')
+sys.path.insert(0, '/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape')
 
 from analysis.ML.ML_utils import construct_scATAC_dir, construct_scATAC_sources
 parser = argparse.ArgumentParser()
@@ -38,7 +39,6 @@ parser.add_argument('--cell_number_filter', type=int)
 parser.add_argument('--num_iter_skips', type=int, default=5)
 parser.add_argument('--seed', type=int, default=42)
 parser.add_argument('--tss_fragment_filter', nargs="+", type=int, default=[-1])
-group = parser.add_mutually_exclusive_group()
 # group.add_argument('--waddell_sarc_biph', action="store_true",
 #                     default=False)
 # group.add_argument('--waddell_sarc', action="store_true", default=False)
@@ -199,7 +199,10 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
             # sorted_features = features[feat_importance_idx]
             # sorted_feature_importances = sorted(feature_importances, reverse=True)
 
-config = parser.parse_args()
+# config = parser.parse_args()
+config = parser.parse_args(['--cancer_types', 'CNS-GBM', "--datasets", "Greenleaf_brain Bingren Shendure Tsankov",
+                          "--cell_number_filter", "1", "--annotation", "finalized_annotation",
+                          "--ML_model", "XGB", "--seed", "42"])
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
 print(backwards_elim_dirs)
 num_iter_skips = config.num_iter_skips
