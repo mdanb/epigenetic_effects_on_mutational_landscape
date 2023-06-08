@@ -8,7 +8,7 @@ from pathlib import Path
 import optuna
 import sys
 
-sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML')
+sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/')
 
 from analysis.ML.ML_utils import construct_scATAC_dir, construct_scATAC_sources
 parser = argparse.ArgumentParser()
