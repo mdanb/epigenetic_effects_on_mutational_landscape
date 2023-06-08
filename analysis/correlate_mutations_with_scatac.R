@@ -658,11 +658,21 @@ Heatmap(scale(corrs_pearson),
         top_annotation = ha)
 
 ##### Kidney #####
-scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/Yang_kidney_combined_count_overlaps.rds"))
-scatac_df_yang = scatac_df_yang[chr_keep, ]
-cancer_samples_atac = read.csv("../data/processed_data/binned_atac/binned_atac_KIRP-US.csv",
-                               row.names = 1)
-cancer_samples_atac = cancer_samples_atac[chr_keep, ]
+# scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/Yang_kidney_combined_count_overlaps.rds"))
+# scatac_df_yang = scatac_df_yang[chr_keep, ]
+# cancer_samples_atac = read.csv("../data/processed_data/binned_atac/binned_atac_KIRP-US.csv",
+#                                row.names = 1)
+# cancer_samples_atac = cancer_samples_atac[chr_keep, ]
+library(edgeR)
+library(preprocessCore)
+scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"))
+cell_types = colnames(scatac_df_yang)
+scatac_df_yang = cpm(scatac_df_yang, log=T, prior.count = 5)
+scatac_df_yang = normalize.quantiles(scatac_df_yang)
+colnames(scatac_df_yang) = cell_types
+
+cancer_samples_atac = readRDS("../data/normalized_atac_pan_peak_set.rds")
+
 
 corrs_pearson = cor(scatac_df_yang, cancer_samples_atac)
 pdf("kidney_atac_corrs.pdf", width=15, height=10)
@@ -672,3 +682,5 @@ Heatmap(corrs_pearson,
         row_names_gp = grid::gpar(fontsize = 8),
         cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3))
 dev.off()
+
+
