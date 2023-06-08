@@ -2,6 +2,10 @@ library(ComplexHeatmap)
 library(RColorBrewer)
 library(tidyverse)
 library(circlize)
+library(edgeR)
+library(preprocessCore)
+library(Seurat)
+
 chr_keep = read.csv("../data/processed_data/chr_keep.csv")[["chr"]]
 chr_ranges = unlist(read.csv("../data/processed_data/chr_ranges.csv"))
 
@@ -658,13 +662,50 @@ Heatmap(scale(corrs_pearson),
         top_annotation = ha)
 
 ##### Kidney #####
-scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/Yang_kidney_combined_count_overlaps.rds"))
-scatac_df_yang = scatac_df_yang[chr_keep, ]
-cancer_samples_atac = read.csv("../data/processed_data/binned_atac/binned_atac_KIRP-US.csv",
-                               row.names = 1)
-cancer_samples_atac = cancer_samples_atac[chr_keep, ]
+# scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/Yang_kidney_combined_count_overlaps.rds"))
+# scatac_df_yang = scatac_df_yang[chr_keep, ]
+# cancer_samples_atac = read.csv("../data/processed_data/binned_atac/binned_atac_KIRP-US.csv",
+#                                row.names = 1)
+# cancer_samples_atac = cancer_samples_atac[chr_keep, ]
 
+if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
+  cancer_samples_atac = readRDS("../data/normalized_atac_pan_peak_set.rds")
+  features=rownames(cancer_samples_atac)
+  cancer_samples_atac = cancer_samples_atac[, grepl("KIRP", colnames(cancer_samples_atac))]
+  seurat_data = CreateSeuratObject(counts = cancer_samples_atac)
+  seurat_data = FindVariableFeatures(seurat_data, nfeatures = 50000,
+                                     selection.method="vst")
+  var_features <- VariableFeatures(seurat_data)
+  var_features = gsub("-", "_", var_features)
+  cancer_samples_atac = cancer_samples_atac[var_features, ]
+  saveRDS(cancer_samples_atac, "../data/processed_data/cancer_atac_50k_var_features.rds")
+} else {
+  cancer_samples_atac = readRDS("../data/processed_data/cancer_atac_50k_var_features.rds")
+}
+
+if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
+  scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"))
+  cell_types = colnames(scatac_df_yang)
+  scatac_df_yang = cpm(scatac_df_yang, log=T, prior.count=5)
+  scatac_df_yang = normalize.quantiles(scatac_df_yang)
+  colnames(scatac_df_yang) = cell_types
+  rownames(scatac_df_yang) = features
+  seurat_data = CreateSeuratObject(counts = scatac_df_yang)
+  seurat_data = FindVariableFeatures(seurat_data, nfeatures = 50000,
+                                     selection.method="vst")
+  var_features <- VariableFeatures(seurat_data)
+  var_features = gsub("-", "_", var_features)
+  scatac_df_yang = scatac_df_yang[var_features, ]
+  saveRDS(scatac_df_yang, "../data/processed_data/scatac_50k_var_features.rds")
+} else {
+  scatac_df_yang = readRDS("../data/processed_data/scatac_50k_var_features.rds")
+}
+
+features_keep = intersect(rownames(scatac_df_yang), rownames(cancer_samples_atac))
+scatac_df_yang = scatac_df_yang[features_keep, ]
+cancer_samples_atac = cancer_samples_atac[features_keep, ]
 corrs_pearson = cor(scatac_df_yang, cancer_samples_atac)
+
 pdf("kidney_atac_corrs.pdf", width=15, height=10)
 Heatmap(corrs_pearson, 
         col = RColorBrewer::brewer.pal(9, "RdBu"),
@@ -672,3 +713,5 @@ Heatmap(corrs_pearson,
         row_names_gp = grid::gpar(fontsize = 8),
         cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3))
 dev.off()
+
+
