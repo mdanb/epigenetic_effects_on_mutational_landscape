@@ -5,7 +5,8 @@ from natsort import natsorted
 import pandas as pd
 import os
 from pathlib import Path
-
+import optuna
+from analysis.ML.ML_utils import construct_scATAC_dir, construct_scATAC_sources
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--cancer_types', nargs="+", type=str,
@@ -135,7 +136,7 @@ def get_relevant_backwards_elim_dirs(config):
         #                                    threshold_dir)
 
 def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters_dont_skip,
-                                      ML_model):
+                                      ML_model, optuna_base_dir):
     for backwards_elim_dir in backwards_elim_dirs:
         df = pd.DataFrame(columns = ["features", "importance", "num_features", "score"])
 
@@ -153,12 +154,15 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
         for idx, file in enumerate(files):
             if (idx % num_iter_skips == 0 or idx in iters_dont_skip):
                 model = pickle.load(open(file, "rb"))
-                cv_score = gs.best_score_
+                study_name = f"iter_{idx}_{optuna_base_dir}"
+                study = optuna.load_study(study_name=study_name, storage="sqlite:///db.sqlite3")
+                best_trial = study.best_trial
+                best_cv_score = best_trial.value
                 features = model.feature_names_in_
                 feature_importances = model.feature_importances_
                 df_curr = pd.DataFrame((features, feature_importances,
                                         [len(features)] * len(features),
-                                        [cv_score] * len(features))).T
+                                        [best_cv_score] * len(features))).T
                 df_curr.columns = df.columns
                 df = pd.concat((df, df_curr))
         Path(figure_path).mkdir(parents=True, exist_ok=True)
@@ -197,5 +201,10 @@ print(backwards_elim_dirs)
 num_iter_skips = config.num_iter_skips
 iters_dont_skip = config.iters_dont_skip
 ML_model = config.ML_model
+optuna_base_dir = construct_scATAC_dir(scATAC_sources=construct_scATAC_sources(config.datasets),
+                                       scATAC_cell_number_filter=config.cell_number_filter,
+                                       tss_filter=None,
+                                       annotation_dir=config.annotation,
+                                       seed=config.seed)
 prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips,
-                                  iters_dont_skip, ML_model)
+                                  iters_dont_skip, ML_model, optuna_base_dir)

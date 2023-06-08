@@ -14,13 +14,15 @@ library(tibble)
 
 option_list <- list( 
   make_option("--dataset", type="character"),
-  make_option("--annotation", type="character")
+  make_option("--annotation", type="character"),
+  make_option("--which_interval_ranges", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
 
 dataset = args$dataset
 annotation = args$annotation
+which_interval_ranges = args$which_interval_ranges
 
 save_collapsed_df <- function(df, df_metadata, dataset, annotation) {
   save_dir = paste("../processed_data/count_overlap_data/combined_count_overlaps",
@@ -114,7 +116,12 @@ if (dataset == "Greenleaf_pbmc_bm") {
     save_collapsed_df(df, df_metadata, dataset, annotation)
   }
 } else if (dataset == "Yang_kidney") {
-  default_annotation_fn = "Yang_kidney_combined_count_overlaps.rds"
+  if (which_interval_ranges != "polak") {
+    default_annotation_fn = "interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"
+  }
+  else {
+    default_annotation_fn = "Yang_kidney_combined_count_overlaps.rds"
+  }
   default_annotation_fp = paste(root, "default_annotation", 
                                 default_annotation_fn, sep="/")
   default_combined_count_ovs = readRDS(default_annotation_fp)
@@ -173,7 +180,8 @@ if (dataset == "Greenleaf_pbmc_bm") {
     cell_type = unlist(lapply(cell_type, paste, collapse = " "))
     df_metadata["cell_type"] = cell_type
     df_metadata["tissue"] = tissue
-    save_collapsed_df(default_combined_count_ovs, df_metadata, dataset, annotation)
+    save_collapsed_df(default_combined_count_ovs, df_metadata, dataset, 
+                      annotation)
   }
 } else if (dataset == "Shendure") {
   if (annotation == "Shendure_remove_unknown_unsure") {
