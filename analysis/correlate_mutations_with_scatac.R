@@ -684,6 +684,9 @@ Heatmap(scale(corrs_pearson),
 
 if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
   cancer_samples_atac = readRDS("../data/normalized_atac_pan_peak_set.rds")
+  # ch = import.chain("../hg38ToHg19.over.chain")
+  # seqlevelsStyle(cancer_samples_atac) = "UCSC"  # necessary
+  # cancer_samples_atac = unlist(liftOver(cancer_samples_atac, ch))
   features=rownames(cancer_samples_atac)
   cancer_samples_atac = cancer_samples_atac[, grepl("KIRP", colnames(cancer_samples_atac))]
   seurat_data = CreateSeuratObject(counts = cancer_samples_atac)
