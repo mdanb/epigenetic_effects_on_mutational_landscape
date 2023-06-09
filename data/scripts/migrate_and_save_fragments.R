@@ -6,7 +6,8 @@ source("count_overlaps_utils.R")
 option_list <- list(
   make_option("--dataset", type="character"),
   make_option("--cores", type="integer"),
-  make_option("--tissue", type="character", default="all")
+  make_option("--tissue", type="character", default="all"),
+  make_option("--chain", type="character", default="hg38ToHg19")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -14,7 +15,11 @@ args = parse_args(OptionParser(option_list=option_list))
 dataset = args$dataset
 cores = args$cores
 tissue = args$tissue
-ch = import.chain("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/hg38ToHg19.over.chain")
+chain = args$chain
+
+chain_file = paste0("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/", 
+                    chain, ".over.chain")
+ch = import.chain(chain_file)
 
 helper <- function(files, migrated_filepaths, ch, cores) {
   # files = lapply(strsplit(files, split = "/"), "[", 9)
@@ -24,7 +29,7 @@ helper <- function(files, migrated_filepaths, ch, cores) {
   
   print("MIGRATING")
   print(files)
-  migrated_fragments = mclapply(fragments, migrate_bed_file_to_hg37, ch, 
+  migrated_fragments = mclapply(fragments, migrate_bed_file, ch, 
                                 mc.cores=cores)
   print("EXPORTING")
   print(files)
@@ -79,6 +84,12 @@ if (dataset == "Bingren") {
   dir.create(dir_path)
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_pbmc_bm_scATAC",
                      pattern="tsv.gz",
+                     full.names=TRUE)
+} else if (dataset == "Yang") {
+  dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC/migrated_to_hg38"
+  dir.create(dir_path)
+  files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/",
+                     pattern="bed.bgz",
                      full.names=TRUE)
 }
 
