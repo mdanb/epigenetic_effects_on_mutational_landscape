@@ -9,7 +9,4 @@ interval.ranges = GRanges(seqnames=df[["seqnames"]],
                                         end=df[["end"]]
                                         )
                           )
-ch = import.chain("../hg38ToHg19.over.chain")
-seqlevelsStyle(interval.ranges) = "UCSC"  # necessary
-interval.ranges = unlist(liftOver(interval.ranges, ch))
 save(interval.ranges, file="../peak_set_yang.Rdata")

@@ -29,7 +29,7 @@ helper <- function(files, migrated_filepaths, ch, cores) {
   
   print("MIGRATING")
   print(files)
-  migrated_fragments = mclapply(fragments, migrate_bed_file, ch, 
+  migrated_fragments = mclapply(fragments, migrate_file, ch, 
                                 mc.cores=cores)
   print("EXPORTING")
   print(files)
