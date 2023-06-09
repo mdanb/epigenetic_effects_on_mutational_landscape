@@ -455,6 +455,20 @@ Heatmap(scale(corrs_pearson)[grepl("goblet|acinar|ductal", rownames(corrs_pearso
         # cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
         show_heatmap_legend = F)
 
+shendure_only = c("pancreas Acinar cells SH", 
+                  "pancreas Ductal cells SH",
+                  "stomach Goblet cells SH")
+
+pdf("shendure_only_pancreas.pdf", width=20, height=10)
+Heatmap(scale(corrs_pearson[shendure_only, ]), 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 3),
+        row_names_gp = grid::gpar(fontsize = 10),
+        top_annotation = ha,
+        # column_order = column_order,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=1),
+        show_heatmap_legend = F)
+dev.off()
 plot_count_distribution(pancreas_adenoca, "panc_adenoca_counts.pdf")
 
 #### ColoRect-AdenoCA ####
@@ -700,6 +714,7 @@ if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
 } else {
   scatac_df_yang = readRDS("../data/processed_data/scatac_50k_var_features.rds")
 }
+
 
 features_keep = intersect(rownames(scatac_df_yang), rownames(cancer_samples_atac))
 scatac_df_yang = scatac_df_yang[features_keep, ]
