@@ -305,8 +305,8 @@ get_tissue_name_tsankov <- function(filename) {
 #   return(tissue_name)
 # }
 
-migrate_bed_file_to_hg37 <- function(bed_sample, chain) {
-  seqlevelsStyle(bed_sample) = "UCSC"  # necessary
-  bed_sample = unlist (liftOver(bed_sample, ch))
-  return(bed_sample)
+migrate_file <- function(sample, chain) {
+  seqlevelsStyle(sample) = "UCSC"  # necessary
+  sample = unlist(liftOver(sample, ch))
+  return(sample)
 }

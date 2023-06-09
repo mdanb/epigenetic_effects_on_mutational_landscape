@@ -29,7 +29,7 @@ helper <- function(files, migrated_filepaths, ch, cores) {
   
   print("MIGRATING")
   print(files)
-  migrated_fragments = mclapply(fragments, migrate_bed_file, ch, 
+  migrated_fragments = mclapply(fragments, migrate_file, ch, 
                                 mc.cores=cores)
   print("EXPORTING")
   print(files)
@@ -88,8 +88,8 @@ if (dataset == "Bingren") {
 } else if (dataset == "Yang") {
   dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC/migrated_to_hg38"
   dir.create(dir_path)
-  files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/",
-                     pattern="bed.bgz",
+  files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/yang_kidney_scATAC",
+                     pattern="tsv.gz",
                      full.names=TRUE)
 }
 
