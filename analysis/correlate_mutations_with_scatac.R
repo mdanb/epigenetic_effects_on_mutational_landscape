@@ -455,6 +455,20 @@ Heatmap(scale(corrs_pearson)[grepl("goblet|acinar|ductal", rownames(corrs_pearso
         # cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
         show_heatmap_legend = F)
 
+shendure_only = c("pancreas Acinar cells SH", 
+                  "pancreas Ductal cells SH",
+                  "stomach Goblet cells SH")
+
+pdf("shendure_only_pancreas.pdf", width=20, height=10)
+Heatmap(scale(corrs_pearson[shendure_only, ]), 
+        col = RColorBrewer::brewer.pal(9, "RdBu"),
+        column_names_gp = grid::gpar(fontsize = 3),
+        row_names_gp = grid::gpar(fontsize = 10),
+        top_annotation = ha,
+        # column_order = column_order,
+        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=1),
+        show_heatmap_legend = F)
+dev.off()
 plot_count_distribution(pancreas_adenoca, "panc_adenoca_counts.pdf")
 
 #### ColoRect-AdenoCA ####
@@ -670,11 +684,9 @@ Heatmap(scale(corrs_pearson),
 
 if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
   cancer_samples_atac = readRDS("../data/normalized_atac_pan_peak_set.rds")
-  raw = readRDS("../data/raw_atac_pan_peak_set.rds")[grepl("KIRP",
-                                                           colnames(raw))]
   features=rownames(cancer_samples_atac)
   cancer_samples_atac = cancer_samples_atac[, grepl("KIRP", colnames(cancer_samples_atac))]
-  seurat_data = CreateSeuratObject(counts = raw)
+  seurat_data = CreateSeuratObject(counts = cancer_samples_atac)
   seurat_data = FindVariableFeatures(seurat_data, nfeatures = 50000,
                                      selection.method="vst")
   var_features <- VariableFeatures(seurat_data)
@@ -687,21 +699,22 @@ if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
 
 if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
   scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"))
-  rownames(scatac_df_yang) = features
   cell_types = colnames(scatac_df_yang)
+  scatac_df_yang = cpm(scatac_df_yang, log=T, prior.count=5)
+  scatac_df_yang = normalize.quantiles(scatac_df_yang)
+  colnames(scatac_df_yang) = cell_types
+  rownames(scatac_df_yang) = features
   seurat_data = CreateSeuratObject(counts = scatac_df_yang)
   seurat_data = FindVariableFeatures(seurat_data, nfeatures = 50000,
                                      selection.method="vst")
   var_features <- VariableFeatures(seurat_data)
   var_features = gsub("-", "_", var_features)
-  scatac_df_yang = cpm(scatac_df_yang, log=T, prior.count=5)
-  scatac_df_yang = normalize.quantiles(scatac_df_yang)
-  colnames(scatac_df_yang) = cell_types
   scatac_df_yang = scatac_df_yang[var_features, ]
   saveRDS(scatac_df_yang, "../data/processed_data/scatac_50k_var_features.rds")
 } else {
   scatac_df_yang = readRDS("../data/processed_data/scatac_50k_var_features.rds")
 }
+
 
 features_keep = intersect(rownames(scatac_df_yang), rownames(cancer_samples_atac))
 scatac_df_yang = scatac_df_yang[features_keep, ]
