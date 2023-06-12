@@ -204,7 +204,8 @@ def print_and_save_top_features(top_features, filepath):
         f.write(f"{idx+1}. {feature}\n")
 
 def backward_eliminate_features(X_train, y_train, starting_clf, starting_n, backwards_elim_dir,
-                                ML_model, scATAC_dir, cancer_type_or_donor_id, seed, n_optuna_trials):
+                                ML_model, scATAC_dir, cancer_type_or_donor_id, seed,
+                                n_optuna_trials_backward_selection):
     os.makedirs(backwards_elim_dir, exist_ok=True)
     top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values)
     all_feature_rankings = get_top_n_features(starting_clf, len(X_train.columns.values), X_train.columns.values)
@@ -219,7 +220,7 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n, back
                                       ML_model=ML_model, X_train=X_train,
                                       y_train=y_train,
                                       seed=seed,
-                                      n_optuna_trials=n_optuna_trials)
+                                      n_optuna_trials=n_optuna_trials_backward_selection)
         best_params = study.best_params
         if ML_model == "XGB":
             best_model = XGBRegressor(**best_params)
@@ -268,18 +269,19 @@ def print_and_save_test_set_perf(X_test, y_test, model, filepath):
     print(f"Test set performance: {test_set_performance}")
 
 def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filepath,
-                   ML_model, seed, scATAC_dir, cancer_type_or_donor_id, n_optuna_trials):
+                   ML_model, seed, scATAC_dir, cancer_type_or_donor_id,
+                   n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection):
     X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10, seed)
     study_name = f"{cancer_type_or_donor_id}_{scATAC_dir}"
     study = optimize_optuna_study(study_name=study_name, ML_model=ML_model, X_train=X_train, y_train=y_train, seed=seed,
-                                  n_optuna_trials=n_optuna_trials)
+                                  n_optuna_trials=n_optuna_trials_prebackward_selection)
     best_params = study.best_params
     if ML_model == "XGB":
         best_model = XGBRegressor(**best_params)
     n = 20
     best_model.fit(X=X_train, y=y_train)
     backward_eliminate_features(X_train, y_train, best_model, n, backwards_elim_dir, ML_model, scATAC_dir,
-                                cancer_type_or_donor_id, seed, n_optuna_trials)
+                                cancer_type_or_donor_id, seed, n_optuna_trials_backward_selection)
     # Test Set Performance
     print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filepath)
 
