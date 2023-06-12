@@ -33,6 +33,7 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
                        ML_model,
                        seed,
                        scATAC_dir,
+                       cancer_type_or_donor_id,
                        n_optuna_trials=n_optuna_trials)
 
     # Tissue Specific
@@ -56,6 +57,7 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
                        ML_model,
                        seed,
                        scATAC_dir,
+                       cancer_type_or_donor_id,
                        n_optuna_trials=n_optuna_trials)
 
 def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
