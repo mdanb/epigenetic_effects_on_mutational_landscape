@@ -117,6 +117,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
 # config = parser.parse_args(["--cancer_types", "CNS-GBM", "--datasets", "Bingren", "Greenleaf_brain", "Shendure",
 #                             "Tsankov", "--cell_number_filter", "1", "--annotation", "finalized_annotation",
 #                             "--ML_model", "XGB", "--seed", "42"])
+config = parser.parse_args()
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
 print(backwards_elim_dirs)
 num_iter_skips = config.num_iter_skips
