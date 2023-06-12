@@ -6,7 +6,8 @@ import subprocess
 
 def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_donor_id, scATAC_dir,
                                          scATAC_cell_number_filter, annotation_dir,
-                                         tissues_to_consider, ML_model, seed, tss_filter=None):
+                                         tissues_to_consider, ML_model, seed,
+                                         n_optuna_trials, tss_filter=None):
     #### Filter data ####
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
@@ -31,7 +32,8 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
                        test_set_perf_filepath,
                        ML_model,
                        seed,
-                       scATAC_dir)
+                       scATAC_dir,
+                       n_optuna_trials=n_optuna_trials)
 
     # Tissue Specific
     else:
@@ -53,13 +55,14 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
                        test_set_perf_filepath,
                        ML_model,
                        seed,
-                       scATAC_dir)
+                       scATAC_dir,
+                       n_optuna_trials=n_optuna_trials)
 
 def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
                                   combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model,
-                                  seed_range):
+                                  seed_range, n_optuna_trials):
     start, end = map(int, seed_range.split(':'))
     seed_range = range(start, end + 1)
     for seed in seed_range:
@@ -75,14 +78,15 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                           annotation_dir, seed)
                         run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
                                                              scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
-                                                             ML_model, seed, tss_filter=tss_filter)
+                                                             ML_model, seed, n_optuna_trials,
+                                                             tss_filter=tss_filter)
 
                 else:
                     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
                                                       tss_fragment_filter, annotation_dir, seed)
                     run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
                                                          scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
-                                                         ML_model, seed)
+                                                         ML_model, seed, n_optuna_trials)
         else:
             scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
                                               tss_fragment_filter, annotation_dir, seed)
@@ -90,7 +94,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                 if (idx in range(*donor_range)):
                     run_unclustered_data_analysis_helper(datasets, mutations_df, donor, scATAC_dir,
                                                          scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
-                                                         ML_model, seed)
+                                                         ML_model, seed, n_optuna_trials)
 
         cancer_types = ",".join(cancer_types)
         datasets = ",".join(datasets)

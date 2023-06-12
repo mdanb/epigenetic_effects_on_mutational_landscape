@@ -231,14 +231,14 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n, back
             print_and_save_top_features(top_n_feats, filepath=filepath)
 
 #### Model train/val/test helpers ####
-def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed):
+def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
     study = optuna.create_study(direction="maximize",
                                 storage="sqlite:///db.sqlite3",
                                 study_name=study_name,
                                 load_if_exists=True)
 
     study.optimize(lambda trial: optuna_objective(trial, ML_model=ML_model, X=X_train, y=y_train,
-                                                  seed=seed), n_trials=2)
+                                                  seed=seed), n_trials=n_optuna_trials)
     return study
 
 def optuna_objective(trial, ML_model, X, y, seed):
@@ -266,9 +266,10 @@ def print_and_save_test_set_perf(X_test, y_test, model, filepath):
     print(f"Test set performance: {test_set_performance}")
 
 def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filepath,
-                   ML_model, seed, scATAC_dir):
+                   ML_model, seed, scATAC_dir, n_optuna_trials):
     X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10, seed)
-    study = optimize_optuna_study(study_name=scATAC_dir, ML_model=ML_model, X_train=X_train, y_train=y_train, seed=seed)
+    study = optimize_optuna_study(study_name=scATAC_dir, ML_model=ML_model, X_train=X_train, y_train=y_train, seed=seed,
+                                  n_optuna_trials=n_optuna_trials)
     best_params = study.best_params
     if ML_model == "XGB":
         best_model = XGBRegressor(**best_params)

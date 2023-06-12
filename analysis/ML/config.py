@@ -45,6 +45,7 @@ parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
 parser.add_argument("--ML_model", type=str, default="XGB")
 parser.add_argument('--test_backward_selection_iter', type=int, default=None)
 parser.add_argument('--seed_range', type=str)
+parser.add_argument('--n_optuna_trials', type=int, default=None)
 
 config = parser.parse_args()
 
@@ -75,3 +76,4 @@ per_donor = config.per_donor
 donor_range = config.donor_range
 test_backward_selection_iter = config.test_backward_selection_iter
 seed_range = config.seed_range
+n_optuna_trials = config.n_optuna_trials
