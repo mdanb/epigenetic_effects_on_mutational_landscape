@@ -120,7 +120,7 @@ else:
     run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                                  meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range)
+                                  meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range, n_optuna_trials)
 
 
 
