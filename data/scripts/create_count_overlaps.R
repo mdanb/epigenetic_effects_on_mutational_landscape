@@ -339,8 +339,14 @@ if (dataset == "Bingren") {
 } else if (dataset == "Yang_kidney") {
   metadata_Yang = read_excel("../metadata/41467_2021_27660_MOESM4_ESM.xlsx", 
                              skip=1)
-  files_Yang = list.files("../bed_files/yang_kidney_scATAC/",
-                              pattern = ".*fragments\\.tsv\\.gz")
+  if (which_interval_ranges == "polak") {
+    files_Yang = list.files("../bed_files/yang_kidney_scATAC/",
+                                pattern = ".*fragments\\.tsv\\.gz")
+  }
+  else {
+    files_Yang = list.files("../bed_files/yang_kidney_scATAC/migrated_to_hg38",
+                            pattern = ".*fragments\\.tsv\\.bgz")
+  }
   colnames(metadata_Yang)[2] = "cell_type"
   colnames(metadata_Yang)[3] = "sample"
   metadata_Yang[, "sample"] = as.character(metadata_Yang$sample)

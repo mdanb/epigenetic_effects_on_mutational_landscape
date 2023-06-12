@@ -15,5 +15,5 @@ rownames(agg) = rownames
 # 
 # mut_overlaps = as.data.frame(countOverlaps(interval.ranges, mut_granges))
 write.csv(agg, paste(
-                "/ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/data/processed_data",
+                "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/processed_data",
                 "sclc_count_overlaps.csv", sep="/"))
