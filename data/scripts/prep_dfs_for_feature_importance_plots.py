@@ -24,7 +24,7 @@ parser.add_argument('--clustered_mutations', action="store_true",
 parser.add_argument('--datasets', nargs="+", type=str,
                     help='which sc-ATACseq datasets to analyze', required=True)
 parser.add_argument('--annotation', type=str, default="default_annotation")
-parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
+parser.add_argument('--tissues_to_consider', nargs="+", type=str, default=["all"])
 parser.add_argument('--iters_dont_skip', nargs="+", type=int)
 parser.add_argument('--ML_model', type=str)
 parser.add_argument('--cell_number_filter', type=int)
