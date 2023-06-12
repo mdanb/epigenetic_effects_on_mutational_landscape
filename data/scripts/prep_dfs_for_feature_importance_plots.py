@@ -100,7 +100,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
             if (idx % num_iter_skips == 0 or idx in iters_dont_skip):
                 model = pickle.load(open(file, "rb"))
                 study_name = f"iter_{idx}_{optuna_base_dir}"
-                study = optuna.load_study(study_name=study_name, storage="sqlite:///db.sqlite3")
+                study = optuna.load_study(study_name=study_name, storage="sqlite:///../../analysis/ML/db.sqlite3")
                 best_trial = study.best_trial
                 best_cv_score = best_trial.value
                 features = model.feature_names_in_
