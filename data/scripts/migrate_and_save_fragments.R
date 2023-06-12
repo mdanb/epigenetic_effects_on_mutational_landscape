@@ -86,7 +86,7 @@ if (dataset == "Bingren") {
                      pattern="tsv.gz",
                      full.names=TRUE)
 } else if (dataset == "Yang") {
-  dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC/migrated_to_hg38"
+  dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/yang_kidney_scATAC/migrated_to_hg38"
   dir.create(dir_path)
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/yang_kidney_scATAC",
                      pattern="tsv.gz",
