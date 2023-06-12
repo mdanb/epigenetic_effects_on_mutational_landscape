@@ -345,7 +345,7 @@ if (dataset == "Bingren") {
   }
   else {
     files_Yang = list.files("../bed_files/yang_kidney_scATAC/migrated_to_hg38",
-                            pattern = ".*fragments\\.tsv\\.bgz")
+                            pattern = ".*fragments\\.tsv\\.bgz$")
   }
   colnames(metadata_Yang)[2] = "cell_type"
   colnames(metadata_Yang)[3] = "sample"
