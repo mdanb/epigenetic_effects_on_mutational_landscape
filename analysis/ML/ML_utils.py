@@ -242,7 +242,11 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
     n_existing_trials = len(study.trials)
     print(f"Number of existing optuna trials: {n_existing_trials}")
     n_optuna_trials = n_optuna_trials - n_existing_trials
-    print(f"Running an extra {n_optuna_trials} trials")
+    n_optuna_trials = max(0, n_optuna_trials)
+    if n_optuna_trials > 0:
+        print(f"Running an extra {n_optuna_trials} trials")
+    else:
+        print(f"Done running {n_optuna_trials}!")
     study.optimize(lambda trial: optuna_objective(trial, ML_model=ML_model, X=X_train, y=y_train,
                                                   seed=seed), n_trials=n_optuna_trials)
     return study
