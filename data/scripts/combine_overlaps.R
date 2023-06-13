@@ -96,7 +96,7 @@ save_combined_overlaps <- function(filepaths,
   for (f in filepaths) {
     print(paste("Processing count overlaps for file: ", f, sep=""))
     count_overlaps = readRDS(f)
-    tissue_name <- get_tissue_name(f, dataset)
+    tissue_name <- get_tissue_name(f, dataset, annotation)
     cell_types = names(count_overlaps)
     count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
                                    row.names = paste(tissue_name,

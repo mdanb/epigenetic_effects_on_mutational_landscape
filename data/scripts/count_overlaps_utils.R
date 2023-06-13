@@ -222,7 +222,7 @@ get_sample_name_yang <- function(file) {
   return(sample_name)
 }
 
-get_tissue_name <- function(file, dataset) {
+get_tissue_name <- function(file, dataset, annotation) {
   if (dataset == "Bingren") {
     tissue_name = get_tissue_name_bingren(file)
   }
@@ -230,7 +230,7 @@ get_tissue_name <- function(file, dataset) {
     tissue_name = get_tissue_name_shendure(file)
   }
   else if (dataset == "Tsankov") {
-    tissue_name = get_tissue_name_tsankov(file)
+    tissue_name = get_tissue_name_tsankov(file, annotation)
   }
   else if (dataset == "Greenleaf_brain") {
     tissue_name = "brain"
@@ -291,11 +291,15 @@ get_tissue_name_greenleaf_pbmc_bm <- function(filename) {
 }
 
 get_tissue_name_tsankov <- function(filename) {
-  if (grepl("RPL", filename)) {
-    tissue_name = "distal lung"
-  }
-  else {
-    tissue_name = "proximal lung"
+  if (annotation == "default_annotation") {
+    if (grepl("RPL", filename)) {
+      tissue_name = "distal lung"
+    }
+    else {
+      tissue_name = "proximal lung"
+    }
+  } else if (annotation == "Tsankov_refined") {
+    tissue_name = "lung"
   }
   return(tissue_name)
 }
