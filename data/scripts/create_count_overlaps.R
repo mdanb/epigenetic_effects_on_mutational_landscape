@@ -348,6 +348,7 @@ if (dataset == "Bingren") {
     files_Yang = list.files("../bed_files/yang_kidney_scATAC/migrated_to_hg38",
                             pattern = ".*fragments\\.tsv\\.bgz$")
   }
+  print(files_Yang)
   colnames(metadata_Yang)[2] = "cell_type"
   colnames(metadata_Yang)[3] = "sample"
   metadata_Yang[, "sample"] = as.character(metadata_Yang$sample)
