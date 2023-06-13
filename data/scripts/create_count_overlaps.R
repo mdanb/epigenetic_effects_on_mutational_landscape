@@ -65,7 +65,7 @@ create_count_overlaps_files <- function(file, metadata, interval_ranges, chain,
   dir.create(dirpath)
     if (!file.exists(filepath)) {
       print(paste("Processing", file, sep= " "))
-      sample = import_sample(file, dataset)
+      sample = import_sample(file, dataset, which_interval_ranges)
       sample_name = get_sample_name(file, dataset)
       filtered_metadata = filter_metadata_by_sample_name(sample_name, metadata)
       if (nrow(filtered_metadata) == 0) {
