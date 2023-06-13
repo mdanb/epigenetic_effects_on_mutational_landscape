@@ -203,9 +203,7 @@ def print_and_save_top_features(top_features, filepath):
         print(f"{idx+1}. {feature}")
         f.write(f"{idx+1}. {feature}\n")
 
-def backward_eliminate_features(X_train, y_train, starting_clf, starting_n, backwards_elim_dir,
-                                ML_model, scATAC_dir, cancer_type_or_donor_id, seed,
-                                n_optuna_trials_backward_selection):
+############
     os.makedirs(backwards_elim_dir, exist_ok=True)
     top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values)
     all_feature_rankings = get_top_n_features(starting_clf, len(X_train.columns.values), X_train.columns.values)
@@ -214,6 +212,45 @@ def backward_eliminate_features(X_train, y_train, starting_clf, starting_n, back
     print_and_save_top_features(top_n_feats,
                                 filepath=f"{backwards_elim_dir}/starter_model_top_features.txt")
     for idx in range(1, len(top_n_feats)):
+        filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}.txt"
+        if (not os.path.exists(filepath)):
+            if (ML_model == "RF"):
+                pipe = Pipeline([
+                    ('regressor', PipelineHelper([
+                        ('rf', RandomForestRegressor(random_state=idx)),
+                    ])),
+                ])
+            elif (ML_model == "XGB"):
+                pipe = Pipeline([
+                    ('regressor', PipelineHelper([
+                        ('xgb', XGBRegressor(random_state=idx)),
+                    ])),
+                ])
+            grid_search_results = grid_search(X_train, y_train, pipe, params, num_k_folds)
+            pickle.dump(grid_search_results, open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'wb'))
+        grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
+        best_model = grid_search_results.best_estimator_.get_params()['regressor__selected_model']
+        top_n_feats = get_top_n_features(best_model, len(X_train.columns) - 1, X_train.columns)
+        X_train = X_train.loc[:, top_n_feats]
+        if (not os.path.exists(filepath)):
+            print_and_save_top_features(top_n_feats, filepath=filepath)
+############
+def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
+                                ML_model, scATAC_dir, cancer_type_or_donor_id, seed,
+                                n_optuna_trials_backward_selection, starting_clf=None, starting_n=None):
+    os.makedirs(backwards_elim_dir, exist_ok=True)
+    if X_train.shape[1] > 20:
+        top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values)
+        all_feature_rankings = get_top_n_features(starting_clf, len(X_train.columns.values), X_train.columns.values)
+        print_and_save_top_features(all_feature_rankings, filepath=f"{backwards_elim_dir}/all_features_rankings.txt")
+        X_train = X_train.loc[:, top_n_feats]
+        print_and_save_top_features(top_n_feats,
+                                    filepath=f"{backwards_elim_dir}/starter_model_top_features.txt")
+        num_iterations = len(top_n_feats)
+    else:
+        num_iterations = X_train.shape[1]
+
+    for idx in range(1, num_iterations):
         filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}.txt"
         # if not os.path.exists(filepath):
         study = optimize_optuna_study(study_name=f"{cancer_type_or_donor_id}_iter_{idx}_{scATAC_dir}",
@@ -279,21 +316,29 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
                    ML_model, seed, scATAC_dir, cancer_type_or_donor_id,
                    n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection):
     X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10, seed)
+
+    starting_clf = None
+    n = None
+
     if scATAC_df.shape[1] > 20:
+        print("Getting a starter model!")
         study_name = f"{cancer_type_or_donor_id}_{scATAC_dir}"
         study = optimize_optuna_study(study_name=study_name, ML_model=ML_model, X_train=X_train, y_train=y_train, seed=seed,
                                       n_optuna_trials=n_optuna_trials_prebackward_selection)
         best_params = study.best_params
         if ML_model == "XGB":
-            best_model = XGBRegressor(**best_params)
+            starting_clf = XGBRegressor(**best_params)
         n = 20
-        best_model.fit(X=X_train, y=y_train)
+        starting_clf.fit(X=X_train, y=y_train)
+        # Test Set Performance
+        print_and_save_test_set_perf(X_test, y_test, starting_clf, test_set_perf_filepath)
+        print("Done getting starter model!")
     else:
-
-    backward_eliminate_features(X_train, y_train, best_model, n, backwards_elim_dir, ML_model, scATAC_dir,
-                                cancer_type_or_donor_id, seed, n_optuna_trials_backward_selection)
-    # Test Set Performance
-    print_and_save_test_set_perf(X_test, y_test, best_model, test_set_perf_filepath)
+        print("Starter model not needed! Number of features is less than or equal to 20 already!")
+        
+    backward_eliminate_features(X_train, y_train, backwards_elim_dir, ML_model, scATAC_dir,
+                                cancer_type_or_donor_id, seed, n_optuna_trials_backward_selection,
+                                starting_clf=starting_clf, starting_n=n)
 
 def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_number_filter, tss_filter, annotation_dir,
                                            meso, SCLC, lung_subtyped, woo_pcawg,
