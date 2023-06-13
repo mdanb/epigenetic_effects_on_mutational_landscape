@@ -118,10 +118,10 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
         df.to_csv(os.path.join(figure_path, "df_for_feature_importance_plots.csv"),
                   index=False)
 
-config = parser.parse_args(["--cancer_types", "SCLC", "--datasets", "Bingren", "Greenleaf_brain", "Shendure",
-                            "Tsankov", "--cell_number_filter", "30", "--annotation", "finalized_annotation",
-                            "--ML_model", "XGB", "--seed", "42", "--iters_dont_skip", "18"])
-# config = parser.parse_args()
+# config = parser.parse_args(["--cancer_types", "SCLC", "--datasets", "Bingren", "Greenleaf_brain", "Shendure",
+#                             "Tsankov", "--cell_number_filter", "30", "--annotation", "finalized_annotation",
+#                             "--ML_model", "XGB", "--seed", "42", "--iters_dont_skip", "18"])
+config = parser.parse_args()
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
 print(backwards_elim_dirs)
 num_iter_skips = config.num_iter_skips
