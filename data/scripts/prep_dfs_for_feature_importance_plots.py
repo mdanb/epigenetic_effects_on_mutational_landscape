@@ -36,9 +36,13 @@ parser.add_argument('--tss_fragment_filter', nargs="+", type=int, default=[-1])
 def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
                                  tss_fragment_filter, annotation, tissues_to_consider,
                                  ML_model, seed):
-    dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/" \
+    # dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/" \
+    #       f"models/{ML_model}/{cancer_type}/scATAC_source_" \
+    #       f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
+    dir = f"/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/" \
           f"models/{ML_model}/{cancer_type}/scATAC_source_" \
           f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
+
     if (tss_fragment_filter != -1):
         dir = dir + f"_tss_fragment_filter_{tss_fragment_filter}"
     dir = dir + f"_annotation_{annotation}_seed_{seed}"
@@ -99,7 +103,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
         for idx, file in enumerate(files):
             if (idx % num_iter_skips == 0 or idx in iters_dont_skip):
                 model = pickle.load(open(file, "rb"))
-                study_name = f"iter_{idx + 1}_{optuna_base_dir}"
+                study_name = f"{cancer_type}_iter_{idx + 1}_{optuna_base_dir}"
                 study = optuna.load_study(study_name=study_name, storage="sqlite:///../../analysis/ML/db.sqlite3")
                 best_trial = study.best_trial
                 best_cv_score = best_trial.value
@@ -114,10 +118,10 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
         df.to_csv(os.path.join(figure_path, "df_for_feature_importance_plots.csv"),
                   index=False)
 
-# config = parser.parse_args(["--cancer_types", "CNS-GBM", "--datasets", "Bingren", "Greenleaf_brain", "Shendure",
-#                             "Tsankov", "--cell_number_filter", "1", "--annotation", "finalized_annotation",
-#                             "--ML_model", "XGB", "--seed", "42"])
-config = parser.parse_args()
+config = parser.parse_args(["--cancer_types", "SCLC", "--datasets", "Bingren", "Greenleaf_brain", "Shendure",
+                            "Tsankov", "--cell_number_filter", "30", "--annotation", "finalized_annotation",
+                            "--ML_model", "XGB", "--seed", "42", "--iters_dont_skip", "18"])
+# config = parser.parse_args()
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
 print(backwards_elim_dirs)
 num_iter_skips = config.num_iter_skips
