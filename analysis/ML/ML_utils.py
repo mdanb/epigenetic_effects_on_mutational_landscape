@@ -275,7 +275,8 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
     study = optuna.create_study(direction="maximize",
                                 storage="sqlite:///db.sqlite3",
                                 study_name=study_name,
-                                load_if_exists=True)
+                                load_if_exists=True,
+                                sampler=optuna.samplers.TPESampler(seed=seed))
     n_existing_trials = len(study.trials)
     print(f"Number of existing optuna trials: {n_existing_trials}")
     n_optuna_trials = n_optuna_trials - n_existing_trials
@@ -335,7 +336,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
         print("Done getting starter model!")
     else:
         print("Starter model not needed! Number of features is less than or equal to 20 already!")
-        
+
     backward_eliminate_features(X_train, y_train, backwards_elim_dir, ML_model, scATAC_dir,
                                 cancer_type_or_donor_id, seed, n_optuna_trials_backward_selection,
                                 starting_clf=starting_clf, starting_n=n)
