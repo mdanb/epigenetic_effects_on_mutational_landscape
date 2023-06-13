@@ -35,7 +35,7 @@ filter_samples_to_contain_only_cells_in_metadata <- function(i,
   return(samples[[i]])
 }
 
-import_sample <- function(file, dataset) {
+import_sample <- function(file, dataset, which_interval_ranges) {
   if (dataset == "Bingren") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", 
@@ -68,10 +68,19 @@ import_sample <- function(file, dataset) {
                           file, sep="/"), format="bed")
   }
   else if (dataset == "Yang_kidney") {
-    sample = import(paste("/broad", "hptmp", "bgiotti", 
-                          "BingRen_scATAC_atlas", "data", "bed_files",
-                          "yang_kidney_scATAC", 
-                          file, sep="/"), format="bed")
+    if (which_interval_ranges == "polak") {
+      fp = paste("/broad", "hptmp", "bgiotti", 
+                 "BingRen_scATAC_atlas", "data", "bed_files",
+                 "yang_kidney_scATAC", 
+                 file, sep="/")
+    } else if (which_interval_ranges == "yang") {
+      fp = paste("/broad", "hptmp", "bgiotti", 
+                 "BingRen_scATAC_atlas", "data", "bed_files",
+                 "yang_kidney_scATAC", "migrated_to_hg38", 
+                 file, sep="/")
+    }
+    print(paste("Importing", fp))
+    sample = import(fp, format="bed")
   }
   return(sample)
 }
