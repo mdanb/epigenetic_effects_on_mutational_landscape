@@ -700,8 +700,8 @@ if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
   cancer_samples_atac = readRDS("../data/processed_data/cancer_atac_50k_var_features.rds")
 }
 
-if (!file.exists("../data/processed_data/scatac_50k_var_features.rds")) {
-  scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"))
+if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
+  scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/finalized_annotation/interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"))
   cell_types = colnames(scatac_df_yang)
   scatac_df_yang = cpm(scatac_df_yang, log=T, prior.count=5)
   scatac_df_yang = normalize.quantiles(scatac_df_yang)
