@@ -36,12 +36,12 @@ parser.add_argument('--tss_fragment_filter', nargs="+", type=int, default=[-1])
 def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
                                  tss_fragment_filter, annotation, tissues_to_consider,
                                  ML_model, seed):
-    # dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/" \
-    #       f"models/{ML_model}/{cancer_type}/scATAC_source_" \
-    #       f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
-    dir = f"/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/" \
+    dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/" \
           f"models/{ML_model}/{cancer_type}/scATAC_source_" \
           f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
+    # dir = f"/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/" \
+    #       f"models/{ML_model}/{cancer_type}/scATAC_source_" \
+    #       f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
 
     if (tss_fragment_filter != -1):
         dir = dir + f"_tss_fragment_filter_{tss_fragment_filter}"
