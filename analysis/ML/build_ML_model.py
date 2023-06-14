@@ -19,8 +19,7 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
     cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
 
-    os.makedirs(f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}",
-                exist_ok=True)
+    os.makedirs(f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}", exist_ok=True)
 
     if (tissues_to_consider == "all"):
         backwards_elim_dir=f"models/{ML_model}/" \
