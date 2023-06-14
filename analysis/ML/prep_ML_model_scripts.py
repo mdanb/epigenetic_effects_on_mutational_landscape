@@ -51,11 +51,11 @@ for seed_range in ranges:
                              "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection])
 
     if meso:
-        command_args = command_args + "--meso"
+        command_args = command_args + " " + "--meso"
 
     python_command = "python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py " + \
                      command_args
-    
+
     job_script = "\n".join(["#!/bin/bash",
                             "#$ -cwd",
                             "#$ -l h_rt=24:00:00",
