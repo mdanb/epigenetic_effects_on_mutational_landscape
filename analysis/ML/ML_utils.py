@@ -195,13 +195,17 @@ def get_top_n_features(clf, n, features):
     top_n_feats = features[feat_importance_idx][:n]
     return top_n_feats
 
-def print_and_save_top_features(top_features, filepath):
-    n = len(top_features)
-    print(f"Top {n} features")
+def print_and_save_features(features, filepath, top=True):
+    n = len(features)
+    if top:
+        print(f"Top {n} features")
     f = open(filepath, "w")
-    for idx, feature in enumerate(top_features):
-        print(f"{idx+1}. {feature}")
-        f.write(f"{idx+1}. {feature}\n")
+    for idx, feature in enumerate(features):
+        if top:
+            print(f"{idx+1}. {feature}")
+            f.write(f"{idx+1}. {feature}\n")
+        else:
+            f.write(f"-{feature}\n")
 
 def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 ML_model, scATAC_dir, cancer_type_or_donor_id, seed,
@@ -210,12 +214,17 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
     if X_train.shape[1] > 20:
         top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values)
         all_feature_rankings = get_top_n_features(starting_clf, len(X_train.columns.values), X_train.columns.values)
-        print_and_save_top_features(all_feature_rankings, filepath=f"{backwards_elim_dir}/all_features_rankings.txt")
+        print_and_save_features(all_feature_rankings, filepath=f"{backwards_elim_dir}/all_features_rankings.txt",
+                                top=True)
         X_train = X_train.loc[:, top_n_feats]
-        print_and_save_top_features(top_n_feats,
-                                    filepath=f"{backwards_elim_dir}/starter_model_top_features.txt")
+        print_and_save_features(top_n_feats,
+                                filepath=f"{backwards_elim_dir}/starter_model_top_features.txt",
+                                top=True)
         num_iterations = len(top_n_feats)
     else:
+        print_and_save_features(X_train.columns,
+                                filepath=f"{backwards_elim_dir}/starter_features.txt",
+                                top=False)
         num_iterations = X_train.shape[1]
 
     for idx in range(1, num_iterations):
@@ -236,7 +245,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         top_n_feats = get_top_n_features(best_model, len(X_train.columns) - 1, X_train.columns)
         X_train = X_train.loc[:, top_n_feats]
         if not os.path.exists(filepath):
-            print_and_save_top_features(top_n_feats, filepath=filepath)
+            print_and_save_features(top_n_feats, filepath=filepath, top=True)
 
 #### Model train/val/test helpers ####
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
@@ -248,13 +257,13 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
     n_existing_trials = len(study.trials)
     print(f"Number of existing optuna trials: {n_existing_trials}")
     n_optuna_trials = n_optuna_trials - n_existing_trials
-    n_optuna_trials = max(0, n_optuna_trials)
+    n_optuna_trials_remaining = max(0, n_optuna_trials)
     if n_optuna_trials > 0:
-        print(f"Running an extra {n_optuna_trials} trials")
+        print(f"Running an extra {n_optuna_trials_remaining} trials")
     else:
-        print(f"Done running {n_optuna_trials}!")
+        print(f"Done running {n_optuna_trials} trials!")
     study.optimize(lambda trial: optuna_objective(trial, ML_model=ML_model, X=X_train, y=y_train,
-                                                  seed=seed), n_trials=n_optuna_trials)
+                                                  seed=seed), n_trials=n_optuna_trials_remaining)
     return study
 
 def optuna_objective(trial, ML_model, X, y, seed):
