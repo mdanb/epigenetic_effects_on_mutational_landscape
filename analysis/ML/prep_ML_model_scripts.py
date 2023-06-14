@@ -15,6 +15,8 @@ parser.add_argument('--iters_dont_skip', nargs="+", type=str,
                     default=["18"])
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=str)
 parser.add_argument('--n_optuna_trials_backward_selection', type=str)
+group = parser.add_mutually_exclusive_group()
+group.add_argument("--meso", action="store_true", default=False)
 
 config = parser.parse_args()
 cancer_types = " ".join(config.cancer_types)
@@ -25,6 +27,7 @@ iters_dont_skip = " ".join(config.iters_dont_skip)
 ranges = config.seed_ranges.split(',')
 n_optuna_trials_prebackward_selection = config.n_optuna_trials_prebackward_selection
 n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
+meso = config.meso
 
 for seed_range in ranges:
     script_filename = "_".join(["cancer_types", cancer_types,
@@ -35,6 +38,8 @@ for seed_range in ranges:
                                 "iters_dont_skip", iters_dont_skip,
                                 "n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
                                 "n_optuna_trials_backward_selection", n_optuna_trials_backward_selection])
+    if meso:
+        script_filename = script_filename + "_" + "meso"
     script_filename = f"{script_filename}.sh"
     command_args = " ".join(["--cancer_types", cancer_types,
                              "--datasets", datasets,
@@ -45,8 +50,12 @@ for seed_range in ranges:
                              "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
                              "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection])
 
-    python_command = "python /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py " + \
+    if meso:
+        command_args = command_args + "--meso"
+
+    python_command = "python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py " + \
                      command_args
+    
     job_script = "\n".join(["#!/bin/bash",
                             "#$ -cwd",
                             "#$ -l h_rt=24:00:00",

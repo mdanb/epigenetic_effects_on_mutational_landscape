@@ -72,6 +72,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
     start, end = map(int, seed_range.split('-'))
     seed_range = range(start, end + 1)
     for seed in seed_range:
+        print(f"Running model for seed {seed}")
         scATAC_sources = construct_scATAC_sources(datasets)
         mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                       histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
