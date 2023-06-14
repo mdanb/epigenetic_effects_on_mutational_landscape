@@ -203,38 +203,6 @@ def print_and_save_top_features(top_features, filepath):
         print(f"{idx+1}. {feature}")
         f.write(f"{idx+1}. {feature}\n")
 
-############
-    os.makedirs(backwards_elim_dir, exist_ok=True)
-    top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values)
-    all_feature_rankings = get_top_n_features(starting_clf, len(X_train.columns.values), X_train.columns.values)
-    print_and_save_top_features(all_feature_rankings, filepath=f"{backwards_elim_dir}/all_features_rankings.txt")
-    X_train = X_train.loc[:, top_n_feats]
-    print_and_save_top_features(top_n_feats,
-                                filepath=f"{backwards_elim_dir}/starter_model_top_features.txt")
-    for idx in range(1, len(top_n_feats)):
-        filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}.txt"
-        if (not os.path.exists(filepath)):
-            if (ML_model == "RF"):
-                pipe = Pipeline([
-                    ('regressor', PipelineHelper([
-                        ('rf', RandomForestRegressor(random_state=idx)),
-                    ])),
-                ])
-            elif (ML_model == "XGB"):
-                pipe = Pipeline([
-                    ('regressor', PipelineHelper([
-                        ('xgb', XGBRegressor(random_state=idx)),
-                    ])),
-                ])
-            grid_search_results = grid_search(X_train, y_train, pipe, params, num_k_folds)
-            pickle.dump(grid_search_results, open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'wb'))
-        grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
-        best_model = grid_search_results.best_estimator_.get_params()['regressor__selected_model']
-        top_n_feats = get_top_n_features(best_model, len(X_train.columns) - 1, X_train.columns)
-        X_train = X_train.loc[:, top_n_feats]
-        if (not os.path.exists(filepath)):
-            print_and_save_top_features(top_n_feats, filepath=filepath)
-############
 def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 ML_model, scATAC_dir, cancer_type_or_donor_id, seed,
                                 n_optuna_trials_backward_selection, starting_clf=None, starting_n=None):
@@ -267,7 +235,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         # grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
         top_n_feats = get_top_n_features(best_model, len(X_train.columns) - 1, X_train.columns)
         X_train = X_train.loc[:, top_n_feats]
-        if (not os.path.exists(filepath)):
+        if not os.path.exists(filepath):
             print_and_save_top_features(top_n_feats, filepath=filepath)
 
 #### Model train/val/test helpers ####
