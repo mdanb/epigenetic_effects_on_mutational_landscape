@@ -70,7 +70,7 @@ for seed_range in ranges:
                             "#$ -m bea",
                             "",
                             "source /broad/software/scripts/useuse",
-                            "use .anaconda3-5.3.1",
+                            "use Anaconda",
                             "source activate /home/unix/bgiotti/conda/coo",
                             "",
                             python_command])
