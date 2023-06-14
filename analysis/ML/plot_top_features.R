@@ -7,19 +7,12 @@ library(optparse)
 library(stringr)
 source("../../utils.R")
 
-parser <- OptionParser() 
-# parser <- add_option(parser, c("--bing_ren"), action="store_true",
-#                                default=F)
-# parser <- add_option(parser, c("--tsankov"), action="store_true",
-#                      default=F)
-# parser <- add_option(parser, c("--shendure"), action="store_true",
-#                      default=F)
+parser <- OptionParser()
 parser <- add_option(parser, c("--datasets"), type="character")
 parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
-# parser <- add_option(parser, c("--bar_plot_num_features"), type="integer")
-parser <- add_option(parser, c("--tss_fragment_filter"), 
+parser <- add_option(parser, c("--tss_fragment_filter"),
                      type="character", default="-1")
 parser <- add_option(parser, c("--ML_model"), type="character")
 parser <- add_option(parser, c("--num_iter_skips"), 
@@ -28,28 +21,10 @@ parser <- add_option(parser, c("--tissues_to_consider"),
                      type="character", default="all")
 parser <- add_option(parser, c("--annotation"), 
                      type="character", default="default_annotation")
-# parser <- add_option(parser, c("--waddell_sarc_biph"), action="store_true",
-#                      default=F)
-# parser <- add_option(parser, c("--waddell_sarc"), action="store_true",
-#                      default=F)
-# parser <- add_option(parser, c("--waddell_sarc_tsankov_sarc"), 
-#                      action="store_true",
-#                      default=F)
-# parser <- add_option(parser, c("--waddell_sarc_biph_tsankov_sarc_biph"), 
-#                      action="store_true",
-#                      default=F)
 parser <- add_option(parser, c("--iters_dont_skip"), default="18")
 parser <- add_option(parser, c("--seed"), default="42")
 
 args = parse_args(parser)
-
-# args = parse_args(parser, args = c("--cancer_types=combined_TCGA_CPTAC_adenoxtop_1500-no_bottom_0_samples-scale_TRUE-norm_by_mut_counts_TRUE-pca_n_components_30-dims_for_UMAP_1:15-regress_by_counts_TRUE_clustering_res_0.8xcluster_1",
-#                                    "--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney", "--cell_number_filter=1",
-#                                    "--ML_model=XGB", "--annotation=default_annotation"))
-
-# args = parse_args(parser, args = c("--cancer_types=Biliary-AdenoCA",
-#                                    "--all_cells", "--cell_number_filter=1",
-#                                    "--bing_ren", "--tsankov", "--shendure"))
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter,
@@ -65,20 +40,7 @@ construct_backwards_elim_dir <- function(cancer_type, scATAC_source,
     scATAC_source = paste(scATAC_source, "tss_fragment_filter", 
                           tss_fragment_filter, sep="_")
   }
-    
-  # if (waddell_sarc_biph) {
-  #     scATAC_source = paste(scATAC_source, "waddell_sarc_biph", 
-  #                           sep="_")
-  # } else if (waddell_sarc) {
-  #     scATAC_source = paste(scATAC_source, "waddell_sarc", sep="_")
-  # } else if (waddell_sarc_tsankov_sarc) {
-  #     scATAC_source = paste(scATAC_source, "waddell_sarc_tsankov_sarc",
-  #                           sep="_")
-  # } else if (waddell_sarc_biph_tsankov_sarc_biph) {
-  #     scATAC_source = paste(scATAC_source, "waddell_sarc_biph_tsankov_sarc_biph", 
-  #                           sep="_")
-  # }
-  
+
   scATAC_source = paste(scATAC_source, "annotation", annotation, "seed", seed, 
                         sep="_")
   
@@ -98,31 +60,12 @@ get_relevant_backwards_elim_dirs <- function(args) {
     tissues_to_consider = paste(unlist(strsplit(args$tissues_to_consider, 
                                                 split=","), 
                                        "_"))
-    # bing_ren = args$bing_ren
-    # shendure = args$shendure
-    # tsankov = args$tsankov
     datasets = unlist(strsplit(args$datasets, split = ","))
     cell_number_filter = args$cell_number_filter
     tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
-    # waddell_sarc_biph = args$waddell_sarc_biph
-    # waddell_sarc = args$waddell_sarc
     annotation = args$annotation
-    # waddell_sarc_tsankov_sarc = args$waddell_sarc_tsankov_sarc
-    # waddell_sarc_biph_tsankov_sarc_biph = args$waddell_sarc_biph_tsankov_sarc_biph
     ML_model = args$ML_model
     seed = args$seed
-    # if (bing_ren) {
-    #   scATAC_sources = paste(scATAC_sources, "bing_ren", sep="_")
-    # }
-    # if (shendure) {
-    #   scATAC_sources = paste(scATAC_sources, "shendure", sep="_")
-    # }
-    # if (tsankov) {
-    #   scATAC_sources = paste(scATAC_sources, "tsankov", sep="_")
-    # }
-    # if (bing_ren && shendure && tsankov) {
-    #   scATAC_sources = "combined_datasets"
-    # }
     scATAC_sources = ""
     
     for (i in 1:length(datasets)) {
@@ -134,9 +77,7 @@ get_relevant_backwards_elim_dirs <- function(args) {
         scATAC_sources = paste(scATAC_sources, dataset, sep="_")
       }
     }
-    
-    # scATAC_sources = sub("^_", "", scATAC_sources)
-    
+
     backward_elim_dirs = list()
     for (cancer_type in cancer_types) {
       for (tss_filter in tss_fragment_filter) {
@@ -250,12 +191,8 @@ iters_dont_skip = as.integer(unlist(strsplit(iters_dont_skip, split = ",")))
 datasets = unlist(strsplit(args$datasets, split = ","))
 cell_number_filter = args$cell_number_filter
 tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
-# waddell_sarc_biph = args$waddell_sarc_biph
-# waddell_sarc = args$waddell_sarc
 num_iter_skips = args$num_iter_skips
 annotation = args$annotation
-# waddell_sarc_tsankov_sarc = args$waddell_sarc_tsankov_sarc
-# waddell_sarc_biph_tsankov_sarc_biph = args$waddell_sarc_biph_tsankov_sarc_biph
 tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
 ML_model = args$ML_model
 seed = args$seed
@@ -272,15 +209,6 @@ prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_import
                          paste(tss_fragment_filter, collapse = " "),
                          "--ML_model", ML_model,
                          "--cancer_types", cancer_types, "--seed", seed)
-# if (waddell_sarc_biph) {
-#   prep_dfs_command = paste(prep_dfs_command, "--waddell_sarc_biph")
-# } else if (waddell_sarc) {
-#   prep_dfs_command = paste(prep_dfs_command, "--waddell_sarc")
-# } else if (waddell_sarc_tsankov_sarc) {
-#   prep_dfs_command = paste(prep_dfs_command, "--waddell_sarc_tsankov_sarc")
-# } else if (waddell_sarc_biph_tsankov_sarc_biph) {
-#   prep_dfs_command = paste(prep_dfs_command, "--waddell_sarc_biph_tsankov_sarc_biph")
-# }
 
 system(prep_dfs_command)
 
@@ -291,22 +219,3 @@ if (args$pie_chart) {
 } else {
   construct_bar_plots(args)
 }
-
-# df_temp <- df %>%
-#             filter(num_features == 5) %>%
-#             select(-c(num_features, num_features_f))
-# 
-# df_temp <- df_temp %>% 
-#   arrange(desc(features)) %>%
-#   mutate(prop = importance / sum(df_temp$importance) *100) %>%
-#   mutate(ypos = cumsum(prop)- 0.5*prop )
-# 
-# ggplot(df_temp, aes(x="", y=prop, fill=features)) +
-#   geom_bar(stat="identity", width=1, color="white") +
-#   coord_polar("y", start=0) +
-#   theme_void() + 
-#   theme(legend.position="none") +
-#   geom_text(aes(y = ypos, label = features), color = "white", size=2.5) +
-#   scale_fill_brewer(palette="Set1")
-
-

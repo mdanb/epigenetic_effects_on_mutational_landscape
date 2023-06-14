@@ -69,7 +69,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
                                   combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model,
                                   seed_range, n_optuna_trials_prebackward_selection,
-                                  n_optuna_trials_backward_selection):
+                                  n_optuna_trials_backward_selection, iters_dont_skip):
     start, end = map(int, seed_range.split(':'))
     seed_range = range(start, end + 1)
     for seed in seed_range:
@@ -108,13 +108,16 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
 
         cancer_types = ",".join(cancer_types)
         datasets = ",".join(datasets)
+        iters_dont_skip = ",".join(iters_dont_skip)
+
         subprocess.call(["Rscript", "plot_top_features.R",
                          f"--cancer_types={cancer_types}",
                          f"--ML_model={ML_model}",
                          f"--datasets={datasets}",
                          f"--seed={seed}",
                          f"--cell_number_filter={scATAC_cell_number_filter}",
-                         f"--annotation={annotation_dir}"])
+                         f"--annotation={annotation_dir}",
+                         f"--iters_dont_skip={iters_dont_skip}"])
 
     return
 
@@ -131,7 +134,8 @@ else:
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
                                   meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range,
-                                  n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection)
+                                  n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
+                                  iters_dont_skip)
 
 
 
