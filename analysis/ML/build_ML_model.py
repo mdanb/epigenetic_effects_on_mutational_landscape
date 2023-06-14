@@ -69,7 +69,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model,
                                   seed_range, n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, iters_dont_skip):
-    start, end = map(int, seed_range.split(':'))
+    start, end = map(int, seed_range.split('-'))
     seed_range = range(start, end + 1)
     for seed in seed_range:
         scATAC_sources = construct_scATAC_sources(datasets)
