@@ -53,9 +53,7 @@ def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
         return f"{dir}/backwards_elimination_results_{tissues_to_consider}"
 
 def get_relevant_backwards_elim_dirs(config):
-    print("cancer types")
     cancer_types = config.cancer_types
-    print(cancer_types)
     datasets = config.datasets
     cell_number_filter = config.cell_number_filter
     tss_fragment_filter = config.tss_fragment_filter
@@ -82,7 +80,6 @@ def get_relevant_backwards_elim_dirs(config):
                                                                    tissues_to_consider,
                                                                    ML_model,
                                                                    seed))
-    print(backward_elim_dirs)
     return backward_elim_dirs
 
 def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters_dont_skip,
@@ -101,7 +98,9 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
                                    "backwards_elimination_results")
         files = natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))
         for idx, file in enumerate(files):
+            print(idx)
             if (idx % num_iter_skips == 0 or idx in iters_dont_skip):
+                print(f"Prepping backwards elim results at iteration {idx} for plotting")
                 model = pickle.load(open(file, "rb"))
                 study_name = f"{cancer_type}_iter_{idx + 1}_{optuna_base_dir}"
                 study = optuna.load_study(study_name=study_name, storage="sqlite:///../../analysis/ML/db.sqlite3")
@@ -123,7 +122,6 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
 #                             "--ML_model", "XGB", "--seed", "42", "--iters_dont_skip", "18"])
 config = parser.parse_args()
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
-print(backwards_elim_dirs)
 num_iter_skips = config.num_iter_skips
 iters_dont_skip = config.iters_dont_skip
 ML_model = config.ML_model
