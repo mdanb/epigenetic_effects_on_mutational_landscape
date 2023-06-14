@@ -40,7 +40,7 @@ parser.add_argument('--test_backward_selection_iter', type=int, default=None)
 parser.add_argument('--seed_range', type=str)
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=int, default=None)
 parser.add_argument('--n_optuna_trials_backward_selection', type=int, default=None)
-parser.add_argument('--iters_dont_skip', nargs="+", type=int, default=[18])
+parser.add_argument('--iters_dont_skip', nargs="+", type=str, default=["18"])
 
 config = parser.parse_args()
 
