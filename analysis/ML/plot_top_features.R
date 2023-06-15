@@ -33,10 +33,12 @@ parser <- add_option(parser, c("--robustness_top_n"), type="integer",
 args = parse_args(parser, args =
                     c("--datasets=Tsankov",
                       "--cancer_types=sarcomatoid_waddell_mesomics",
-                      "--cell_number_filter=1",
+                      "--cell_number_filter=30",
                       "--annotation=default_annotation",
                       "--ML_model=XGB",
-                      "--annotation=finalized_annotation"))
+                      "--annotation=finalized_annotation",
+                      "--seed=1",
+                      "--iters_dont_skip=17"))
 
 args = parse_args(parser)
 
@@ -82,7 +84,7 @@ construct_sources_string <- function(datasets) {
   return(scATAC_sources)
 }
 
-get_relevant_backwards_elim_dirs <- function(args) {
+get_relevant_backwards_elim_dirs <- function(args, accumulated_seeds=F) {
     cancer_types = args$cancer_types
     cancer_types = unlist(strsplit(cancer_types, split = ","))
     combined_datasets = args$combined_datasets
@@ -94,7 +96,11 @@ get_relevant_backwards_elim_dirs <- function(args) {
     tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
     annotation = args$annotation
     ML_model = args$ML_model
-    seed = args$seed
+    if (!accumulated_seeds) {
+      seed = args$seed
+    } else {
+      seed = "all_seeds"
+    }
     scATAC_sources = construct_sources_string(datasets)
 
     backward_elim_dirs = list()
@@ -163,7 +169,7 @@ construct_pie_charts <- function(args) {
   }
 }
 
-ggplot_barplot_helper <- function(df, title, savepath) {
+ggplot_barplot_helper <- function(df, title, savepath, accumulated_imp=F) {
   df$num_features_f = factor(df$num_features, levels=unique(df$num_features))
   colors = get_n_colors(20, 1)
   
@@ -179,7 +185,11 @@ ggplot_barplot_helper <- function(df, title, savepath) {
                labeller = as_labeller(to), scales = "free") +
     geom_bar(stat="identity", width=1, color="white") +
     xlab("Cell type") +
-    ylab("Percent importance (%)") +
+    {if (!accumulated_imp) 
+      ylab("Percent importance (%)")
+    else {
+      ylab("Accumulated percent importance")
+    }} +
     # theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1),
     #       aspect.ratio = 1.1/1) +
     theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1,
@@ -200,8 +210,7 @@ construct_bar_plots <- function(args) {
     df = as_tibble(read.csv(file))
     title = unlist(strsplit(dir, split ="/"))
     title = title[length(title) - 2]
-    savepath = paste(dir, "bar_plot.png", sep="/")
-    ggplot_barplot_helper(df, title, savepath)
+    ggplot_barplot_helper(df, title, savepath=dir)
   }
 }
 
@@ -273,7 +282,7 @@ if (!robustness_analysis) {
                                      sep="/")))
       df_feature_importances = df_feature_importances %>%
                                 filter(num_features == robustness_top_n)
-      temp = unlist(strsplit(all_seeds_dirs, split="_"))
+      temp = unlist(strsplit(dir, split="_"))
       seed = temp[length(temp)]
       df_feature_importances["seed"] = seed
       if (nrow(df_feature_importances_all_seeds) == 0) {
@@ -288,5 +297,13 @@ if (!robustness_analysis) {
                             group_by(features) %>%
                             summarise(sum(importance))
     colnames(df_accumulated_imp)[2] = "importance"
+    df_accumulated_imp$num_features = robustness_top_n
+    savepath = get_relevant_backwards_elim_dirs(args, accumulated_seeds = T)
+    dir.create(savepath, recursive = T)
+    ggplot_barplot_helper(df=df_accumulated_imp, 
+                          title=cancer_type, 
+                          savepath=savepath,
+                          accumulated_imp=T)
+    
   }
 }
