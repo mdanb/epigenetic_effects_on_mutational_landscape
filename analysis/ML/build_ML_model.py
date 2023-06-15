@@ -93,7 +93,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                 else:
                     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
                                                       tss_fragment_filter, annotation_dir, seed)
-                    print(f"scATAC_dir is f{scATAC_dir}")
+                    print(f"scATAC_dir is {scATAC_dir}")
                     run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
                                                          scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
@@ -109,14 +109,14 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          n_optuna_trials_backward_selection)
 
         cancer_types = ",".join(cancer_types)
-        datasets = ",".join(datasets)
+        datasets_arg = ",".join(datasets)
         iters_dont_skip = ",".join(iters_dont_skip)
 
         print(f"Plotting top features for seed {seed}...")
         subprocess.call(["Rscript", "plot_top_features.R",
                          f"--cancer_types={cancer_types}",
                          f"--ML_model={ML_model}",
-                         f"--datasets={datasets}",
+                         f"--datasets={datasets_arg}",
                          f"--seed={seed}",
                          f"--cell_number_filter={scATAC_cell_number_filter}",
                          f"--annotation={annotation_dir}",
