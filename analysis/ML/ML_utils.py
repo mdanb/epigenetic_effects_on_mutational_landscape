@@ -320,7 +320,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
 def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_number_filter, tss_filter, annotation_dir,
                                            meso, SCLC, lung_subtyped, woo_pcawg,
                                            histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                           CPTAC, combined_CPTAC_ICGC, per_donor, seed):
+                                           CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, seed):
     for cancer_type in cancer_types:
         scATAC_sources = construct_scATAC_sources(datasets)
         scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter,
@@ -335,7 +335,7 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
         scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
         mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                       histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                      CPTAC, combined_CPTAC_ICGC, per_donor)
+                                      CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
 
         if not pd.isna(mutations_df).any().any():
             # for compatibility

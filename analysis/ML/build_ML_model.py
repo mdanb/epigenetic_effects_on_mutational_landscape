@@ -130,12 +130,12 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
 
 
 if test_backward_selection_iter:
-    save_n_features_model_test_performance(test_backward_selection_iter, datasets, ML_model, scATAC_cell_number_filter,
-                                           tss_fragment_filter,
-                                           annotation_dir, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
-                                           waddell_sarc_biph_tsankov_sarc_biph, SCLC, lung_subtyped, woo_pcawg,
-                                           histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                           CPTAC, combined_CPTAC_ICGC, per_donor, seed)
+    for seed in seed_range:
+        save_n_features_model_test_performance(test_backward_selection_iter, datasets, ML_model, scATAC_cell_number_filter,
+                                               tss_fragment_filter,
+                                               annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
+                                               histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+                                               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, seed)
 else:
     run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
