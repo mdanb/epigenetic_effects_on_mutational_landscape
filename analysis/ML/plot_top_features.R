@@ -30,14 +30,13 @@ parser <- add_option(parser, c("--robustness_top_n"), type="integer",
                      default=2)
 
 
-# args = parse_args(parser, args =
-#                     c("--datasets=Tsankov",
-#                       "--cancer_types=sarcomatoid_waddell_mesomics",
-#                       "--cell_number_filter=1",
-#                       "--annotation=default_annotation",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--robustness_analysis"))
+args = parse_args(parser, args =
+                    c("--datasets=Tsankov",
+                      "--cancer_types=sarcomatoid_waddell_mesomics",
+                      "--cell_number_filter=1",
+                      "--annotation=default_annotation",
+                      "--ML_model=XGB",
+                      "--annotation=finalized_annotation"))
 
 args = parse_args(parser)
 
@@ -164,7 +163,15 @@ construct_pie_charts <- function(args) {
   }
 }
 
-ggplot_barplot_helper <- function(title, savepath) {
+ggplot_barplot_helper <- function(df, title, savepath) {
+  df$num_features_f = factor(df$num_features, levels=unique(df$num_features))
+  colors = get_n_colors(20, 1)
+  
+  from = as.character(unique(df$num_features))
+  to = paste(paste(levels(df$num_features_f), "features"),
+             paste("(R^2=", as.character(round(unique(df$score*100), 1)), 
+                   ")", sep=""), sep=" ")
+  names(to) <- from
   plot = ggplot(df, aes(x=reorder_within(features, -importance, within=num_features_f,
                                          sep="."), 
                         y=importance, fill=features)) +
@@ -183,7 +190,7 @@ ggplot_barplot_helper <- function(title, savepath) {
     #               as.character(round(unique(df$score*100), 1)), ")")) +
     ggtitle(title) +
     theme(plot.title = element_text(hjust = 0.5))
-  ggsave(paste(dir, "bar_plot.png", sep="/"), width = 20, height = 15, plot)
+  ggsave(paste(savepath, "bar_plot.png", sep="/"), width = 20, height = 15, plot)
 }
 
 construct_bar_plots <- function(args) {
@@ -191,37 +198,10 @@ construct_bar_plots <- function(args) {
   for (dir in dirs) {
     file = paste(dir, "df_for_feature_importance_plots.csv", sep="/")
     df = as_tibble(read.csv(file))
-    # df = df %>% filter(num_features == args$bar_plot_num_features)
-    df$num_features_f = factor(df$num_features, levels=unique(df$num_features))
-    colors = get_n_colors(20, 1)
-    
-    from = as.character(unique(df$num_features))
-    to = paste(paste(levels(df$num_features_f), "features"),
-               paste("(R^2=", as.character(round(unique(df$score*100), 1)), 
-                     ")", sep=""), sep=" ")
-    names(to) <- from
-    # df = df %>% group_by(num_features_f) %>% arrange(-importance, .by_group=T)
     title = unlist(strsplit(dir, split ="/"))
     title = title[length(title) - 2]
-    plot = ggplot(df, aes(x=reorder_within(features, -importance, within=num_features_f,
-                                           sep="."), 
-                          y=importance, fill=features)) +
-          facet_wrap(~num_features_f, nrow=1, 
-                     labeller = as_labeller(to), scales = "free") +
-           geom_bar(stat="identity", width=1, color="white") +
-           xlab("Cell type") +
-           ylab("Percent importance (%)") +
-           # theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1),
-           #       aspect.ratio = 1.1/1) +
-           theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1,
-                                            size=15)) +
-           guides(fill="none") +
-           scale_fill_manual(values=colors) +
-           # ggtitle(paste0(unlist(strsplit(dir, split ="/"))[3], " (R^2=",
-           #               as.character(round(unique(df$score*100), 1)), ")")) +
-           ggtitle(title) +
-           theme(plot.title = element_text(hjust = 0.5))
-    ggsave(paste(dir, "bar_plot.png", sep="/"), width = 20, height = 15, plot)
+    savepath = paste(dir, "bar_plot.png", sep="/")
+    ggplot_barplot_helper(df, title, savepath)
   }
 }
 
