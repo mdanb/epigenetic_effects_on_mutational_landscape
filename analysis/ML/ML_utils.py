@@ -326,7 +326,7 @@ def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_nu
         scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter,
                                          annotation_dir, seed)
         filename = f"model_iteration_{n}.pkl"
-        backwards_elim_model_file = f"analysis/ML/models/{ML_model}/" \
+        backwards_elim_model_file = f"models/{ML_model}/" \
                                     f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
         gs = pickle.load(open(backwards_elim_model_file, "rb"))
         model = gs.best_estimator_.get_params()['regressor__selected_model']
