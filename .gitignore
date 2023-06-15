@@ -19,7 +19,6 @@ __pycache__/
 *.png
 build_ml_commands_non_interactive_out
 tsse_filtered_run_commands
-analysis/ML/*.sh
 analysis/ML/seed_range*
 analysis/ML/db.sqlite3
 analysis/create_frag_counts_and_tss_filtered_v_R_plots.sh
