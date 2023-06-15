@@ -30,15 +30,15 @@ parser <- add_option(parser, c("--robustness_top_ns"), type="character",
                      default="2,5")
 
 
-args = parse_args(parser, args =
-                    c("--datasets=Tsankov",
-                      "--cancer_types=sarcomatoid_waddell_mesomics",
-                      "--cell_number_filter=30",
-                      "--ML_model=XGB",
-                      "--annotation=finalized_annotation",
-                      "--seed=1",
-                      "--iters_dont_skip=17",
-                      "--robustness_top_ns=2,4"))
+# args = parse_args(parser, args =
+#                     c("--datasets=Tsankov",
+#                       "--cancer_types=sarcomatoid_waddell_mesomics",
+#                       "--cell_number_filter=30",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--seed=1",
+#                       "--iters_dont_skip=17",
+#                       "--robustness_top_ns=2,4"))
 
 args = parse_args(parser)
 
@@ -311,8 +311,6 @@ if (!robustness_analysis) {
                           title=cancer_type, 
                           savepath=savepath,
                           accumulated_imp=T)
-    
-    df_feature_importances_all_seeds
     
   }
 }
