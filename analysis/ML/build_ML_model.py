@@ -135,7 +135,7 @@ if test_backward_selection_iter:
                                                tss_fragment_filter,
                                                annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
                                                histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, seed)
+                                               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, int(seed))
 else:
     run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
