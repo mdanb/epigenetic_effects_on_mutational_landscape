@@ -253,8 +253,9 @@ if (!robustness_analysis) {
                            paste(tss_fragment_filter, collapse = " "),
                            "--ML_model", ML_model,
                            "--cancer_types", cancer_types, "--seed", seed)
-  
+  print(paste0("Prepping feature importance dfs for seed ", seed, "..."))
   system(prep_dfs_command)
+  print(paste0("Done feature importance dfs for seed ", seed, "!"))
   
   tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
   
