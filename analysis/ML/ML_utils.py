@@ -2,8 +2,6 @@ import pyreadr
 from natsort import natsorted
 from itertools import chain
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
-import time
 import pandas as pd
 import numpy as np
 import pickle
