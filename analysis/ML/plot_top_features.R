@@ -5,6 +5,7 @@ library(RColorBrewer)
 library(dplyr)
 library(optparse)
 library(stringr)
+library(tibble)
 source("../../utils.R")
 
 parser <- OptionParser()
@@ -23,6 +24,20 @@ parser <- add_option(parser, c("--annotation"),
                      type="character", default="default_annotation")
 parser <- add_option(parser, c("--iters_dont_skip"), default="18")
 parser <- add_option(parser, c("--seed"), default="42")
+parser <- add_option(parser, c("--robustness_analysis"), action="store_true", 
+                     default=F)
+parser <- add_option(parser, c("--robustness_top_n"), type="integer",
+                     default=2)
+
+
+args = parse_args(parser, args =
+                    c("--datasets=Tsankov",
+                      "--cancer_types=sarcomatoid_waddell_mesomics",
+                      "--cell_number_filter=1",
+                      "--annotation=default_annotation",
+                      "--ML_model=XGB",
+                      "--annotation=finalized_annotation",
+                      "--robustness_analysis"))
 
 args = parse_args(parser)
 
@@ -53,6 +68,21 @@ construct_backwards_elim_dir <- function(cancer_type, scATAC_source,
   return(dir)
 }
 
+construct_sources_string <- function(datasets) {
+  scATAC_sources = ""
+  
+  for (i in 1:length(datasets)) {
+    dataset = datasets[i]
+    if (scATAC_sources == "") {
+      scATAC_sources = dataset
+    }
+    else {
+      scATAC_sources = paste(scATAC_sources, dataset, sep="_")
+    }
+  }
+  return(scATAC_sources)
+}
+
 get_relevant_backwards_elim_dirs <- function(args) {
     cancer_types = args$cancer_types
     cancer_types = unlist(strsplit(cancer_types, split = ","))
@@ -66,17 +96,7 @@ get_relevant_backwards_elim_dirs <- function(args) {
     annotation = args$annotation
     ML_model = args$ML_model
     seed = args$seed
-    scATAC_sources = ""
-    
-    for (i in 1:length(datasets)) {
-      dataset = datasets[i]
-      if (scATAC_sources == "") {
-        scATAC_sources = dataset
-      }
-      else {
-        scATAC_sources = paste(scATAC_sources, dataset, sep="_")
-      }
-    }
+    scATAC_sources = construct_sources_string(datasets)
 
     backward_elim_dirs = list()
     for (cancer_type in cancer_types) {
@@ -196,26 +216,75 @@ annotation = args$annotation
 tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
 ML_model = args$ML_model
 seed = args$seed
+robustness_analysis = args$robustness_analysis
 
 cancer_types = paste(cancer_types, collapse = " ")
-prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_importance_plots.py", 
-                         "--datasets", 
-                         paste(datasets, collapse=" "), 
-                         "--annotation", annotation, "--tissues_to_consider",
-                         paste(tissues_to_consider, collapse = " "), 
-                         "--cell_number_filter", cell_number_filter, 
-                         "--num_iter_skips", num_iter_skips, "--iters_dont_skip",
-                         iters_dont_skip, "--tss_fragment_filter", 
-                         paste(tss_fragment_filter, collapse = " "),
-                         "--ML_model", ML_model,
-                         "--cancer_types", cancer_types, "--seed", seed)
 
-system(prep_dfs_command)
-
-tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
-
-if (args$pie_chart) {
-  construct_pie_charts(args)
+if (!robustness_analysis) {
+  prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_importance_plots.py", 
+                           "--datasets", 
+                           paste(datasets, collapse=" "), 
+                           "--annotation", annotation, "--tissues_to_consider",
+                           paste(tissues_to_consider, collapse = " "), 
+                           "--cell_number_filter", cell_number_filter, 
+                           "--num_iter_skips", num_iter_skips, "--iters_dont_skip",
+                           iters_dont_skip, "--tss_fragment_filter", 
+                           paste(tss_fragment_filter, collapse = " "),
+                           "--ML_model", ML_model,
+                           "--cancer_types", cancer_types, "--seed", seed)
+  
+  system(prep_dfs_command)
+  
+  tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
+  
+  if (args$pie_chart) {
+    construct_pie_charts(args)
+  } else {
+    construct_bar_plots(args)
+  }
 } else {
-  construct_bar_plots(args)
+  robustness_top_n = args$robustness_top_n
+  for (cancer_type in cancer_types) {
+    # for (tss_filter in tss_fragment_filter) {
+    scATAC_sources = construct_sources_string(datasets)
+    scATAC_source = paste("scATAC_source", scATAC_sources, "cell_number_filter", 
+                          cell_number_filter, sep="_")
+    if (tss_fragment_filter != "-1") {
+      scATAC_source = paste(scATAC_source, "tss_fragment_filter",
+                            tss_fragment_filter, sep="_")
+    }
+    
+    # if (tss_filter != "-1") {
+    #   scATAC_source = paste(scATAC_source, "tss_fragment_filter",
+    #                         tss_filter, sep="_")
+    # }
+    
+    scATAC_source = paste(scATAC_source, "annotation", annotation, 
+                          sep="_")
+    dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type, 
+                           sep="/"), recursive = F)
+    all_seeds_dirs = dirs[grepl(scATAC_source, dirs)]
+    df_feature_importances_all_seeds = tibble()
+    for (dir in all_seeds_dirs) {
+      df_feature_importances = as_tibble(read.csv(paste(dir, "backwards_elimination_results", 
+                                     "df_for_feature_importance_plots.csv",
+                                     sep="/")))
+      df_feature_importances = df_feature_importances %>%
+                                filter(num_features == robustness_top_n)
+      temp = unlist(strsplit(all_seeds_dirs, split="_"))
+      seed = temp[length(temp)]
+      df_feature_importances["seed"] = seed
+      if (nrow(df_feature_importances_all_seeds) == 0) {
+        df_feature_importances_all_seeds = df_feature_importances
+      } else {
+        df_feature_importances_all_seeds = rbind(df_feature_importances_all_seeds,
+                                                 df_feature_importances)
+      }
+    }
+    # }
+    df_accumulated_imp = df_feature_importances_all_seeds %>% 
+                            group_by(features) %>%
+                            summarise(sum(importance))
+    colnames(df_accumulated_imp)[2] = "importance"
+  }
 }
