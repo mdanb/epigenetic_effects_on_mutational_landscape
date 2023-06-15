@@ -10,7 +10,8 @@ parser.add_argument('--scATAC_cell_number_filter', type=str,
                     help='minimum number of cells per cell type in scATAC', default=100)
 parser.add_argument('--annotation_dir', type=str,
                     help='name of annotation directory', default="default_annotation")
-parser.add_argument('--seed_ranges', type=str)
+parser.add_argument('--seed_interval', type=str)
+parser.add_argument('--seed_interval_step', type=int)
 parser.add_argument('--iters_dont_skip', nargs="+", type=str,
                     default=["18"])
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=str)
@@ -24,12 +25,16 @@ datasets = " ".join(sorted(config.datasets))
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
 annotation_dir = config.annotation_dir
 iters_dont_skip = " ".join(config.iters_dont_skip)
-ranges = config.seed_ranges.split(',')
+seed_interval = config.seed_interval
+start, end = map(int, seed_interval.split('-'))
+seed_interval_step = config.seed_interval_step
+seed_ranges = list(range(start - 1, end + 1, seed_interval_step))
+seed_ranges = [f"{seed_ranges[i] + 1}-{seed_ranges[i+1]}" for i in range(len(seed_ranges)-1)]
 n_optuna_trials_prebackward_selection = config.n_optuna_trials_prebackward_selection
 n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 meso = config.meso
 
-for seed_range in ranges:
+for seed_range in seed_ranges:
     script_filename = "_".join(["cancer_types", cancer_types,
                                 "datasets", datasets,
                                 "scATAC_cell_number_filter", scATAC_cell_number_filter,
