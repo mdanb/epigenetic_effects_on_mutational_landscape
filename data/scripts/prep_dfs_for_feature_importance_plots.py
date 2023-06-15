@@ -98,9 +98,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
                                    "backwards_elimination_results")
         files = natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))
         for idx, file in enumerate(files):
-            print(idx)
             if (idx % num_iter_skips == 0 or idx in iters_dont_skip):
-                print(f"Prepping backwards elim results at iteration {idx} for plotting")
                 model = pickle.load(open(file, "rb"))
                 study_name = f"{cancer_type}_iter_{idx + 1}_{optuna_base_dir}"
                 study = optuna.load_study(study_name=study_name, storage="sqlite:///../../analysis/ML/db.sqlite3")

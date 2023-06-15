@@ -164,7 +164,7 @@ construct_pie_charts <- function(args) {
   }
 }
 
-ggplot_barplot_helper(title, savepath) {
+ggplot_barplot_helper <- function(title, savepath) {
   plot = ggplot(df, aes(x=reorder_within(features, -importance, within=num_features_f,
                                          sep="."), 
                         y=importance, fill=features)) +
@@ -201,7 +201,6 @@ construct_bar_plots <- function(args) {
                      ")", sep=""), sep=" ")
     names(to) <- from
     # df = df %>% group_by(num_features_f) %>% arrange(-importance, .by_group=T)
-    print(paste("Plotting data in", dir))
     title = unlist(strsplit(dir, split ="/"))
     title = title[length(title) - 2]
     plot = ggplot(df, aes(x=reorder_within(features, -importance, within=num_features_f,

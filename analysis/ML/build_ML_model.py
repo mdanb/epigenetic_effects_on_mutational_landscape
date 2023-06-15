@@ -110,6 +110,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
         datasets = ",".join(datasets)
         iters_dont_skip = ",".join(iters_dont_skip)
 
+	#print(f"running ")
         subprocess.call(["Rscript", "plot_top_features.R",
                          f"--cancer_types={cancer_types}",
                          f"--ML_model={ML_model}",
@@ -118,7 +119,6 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                          f"--cell_number_filter={scATAC_cell_number_filter}",
                          f"--annotation={annotation_dir}",
                          f"--iters_dont_skip={iters_dont_skip}"])
-
     return
 
 
