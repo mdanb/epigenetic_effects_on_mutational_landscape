@@ -164,6 +164,28 @@ construct_pie_charts <- function(args) {
   }
 }
 
+ggplot_barplot_helper(title, savepath) {
+  plot = ggplot(df, aes(x=reorder_within(features, -importance, within=num_features_f,
+                                         sep="."), 
+                        y=importance, fill=features)) +
+    facet_wrap(~num_features_f, nrow=1, 
+               labeller = as_labeller(to), scales = "free") +
+    geom_bar(stat="identity", width=1, color="white") +
+    xlab("Cell type") +
+    ylab("Percent importance (%)") +
+    # theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1),
+    #       aspect.ratio = 1.1/1) +
+    theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust=1,
+                                     size=15)) +
+    guides(fill="none") +
+    scale_fill_manual(values=colors) +
+    # ggtitle(paste0(unlist(strsplit(dir, split ="/"))[3], " (R^2=",
+    #               as.character(round(unique(df$score*100), 1)), ")")) +
+    ggtitle(title) +
+    theme(plot.title = element_text(hjust = 0.5))
+  ggsave(paste(dir, "bar_plot.png", sep="/"), width = 20, height = 15, plot)
+}
+
 construct_bar_plots <- function(args) {
   dirs = get_relevant_backwards_elim_dirs(args)
   for (dir in dirs) {
