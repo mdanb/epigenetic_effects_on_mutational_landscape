@@ -71,13 +71,21 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   n_optuna_trials_backward_selection, iters_dont_skip):
     start, end = map(int, seed_range.split('-'))
     seed_range = range(start, end + 1)
+
+    ### args used at the end for plot_top_features.R ###
+    cancer_types_arg = ",".join(cancer_types)
+    datasets_arg = ",".join(datasets)
+    iters_dont_skip_arg = ",".join(iters_dont_skip)
+    ####################################################
+
+    mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
+                                  histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
+    scATAC_sources = construct_scATAC_sources(datasets)
+
     for seed in seed_range:
         print(f"Running model for seed {seed}")
-        scATAC_sources = construct_scATAC_sources(datasets)
         print(f"Using scATAC sources: {scATAC_sources}")
-        mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
-                                      histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                      CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
         if not per_donor:
             for cancer_type in cancer_types:
                 if tss_fragment_filter:
@@ -108,19 +116,15 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
                                                          n_optuna_trials_backward_selection)
 
-        cancer_types = ",".join(cancer_types)
-        datasets_arg = ",".join(datasets)
-        iters_dont_skip = ",".join(iters_dont_skip)
-
         print(f"Plotting top features for seed {seed}...")
         subprocess.call(["Rscript", "plot_top_features.R",
-                         f"--cancer_types={cancer_types}",
+                         f"--cancer_types={cancer_types_arg}",
                          f"--ML_model={ML_model}",
                          f"--datasets={datasets_arg}",
                          f"--seed={seed}",
                          f"--cell_number_filter={scATAC_cell_number_filter}",
                          f"--annotation={annotation_dir}",
-                         f"--iters_dont_skip={iters_dont_skip}"])
+                         f"--iters_dont_skip={iters_dont_skip_arg}"])
         print(f"Done plotting top features for seed {seed}!")
     return
 
