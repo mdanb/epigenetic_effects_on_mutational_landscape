@@ -26,19 +26,19 @@ parser <- add_option(parser, c("--iters_dont_skip"), default="18")
 parser <- add_option(parser, c("--seed"), default="42")
 parser <- add_option(parser, c("--robustness_analysis"), action="store_true", 
                      default=F)
-parser <- add_option(parser, c("--robustness_top_n"), type="integer",
-                     default=2)
+parser <- add_option(parser, c("--robustness_top_ns"), type="character",
+                     default="2,5")
 
 
 args = parse_args(parser, args =
                     c("--datasets=Tsankov",
                       "--cancer_types=sarcomatoid_waddell_mesomics",
                       "--cell_number_filter=30",
-                      "--annotation=default_annotation",
                       "--ML_model=XGB",
                       "--annotation=finalized_annotation",
                       "--seed=1",
-                      "--iters_dont_skip=17"))
+                      "--iters_dont_skip=17",
+                      "--robustness_top_ns=2,4"))
 
 args = parse_args(parser)
 
@@ -174,9 +174,12 @@ ggplot_barplot_helper <- function(df, title, savepath, accumulated_imp=F) {
   colors = get_n_colors(20, 1)
   
   from = as.character(unique(df$num_features))
-  to = paste(paste(levels(df$num_features_f), "features"),
-             paste("(R^2=", as.character(round(unique(df$score*100), 1)), 
-                   ")", sep=""), sep=" ")
+  to = paste(levels(df$num_features_f), "features", sep=" ")
+  if (!accumulated_imp) {
+    to = paste(to, paste("(R^2=", 
+                         as.character(round(unique(df$score*100), 1)), ")",
+                         sep=""))
+  }
   names(to) <- from
   plot = ggplot(df, aes(x=reorder_within(features, -importance, within=num_features_f,
                                          sep="."), 
@@ -212,6 +215,10 @@ construct_bar_plots <- function(args) {
     title = title[length(title) - 2]
     ggplot_barplot_helper(df, title, savepath=dir)
   }
+}
+
+construct_boxplots <- function(df) {
+  
 }
 
 cancer_types = args$cancer_types
@@ -254,7 +261,7 @@ if (!robustness_analysis) {
     construct_bar_plots(args)
   }
 } else {
-  robustness_top_n = args$robustness_top_n
+  robustness_top_ns = as.integer(unlist(strsplit(args$robustness_top_ns, split=",")))
   for (cancer_type in cancer_types) {
     # for (tss_filter in tss_fragment_filter) {
     scATAC_sources = construct_sources_string(datasets)
@@ -275,13 +282,14 @@ if (!robustness_analysis) {
     dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type, 
                            sep="/"), recursive = F)
     all_seeds_dirs = dirs[grepl(scATAC_source, dirs)]
+    all_seeds_dirs = all_seeds_dirs[!grepl("all_seeds", all_seeds_dirs)]
     df_feature_importances_all_seeds = tibble()
     for (dir in all_seeds_dirs) {
       df_feature_importances = as_tibble(read.csv(paste(dir, "backwards_elimination_results", 
                                      "df_for_feature_importance_plots.csv",
                                      sep="/")))
       df_feature_importances = df_feature_importances %>%
-                                filter(num_features == robustness_top_n)
+                                filter(num_features %in% robustness_top_ns)
       temp = unlist(strsplit(dir, split="_"))
       seed = temp[length(temp)]
       df_feature_importances["seed"] = seed
@@ -294,16 +302,17 @@ if (!robustness_analysis) {
     }
     # }
     df_accumulated_imp = df_feature_importances_all_seeds %>% 
-                            group_by(features) %>%
+                            group_by(features, num_features) %>%
                             summarise(sum(importance))
-    colnames(df_accumulated_imp)[2] = "importance"
-    df_accumulated_imp$num_features = robustness_top_n
+    colnames(df_accumulated_imp)[3] = "importance"
     savepath = get_relevant_backwards_elim_dirs(args, accumulated_seeds = T)
     dir.create(savepath, recursive = T)
     ggplot_barplot_helper(df=df_accumulated_imp, 
                           title=cancer_type, 
                           savepath=savepath,
                           accumulated_imp=T)
+    
+    df_feature_importances_all_seeds
     
   }
 }
