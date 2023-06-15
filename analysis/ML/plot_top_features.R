@@ -30,14 +30,14 @@ parser <- add_option(parser, c("--robustness_top_n"), type="integer",
                      default=2)
 
 
-args = parse_args(parser, args =
-                    c("--datasets=Tsankov",
-                      "--cancer_types=sarcomatoid_waddell_mesomics",
-                      "--cell_number_filter=1",
-                      "--annotation=default_annotation",
-                      "--ML_model=XGB",
-                      "--annotation=finalized_annotation",
-                      "--robustness_analysis"))
+# args = parse_args(parser, args =
+#                     c("--datasets=Tsankov",
+#                       "--cancer_types=sarcomatoid_waddell_mesomics",
+#                       "--cell_number_filter=1",
+#                       "--annotation=default_annotation",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--robustness_analysis"))
 
 args = parse_args(parser)
 
