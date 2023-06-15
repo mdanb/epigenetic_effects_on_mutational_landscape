@@ -16,29 +16,29 @@ import optuna
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                    histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
                    CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor):
-    if (meso):
+    if meso:
         mutations_df = load_meso()
-    elif (SCLC):
+    elif SCLC:
         mutations_df = load_sclc_mutations()
-    elif (lung_subtyped):
+    elif lung_subtyped:
         mutations_df = load_subtyped_lung_mutations()
-    elif (woo_pcawg):
+    elif woo_pcawg:
         mutations_df = load_woo_pcawg_mutations()
-    elif (histologically_subtyped_mutations):
+    elif histologically_subtyped_mutations:
         mutations_df = load_histologically_subtyped_mutations()
-    elif (de_novo_seurat_clustering):
+    elif de_novo_seurat_clustering:
         mutations_df = load_de_novo_seurat_clustered_cancers(cancer_types)
-    elif (CPTAC):
+    elif CPTAC:
         mutations_df = load_CPTAC()
-    elif (combined_CPTAC_ICGC):
+    elif combined_CPTAC_ICGC:
         mutations_df = load_combined_CPTAC_ICGC()
-    elif (RNA_subtyped):
+    elif RNA_subtyped:
         mutations_df = load_RNA_subtyped_mutations()
-    elif (per_donor):
+    elif per_donor:
         mutations_df = load_per_donor_mutations(cancer_types[0])
     else:
         mutations_df = load_agg_mutations()
-    return(mutations_df)
+    return mutations_df
 
 def load_scATAC(scATAC_path):
     scATAC_df = pyreadr.read_r(scATAC_path)

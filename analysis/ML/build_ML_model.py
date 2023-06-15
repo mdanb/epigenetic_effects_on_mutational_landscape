@@ -13,7 +13,7 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
     #### Filter data ####
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
-    if (not pd.isna(mutations_df).any().any()):
+    if not pd.isna(mutations_df).any().any():
         # for compatibility
         mutations_df = add_na_ranges(mutations_df)
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
@@ -21,7 +21,7 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
 
     os.makedirs(f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}", exist_ok=True)
 
-    if (tissues_to_consider == "all"):
+    if tissues_to_consider == "all":
         backwards_elim_dir=f"models/{ML_model}/" \
                            f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results"
         test_set_perf_filepath = f"models/{ML_model}/" \
@@ -74,12 +74,13 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
     for seed in seed_range:
         print(f"Running model for seed {seed}")
         scATAC_sources = construct_scATAC_sources(datasets)
+        print(f"Using scATAC sources: {scATAC_sources}")
         mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                       histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
                                       CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
-        if (not per_donor):
+        if not per_donor:
             for cancer_type in cancer_types:
-                if (tss_fragment_filter):
+                if tss_fragment_filter:
                     for tss_filter in tss_fragment_filter:
                         scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
                                                           annotation_dir, seed)
@@ -92,6 +93,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                 else:
                     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
                                                       tss_fragment_filter, annotation_dir, seed)
+                    print(f"scATAC_dir is f{scATAC_dir}")
                     run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
                                                          scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
@@ -123,7 +125,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
     return
 
 
-if (test_backward_selection_iter):
+if test_backward_selection_iter:
     save_n_features_model_test_performance(test_backward_selection_iter, datasets, ML_model, scATAC_cell_number_filter,
                                            tss_fragment_filter,
                                            annotation_dir, waddell_sarc_biph, waddell_sarc, waddell_sarc_tsankov_sarc,
