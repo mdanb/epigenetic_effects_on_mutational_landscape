@@ -30,17 +30,17 @@ parser <- add_option(parser, c("--robustness_top_ns"), type="character",
                      default="2,5")
 
 
-# args = parse_args(parser, args =
-#                     c("--datasets=Tsankov",
-#                       "--cancer_types=sarcomatoid_waddell_mesomics",
-#                       "--cell_number_filter=30",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--seed=1",
-#                       "--iters_dont_skip=17",
-#                       "--robustness_top_ns=2,4"))
+args = parse_args(parser, args =
+                    c("--datasets=Tsankov",
+                      "--cancer_types=sarcomatoid_waddell_mesomics",
+                      "--cell_number_filter=30",
+                      "--ML_model=XGB",
+                      "--annotation=finalized_annotation",
+                      "--seed=1",
+                      "--iters_dont_skip=17",
+                      "--robustness_top_ns=2,4"))
 
-args = parse_args(parser)
+# args = parse_args(parser)
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter,
@@ -48,7 +48,8 @@ construct_backwards_elim_dir <- function(cancer_type, scATAC_source,
                                          annotation,
                                          tissues_to_consider, 
                                          ML_model,
-                                         seed) {
+                                         seed,
+                                         test=F) {
   scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
                         cell_number_filter, sep="_")
   
@@ -59,13 +60,17 @@ construct_backwards_elim_dir <- function(cancer_type, scATAC_source,
 
   scATAC_source = paste(scATAC_source, "annotation", annotation, "seed", seed, 
                         sep="_")
-  
-  dir = paste("../../figures", "models", ML_model, cancer_type, scATAC_source,
+  dir = paste("models", ML_model, cancer_type, scATAC_source,
               "backwards_elimination_results", sep="/")
+  
   if (tissues_to_consider != "all") {
     dir = paste(dir, tissues_to_consider, sep="_")
   }
-
+  
+  if (!test) {
+    dir = paste("../../figures", dir, sep="/")
+  }
+  
   return(dir)
 }
 
@@ -217,7 +222,7 @@ construct_bar_plots <- function(args) {
   }
 }
 
-construct_boxplots <- function(df) {
+construct_test_boxplots <- function(df) {
   
 }
 
@@ -312,5 +317,17 @@ if (!robustness_analysis) {
                           savepath=savepath,
                           accumulated_imp=T)
     
+    test_dir = construct_backwards_elim_dir(cancer_type, scATAC_source, 
+                                            cell_number_filter,
+                                            tss_fragment_filter, 
+                                            annotation,
+                                            tissues_to_consider, 
+                                            ML_model,
+                                            seed,
+                                            test=T)
+    num_iters = length(list.files(test_dir, 
+                                  pattern="model_iteration_[0-9]*\\.pkl"))
+    test_file_idx = num_iters - robustness_top_ns + 1
+    test_set_perf_files = list.files(test_dir, pattern = "test_performance")
   }
 }
