@@ -82,5 +82,5 @@ for seed_range in seed_ranges:
     with open(script_filename, "w") as f:
         f.write(job_script)
 
-    # subprocess.run(["qsub", f"{script_filename}"])
+    subprocess.run(["qsub", f"{script_filename}"])
 
