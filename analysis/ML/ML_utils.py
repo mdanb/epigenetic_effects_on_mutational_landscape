@@ -251,7 +251,8 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
                                 storage="sqlite:///db.sqlite3",
                                 study_name=study_name,
                                 load_if_exists=True,
-                                sampler=optuna.samplers.TPESampler(seed=seed))
+                                sampler=optuna.samplers.TPESampler(seed=seed),
+                                pruner=optuna.pruners.MedianPruner())
     n_existing_trials = len(study.trials)
     print(f"Number of existing optuna trials: {n_existing_trials}")
     n_optuna_trials = n_optuna_trials - n_existing_trials

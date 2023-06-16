@@ -346,7 +346,8 @@ if (!robustness_analysis) {
                 seed = integer(0))
     
     for (seed in seq(robustness_seed_range[1], robustness_seed_range[2])) {
-        test_dir = construct_backwards_elim_dir(cancer_type, scATAC_source,
+        test_dir = construct_backwards_elim_dir(cancer_type,
+                                                construct_sources_string(datasets),
                                                 cell_number_filter,
                                                 tss_fragment_filter, 
                                                 annotation,
