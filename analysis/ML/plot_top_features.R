@@ -28,7 +28,8 @@ parser <- add_option(parser, c("--robustness_analysis"), action="store_true",
                      default=F)
 parser <- add_option(parser, c("--robustness_top_ns"), type="character",
                      default="2,5")
-
+parser <- add_option(parser, c("--robustness_seed_range"), type="character",
+                     default="1-100")
 
 args = parse_args(parser, args =
                     c("--datasets=Tsankov",
@@ -38,7 +39,9 @@ args = parse_args(parser, args =
                       "--annotation=finalized_annotation",
                       "--seed=1",
                       "--iters_dont_skip=17",
-                      "--robustness_top_ns=2,4"))
+                      "--robustness_analysis",
+                      "--robustness_top_ns=2,4",
+                      "--robustness_seed_range=1-100"))
 
 # args = parse_args(parser)
 
@@ -222,8 +225,27 @@ construct_bar_plots <- function(args) {
   }
 }
 
-construct_test_boxplots <- function(df) {
+construct_test_boxplots <- function(df, title, savepath) {
+  from = as.character(unique(df$top_n))
+  to = paste("top", from, "features")
   
+  names(to) <- from
+  
+  plot = ggplot(df) +
+          geom_boxplot(aes(x = top_feature, y = test_set_perf, color=top_feature),
+                       lwd=1.2) +
+          geom_text(aes(x = top_feature, y = y_position, label = paste0("n=", n_top_feature)),
+                    vjust = -0.5) +
+          facet_wrap(~top_n, nrow=1, 
+                     scales = "free",
+                     labeller = as_labeller(to)) +
+          xlab("Cell type") +
+          ylab("Test set R^2") +
+          ggtitle(title) +
+          theme(plot.title = element_text(hjust = 0.5),
+                axis.text.x = element_blank())
+  ggsave(paste(savepath, "test_set_boxplots.png", sep="/"), 
+         width = 20, height = 15, plot)
 }
 
 cancer_types = args$cancer_types
@@ -239,6 +261,7 @@ tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
 ML_model = args$ML_model
 seed = args$seed
 robustness_analysis = args$robustness_analysis
+robustness_seed_range = as.integer(unlist(strsplit(args$robustness_seed_range, split="-")))
 
 cancer_types = paste(cancer_types, collapse = " ")
 
@@ -316,18 +339,55 @@ if (!robustness_analysis) {
                           title=cancer_type, 
                           savepath=savepath,
                           accumulated_imp=T)
+  
+    df = tibble(top_feature = character(0),
+                top_n = integer(0),
+                test_set_perf = double(0),
+                seed = integer(0))
     
-    test_dir = construct_backwards_elim_dir(cancer_type, scATAC_source, 
-                                            cell_number_filter,
-                                            tss_fragment_filter, 
-                                            annotation,
-                                            tissues_to_consider, 
-                                            ML_model,
-                                            seed,
-                                            test=T)
-    num_iters = length(list.files(test_dir, 
-                                  pattern="model_iteration_[0-9]*\\.pkl"))
-    test_file_idx = num_iters - robustness_top_ns + 1
-    test_set_perf_files = list.files(test_dir, pattern = "test_performance")
+    for (seed in seq(robustness_seed_range[1], robustness_seed_range[2])) {
+        test_dir = construct_backwards_elim_dir(cancer_type, scATAC_source,
+                                                cell_number_filter,
+                                                tss_fragment_filter, 
+                                                annotation,
+                                                tissues_to_consider, 
+                                                ML_model,
+                                                seed,
+                                                test=T)
+        num_iters = length(list.files(test_dir,
+                                      pattern="model_iteration_[0-9]*\\.pkl"))
+        test_file_idx = num_iters - robustness_top_ns + 1
+        test_perf_filenames = paste("model_iteration", test_file_idx, "test_performance.txt",
+                        sep = "_")
+        test_set_perf_files = paste(test_dir, test_perf_filenames, sep="/")
+        
+        idx = 1
+        for (file in test_set_perf_files) {
+          tryCatch(
+              {
+                top_feature_file = paste0("top_features_iteration_",
+                                        test_file_idx[idx],
+                                        ".txt")
+                top_feature_fp = paste(test_dir, top_feature_file, sep="/")
+                top_feature = readLines(top_feature_fp, n = 1)
+                top_feature = substring(top_feature, 4, nchar(top_feature))
+                suppressWarnings({
+                  perf = read.table(file)[1,1]
+                })
+                df = df %>% add_row(top_feature = top_feature,
+                                    top_n = robustness_top_ns[idx],
+                                    test_set_perf = perf,
+                                    seed = seed)
+                idx = idx + 1
+              },
+              error = function(e) {
+              }
+          )
+        }
+    }
+    df = df %>% 
+          group_by(top_n, top_feature) %>%
+          mutate(n_top_feature = n(), y_position = max(test_set_perf))
+    construct_test_boxplots(df, title=cancer_type, savepath=savepath)
   }
 }

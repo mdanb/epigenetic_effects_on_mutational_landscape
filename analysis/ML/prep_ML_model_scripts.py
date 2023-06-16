@@ -18,6 +18,8 @@ parser.add_argument('--n_optuna_trials_prebackward_selection', type=str)
 parser.add_argument('--n_optuna_trials_backward_selection', type=str)
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
+parser.add_argument('--cores', type=str, default="8")
+parser.add_argument('--time', type=str, default="24:00:00")
 
 config = parser.parse_args()
 cancer_types = " ".join(config.cancer_types)
@@ -33,6 +35,8 @@ seed_ranges = [f"{seed_ranges[i] + 1}-{seed_ranges[i+1]}" for i in range(len(see
 n_optuna_trials_prebackward_selection = config.n_optuna_trials_prebackward_selection
 n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 meso = config.meso
+cores = config.cores
+time = config.time
 
 for seed_range in seed_ranges:
     script_filename = "_".join(["cancer_types", cancer_types,
@@ -63,14 +67,14 @@ for seed_range in seed_ranges:
 
     job_script = "\n".join(["#!/bin/bash",
                             "#$ -cwd",
-                            "#$ -l h_rt=24:00:00",
+                            f"#$ -l h_rt={time}",
                             "#$ -l os=RedHat7",
-                            "#$ -pe smp 8",
+                            f"#$ -pe smp {cores}",
                             "#$ -l h_vmem=8G",
-                            f"#$ -N seed_range_{seed_range}",
+                            f"#$ -N {config.cancer_types[0]}_seed_range_{seed_range}",
                             "#$ -o /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
                             "#$ -e /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
-                            "#$ -binding linear:8",
+                            f"#$ -binding linear:{cores}",
                             "#$ -M bgiotti@broadinstitute.org",
                             "#$ -m bea",
                             "",
