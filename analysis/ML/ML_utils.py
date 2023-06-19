@@ -8,8 +8,10 @@ import pickle
 import os
 from sklearn.metrics import r2_score
 from xgboost import XGBRegressor
-from sklearn.model_selection import cross_val_score
+# from sklearn.model_selection import cross_val_score
 import optuna
+from sklearn.model_selection import KFold
+import xgboost as xgb
 
 
 ### Load Data helpers ###
@@ -247,12 +249,13 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 
 #### Model train/val/test helpers ####
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
+    storage_name = "mysql+pymysql://mdanb:mdanb@localhost/optuna_db"
     study = optuna.create_study(direction="maximize",
-                                storage="sqlite:///db.sqlite3",
+                                storage=storage_name,
                                 study_name=study_name,
                                 load_if_exists=True,
                                 sampler=optuna.samplers.TPESampler(seed=seed),
-                                pruner=optuna.pruners.MedianPruner())
+                                pruner=optuna.pruners.MedianPruner(n_warmup_steps=5))
     n_existing_trials = len(study.trials)
     print(f"Number of existing optuna trials: {n_existing_trials}")
     n_optuna_trials = n_optuna_trials - n_existing_trials
@@ -277,10 +280,33 @@ def optuna_objective(trial, ML_model, X, y, seed):
             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
         }
-        model = XGBRegressor(**param, random_state=seed)
 
-    score = cross_val_score(model, X=X, y=y, scoring="r2", n_jobs=-1, cv=10, verbose=100)
-    return score.mean()
+    scores = []
+    kf = KFold(n_splits=10, shuffle=True, random_state=seed)
+
+    for train_index, val_index in kf.split(X):
+        X_train, X_val = X[train_index], X[val_index]
+        y_train, y_val = y[train_index], y[val_index]
+
+        dtrain = xgb.DMatrix(X_train, label=y_train)
+        dval = xgb.DMatrix(X_val, label=y_val)
+
+        watchlist = [(dtrain, 'train'), (dval, 'eval')]
+
+        model = xgb.train(param, dtrain, evals=watchlist,
+                          callbacks=[optuna.integration.XGBoostPruningCallback(trial, "eval-rmse")],
+                          early_stopping_rounds=10, verbose_eval=False)
+
+        preds = model.predict(dval)
+        score = r2_score(y_val, preds)
+        scores.append(score)
+
+    return np.mean(scores)
+
+    #     model = XGBRegressor(**param, random_state=seed)
+    #
+    # score = cross_val_score(model, X=X, y=y, scoring="r2", n_jobs=-1, cv=10, verbose=100)
+    # return score.mean()
 
 def print_and_save_test_set_perf(X_test, y_test, model, filepath):
     test_preds = model.predict(X_test)
