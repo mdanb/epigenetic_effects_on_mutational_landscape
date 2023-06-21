@@ -250,20 +250,8 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 #### Model train/val/test helpers ####
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
     storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
-    subprocess.Popen(["mysqld_safe",
-                     f"--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock",
-                     f"--log-error=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.log",
-                     f"--datadir=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql_data",
-                     f"--pid-file=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mariadb.pid &"
-                     ])
     # storage_name = "sqlite:///example.db"
-    while True:
-        try:
-            subprocess.check_output(["mysqladmin", "ping", "-u mdanb -pmdanb",
-                                     "--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock"])
-            break
-        except subprocess.CalledProcessError:
-            time.sleep(1)
+    connect_to_mysqldb()
 
     study = optuna.create_study(direction="maximize",
                                 storage=storage_name,
@@ -468,3 +456,18 @@ def construct_scATAC_sources(datasets):
         else:
             scATAC_sources = "_".join((scATAC_sources, dataset))
     return(scATAC_sources)
+
+def connect_to_mysqldb():
+    subprocess.Popen(["mysqld_safe",
+                     f"--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock",
+                     f"--log-error=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.log",
+                     f"--datadir=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql_data",
+                     f"--pid-file=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mariadb.pid &"
+                     ])
+    while True:
+        try:
+            subprocess.check_output(["mysqladmin", "ping", "-u mdanb -pmdanb",
+                                     "--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock"])
+            break
+        except subprocess.CalledProcessError:
+            time.sleep(1)
