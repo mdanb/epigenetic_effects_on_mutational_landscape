@@ -272,7 +272,7 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
 def optuna_objective(trial, ML_model, X, y, seed):
     if ML_model == "XGB":
         param = {
-            'n_estimators': trial.suggest_int('n_estimators', 100, 500),
+            'num_boost_round': trial.suggest_int('n_estimators', 100, 500),
             'max_depth': trial.suggest_int('max_depth', 3, 10),
             'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
             'subsample': trial.suggest_float('subsample', 0.1, 1.0),
