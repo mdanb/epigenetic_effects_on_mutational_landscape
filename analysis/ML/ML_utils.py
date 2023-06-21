@@ -249,8 +249,8 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 
 #### Model train/val/test helpers ####
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
-    storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
-    #storage_name = "sqlite:///example.db"
+    # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
+    storage_name = "sqlite:///example.db"
     study = optuna.create_study(direction="maximize",
                                 storage=storage_name,
                                 study_name=study_name,
@@ -269,10 +269,44 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
                                                   seed=seed), n_trials=n_optuna_trials_remaining)
     return study
 
-def optuna_objective(trial, ML_model, X, y, seed):
-    scores = []
-    kf = KFold(n_splits=10, shuffle=True, random_state=seed)
 
+    # scores = []
+    # kf = KFold(n_splits=10, shuffle=True, random_state=seed)
+    #
+    # if ML_model == "XGB":
+    #     param = {
+    #         'max_depth': trial.suggest_int('max_depth', 3, 10),
+    #         'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
+    #         'subsample': trial.suggest_float('subsample', 0.1, 1.0),
+    #         'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
+    #         'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
+    #         'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
+    #         'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
+    #     }
+    #     num_boost_round = trial.suggest_int('num_boost_round', 100, 500)
+    #
+    #     for train_index, val_index in kf.split(X):
+    #         X_train, X_val = X.iloc[train_index], X.iloc[val_index]
+    #         y_train, y_val = y[train_index], y[val_index]
+    #
+    #         dtrain = xgb.DMatrix(X_train, label=y_train)
+    #         dval = xgb.DMatrix(X_val, label=y_val)
+    #
+    #         watchlist = [(dtrain, 'train'), (dval, 'eval')]
+    #
+    #         # model = xgb.train(param, dtrain, num_boost_round=num_boost_round, evals=watchlist,
+    #         #                   callbacks=[optuna.integration.XGBoostPruningCallback(trial, "eval-rmse")],
+    #         #                   early_stopping_rounds=10, verbose_eval=False)
+    #         model = xgb.train(param, dtrain, num_boost_round=num_boost_round, evals=watchlist,
+    #                           early_stopping_rounds=10, verbose_eval=False)
+    #
+    #         preds = model.predict(dval)
+    #         score = r2_score(y_val, preds)
+    #         scores.append(score)
+    # return np.mean(scores)
+
+
+def optuna_objective(trial, ML_model, X, y, seed):
     if ML_model == "XGB":
         param = {
             'max_depth': trial.suggest_int('max_depth', 3, 10),
@@ -282,31 +316,20 @@ def optuna_objective(trial, ML_model, X, y, seed):
             'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
+            'objective': 'reg:squarederror',  # Replace with your objective
+            'seed': seed,
         }
         num_boost_round = trial.suggest_int('num_boost_round', 100, 500)
 
-        for train_index, val_index in kf.split(X):
-            X_train, X_val = X.iloc[train_index], X.iloc[val_index]
-            y_train, y_val = y[train_index], y[val_index]
+        dtrain = xgb.DMatrix(X, label=y)
 
-            dtrain = xgb.DMatrix(X_train, label=y_train)
-            dval = xgb.DMatrix(X_val, label=y_val)
+        cv_results = xgb.cv(param, dtrain, num_boost_round=num_boost_round,
+                        nfold=10, stratified=False,
+                        early_stopping_rounds=10,
+                        callbacks=[optuna.integration.XGBoostPruningCallback(trial, "test-rmse")],
+                        seed=seed)
 
-            watchlist = [(dtrain, 'train'), (dval, 'eval')]
-
-            model = xgb.train(param, dtrain, num_boost_round=num_boost_round, evals=watchlist,
-                              callbacks=[optuna.integration.XGBoostPruningCallback(trial, "eval-rmse")],
-                              early_stopping_rounds=10, verbose_eval=False)
-
-            preds = model.predict(dval)
-            score = r2_score(y_val, preds)
-            scores.append(score)
-    return np.mean(scores)
-
-    #     model = XGBRegressor(**param, random_state=seed)
-    #
-    # score = cross_val_score(model, X=X, y=y, scoring="r2", n_jobs=-1, cv=10, verbose=100)
-    # return score.mean()
+    return cv_results['test-rmse-mean'].values[-1]
 
 def print_and_save_test_set_perf(X_test, y_test, model, filepath):
     test_preds = model.predict(X_test)
