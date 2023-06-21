@@ -10,7 +10,6 @@ from sklearn.metrics import r2_score
 from xgboost import XGBRegressor
 # from sklearn.model_selection import cross_val_score
 import optuna
-from sklearn.model_selection import KFold
 import xgboost as xgb
 
 
