@@ -256,6 +256,7 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
                      f"--datadir=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql_data",
                      f"--pid-file=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mariadb.pid"
                      ])
+    subprocess.call(["wait"])
     # storage_name = "sqlite:///example.db"
 
     study = optuna.create_study(direction="maximize",
