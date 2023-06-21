@@ -250,6 +250,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 #### Model train/val/test helpers ####
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
     storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
+    #storage_name = "sqlite:///example.db"
     study = optuna.create_study(direction="maximize",
                                 storage=storage_name,
                                 study_name=study_name,
@@ -285,7 +286,7 @@ def optuna_objective(trial, ML_model, X, y, seed):
     kf = KFold(n_splits=10, shuffle=True, random_state=seed)
 
     for train_index, val_index in kf.split(X):
-        X_train, X_val = X[train_index], X[val_index]
+        X_train, X_val = X.iloc[train_index], X.iloc[val_index]
         y_train, y_val = y[train_index], y[val_index]
 
         dtrain = xgb.DMatrix(X_train, label=y_train)
