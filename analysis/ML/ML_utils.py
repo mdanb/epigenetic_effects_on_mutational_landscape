@@ -247,34 +247,69 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
             print_and_save_features(top_n_feats, filepath=filepath, top=True)
 
 #### Model train/val/test helpers ####
-def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
-    # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
-    # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
-    storage_name = "sqlite:///example.db"
-    study = optuna.create_study(direction="maximize",
-                                storage=storage_name,
-                                study_name=study_name,
-                                load_if_exists=True,
-                                sampler=optuna.samplers.TPESampler(seed=seed),
-                                pruner=optuna.pruners.MedianPruner(n_warmup_steps=5))
-    n_existing_trials = len(study.trials)
-    print(f"Number of existing optuna trials: {n_existing_trials}")
-    n_optuna_trials = n_optuna_trials - n_existing_trials
-    n_optuna_trials_remaining = max(0, n_optuna_trials)
-    if n_optuna_trials > 0:
-        print(f"Running an extra {n_optuna_trials_remaining} trials")
-    else:
-        print(f"Done running {n_optuna_trials} trials!")
-    study.optimize(lambda trial: optuna_objective(trial, ML_model=ML_model, X=X_train, y=y_train,
-                                                  seed=seed), n_trials=n_optuna_trials_remaining)
-    return study
+# def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
+#     # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
+#     # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
+#     storage_name = "sqlite:///example.db"
+#     study = optuna.create_study(direction="maximize",
+#                                 storage=storage_name,
+#                                 study_name=study_name,
+#                                 load_if_exists=True,
+#                                 sampler=optuna.samplers.TPESampler(seed=seed),
+#                                 pruner=optuna.pruners.MedianPruner(n_warmup_steps=5))
+#     n_existing_trials = len(study.trials)
+#     print(f"Number of existing optuna trials: {n_existing_trials}")
+#     n_optuna_trials = n_optuna_trials - n_existing_trials
+#     n_optuna_trials_remaining = max(0, n_optuna_trials)
+#     if n_optuna_trials > 0:
+#         print(f"Running an extra {n_optuna_trials_remaining} trials")
+#     else:
+#         print(f"Done running {n_optuna_trials} trials!")
+#     study.optimize(lambda trial: optuna_objective(trial, ML_model=ML_model, X=X_train, y=y_train,
+#                                                   seed=seed), n_trials=n_optuna_trials_remaining)
+#     return study
+#
+# def optuna_objective(trial, ML_model, X, y, seed):
+#     scores = []
+#     kf = KFold(n_splits=10, shuffle=True, random_state=seed)
+#
+#     if ML_model == "XGB":
+#         param = {
+#             'max_depth': trial.suggest_int('max_depth', 3, 10),
+#             'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
+#             'subsample': trial.suggest_float('subsample', 0.1, 1.0),
+#             'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
+#             'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
+#             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
+#             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
+#             'seed': seed,
+#             'nthread': 8
+#         }
+#         num_boost_round = trial.suggest_int('num_boost_round', 100, 500)
+#
+#         for train_index, val_index in kf.split(X):
+#             X_train, X_val = X.iloc[train_index], X.iloc[val_index]
+#             y_train, y_val = y[train_index], y[val_index]
+#
+#             dtrain = xgb.DMatrix(X_train, label=y_train)
+#             dval = xgb.DMatrix(X_val, label=y_val)
+#
+#             watchlist = [(dtrain, 'train'), (dval, 'eval')]
+#             # model = xgb.train(param, dtrain, num_boost_round=num_boost_round, evals=watchlist,
+#             #                   callbacks=[optuna.integration.XGBoostPruningCallback(trial, "eval-rmse")],
+#             #                   early_stopping_rounds=10, verbose_eval=False)
+#             model = xgb.train(param, dtrain, num_boost_round=num_boost_round, evals=watchlist,
+#                               verbose_eval=False)
+#
+#             preds = model.predict(dval)
+#             score = r2_score(y_val, preds)
+#             scores.append(score)
+#     return np.mean(scores)
 
 def optuna_objective(trial, ML_model, X, y, seed):
-    scores = []
-    kf = KFold(n_splits=10, shuffle=True, random_state=seed)
-
     if ML_model == "XGB":
         param = {
+            'n_estimators': trial.suggest_int('n_estimators', 100, 500),
             'max_depth': trial.suggest_int('max_depth', 3, 10),
             'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
             'subsample': trial.suggest_float('subsample', 0.1, 1.0),
@@ -282,30 +317,11 @@ def optuna_objective(trial, ML_model, X, y, seed):
             'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
-            'seed': seed,
-            'nthread': 8
         }
-        num_boost_round = trial.suggest_int('num_boost_round', 100, 500)
+        model = XGBRegressor(**param, random_state=seed)
 
-        for train_index, val_index in kf.split(X):
-            X_train, X_val = X.iloc[train_index], X.iloc[val_index]
-            y_train, y_val = y[train_index], y[val_index]
-
-            dtrain = xgb.DMatrix(X_train, label=y_train)
-            dval = xgb.DMatrix(X_val, label=y_val)
-
-            watchlist = [(dtrain, 'train'), (dval, 'eval')]
-            # model = xgb.train(param, dtrain, num_boost_round=num_boost_round, evals=watchlist,
-            #                   callbacks=[optuna.integration.XGBoostPruningCallback(trial, "eval-rmse")],
-            #                   early_stopping_rounds=10, verbose_eval=False)
-            model = xgb.train(param, dtrain, num_boost_round=num_boost_round, evals=watchlist,
-                              verbose_eval=False)
-
-            preds = model.predict(dval)
-            score = r2_score(y_val, preds)
-            scores.append(score)
-    return np.mean(scores)
-
+    score = cross_val_score(model, X=X, y=y, scoring="r2", n_jobs=-1, cv=10, verbose=100)
+    return score.mean()
 
 # def optuna_objective(trial, ML_model, X, y, seed):
 #     if ML_model == "XGB":
