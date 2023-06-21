@@ -270,9 +270,11 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
     return study
 
 def optuna_objective(trial, ML_model, X, y, seed):
+    scores = []
+    kf = KFold(n_splits=10, shuffle=True, random_state=seed)
+
     if ML_model == "XGB":
         param = {
-            'num_round': trial.suggest_int('n_estimators', 100, 500),
             'max_depth': trial.suggest_int('max_depth', 3, 10),
             'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
             'subsample': trial.suggest_float('subsample', 0.1, 1.0),
@@ -281,27 +283,24 @@ def optuna_objective(trial, ML_model, X, y, seed):
             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
         }
+        num_boost_round = trial.suggest_int('num_boost_round', 100, 500)
 
-    scores = []
-    kf = KFold(n_splits=10, shuffle=True, random_state=seed)
+        for train_index, val_index in kf.split(X):
+            X_train, X_val = X.iloc[train_index], X.iloc[val_index]
+            y_train, y_val = y[train_index], y[val_index]
 
-    for train_index, val_index in kf.split(X):
-        X_train, X_val = X.iloc[train_index], X.iloc[val_index]
-        y_train, y_val = y[train_index], y[val_index]
+            dtrain = xgb.DMatrix(X_train, label=y_train)
+            dval = xgb.DMatrix(X_val, label=y_val)
 
-        dtrain = xgb.DMatrix(X_train, label=y_train)
-        dval = xgb.DMatrix(X_val, label=y_val)
+            watchlist = [(dtrain, 'train'), (dval, 'eval')]
 
-        watchlist = [(dtrain, 'train'), (dval, 'eval')]
+            model = xgb.train(param, dtrain, num_boost_round=num_boost_round, evals=watchlist,
+                              callbacks=[optuna.integration.XGBoostPruningCallback(trial, "eval-rmse")],
+                              early_stopping_rounds=10, verbose_eval=False)
 
-        model = xgb.train(param, dtrain, evals=watchlist,
-                          callbacks=[optuna.integration.XGBoostPruningCallback(trial, "eval-rmse")],
-                          early_stopping_rounds=10, verbose_eval=False)
-
-        preds = model.predict(dval)
-        score = r2_score(y_val, preds)
-        scores.append(score)
-
+            preds = model.predict(dval)
+            score = r2_score(y_val, preds)
+            scores.append(score)
     return np.mean(scores)
 
     #     model = XGBRegressor(**param, random_state=seed)
