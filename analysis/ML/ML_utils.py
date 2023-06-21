@@ -328,35 +328,9 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
 #             scores.append(score)
 #     return np.mean(scores)
 
-# def optuna_objective(trial, ML_model, X, y, seed):
-#     if ML_model == "XGB":
-#         param = {
-#             'max_depth': trial.suggest_int('max_depth', 3, 10),
-#             'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
-#             'subsample': trial.suggest_float('subsample', 0.1, 1.0),
-#             'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
-#             'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
-#             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
-#             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
-#             'seed': seed,
-#             'nthread': -1
-#         }
-#         num_boost_round = trial.suggest_int('num_boost_round', 100, 500)
-#
-#         dtrain = xgb.DMatrix(X, label=y)
-#
-#         cv_results = xgb.cv(param, dtrain, num_boost_round=num_boost_round,
-#                         nfold=10, stratified=False,
-#                         seed=seed)
-#
-#     return cv_results['validation-rmse-mean'].values[-1]
-
-# callbacks=[optuna.integration.XGBoostPruningCallback(trial, "validation-rmse")],
-
 def optuna_objective(trial, ML_model, X, y, seed):
     if ML_model == "XGB":
         param = {
-            'n_estimators': trial.suggest_int('n_estimators', 100, 500),
             'max_depth': trial.suggest_int('max_depth', 3, 10),
             'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
             'subsample': trial.suggest_float('subsample', 0.1, 1.0),
@@ -364,11 +338,37 @@ def optuna_objective(trial, ML_model, X, y, seed):
             'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
+            'seed': seed,
+            'nthread': -1
         }
-        model = XGBRegressor(**param, random_state=seed)
+        num_boost_round = trial.suggest_int('num_boost_round', 100, 500)
 
-    score = cross_val_score(model, X=X, y=y, scoring="r2", n_jobs=-1, cv=10, verbose=0)
-    return score.mean()
+        dtrain = xgb.DMatrix(X, label=y)
+
+        cv_results = xgb.cv(param, dtrain, num_boost_round=num_boost_round,
+                        nfold=10, stratified=False,
+                        seed=seed)
+
+    return cv_results['validation-rmse-mean'].values[-1]
+
+# callbacks=[optuna.integration.XGBoostPruningCallback(trial, "validation-rmse")],
+
+# def optuna_objective(trial, ML_model, X, y, seed):
+#     if ML_model == "XGB":
+#         param = {
+#             'n_estimators': trial.suggest_int('n_estimators', 100, 500),
+#             'max_depth': trial.suggest_int('max_depth', 3, 10),
+#             'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
+#             'subsample': trial.suggest_float('subsample', 0.1, 1.0),
+#             'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
+#             'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
+#             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
+#             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
+#         }
+#         model = XGBRegressor(**param, random_state=seed)
+#
+#     score = cross_val_score(model, X=X, y=y, scoring="r2", n_jobs=-1, cv=10, verbose=0)
+#     return score.mean()
 
 def print_and_save_test_set_perf(X_test, y_test, model, filepath):
     test_preds = model.predict(X_test)
