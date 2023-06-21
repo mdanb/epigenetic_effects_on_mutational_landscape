@@ -339,7 +339,7 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
 #             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
 #             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
 #             'seed': seed,
-#             'nthread': 8
+#             'nthread': -1
 #         }
 #         num_boost_round = trial.suggest_int('num_boost_round', 100, 500)
 #
@@ -347,11 +347,11 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
 #
 #         cv_results = xgb.cv(param, dtrain, num_boost_round=num_boost_round,
 #                         nfold=10, stratified=False,
-#                         early_stopping_rounds=10,
-#                         callbacks=[optuna.integration.XGBoostPruningCallback(trial, "validation-rmse")],
 #                         seed=seed)
 #
 #     return cv_results['validation-rmse-mean'].values[-1]
+
+# callbacks=[optuna.integration.XGBoostPruningCallback(trial, "validation-rmse")],
 
 def optuna_objective(trial, ML_model, X, y, seed):
     if ML_model == "XGB":
