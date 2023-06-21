@@ -349,7 +349,7 @@ def optuna_objective(trial, ML_model, X, y, seed):
                         nfold=10, stratified=False,
                         seed=seed)
 
-    return cv_results['validation-rmse-mean'].values[-1]
+    return cv_results['test-rmse-mean'].values[-1]
 
 # callbacks=[optuna.integration.XGBoostPruningCallback(trial, "validation-rmse")],
 
