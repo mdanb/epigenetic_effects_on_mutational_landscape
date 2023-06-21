@@ -318,7 +318,7 @@ def optuna_objective(trial, ML_model, X, y, seed):
             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
             'objective': 'reg:squarederror',  # Replace with your objective
             'seed': seed,
-            'nthread': -1
+            'nthread': 8
         }
         num_boost_round = trial.suggest_int('num_boost_round', 100, 500)
 
