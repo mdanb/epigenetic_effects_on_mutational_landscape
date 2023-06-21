@@ -12,7 +12,7 @@ from sklearn.model_selection import cross_val_score, KFold
 import optuna
 import xgboost as xgb
 import subprocess
-
+import time
 
 ### Load Data helpers ###
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
@@ -257,6 +257,13 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
                      f"--pid-file=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mariadb.pid &"
                      ])
     # storage_name = "sqlite:///example.db"
+    while True:
+        try:
+            subprocess.check_output(["mysqladmin", "ping", "-u mdanb -pmdanb"
+                                     "--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock"])
+            break
+        except subprocess.CalledProcessError:
+            time.sleep(1)
 
     study = optuna.create_study(direction="maximize",
                                 storage=storage_name,
