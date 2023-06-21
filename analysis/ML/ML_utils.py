@@ -11,6 +11,7 @@ from xgboost import XGBRegressor
 from sklearn.model_selection import cross_val_score, KFold
 import optuna
 import xgboost as xgb
+import subprocess
 
 
 ### Load Data helpers ###
@@ -249,7 +250,14 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 #### Model train/val/test helpers ####
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
     storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
+    subprocess.call(["mysqld_safe",
+                     f"--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock",
+                     f"--log-error=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.log",
+                     f"--datadir=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql_data",
+                     f"--pid-file=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mariadb.pid"
+                     ])
     # storage_name = "sqlite:///example.db"
+
     study = optuna.create_study(direction="maximize",
                                 storage=storage_name,
                                 study_name=study_name,
