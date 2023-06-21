@@ -249,7 +249,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 #### Model train/val/test helpers ####
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
     # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
-    # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
+    #storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
     storage_name = "sqlite:///example.db"
     study = optuna.create_study(direction="maximize",
                                 storage=storage_name,
