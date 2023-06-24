@@ -477,7 +477,7 @@ def construct_scATAC_sources(datasets):
 def connect_to_mysqldb():
     while True:
         try:
-            connection = mysql.connector.connect(host='localhost',
+            connection = mysql.connector.connect(unix_socket='/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock',
                                                  database='optuna_db',
                                                  user='mdanb',
                                                  password='mdanb')
