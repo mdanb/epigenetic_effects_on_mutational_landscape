@@ -405,10 +405,12 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
     else:
         print("Starter model not needed! Number of features is less than or equal to 20 already!")
     if not os.path.exists(f"{backwards_elim_dir}/top_features_iteration_{scATAC_df.shape[1] - 1}.txt"):
+        print("Running backward feature selection...")
         backward_eliminate_features(X_train, y_train, backwards_elim_dir, ML_model, scATAC_dir,
                                     cancer_type_or_donor_id, seed, n_optuna_trials_backward_selection,
                                     starting_clf=starting_clf, starting_n=n)
-
+    else:
+        print("Backward feature selection is already done!")
 
 def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_number_filter, tss_filter, annotation_dir,
                                            meso, SCLC, lung_subtyped, woo_pcawg,
