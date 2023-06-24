@@ -103,7 +103,9 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
                                                          n_optuna_trials_backward_selection)
-                if not os.path.exists(f"../../figures/models/{ML_model}/{cancer_type}/{scATAC_dir}/backwards_elimination_results/bar_plot.png"):
+                bp_path = f"../../figures/models/{ML_model}/{cancer_type}/{scATAC_dir}/backwards_elimination_results/bar_plot.png"
+                print(f"Bar plot path: {bp_path}")
+                if not os.path.exists(bp_path):
                     print(f"Plotting top features for seed {seed}...")
                     subprocess.call(["Rscript", "plot_top_features.R",
                                      f"--cancer_types={cancer_types_arg}",
