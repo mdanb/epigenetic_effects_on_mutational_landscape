@@ -13,6 +13,8 @@ import optuna
 import xgboost as xgb
 import subprocess
 import time
+import mysql.connector
+from mysql.connector import Error
 
 ### Load Data helpers ###
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
@@ -457,17 +459,31 @@ def construct_scATAC_sources(datasets):
             scATAC_sources = "_".join((scATAC_sources, dataset))
     return(scATAC_sources)
 
+# def connect_to_mysqldb():
+#     subprocess.Popen(["mysqld_safe",
+#                      f"--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock",
+#                      f"--log-error=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.log",
+#                      f"--datadir=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql_data",
+#                      f"--pid-file=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mariadb.pid &"
+#                      ])
+#     while True:
+#         try:
+#             subprocess.check_output(["mysqladmin", "ping", "-u mdanb -pmdanb",
+#                                      "--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock"])
+#             break
+#         except subprocess.CalledProcessError:
+#             time.sleep(1)
+
 def connect_to_mysqldb():
-    subprocess.Popen(["mysqld_safe",
-                     f"--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock",
-                     f"--log-error=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.log",
-                     f"--datadir=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql_data",
-                     f"--pid-file=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mariadb.pid &"
-                     ])
     while True:
         try:
-            subprocess.check_output(["mysqladmin", "ping", "-u mdanb -pmdanb",
-                                     "--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock"])
-            break
-        except subprocess.CalledProcessError:
+            connection = mysql.connector.connect(host='localhost',
+                                                 database='optuna_db',
+                                                 user='mdanb',
+                                                 password='mdanb')
+            if connection.is_connected():
+                print("Connected to MySQL")
+                break
+        except Error as e:
+            print("Error while connecting to MySQL", e)
             time.sleep(1)
