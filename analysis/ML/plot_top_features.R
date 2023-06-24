@@ -43,7 +43,7 @@ parser <- add_option(parser, c("--robustness_seed_range"), type="character",
 #                       "--robustness_top_ns=2,4",
 #                       "--robustness_seed_range=1-100"))
 
-# args = parse_args(parser)
+args = parse_args(parser)
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter,
