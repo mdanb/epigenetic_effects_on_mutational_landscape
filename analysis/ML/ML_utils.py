@@ -253,7 +253,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
     storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
     # storage_name = "sqlite:///example.db"
-    connect_to_mysqldb()
+    # connection = connect_to_mysqldb()
 
     study = optuna.create_study(direction="maximize",
                                 storage=storage_name,
@@ -271,6 +271,7 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
         print(f"Done running {n_optuna_trials} trials!")
     study.optimize(lambda trial: optuna_objective(trial, ML_model=ML_model, X=X_train, y=y_train,
                                                   seed=seed), n_trials=n_optuna_trials_remaining)
+    # connection.close()
     return study
 
 # def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
@@ -489,3 +490,4 @@ def connect_to_mysqldb():
         except Error as e:
             print("Error while connecting to MySQL", e)
             time.sleep(1)
+    return connection
