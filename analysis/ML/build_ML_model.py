@@ -103,6 +103,17 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
                                                          n_optuna_trials_backward_selection)
+                if not os.path.exists(f"../../figures/models/{ML_model}/{cancer_type}/{scATAC_dir}/backwards_elimination_results/bar_plot.png"):
+                    print(f"Plotting top features for seed {seed}...")
+                    subprocess.call(["Rscript", "plot_top_features.R",
+                                     f"--cancer_types={cancer_types_arg}",
+                                     f"--ML_model={ML_model}",
+                                     f"--datasets={datasets_arg}",
+                                     f"--seed={seed}",
+                                     f"--cell_number_filter={scATAC_cell_number_filter}",
+                                     f"--annotation={annotation_dir}",
+                                     f"--iters_dont_skip={iters_dont_skip_arg}"])
+                    print(f"Done plotting top features for seed {seed}!")
         else:
             scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
                                               tss_fragment_filter, annotation_dir, seed)
@@ -112,17 +123,6 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
                                                          n_optuna_trials_backward_selection)
-
-        print(f"Plotting top features for seed {seed}...")
-        subprocess.call(["Rscript", "plot_top_features.R",
-                         f"--cancer_types={cancer_types_arg}",
-                         f"--ML_model={ML_model}",
-                         f"--datasets={datasets_arg}",
-                         f"--seed={seed}",
-                         f"--cell_number_filter={scATAC_cell_number_filter}",
-                         f"--annotation={annotation_dir}",
-                         f"--iters_dont_skip={iters_dont_skip_arg}"])
-        print(f"Done plotting top features for seed {seed}!")
     return
 
 
