@@ -259,8 +259,7 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
                                 storage=storage_name,
                                 study_name=study_name,
                                 load_if_exists=True,
-                                sampler=optuna.samplers.TPESampler(seed=seed),
-                                pruner=optuna.pruners.MedianPruner(n_warmup_steps=5))
+                                sampler=optuna.samplers.TPESampler(seed=seed))
     n_existing_trials = len(study.trials)
     print(f"Number of existing optuna trials: {n_existing_trials}")
     n_optuna_trials = n_optuna_trials - n_existing_trials
@@ -477,17 +476,17 @@ def construct_scATAC_sources(datasets):
 #         except subprocess.CalledProcessError:
 #             time.sleep(1)
 
-def connect_to_mysqldb():
-    while True:
-        try:
-            connection = mysql.connector.connect(unix_socket='/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock',
-                                                 database='optuna_db',
-                                                 user='mdanb',
-                                                 password='mdanb')
-            if connection.is_connected():
-                print("Connected to MySQL")
-                break
-        except Error as e:
-            print("Error while connecting to MySQL", e)
-            time.sleep(1)
-    return connection
+# def connect_to_mysqldb():
+#     while True:
+#         try:
+#             connection = mysql.connector.connect(unix_socket='/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock',
+#                                                  database='optuna_db',
+#                                                  user='mdanb',
+#                                                  password='mdanb')
+#             if connection.is_connected():
+#                 print("Connected to MySQL")
+#                 break
+#         except Error as e:
+#             print("Error while connecting to MySQL", e)
+#             time.sleep(1)
+#     return connection
