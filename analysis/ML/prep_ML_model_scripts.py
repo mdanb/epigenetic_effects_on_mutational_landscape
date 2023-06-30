@@ -23,10 +23,10 @@ parser.add_argument('--time', type=str, default="24:00:00")
 
 config = parser.parse_args()
 cancer_types = " ".join(config.cancer_types)
-datasets = " ".join(sorted(config.datasets))
+# datasets = " ".join(sorted(config.datasets))
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
 annotation_dir = config.annotation_dir
-iters_dont_skip = " ".join(config.iters_dont_skip)
+# iters_dont_skip = " ".join(config.iters_dont_skip)
 seed_interval = config.seed_interval
 start, end = map(int, seed_interval.split('-'))
 seed_interval_step = config.seed_interval_step
@@ -40,22 +40,22 @@ time = config.time
 
 for seed_range in seed_ranges:
     script_filename = "_".join(["cancer_types", cancer_types,
-                                "datasets", datasets,
+                                "datasets", "_".join(sorted(config.datasets)),
                                 "scATAC_cell_number_filter", scATAC_cell_number_filter,
                                 "annotation_dir", annotation_dir,
                                 "seed_range", seed_range,
-                                "iters_dont_skip", iters_dont_skip,
+                                "iters_dont_skip", "_".join(config.iters_dont_skip),
                                 "n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
                                 "n_optuna_trials_backward_selection", n_optuna_trials_backward_selection])
     if meso:
         script_filename = script_filename + "_" + "meso"
     script_filename = f"{script_filename}.sh"
     command_args = " ".join(["--cancer_types", cancer_types,
-                             "--datasets", datasets,
+                             "--datasets", " ".join(sorted(config.datasets)),
                              "--scATAC_cell_number_filter", scATAC_cell_number_filter,
                              "--annotation_dir", annotation_dir,
                              "--seed_range", seed_range,
-                             "--iters_dont_skip", iters_dont_skip,
+                             "--iters_dont_skip", " ".join(config.iters_dont_skip),
                              "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
                              "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection])
 
