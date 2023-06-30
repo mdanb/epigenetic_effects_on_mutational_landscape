@@ -15,6 +15,13 @@ import subprocess
 import time
 import mysql.connector
 from mysql.connector import Error
+from sqlalchemy import create_engine
+from sqlalchemy.sql import text
+# from sqlalchemy.orm import sessionmaker
+
+engine = create_engine('mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db')
+conn = engine.connect()
+# Session = sessionmaker(bind=engine)
 
 ### Load Data helpers ###
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
@@ -251,10 +258,13 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 
 #### Model train/val/test helpers ####
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
-    storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
+    # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
+    storage_name = "postgresql://bgiotti@localhost:5432/optuna_db"
     # storage_name = "sqlite:///example.db"
     # connection = connect_to_mysqldb()
-
+    # get_connection_cnt = text("show status where `Variable_name` = 'Threads_connected'")
+    # conn_cnt = conn.execute(get_connection_cnt).fetchall()
+    
     study = optuna.create_study(direction="maximize",
                                 storage=storage_name,
                                 study_name=study_name,
