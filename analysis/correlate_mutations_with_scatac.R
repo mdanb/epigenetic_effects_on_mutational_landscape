@@ -455,20 +455,6 @@ Heatmap(scale(corrs_pearson)[grepl("goblet|acinar|ductal", rownames(corrs_pearso
         # cell_fun = create_cell_fun(corrs = corrs_pearson, fs=5),
         show_heatmap_legend = F)
 
-shendure_only = c("pancreas Acinar cells SH", 
-                  "pancreas Ductal cells SH",
-                  "stomach Goblet cells SH")
-
-pdf("shendure_only_pancreas.pdf", width=20, height=10)
-Heatmap(scale(corrs_pearson[shendure_only, ]), 
-        col = RColorBrewer::brewer.pal(9, "RdBu"),
-        column_names_gp = grid::gpar(fontsize = 3),
-        row_names_gp = grid::gpar(fontsize = 10),
-        top_annotation = ha,
-        # column_order = column_order,
-        cell_fun = create_cell_fun(corrs = corrs_pearson, fs=1),
-        show_heatmap_legend = F)
-dev.off()
 plot_count_distribution(pancreas_adenoca, "panc_adenoca_counts.pdf")
 
 #### ColoRect-AdenoCA ####
@@ -697,8 +683,8 @@ if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
   cancer_samples_atac = readRDS("../data/processed_data/cancer_atac_50k_var_features.rds")
 }
 
-if (!file.exists("../data/processed_data/scatac_50k_var_features.rds")) {
-  scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/finalized_annotation/interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"))
+if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
+  scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"))
   cell_types = colnames(scatac_df_yang)
   scatac_df_yang = cpm(scatac_df_yang, log=T, prior.count=5)
   scatac_df_yang = normalize.quantiles(scatac_df_yang)
@@ -715,13 +701,10 @@ if (!file.exists("../data/processed_data/scatac_50k_var_features.rds")) {
   scatac_df_yang = readRDS("../data/processed_data/scatac_50k_var_features.rds")
 }
 
-
 features_keep = intersect(rownames(scatac_df_yang), rownames(cancer_samples_atac))
 scatac_df_yang = scatac_df_yang[features_keep, ]
 cancer_samples_atac = cancer_samples_atac[features_keep, ]
 corrs_pearson = cor(scatac_df_yang, cancer_samples_atac)
-corrs_spearman = cor(scatac_df_yang, cancer_samples_atac, 
-                     method = "spearman")
 
 pdf("kidney_atac_corrs.pdf", width=15, height=10)
 Heatmap(corrs_pearson, 
@@ -731,11 +714,4 @@ Heatmap(corrs_pearson,
         cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3))
 dev.off()
 
-pdf("kidney_atac_corrs_spearman.pdf", width=15, height=10)
-Heatmap(corrs_spearman, 
-        col = RColorBrewer::brewer.pal(9, "RdBu"),
-        column_names_gp = grid::gpar(fontsize = 2),
-        row_names_gp = grid::gpar(fontsize = 8),
-        cell_fun = create_cell_fun(corrs = corrs_spearman, fs=3))
-dev.off()
 
