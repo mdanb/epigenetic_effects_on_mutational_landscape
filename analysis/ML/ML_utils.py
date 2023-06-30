@@ -264,7 +264,7 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
     # connection = connect_to_mysqldb()
     # get_connection_cnt = text("show status where `Variable_name` = 'Threads_connected'")
     # conn_cnt = conn.execute(get_connection_cnt).fetchall()
-    
+
     study = optuna.create_study(direction="maximize",
                                 storage=storage_name,
                                 study_name=study_name,
