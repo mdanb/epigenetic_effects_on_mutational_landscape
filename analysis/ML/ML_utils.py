@@ -19,8 +19,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 # from sqlalchemy.orm import sessionmaker
 
-engine = create_engine('mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db')
-conn = engine.connect()
+# engine = create_engine('mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db')
+# conn = engine.connect()
 # Session = sessionmaker(bind=engine)
 
 ### Load Data helpers ###
