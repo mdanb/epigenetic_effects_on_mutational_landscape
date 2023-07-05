@@ -259,7 +259,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 #### Model train/val/test helpers ####
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
     # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
-    storage_name = "postgresql://bgiotti@uger-r7-c001.broadinstitute.org:5432/optuna_db"
+    storage_name = "postgresql://bgiotti:bgiotti@uger-r7-c001.broadinstitute.org:5432/optuna_db"
     # storage_name = "sqlite:///example.db"
     # connection = connect_to_mysqldb()
     # get_connection_cnt = text("show status where `Variable_name` = 'Threads_connected'")
