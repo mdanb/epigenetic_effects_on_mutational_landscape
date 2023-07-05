@@ -39,7 +39,7 @@ scriptdir = os.path.dirname(os.path.abspath(__file__))
 # submitter(splitter)
 
 
-print "Trimming adapters..."
+print("Trimming adapters...")
 trimmer = 'java -Xmx1G -jar ' + "/seq/regev_genome_portal/SOFTWARE/Trimmomatic" + \
           '/trimmomatic-0.30.jar PE -threads 8 ' + \
           args.outdir + args.prefix + '_R1_fast.fastq.gz ' + args.outdir + args.prefix + \
