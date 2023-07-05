@@ -22,7 +22,7 @@ if args.outdir[-1] != '/':
 try:
 	os.makedirs(args.outdir)
 except OSError:
-	print 'Outdir already exists...'
+	print('Outdir already exists...')
 
 scriptdir = os.path.dirname(os.path.abspath(__file__))
 
