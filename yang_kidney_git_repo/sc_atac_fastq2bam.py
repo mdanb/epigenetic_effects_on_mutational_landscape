@@ -39,17 +39,17 @@ scriptdir = os.path.dirname(os.path.abspath(__file__))
 # submitter(splitter)
 
 
-# print("Trimming adapters...")
-# trimmer = 'java -Xmx1G -jar ' + "/seq/regev_genome_portal/SOFTWARE/Trimmomatic" + \
-#           '/trimmomatic-0.30.jar PE -threads 8 ' + \
-#           args.outdir + args.prefix + '_R1_fast.fastq.gz ' + args.outdir + args.prefix + \
-#           '_R2_fast.fastq.gz ' + args.outdir + args.prefix + '.split.1.trimmed.paired.fastq.gz ' + \
-#           args.outdir + args.prefix + '.split.1.trimmed.unpaired.fastq.gz ' + args.outdir + \
-#           args.prefix + '.split.2.trimmed.paired.fastq.gz ' + args.outdir + args.prefix + \
-#           '.split.2.trimmed.unpaired.fastq.gz ILLUMINACLIP:' + scriptdir + \
-#           '/trimmomatic/NexteraPE-PE.fa:2:30:10:1:true TRAILING:3 SLIDINGWINDOW:4:10 MINLEN:25 2> ' + \
-#           args.outdir + args.prefix + '.split.trimmomatic.log'
-# submitter(trimmer)
+print("Trimming adapters...")
+trimmer = 'java -Xmx1G -jar ' + "/seq/regev_genome_portal/SOFTWARE/Trimmomatic" + \
+          '/trimmomatic-0.30.jar PE -threads 8 ' + \
+          args.outdir + args.prefix + '_R1_fast.fastq.gz ' + args.outdir + args.prefix + \
+          '_R2_fast.fastq.gz ' + args.outdir + args.prefix + '.split.1.trimmed.paired.fastq.gz ' + \
+          args.outdir + args.prefix + '.split.1.trimmed.unpaired.fastq.gz ' + args.outdir + \
+          args.prefix + '.split.2.trimmed.paired.fastq.gz ' + args.outdir + args.prefix + \
+          '.split.2.trimmed.unpaired.fastq.gz ILLUMINACLIP:' + scriptdir + \
+          '/trimmomatic/NexteraPE-PE.fa:2:30:10:1:true TRAILING:3 SLIDINGWINDOW:4:10 MINLEN:25 2> ' + \
+          args.outdir + args.prefix + '.split.trimmomatic.log'
+submitter(trimmer)
 
 print("Cleaning up...")
 cleaner = 'rm ' + args.outdir + args.prefix + '.split.1.trimmed.unpaired.fastq.gz; rm ' + args.outdir + \
