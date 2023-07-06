@@ -396,21 +396,26 @@ if (dir.exists(proj_dir)) {
   proj <- loadArchRProject(proj_dir)
   if (filter_doublets) {
     setting = paste0(setting, "_", "filter_doublets")
-    if (dataset == "Tsankov") {
-      cell_col_data = getCellColData(proj)
-      idx = cell_col_data[["Clusters_res_0.6"]] == "C4"
-      proj = proj[!idx]
-      
-      # idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
-      # proj = proj[!(idx & idx_2)]
+    if (dir.exists(proj_dir)) {
+      proj_dir = paste("ArchR_projects", setting, sep="/")
+      proj <- loadArchRProject(proj_dir)
     }
-    proj_dir = paste("ArchR_projects", setting, sep="/")
-    proj <- saveArchRProject(ArchRProj = proj, 
-                             outputDirectory = proj_dir,
-                             load = TRUE)
-    proj = reduce_dims(proj, force=T)
+    else {
+      if (dataset == "Tsankov") {
+        cell_col_data = getCellColData(proj)
+        idx = cell_col_data[["Clusters_res_0.6"]] == "C4"
+        proj = proj[!idx]
+        
+        # idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
+        # proj = proj[!(idx & idx_2)]
+      }
+      proj_dir = paste("ArchR_projects", setting, sep="/")
+      proj <- saveArchRProject(ArchRProj = proj, 
+                               outputDirectory = proj_dir,
+                               load = TRUE)
+      proj = reduce_dims(proj, force=T)
+    }
   }
-  print("Done loading existing project")
 } else {
   dir = "ArchR_projects/ArchR_proj/"
   print("Loading full ArchR data object")
@@ -473,9 +478,9 @@ if (cluster) {
     quantCut = c(0.01, 0.95))
 
   fn = paste("clusters_UMAPs_cluster_res", cluster_res, setting, sep="_")
-  if (filter_doublets) {
-    fn = paste(fn, "filter_doublets", sep="_")
-  }
+  # if (filter_doublets) {
+  #   fn = paste(fn, "filter_doublets", sep="_")
+  # }
   fn = paste0(fn, ".pdf")
   print(paste("saving", fn))
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
@@ -510,17 +515,17 @@ if (reannotate) {
                   "new_annotation"] = "Fibroblast.WT1-"
     cell_col_data[cell_col_data[["cell_type"]] == "B_cells", 
                   "new_annotation"] = "B.cells"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C5", 
-                  "new_annotation"] = "T.cells"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C4", 
-                  "new_annotation"] = "B.cells"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C17", 
-                  "new_annotation"] = "Fibroblast.WT1+"
     cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C18", 
+                  "new_annotation"] = "T.cells"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C17", 
+                  "new_annotation"] = "B.cells"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C5", 
+                  "new_annotation"] = "Fibroblast.WT1+"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C6", 
                   "new_annotation"] = "Fibroblast.WT1-"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C2", 
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C9", 
                   "new_annotation"] = "Myeloid"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C3", 
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C12", 
                   "new_annotation"] = "Myeloid"
     cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C1", 
                   "new_annotation"] = "Neuronal"
