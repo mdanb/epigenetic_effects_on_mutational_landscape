@@ -27,6 +27,7 @@ option_list <- list(
   make_option("--plot_doublet_scores", action="store_true", default=FALSE),
   make_option("--filter_doublets", action="store_true", default=FALSE),
   make_option("--save_clusters", action="store_true", default=FALSE),
+  make_option("--reannotate", action="store_true", default=FALSE),
   make_option("--de_novo_marker_discovery", action="store_true", default=FALSE)
 )
 
@@ -169,8 +170,8 @@ args = parse_args(OptionParser(option_list=option_list), args=
                       "--de_novo_marker_discovery",
                       "--cluster_res=0.6",
                       "--filter_doublets",
-                      "--marker_genes=RBFOX3,ASCL1,CALCA,CHGA,GRP,SCG5,TPSB2,TPSAB1,CPA3,HPGDS")
-)
+                      "--reannotate"
+))
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
                                             cell_type_col_in_orig_metadata, 
@@ -294,6 +295,39 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile,
   return(proj)
 }
 
+reduce_dims <- function(proj, force=F) {
+  print("Running iterative LSI")
+  proj <- addIterativeLSI(
+    ArchRProj = proj,
+    useMatrix = "TileMatrix", 
+    name = "IterativeLSI", 
+    iterations = 2, 
+    clusterParams = list( #See Seurat::FindClusters
+      resolution = c(0.2), 
+      sampleCells = 10000, 
+      n.start = 10
+    ), 
+    varFeatures = 25000, 
+    dimsToUse = 1:30,
+    force=force
+  )
+  
+  proj <- saveArchRProject(ArchRProj = proj, 
+                           outputDirectory = proj_dir,
+                           load = TRUE)
+  
+  proj <- addUMAP(ArchRProj = proj, 
+                  reducedDims = "IterativeLSI", 
+                  name = "UMAP", nNeighbors = 30, minDist = 0.5, 
+                  metric = "cosine",
+                  force=force)
+  
+  proj <- saveArchRProject(ArchRProj = proj, 
+                           outputDirectory = proj_dir,
+                           load = TRUE)
+  return(proj)
+}
+
 print("Collecting cmd line args")
 args = parse_args(OptionParser(option_list=option_list))
 cores = args$cores
@@ -318,6 +352,7 @@ filter_doublets = args$filter_doublets
 plot_doublet_scores = args$plot_doublet_scores
 save_clusters = args$save_clusters
 de_novo_marker_discovery = args$de_novo_marker_discovery
+reannotate = args$reannotate
 print("Done collecting cmd line args")
 
 addArchRThreads(threads = cores)
@@ -359,14 +394,22 @@ proj_dir = paste("ArchR_projects", setting, sep="/")
 if (dir.exists(proj_dir)) {
   print("Loading existing project")
   proj <- loadArchRProject(proj_dir)
-  # if (filter_doublets) {
-  #   if (dataset == "Tsankov") {
-  #     cell_col_data = getCellColData(proj)
-  #     idx = cell_col_data[["cell_type"]] == "distal AT2"
-  #     idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
-  #     proj = proj[!(idx & idx_2)]
-  #   }
-  # }
+  if (filter_doublets) {
+    setting = paste0(setting, "_", "filter_doublets")
+    if (dataset == "Tsankov") {
+      cell_col_data = getCellColData(proj)
+      idx = cell_col_data[["Clusters_res_0.6"]] == "C4"
+      proj = proj[!idx]
+      
+      # idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
+      # proj = proj[!(idx & idx_2)]
+    }
+    proj_dir = paste("ArchR_projects", setting, sep="/")
+    proj <- saveArchRProject(ArchRProj = proj, 
+                             outputDirectory = proj_dir,
+                             load = TRUE)
+    proj = reduce_dims(proj, force=T)
+  }
   print("Done loading existing project")
 } else {
   dir = "ArchR_projects/ArchR_proj/"
@@ -383,33 +426,7 @@ if (dir.exists(proj_dir)) {
                            outputDirectory = proj_dir,
                            load = TRUE)
   print("Done saving new project")
-  print("Running iterative LSI")
-  proj <- addIterativeLSI(
-    ArchRProj = proj,
-    useMatrix = "TileMatrix", 
-    name = "IterativeLSI", 
-    iterations = 2, 
-    clusterParams = list( #See Seurat::FindClusters
-      resolution = c(0.2), 
-      sampleCells = 10000, 
-      n.start = 10
-    ), 
-    varFeatures = 25000, 
-    dimsToUse = 1:30
-  )
-  
-  proj <- saveArchRProject(ArchRProj = proj, 
-                           outputDirectory = proj_dir,
-                           load = TRUE)
-  
-  proj <- addUMAP(ArchRProj = proj, 
-                  reducedDims = "IterativeLSI", 
-                  name = "UMAP", nNeighbors = 30, minDist = 0.5, 
-                  metric = "cosine")
-  
-  proj <- saveArchRProject(ArchRProj = proj, 
-                           outputDirectory = proj_dir,
-                           load = TRUE)
+  proj = reduce_dims(proj)
 }
 
 if (plot_doublet_scores) {
@@ -451,7 +468,7 @@ if (cluster) {
   p <- plotEmbedding(
     ArchRProj = proj, 
     colorBy = "cellColData", 
-    name = "Clusters",
+    name = paste("Clusters_res", cluster_res, sep="_"),
     embedding = "UMAP",
     quantCut = c(0.01, 0.95))
 
@@ -467,11 +484,11 @@ if (cluster) {
 if (reannotate) {
   if (dataset == "Tsankov" && cluster_res==0.6) {
    cell_col_data = getCellColData(proj)
-   if (filter_doublets) {
-       idx = cell_col_data[["cell_type"]] == "AT2"
-       idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
-       proj = proj[!(idx & idx_2)]
-   }
+   # if (filter_doublets) {
+   #     idx = cell_col_data[["cell_type"]] == "AT2"
+   #     idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
+   #     proj = proj[!(idx & idx_2)]
+   # }
    cell_col_data["new_annotation"] = cell_col_data["cell_type"]
    cell_col_data[grepl("Sec-Ciliated", cell_col_data[["new_annotation"]]), 
                   "new_annotation"] = "proximal Ciliated"
@@ -517,7 +534,7 @@ if (reannotate) {
 }
 
 if (plot_cell_types) {
-  if (reannotated) {
+  if (reannotate) {
     p <- plotEmbedding(
       ArchRProj = proj, 
       colorBy = "cellColData", 
@@ -541,9 +558,9 @@ if (plot_cell_types) {
                        guide = guide_legend(override.aes = 
                                               list(shape = 15)))  
   fn = paste("cell_type_UMAP", setting, sep="_")
-  if (filter_doublets) {
-    fn = paste(fn, "filter_doublets", sep="_")
-  }
+  # if (filter_doublets) {
+  #   fn = paste(fn, "filter_doublets", sep="_")
+  # }
   if (reannotate) {
     fn = paste(fn, "reannotated", sep="_")
   }
