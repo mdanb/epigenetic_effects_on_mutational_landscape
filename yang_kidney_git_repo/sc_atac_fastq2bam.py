@@ -58,7 +58,7 @@ submitter(cleaner)
 
 
 print("Mapping reads...")
-mapper = "/seq/regev_genome_portal/SOFTWARE/bowtie2 -p 11 -X 2000 -3 1 -x " + \
+mapper = "/seq/regev_genome_portal/SOFTWARE/bowtie2/bowtie2-2.1.0/bowtie2 -p 11 -X 2000 -3 1 -x " + \
          args.genome + " -1 " + args.outdir + args.prefix +".split.1.trimmed.paired.fastq.gz -2 " + \
          args.outdir + args.prefix +".split.2.trimmed.paired.fastq.gz 2> " + args.outdir + \
          args.prefix +".split.bowtie2.log | samtools view -bS - > " + args.outdir + args.prefix \
