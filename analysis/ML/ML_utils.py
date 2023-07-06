@@ -260,7 +260,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
     # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
     hostname_file = open("postgresql_hostname.txt", "r")
-    hostname = hostname_file.readline()
+    hostname = hostname_file.readline().strip()
     storage_name = f"postgresql://bgiotti:bgiotti@{hostname}:5432/optuna_db"
     # storage_name = "sqlite:///example.db"
     # connection = connect_to_mysqldb()
