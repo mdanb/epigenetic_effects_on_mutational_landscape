@@ -170,7 +170,8 @@ args = parse_args(OptionParser(option_list=option_list), args=
                       "--de_novo_marker_discovery",
                       "--cluster_res=0.6",
                       "--filter_doublets",
-                      "--reannotate"
+                      "--reannotate",
+                      "--filter_per_cell_type"
 ))
 
 add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
