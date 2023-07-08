@@ -512,22 +512,22 @@ if (reannotate) {
     # cell_col_data[all_except_idx, "new_annotation"] = gsub("(proximal|distal) ", 
     #                                                        "", 
     #                                                        cell_col_data[["new_annotation"]][all_except_idx])
+   cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C3", 
+                 "new_annotation"] = "Myeloid"
+   cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C2", 
+                 "new_annotation"] = "Myeloid"
     cell_col_data[cell_col_data[["cell_type"]] == "Fibroblasts", 
                   "new_annotation"] = "Fibroblast.WT1-"
     cell_col_data[cell_col_data[["cell_type"]] == "B_cells", 
-                  "new_annotation"] = "B.cells"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C18", 
                   "new_annotation"] = "T.cells"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C17", 
-                  "new_annotation"] = "B.cells"
     cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C5", 
+                  "new_annotation"] = "T.cells"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C4", 
+                  "new_annotation"] = "B.cells"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C16", 
                   "new_annotation"] = "Fibroblast.WT1+"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C6", 
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C17", 
                   "new_annotation"] = "Fibroblast.WT1-"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C9", 
-                  "new_annotation"] = "Myeloid"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C12", 
-                  "new_annotation"] = "Myeloid"
     cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C1", 
                   "new_annotation"] = "Neuronal"
     proj@cellColData = cell_col_data
@@ -535,7 +535,10 @@ if (reannotate) {
     keep_cells = !(cell_col_data[["new_annotation"]] == "Immune" |
                      cell_col_data[["new_annotation"]] == "Stromal")
     proj = proj[keep_cells, ]
-    proj = saveArchRProject(ArchRProj = proj, load=T)
+    setting = paste(setting, "reannotated", sep="_")
+    proj = saveArchRProject(ArchRProj = proj, 
+                            outputDirectory = setting,
+                            load=T)
   }
 }
 
@@ -546,7 +549,8 @@ if (plot_cell_types) {
       colorBy = "cellColData", 
       name = "new_annotation", 
       embedding = "UMAP",
-      quantCut = c(0.01, 0.95))
+      quantCut = c(0.01, 0.95),
+      labelMeans = F)
   } else {
     p <- plotEmbedding(
       ArchRProj = proj, 
@@ -555,10 +559,10 @@ if (plot_cell_types) {
       embedding = "UMAP",
       quantCut = c(0.01, 0.95))
   }
-  cols <- c("#e6194B", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
-            "#911eb4", "#42d4f4", "#f032e6", "#bfef45", "#fabed4",
+  cols <- c("#000075", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
+            "#FF0000", "#42d4f4", "#f032e6", "#bfef45", "#fabed4",
             "#469990", "#dcbeff", "#9A6324", "#7F00FF", "#800000",
-            "#aaffc3", "#808000", "#ffd8b1", "#000075", "#000000")
+            "#aaffc3", "#808000", "#ffd8b1", "#000000")
   p <- p + 
     scale_color_manual(values = cols,
                        guide = guide_legend(override.aes = 
