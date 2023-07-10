@@ -324,6 +324,7 @@ if (!robustness_analysis) {
     
     scATAC_source = paste(scATAC_source, "annotation", annotation, 
                           sep="_")
+    savepath = get_relevant_backwards_elim_dirs(args, accumulated_seeds = T)
     if (robustness_feature_importance_barplot) {
       dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type, 
                              sep="/"), recursive = F)
@@ -351,7 +352,6 @@ if (!robustness_analysis) {
                               group_by(features, num_features) %>%
                               summarise(sum(importance))
       colnames(df_accumulated_imp)[3] = "importance"
-      savepath = get_relevant_backwards_elim_dirs(args, accumulated_seeds = T)
       dir.create(savepath, recursive = T)
       ggplot_barplot_helper(df=df_accumulated_imp, 
                             title=cancer_type, 
