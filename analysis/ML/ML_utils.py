@@ -466,7 +466,8 @@ def construct_scATAC_sources(datasets):
     return(scATAC_sources)
 
 def get_storage_name():
-    hostname_file = open("postgresql_hostname.txt", "r")
+    hostname_file = open(os.path.dirname(os.path.abspath(__file__)) + "/" + "postgresql_hostname.txt", "r")
+    # hostname_file = open("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/postgresql_hostname.txt", "r")
     hostname = hostname_file.readline().strip()
     storage_name = f"postgresql://bgiotti:bgiotti@{hostname}:5432/optuna_db"
     return storage_name

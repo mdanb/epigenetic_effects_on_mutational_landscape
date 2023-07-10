@@ -16,18 +16,24 @@ parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
 parser <- add_option(parser, c("--tss_fragment_filter"),
                      type="character", default="-1")
 parser <- add_option(parser, c("--ML_model"), type="character")
-parser <- add_option(parser, c("--num_iter_skips"), 
-                     type="integer", default=5)
+# parser <- add_option(parser, c("--num_iter_skips"), 
+#                      type="integer", default=5)
+parser <- add_option(parser, c("--top_features_to_plot"),
+                     type="character")
 parser <- add_option(parser, c("--tissues_to_consider"), 
                      type="character", default="all")
 parser <- add_option(parser, c("--annotation"), 
                      type="character", default="default_annotation")
-parser <- add_option(parser, c("--iters_dont_skip"), default="18")
+# parser <- add_option(parser, c("--iters_dont_skip"), default="18")
 parser <- add_option(parser, c("--seed"), default="42")
 parser <- add_option(parser, c("--robustness_analysis"), action="store_true", 
                      default=F)
-parser <- add_option(parser, c("--robustness_top_ns"), type="character",
-                     default="2,5")
+parser <- add_option(parser, c("--robustness_feature_importance_barplot"), 
+                     action="store_true", 
+                     default=F)
+parser <- add_option(parser, c("--robustness_test_perf_boxplot"), 
+                     action="store_true", 
+                     default=F)
 parser <- add_option(parser, c("--robustness_seed_range"), type="character",
                      default="1-100")
 
@@ -39,17 +45,17 @@ parser <- add_option(parser, c("--robustness_seed_range"), type="character",
 #                                    "--annotation=finalized_annotation",
 #                                    "--iters_dont_skip=17",
 #                                    "--robustness_top_ns=2,4"))
-# args = parse_args(parser, args =
-#                     c("--datasets=Tsankov",
-#                       "--cancer_types=sarcomatoid_waddell_mesomics",
-#                       "--cell_number_filter=30",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--seed=1",
-#                       "--iters_dont_skip=17",
-#                       "--robustness_analysis",
-#                       "--robustness_top_ns=2,4",
-#                       "--robustness_seed_range=1-100"))
+args = parse_args(parser, args =
+                    c("--datasets=Tsankov",
+                      "--cancer_types=Lung-SCC",
+                      "--cell_number_filter=30",
+                      "--ML_model=XGB",
+                      "--annotation=finalized_annotation",
+                      "--seed=1",
+                      "--robustness_analysis",
+                      "--robustness_seed_range=1-100",
+                      "--top_features_to_plot=15,10,5,2",
+                      "--robustness_test_perf_boxplot"))
 
 args = parse_args(parser)
 
@@ -258,19 +264,22 @@ construct_test_boxplots <- function(df, title, savepath) {
 
 cancer_types = args$cancer_types
 cancer_types = unlist(strsplit(cancer_types, split = ","))
-iters_dont_skip = args$iters_dont_skip
-iters_dont_skip = as.integer(unlist(strsplit(iters_dont_skip, split = ",")))
+top_features_to_plot = args$top_features_to_plot
+top_features_to_plot = as.integer(unlist(strsplit(top_features_to_plot, 
+                                                  split = ",")))
+# iters_dont_skip = args$iters_dont_skip
+# iters_dont_skip = as.integer(unlist(strsplit(iters_dont_skip, split = ",")))
 datasets = unlist(strsplit(args$datasets, split = ","))
 cell_number_filter = args$cell_number_filter
 tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
-num_iter_skips = args$num_iter_skips
+# num_iter_skips = args$num_iter_skips
 annotation = args$annotation
 tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
 ML_model = args$ML_model
 seed = args$seed
 robustness_analysis = args$robustness_analysis
 robustness_seed_range = as.integer(unlist(strsplit(args$robustness_seed_range, split="-")))
-
+robustness_test_perf_boxplot = args$robustness_test_perf_boxplot
 cancer_types = paste(cancer_types, collapse = " ")
 
 if (!robustness_analysis) {
@@ -280,9 +289,9 @@ if (!robustness_analysis) {
                            "--annotation", annotation, "--tissues_to_consider",
                            paste(tissues_to_consider, collapse = " "), 
                            "--cell_number_filter", cell_number_filter, 
-                           "--num_iter_skips", num_iter_skips, "--iters_dont_skip",
-                           iters_dont_skip, "--tss_fragment_filter", 
-                           paste(tss_fragment_filter, collapse = " "),
+                           "--top_features_to_plot", top_features_to_plot,
+                           "--tss_fragment_filter",  paste(tss_fragment_filter, 
+                                                           collapse = " "),
                            "--ML_model", ML_model,
                            "--cancer_types", cancer_types, "--seed", seed)
   print(paste0("Prepping feature importance dfs for seed ", seed, "..."))
@@ -297,7 +306,6 @@ if (!robustness_analysis) {
     construct_bar_plots(args)
   }
 } else {
-  robustness_top_ns = as.integer(unlist(strsplit(args$robustness_top_ns, split=",")))
   for (cancer_type in cancer_types) {
     # for (tss_filter in tss_fragment_filter) {
     scATAC_sources = construct_sources_string(datasets)
@@ -315,88 +323,92 @@ if (!robustness_analysis) {
     
     scATAC_source = paste(scATAC_source, "annotation", annotation, 
                           sep="_")
-    dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type, 
-                           sep="/"), recursive = F)
-    all_seeds_dirs = dirs[grepl(scATAC_source, dirs)]
-    all_seeds_dirs = all_seeds_dirs[!grepl("all_seeds", all_seeds_dirs)]
-    df_feature_importances_all_seeds = tibble()
-    for (dir in all_seeds_dirs) {
-      df_feature_importances = as_tibble(read.csv(paste(dir, "backwards_elimination_results", 
-                                     "df_for_feature_importance_plots.csv",
-                                     sep="/")))
-      df_feature_importances = df_feature_importances %>%
-                                filter(num_features %in% robustness_top_ns)
-      temp = unlist(strsplit(dir, split="_"))
-      seed = temp[length(temp)]
-      df_feature_importances["seed"] = seed
-      if (nrow(df_feature_importances_all_seeds) == 0) {
-        df_feature_importances_all_seeds = df_feature_importances
-      } else {
-        df_feature_importances_all_seeds = rbind(df_feature_importances_all_seeds,
-                                                 df_feature_importances)
+    if (robustness_feature_importance_barplot) {
+      dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type, 
+                             sep="/"), recursive = F)
+      all_seeds_dirs = dirs[grepl(scATAC_source, dirs)]
+      all_seeds_dirs = all_seeds_dirs[!grepl("all_seeds", all_seeds_dirs)]
+      df_feature_importances_all_seeds = tibble()
+      for (dir in all_seeds_dirs) {
+        df_feature_importances = as_tibble(read.csv(paste(dir, "backwards_elimination_results", 
+                                       "df_for_feature_importance_plots.csv",
+                                       sep="/")))
+        df_feature_importances = df_feature_importances %>%
+                                  filter(num_features %in% top_features_to_plot)
+        temp = unlist(strsplit(dir, split="_"))
+        seed = temp[length(temp)]
+        df_feature_importances["seed"] = seed
+        if (nrow(df_feature_importances_all_seeds) == 0) {
+          df_feature_importances_all_seeds = df_feature_importances
+        } else {
+          df_feature_importances_all_seeds = rbind(df_feature_importances_all_seeds,
+                                                   df_feature_importances)
+        }
+      }
+      # }
+      df_accumulated_imp = df_feature_importances_all_seeds %>% 
+                              group_by(features, num_features) %>%
+                              summarise(sum(importance))
+      colnames(df_accumulated_imp)[3] = "importance"
+      savepath = get_relevant_backwards_elim_dirs(args, accumulated_seeds = T)
+      dir.create(savepath, recursive = T)
+      ggplot_barplot_helper(df=df_accumulated_imp, 
+                            title=cancer_type, 
+                            savepath=savepath,
+                            accumulated_imp=T)
+    }
+    
+    if (robustness_test_perf_boxplot) {
+      df = tibble(top_feature = character(0),
+                  top_n = integer(0),
+                  test_set_perf = double(0),
+                  seed = integer(0))
+      
+      for (seed in seq(robustness_seed_range[1], robustness_seed_range[2])) {
+          test_dir = construct_backwards_elim_dir(cancer_type,
+                                                  construct_sources_string(datasets),
+                                                  cell_number_filter,
+                                                  tss_fragment_filter, 
+                                                  annotation,
+                                                  tissues_to_consider, 
+                                                  ML_model,
+                                                  seed,
+                                                  test=T)
+          total_num_features = length(list.files(test_dir,
+                                        pattern="model_iteration_[0-9]*\\.pkl")) + 1
+          test_file_idx = total_num_features - top_features_to_plot + 1
+          test_perf_filenames = paste("model_iteration", test_file_idx, "test_performance.txt",
+                          sep = "_")
+          test_set_perf_files = paste(test_dir, test_perf_filenames, sep="/")
+          
+          idx = 1
+          for (file in test_set_perf_files) {
+            tryCatch(
+                {
+                  top_feature_file = paste0("top_features_iteration_",
+                                          test_file_idx[idx],
+                                          ".txt")
+                  top_feature_fp = paste(test_dir, top_feature_file, sep="/")
+                  top_feature = readLines(top_feature_fp, n = 1)
+                  top_feature = substring(top_feature, 4, nchar(top_feature))
+                  suppressWarnings({
+                    perf = read.table(file)[1,1]
+                  })
+                  df = df %>% add_row(top_feature = top_feature,
+                                      top_n = top_features_to_plot[idx],
+                                      test_set_perf = perf,
+                                      seed = seed)
+                  idx = idx + 1
+                },
+                error = function(e) {
+                }
+            )
+          }
+      }
+      df = df %>% 
+            group_by(top_n, top_feature) %>%
+            mutate(n_top_feature = n(), y_position = max(test_set_perf))
+      construct_test_boxplots(df, title=cancer_type, savepath=savepath)
       }
     }
-    # }
-    df_accumulated_imp = df_feature_importances_all_seeds %>% 
-                            group_by(features, num_features) %>%
-                            summarise(sum(importance))
-    colnames(df_accumulated_imp)[3] = "importance"
-    savepath = get_relevant_backwards_elim_dirs(args, accumulated_seeds = T)
-    dir.create(savepath, recursive = T)
-    ggplot_barplot_helper(df=df_accumulated_imp, 
-                          title=cancer_type, 
-                          savepath=savepath,
-                          accumulated_imp=T)
-  
-    df = tibble(top_feature = character(0),
-                top_n = integer(0),
-                test_set_perf = double(0),
-                seed = integer(0))
-    
-    for (seed in seq(robustness_seed_range[1], robustness_seed_range[2])) {
-        test_dir = construct_backwards_elim_dir(cancer_type,
-                                                construct_sources_string(datasets),
-                                                cell_number_filter,
-                                                tss_fragment_filter, 
-                                                annotation,
-                                                tissues_to_consider, 
-                                                ML_model,
-                                                seed,
-                                                test=T)
-        num_iters = length(list.files(test_dir,
-                                      pattern="model_iteration_[0-9]*\\.pkl"))
-        test_file_idx = num_iters - robustness_top_ns + 1
-        test_perf_filenames = paste("model_iteration", test_file_idx, "test_performance.txt",
-                        sep = "_")
-        test_set_perf_files = paste(test_dir, test_perf_filenames, sep="/")
-        
-        idx = 1
-        for (file in test_set_perf_files) {
-          tryCatch(
-              {
-                top_feature_file = paste0("top_features_iteration_",
-                                        test_file_idx[idx],
-                                        ".txt")
-                top_feature_fp = paste(test_dir, top_feature_file, sep="/")
-                top_feature = readLines(top_feature_fp, n = 1)
-                top_feature = substring(top_feature, 4, nchar(top_feature))
-                suppressWarnings({
-                  perf = read.table(file)[1,1]
-                })
-                df = df %>% add_row(top_feature = top_feature,
-                                    top_n = robustness_top_ns[idx],
-                                    test_set_perf = perf,
-                                    seed = seed)
-                idx = idx + 1
-              },
-              error = function(e) {
-              }
-          )
-        }
-    }
-    df = df %>% 
-          group_by(top_n, top_feature) %>%
-          mutate(n_top_feature = n(), y_position = max(test_set_perf))
-    construct_test_boxplots(df, title=cancer_type, savepath=savepath)
-  }
 }

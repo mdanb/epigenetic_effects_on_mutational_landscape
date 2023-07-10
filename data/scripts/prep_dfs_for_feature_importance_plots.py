@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import optuna
 import sys
+import re
 
 # sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML')
 sys.path.insert(0, '/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape')
@@ -25,19 +26,19 @@ parser.add_argument('--datasets', nargs="+", type=str,
                     help='which sc-ATACseq datasets to analyze', required=True)
 parser.add_argument('--annotation', type=str, default="default_annotation")
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default=["all"])
-parser.add_argument('--iters_dont_skip', nargs="+", type=int)
+# parser.add_argument('--iters_dont_skip', nargs="+", type=int)
 parser.add_argument('--ML_model', type=str)
 parser.add_argument('--cell_number_filter', type=int)
-parser.add_argument('--num_iter_skips', type=int, default=5)
+# parser.add_argument('--num_iter_skips', type=int, default=5)
 parser.add_argument('--seed', type=int, default=42)
 parser.add_argument('--tss_fragment_filter', nargs="+", type=int, default=[-1])
+parser.add_argument('--top_features_to_plot', nargs="+", type=int)
 
 
 def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
                                  tss_fragment_filter, annotation, tissues_to_consider,
                                  ML_model, seed):
-    dir = f"/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/" \
-          f"models/{ML_model}/{cancer_type}/scATAC_source_" \
+    dir = f"../../analysis/ML/models/{ML_model}/{cancer_type}/scATAC_source_" \
           f"{scATAC_source}_cell_number_filter_{cell_number_filter}"
     # dir = f"/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/" \
     #       f"models/{ML_model}/{cancer_type}/scATAC_source_" \
@@ -82,7 +83,7 @@ def get_relevant_backwards_elim_dirs(config):
                                                                    seed))
     return backward_elim_dirs
 
-def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters_dont_skip,
+def prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot,
                                       ML_model, optuna_base_dir):
     for backwards_elim_dir in backwards_elim_dirs:
         df = pd.DataFrame(columns = ["features", "importance", "num_features", "score"])
@@ -97,8 +98,9 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
                                    cancer_type_dir,
                                    "backwards_elimination_results")
         files = natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))
+        total_num_starter_features = int(re.search(r"\d+", files[-1].split("/")[-1]).group()) + 1
         for idx, file in enumerate(files):
-            if (idx % num_iter_skips == 0 or idx in iters_dont_skip):
+            if (total_num_starter_features - idx) in top_features_to_plot:
                 model = pickle.load(open(file, "rb"))
                 study_name = f"{cancer_type}_iter_{idx + 1}_{optuna_base_dir}"
                 storage_name = get_storage_name()
@@ -116,18 +118,18 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
         df.to_csv(os.path.join(figure_path, "df_for_feature_importance_plots.csv"),
                   index=False)
 
-# config = parser.parse_args(["--cancer_types", "SCLC", "--datasets", "Bingren", "Greenleaf_brain", "Shendure",
+# config = parser.parse_args(["--cancer_types", "Lung-SCC", "--datasets",
 #                             "Tsankov", "--cell_number_filter", "30", "--annotation", "finalized_annotation",
-#                             "--ML_model", "XGB", "--seed", "42", "--iters_dont_skip", "18"])
+#                             "--ML_model", "XGB", "--seed", "1", "--top_features_to_plot", "2"])
 config = parser.parse_args()
 backwards_elim_dirs = get_relevant_backwards_elim_dirs(config)
-num_iter_skips = config.num_iter_skips
-iters_dont_skip = config.iters_dont_skip
+# num_iter_skips = config.num_iter_skips
+# iters_dont_skip = config.iters_dont_skip
 ML_model = config.ML_model
+top_features_to_plot = config.top_features_to_plot
 optuna_base_dir = construct_scATAC_dir(scATAC_sources=construct_scATAC_sources(config.datasets),
                                        scATAC_cell_number_filter=config.cell_number_filter,
                                        tss_filter=None,
                                        annotation_dir=config.annotation,
                                        seed=config.seed)
-prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips,
-                                  iters_dont_skip, ML_model, optuna_base_dir)
+prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot, ML_model, optuna_base_dir)

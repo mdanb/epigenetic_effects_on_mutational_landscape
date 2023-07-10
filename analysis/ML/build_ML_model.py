@@ -68,12 +68,11 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
                                   combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model,
                                   seed_range, n_optuna_trials_prebackward_selection,
-                                  n_optuna_trials_backward_selection, iters_dont_skip,
-                                  num_iter_skips):
+                                  n_optuna_trials_backward_selection, top_features_to_plot):
     ### args used at the end for plot_top_features.R ###
     cancer_types_arg = ",".join(cancer_types)
     datasets_arg = ",".join(datasets)
-    iters_dont_skip_arg = ",".join(iters_dont_skip)
+    # iters_dont_skip_arg = ",".join(iters_dont_skip)
     ####################################################
 
     mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
@@ -118,8 +117,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                      f"--seed={seed}",
                                      f"--cell_number_filter={scATAC_cell_number_filter}",
                                      f"--annotation={annotation_dir}",
-                                     f"--iters_dont_skip={iters_dont_skip_arg}",
-                                     f"--num_iter_skips={num_iter_skips}"])
+                                     f"--top_features_to_plot={top_features_to_plot}"])
                     print(f"Done plotting top features for seed {seed}!")
             num_files = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl")))
             for iter in range(num_files):
@@ -160,7 +158,7 @@ run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter,
                                histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
                                meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range,
                                n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
-                               iters_dont_skip, num_iter_skips)
+                               top_features_to_plot)
 
 
 
