@@ -134,7 +134,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
             scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
                                               tss_fragment_filter, annotation_dir, seed)
             for idx, donor in enumerate(mutations_df.columns):
-                if (idx in range(*donor_range)):
+                if idx in range(*donor_range):
                     run_unclustered_data_analysis_helper(datasets, mutations_df, donor, scATAC_dir,
                                                          scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,

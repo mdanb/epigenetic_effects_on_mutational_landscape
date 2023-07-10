@@ -45,17 +45,17 @@ parser <- add_option(parser, c("--robustness_seed_range"), type="character",
 #                                    "--annotation=finalized_annotation",
 #                                    "--iters_dont_skip=17",
 #                                    "--robustness_top_ns=2,4"))
-args = parse_args(parser, args =
-                    c("--datasets=Tsankov",
-                      "--cancer_types=Lung-SCC",
-                      "--cell_number_filter=30",
-                      "--ML_model=XGB",
-                      "--annotation=finalized_annotation",
-                      "--seed=1",
-                      "--robustness_analysis",
-                      "--robustness_seed_range=1-100",
-                      "--top_features_to_plot=15,10,5,2",
-                      "--robustness_test_perf_boxplot"))
+# args = parse_args(parser, args =
+#                     c("--datasets=Tsankov",
+#                       "--cancer_types=Lung-SCC",
+#                       "--cell_number_filter=30",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--seed=1",
+#                       "--robustness_analysis",
+#                       "--robustness_seed_range=1-100",
+#                       "--top_features_to_plot=15,10,5,2",
+#                       "--robustness_test_perf_boxplot"))
 
 args = parse_args(parser)
 
@@ -280,6 +280,7 @@ seed = args$seed
 robustness_analysis = args$robustness_analysis
 robustness_seed_range = as.integer(unlist(strsplit(args$robustness_seed_range, split="-")))
 robustness_test_perf_boxplot = args$robustness_test_perf_boxplot
+robustness_feature_importance_barplot = args$robustness_feature_importance_barplot
 cancer_types = paste(cancer_types, collapse = " ")
 
 if (!robustness_analysis) {
