@@ -10,13 +10,7 @@ from sklearn.metrics import r2_score
 from xgboost import XGBRegressor
 from sklearn.model_selection import cross_val_score, KFold
 import optuna
-import xgboost as xgb
-import subprocess
-import time
-import mysql.connector
-from mysql.connector import Error
-from sqlalchemy import create_engine
-from sqlalchemy.sql import text
+
 # from sqlalchemy.orm import sessionmaker
 
 # engine = create_engine('mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db')
