@@ -36,7 +36,7 @@ parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
                     help='tss fragment filters to consider', default="")
 parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
 parser.add_argument("--ML_model", type=str, default="XGB")
-parser.add_argument('--test_backward_selection_iter', type=int, default=None)
+parser.add_argument('--test_backward_selection_iters', type=int, nargs="+", default=None)
 parser.add_argument('--seed_range', type=str)
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=int, default=None)
 parser.add_argument('--n_optuna_trials_backward_selection', type=int, default=None)
@@ -64,7 +64,7 @@ meso = config.meso
 RNA_subtyped = config.RNA_subtyped
 per_donor = config.per_donor
 donor_range = config.donor_range
-test_backward_selection_iter = config.test_backward_selection_iter
+test_backward_selection_iters = config.test_backward_selection_iters
 seed_range = config.seed_range
 start, end = map(int, seed_range.split('-'))
 seed_range = range(start, end + 1)

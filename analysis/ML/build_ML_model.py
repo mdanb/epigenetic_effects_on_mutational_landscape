@@ -68,7 +68,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
                                   combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model,
                                   seed_range, n_optuna_trials_prebackward_selection,
-                                  n_optuna_trials_backward_selection, iters_dont_skip):
+                                  n_optuna_trials_backward_selection, iters_dont_skip,
+                                  test_backward_selection_iters):
     ### args used at the end for plot_top_features.R ###
     cancer_types_arg = ",".join(cancer_types)
     datasets_arg = ",".join(datasets)
@@ -116,6 +117,14 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                      f"--annotation={annotation_dir}",
                                      f"--iters_dont_skip={iters_dont_skip_arg}"])
                     print(f"Done plotting top features for seed {seed}!")
+        for iter in test_backward_selection_iters:
+            save_n_features_model_test_performance(iter, datasets, ML_model, scATAC_cell_number_filter,
+                                                   tss_fragment_filter,
+                                                   annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
+                                                   histologically_subtyped_mutations, de_novo_seurat_clustering,
+                                                   cancer_types, CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+                                                   int(seed))
+
         else:
             scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
                                               tss_fragment_filter, annotation_dir, seed)
@@ -128,24 +137,24 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
     return
 
 
-if test_backward_selection_iter:
-    for seed in seed_range:
-        try:
-            # Not all runs may be done
-            save_n_features_model_test_performance(test_backward_selection_iter, datasets, ML_model, scATAC_cell_number_filter,
-                                                   tss_fragment_filter,
-                                                   annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
-                                                   histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, int(seed))
-        except:
-            pass
-else:
-    run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
-                                  tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
-                                  histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                                  meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range,
-                                  n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
-                                  iters_dont_skip)
+# if test_backward_selection_iter:
+#     for seed in seed_range:
+#         try:
+#             # Not all runs may be done
+#             save_n_features_model_test_performance(test_backward_selection_iter, datasets, ML_model, scATAC_cell_number_filter,
+#                                                    tss_fragment_filter,
+#                                                    annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
+#                                                    histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+#                                                    CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, int(seed))
+#         except:
+#             pass
+# else:
+run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
+                               tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
+                               histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
+                               meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range,
+                               n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
+                               iters_dont_skip, test_backward_selection_iters)
 
 
 
