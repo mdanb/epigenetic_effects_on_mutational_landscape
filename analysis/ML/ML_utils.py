@@ -416,15 +416,15 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
     else:
         print("Backward feature selection is already done!")
 
-def save_n_features_model_test_performance(n, datasets, ML_model, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                           meso, SCLC, lung_subtyped, woo_pcawg,
-                                           histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                           CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, seed):
+def save_iter_i_model_test_performance(i, datasets, ML_model, scATAC_cell_number_filter, tss_filter, annotation_dir,
+                                       meso, SCLC, lung_subtyped, woo_pcawg,
+                                       histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+                                       CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, seed):
     for cancer_type in cancer_types:
         scATAC_sources = construct_scATAC_sources(datasets)
         scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter,
                                          annotation_dir, seed)
-        filename = f"model_iteration_{n}.pkl"
+        filename = f"model_iteration_{i}.pkl"
         backwards_elim_model_file = f"models/{ML_model}/" \
                                     f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
         model = pickle.load(open(backwards_elim_model_file, "rb"))

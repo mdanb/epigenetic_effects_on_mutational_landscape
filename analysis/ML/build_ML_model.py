@@ -119,15 +119,16 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                      f"--annotation={annotation_dir}",
                                      f"--top_features_to_plot={top_features_to_plot}"])
                     print(f"Done plotting top features for seed {seed}!")
-            num_files = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl")))
-            for iter in range(num_files):
-                if iter % num_iter_skips == 0 or iter in list(map(int, iters_dont_skip)):
-                    save_n_features_model_test_performance(iter + 1, datasets, ML_model, scATAC_cell_number_filter,
-                                                           tss_fragment_filter,
-                                                           annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
-                                                           histologically_subtyped_mutations, de_novo_seurat_clustering,
-                                                           cancer_types, CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
-                                                           int(seed))
+            total_num_features = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))) + 1
+            for iter in range(total_num_features - 1):
+                if total_num_features - iter in top_features_to_plot:
+                    save_iter_i_model_test_performance(iter + 1,
+                                                       datasets, ML_model, scATAC_cell_number_filter,
+                                                       tss_fragment_filter,
+                                                       annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
+                                                       histologically_subtyped_mutations, de_novo_seurat_clustering,
+                                                       cancer_types, CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+                                                       int(seed))
 
         else:
             scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
