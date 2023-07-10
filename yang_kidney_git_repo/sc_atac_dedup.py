@@ -15,7 +15,7 @@ for refchrom in refs:
 	if 'chrM' in refchrom or 'chrGL' in refchrom or 'chrNC' in refchrom or 'chrhs' in refchrom or 'random' in refchrom or 'chrU' in refchrom:
 		continue
 	readdic = {}
-	print "Deduplicating " + refchrom + "..."
+	print("Deduplicating " + refchrom + "...")
 	for read in readsin.fetch(refchrom):
 		readname = read.qname.split(':')[0]
 		if 'CTF' in readname or 'AMBIG' in readname:
@@ -35,5 +35,5 @@ for refchrom in refs:
 			total += 1
 			readsout.write(read)
 logout = open(outlog,'w')
-print >> logout, 'total=' + str(total) + '\tunique_count=' + str(unique_count)
+print(logout, 'total=' + str(total) + '\tunique_count=' + str(unique_count))
 logout.close()
