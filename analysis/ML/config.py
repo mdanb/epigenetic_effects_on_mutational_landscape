@@ -41,6 +41,7 @@ parser.add_argument('--seed_range', type=str)
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=int, default=None)
 parser.add_argument('--n_optuna_trials_backward_selection', type=int, default=None)
 parser.add_argument('--iters_dont_skip', nargs="+", type=str, default=["18"])
+parser.add_argument('--num_iter_skips', type=int, default=5)
 
 config = parser.parse_args()
 
@@ -71,3 +72,4 @@ seed_range = range(start, end + 1)
 n_optuna_trials_prebackward_selection = config.n_optuna_trials_prebackward_selection
 n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 iters_dont_skip = config.iters_dont_skip
+num_iter_skips = config.num_iter_skips

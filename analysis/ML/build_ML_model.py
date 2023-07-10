@@ -3,12 +3,14 @@ from ML_utils import *
 from config import *
 from natsort import natsorted
 import subprocess
+import glob
 
 def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_donor_id, scATAC_dir,
                                          scATAC_cell_number_filter, annotation_dir,
                                          tissues_to_consider, ML_model, seed,
                                          n_optuna_trials_prebackward_selection,
                                          n_optuna_trials_backward_selection,
+                                         backwards_elim_dir,
                                          tss_filter=None):
     #### Filter data ####
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
@@ -22,8 +24,6 @@ def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_
     os.makedirs(f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}", exist_ok=True)
 
     if tissues_to_consider == "all":
-        backwards_elim_dir=f"models/{ML_model}/" \
-                           f"{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results"
         test_set_perf_filepath = f"models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance.txt"
 
@@ -69,7 +69,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model,
                                   seed_range, n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, iters_dont_skip,
-                                  test_backward_selection_iters):
+                                  num_iter_skips):
     ### args used at the end for plot_top_features.R ###
     cancer_types_arg = ",".join(cancer_types)
     datasets_arg = ",".join(datasets)
@@ -100,10 +100,13 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
                                                       tss_fragment_filter, annotation_dir, seed)
                     print(f"scATAC_dir is {scATAC_dir}")
+                    backwards_elim_dir=f"models/{ML_model}/" \
+                    f"{cancer_type}/{scATAC_dir}/backwards_elimination_results"
+
                     run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
                                                          scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
-                                                         n_optuna_trials_backward_selection)
+                                                         n_optuna_trials_backward_selection, backwards_elim_dir)
                 bp_path = f"../../figures/models/{ML_model}/{cancer_type}/{scATAC_dir}/backwards_elimination_results/bar_plot.png"
                 print(f"Bar plot path: {bp_path}")
                 if not os.path.exists(bp_path):
@@ -115,15 +118,18 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                      f"--seed={seed}",
                                      f"--cell_number_filter={scATAC_cell_number_filter}",
                                      f"--annotation={annotation_dir}",
-                                     f"--iters_dont_skip={iters_dont_skip_arg}"])
+                                     f"--iters_dont_skip={iters_dont_skip_arg}",
+                                     f"--num_iter_skips={num_iter_skips}"])
                     print(f"Done plotting top features for seed {seed}!")
-        for iter in test_backward_selection_iters:
-            save_n_features_model_test_performance(iter, datasets, ML_model, scATAC_cell_number_filter,
-                                                   tss_fragment_filter,
-                                                   annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
-                                                   histologically_subtyped_mutations, de_novo_seurat_clustering,
-                                                   cancer_types, CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
-                                                   int(seed))
+        num_files = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl")))
+        for iter in range(num_files):
+            if iter % num_iter_skips == 0 or iter in iters_dont_skip:
+                save_n_features_model_test_performance(iter, datasets, ML_model, scATAC_cell_number_filter,
+                                                       tss_fragment_filter,
+                                                       annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
+                                                       histologically_subtyped_mutations, de_novo_seurat_clustering,
+                                                       cancer_types, CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+                                                       int(seed))
 
         else:
             scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
@@ -154,7 +160,7 @@ run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter,
                                histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
                                meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range,
                                n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
-                               iters_dont_skip, test_backward_selection_iters)
+                               iters_dont_skip, num_iter_skips)
 
 
 
