@@ -259,9 +259,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 #### Model train/val/test helpers ####
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
     # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
-    hostname_file = open("postgresql_hostname.txt", "r")
-    hostname = hostname_file.readline().strip()
-    storage_name = f"postgresql://bgiotti:bgiotti@{hostname}:5432/optuna_db"
+    storage_name = get_storage_name()
     # storage_name = "sqlite:///example.db"
     # connection = connect_to_mysqldb()
     # get_connection_cnt = text("show status where `Variable_name` = 'Threads_connected'")
@@ -473,6 +471,11 @@ def construct_scATAC_sources(datasets):
             scATAC_sources = "_".join((scATAC_sources, dataset))
     return(scATAC_sources)
 
+def get_storage_name():
+    hostname_file = open("postgresql_hostname.txt", "r")
+    hostname = hostname_file.readline().strip()
+    storage_name = f"postgresql://bgiotti:bgiotti@{hostname}:5432/optuna_db"
+    return storage_name
 # def connect_to_mysqldb():
 #     subprocess.Popen(["mysqld_safe",
 #                      f"--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock",

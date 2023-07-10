@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, '/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape')
 sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/')
 
-from analysis.ML.ML_utils import construct_scATAC_dir, construct_scATAC_sources
+from analysis.ML.ML_utils import construct_scATAC_dir, construct_scATAC_sources, get_storage_name
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--cancer_types', nargs="+", type=str,
@@ -101,7 +101,8 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, num_iter_skips, iters
             if (idx % num_iter_skips == 0 or idx in iters_dont_skip):
                 model = pickle.load(open(file, "rb"))
                 study_name = f"{cancer_type}_iter_{idx + 1}_{optuna_base_dir}"
-                study = optuna.load_study(study_name=study_name, storage="sqlite:///../../analysis/ML/db.sqlite3")
+                storage_name = get_storage_name()
+                study = optuna.load_study(study_name=study_name, storage=storage_name)
                 best_trial = study.best_trial
                 best_cv_score = best_trial.value
                 features = model.feature_names_in_

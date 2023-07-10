@@ -31,6 +31,14 @@ parser <- add_option(parser, c("--robustness_top_ns"), type="character",
 parser <- add_option(parser, c("--robustness_seed_range"), type="character",
                      default="1-100")
 
+args = parse_args(parser, args = c("--cancer_types=Lung-AdenoCA",
+                                   "--robustness_analysis",
+                                   "--datasets=Tsankov",
+                                   "--cell_number_filter=30",
+                                   "--ML_model=XGB", 
+                                   "--annotation=finalized_annotation",
+                                   "--iters_dont_skip=17",
+                                   "--robustness_top_ns=2,4"))
 # args = parse_args(parser, args =
 #                     c("--datasets=Tsankov",
 #                       "--cancer_types=sarcomatoid_waddell_mesomics",
