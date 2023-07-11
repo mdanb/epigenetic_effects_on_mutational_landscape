@@ -45,16 +45,16 @@ parser <- add_option(parser, c("--robustness_seed_range"), type="character",
 #                                    "--annotation=finalized_annotation",
 #                                    "--iters_dont_skip=17",
 #                                    "--robustness_top_ns=2,4"))
-args = parse_args(parser, args =
-                    c("--datasets=Tsankov",
-                      "--cancer_types=Lung-SCC",
-                      "--cell_number_filter=30",
-                      "--ML_model=XGB",
-                      "--annotation=finalized_annotation",
-                      "--robustness_analysis",
-                      "--robustness_seed_range=1-100",
-                      "--top_features_to_plot=15,10,5,2",
-                      "--robustness_test_perf_boxplot"))
+# args = parse_args(parser, args =
+#                     c("--datasets=Tsankov",
+#                       "--cancer_types=Lung-SCC",
+#                       "--cell_number_filter=30",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--robustness_analysis",
+#                       "--robustness_seed_range=1-100",
+#                       "--top_features_to_plot=15,10,5,2",
+#                       "--robustness_test_perf_boxplot"))
 
 args = parse_args(parser)
 
