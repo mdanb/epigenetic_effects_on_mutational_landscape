@@ -45,17 +45,16 @@ parser <- add_option(parser, c("--robustness_seed_range"), type="character",
 #                                    "--annotation=finalized_annotation",
 #                                    "--iters_dont_skip=17",
 #                                    "--robustness_top_ns=2,4"))
-# args = parse_args(parser, args =
-#                     c("--datasets=Tsankov",
-#                       "--cancer_types=Lung-SCC",
-#                       "--cell_number_filter=30",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--seed=1",
-#                       "--robustness_analysis",
-#                       "--robustness_seed_range=1-100",
-#                       "--top_features_to_plot=15,10,5,2",
-#                       "--robustness_test_perf_boxplot"))
+args = parse_args(parser, args =
+                    c("--datasets=Tsankov",
+                      "--cancer_types=Lung-SCC",
+                      "--cell_number_filter=30",
+                      "--ML_model=XGB",
+                      "--annotation=finalized_annotation",
+                      "--robustness_analysis",
+                      "--robustness_seed_range=1-100",
+                      "--top_features_to_plot=15,10,5,2",
+                      "--robustness_test_perf_boxplot"))
 
 args = parse_args(parser)
 
@@ -251,7 +250,7 @@ construct_test_boxplots <- function(df, title, savepath) {
           geom_text(aes(x = top_feature, y = y_position, label = paste0("n=", n_top_feature)),
                     vjust = -0.5) +
           facet_wrap(~top_n, nrow=1, 
-                     scales = "free",
+                     scales = "fixed",
                      labeller = as_labeller(to)) +
           xlab("Cell type") +
           ylab("Test set R^2") +
