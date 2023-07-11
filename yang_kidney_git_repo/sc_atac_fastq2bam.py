@@ -55,23 +55,23 @@ scriptdir = os.path.dirname(os.path.abspath(__file__))
 # cleaner = 'rm ' + args.outdir + args.prefix + '.split.1.trimmed.unpaired.fastq.gz; rm ' + args.outdir + \
 #           args.prefix + '.split.2.trimmed.unpaired.fastq.gz'
 # submitter(cleaner)
-#
-#
-# print("Mapping reads...")
-# mapper = "/seq/regev_genome_portal/SOFTWARE/bowtie2/bowtie2-2.1.0/bowtie2 -p 11 -X 2000 -3 1 -x " + \
-#          args.genome + " -1 " + args.outdir + args.prefix +".split.1.trimmed.paired.fastq.gz -2 " + \
-#          args.outdir + args.prefix +".split.2.trimmed.paired.fastq.gz 2> " + args.outdir + \
-#          args.prefix +".split.bowtie2.log | samtools view -bS - > " + args.outdir + args.prefix \
-#          +".split.bam; samtools view -h -f 3 -F 12 -q 30 " + args.outdir + args.prefix + \
-#          ".split.bam | grep -v '[0-9]''\\t'chrM | grep -v '[0-9]''\\t'chrU | samtools view -Su - | " \
-#          "samtools sort -@ 8 - -o " + args.outdir + args.prefix +".split.q30.sort.bam; samtools index " + \
-#          args.outdir + args.prefix +".split.q30.sort.bam"
-# print(mapper)
-# submitter(mapper)
-#
-#
-print("Deduplicating reads...")
-dedup = "python " + scriptdir + "/sc_atac_true_dedup.py " + args.outdir + args.prefix +".split.q30.sort.bam " + \
-        args.outdir + args.prefix +".true.nodups.bam " + args.outdir + args.prefix +"_dedup.log"
-submitter(dedup)
 
+
+print("Mapping reads...")
+mapper = "/seq/regev_genome_portal/SOFTWARE/bowtie2/bowtie2-2.1.0/bowtie2 -p 11 -X 2000 -3 1 -x " + \
+         args.genome + " -1 " + args.outdir + args.prefix +".split.1.trimmed.paired.fastq.gz -2 " + \
+         args.outdir + args.prefix +".split.2.trimmed.paired.fastq.gz 2> " + args.outdir + \
+         args.prefix +".split.bowtie2.log | samtools view -bS - > " + args.outdir + args.prefix \
+         +".split.bam; samtools view -h -f 3 -F 12 -q 30 " + args.outdir + args.prefix + \
+         ".split.bam | grep -v '[0-9]''\\t'chrM | grep -v '[0-9]''\\t'chrU | samtools view -Su - | " \
+         "samtools sort -@ 8 - -o " + args.outdir + args.prefix +".split.q30.sort.bam; samtools index " + \
+         args.outdir + args.prefix + ".split.q30.sort.bam"
+print(mapper)
+submitter(mapper)
+#
+#
+# print("Deduplicating reads...")
+# dedup = "python " + scriptdir + "/sc_atac_true_dedup.py " + args.outdir + args.prefix +".split.q30.sort.bam " + \
+#         args.outdir + args.prefix +".true.nodups.bam " + args.outdir + args.prefix +"_dedup.log"
+# submitter(dedup)
+#
