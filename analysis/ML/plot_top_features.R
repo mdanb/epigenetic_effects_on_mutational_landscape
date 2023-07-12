@@ -334,7 +334,7 @@ if (!robustness_analysis) {
     prep_dfs_command = paste(prep_dfs_command, "--meso")
   } else if (combined_CPTAC_ICGC) {
     prep_dfs_command = paste(prep_dfs_command, "--combined_CPTAC_ICGC")
-  } else if (donor_range) {
+  } else if (!is.null(donor_range)) {
     prep_dfs_command = paste(prep_dfs_command, "--donor_range")
   } else if (RNA_subtyped) {
     prep_dfs_command = paste(prep_dfs_command, "--RNA_subtyped")
