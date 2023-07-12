@@ -8,7 +8,8 @@ from pathlib import Path
 import optuna
 import sys
 import re
-
+from sklearn.inspection import permutation_importance
+from analysis.ML.ML_utils import get_train_test_split
 # sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML')
 sys.path.insert(0, '/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape')
 sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/')
@@ -86,7 +87,8 @@ def get_relevant_backwards_elim_dirs(config):
 def prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot,
                                       ML_model, optuna_base_dir):
     for backwards_elim_dir in backwards_elim_dirs:
-        df = pd.DataFrame(columns = ["features", "importance", "num_features", "score"])
+        df = pd.DataFrame(columns=["features", "default_importance", "permutation_importance", "num_features",
+                                   "score"])
 
         temp = backwards_elim_dir.split("/")
         cancer_type = temp[-4]
@@ -108,8 +110,10 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot,
                 best_trial = study.best_trial
                 best_cv_score = best_trial.value
                 features = model.feature_names_in_
-                feature_importances = model.feature_importances_
-                df_curr = pd.DataFrame((features, feature_importances,
+                default_feature_importances = model.feature_importances_
+                permutation_importances = permutation_importance(model, )
+
+                df_curr = pd.DataFrame((features, default_feature_importances,
                                         [len(features)] * len(features),
                                         [best_cv_score] * len(features))).T
                 df_curr.columns = df.columns
@@ -132,4 +136,5 @@ optuna_base_dir = construct_scATAC_dir(scATAC_sources=construct_scATAC_sources(c
                                        tss_filter=None,
                                        annotation_dir=config.annotation,
                                        seed=config.seed)
+_, X_test, _, y_test = get_train_test_split(model, , 0.10, )
 prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot, ML_model, optuna_base_dir)

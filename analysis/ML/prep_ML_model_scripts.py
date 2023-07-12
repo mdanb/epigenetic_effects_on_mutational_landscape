@@ -12,7 +12,7 @@ parser.add_argument('--annotation_dir', type=str,
                     help='name of annotation directory', default="default_annotation")
 parser.add_argument('--seed_interval', type=str)
 parser.add_argument('--seed_interval_step', type=int)
-parser.add_argument('--top_n_features_to_plot', nargs="+", type=str,
+parser.add_argument('--top_features_to_plot', nargs="+", type=str,
                     default=["18"])
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=str)
 parser.add_argument('--n_optuna_trials_backward_selection', type=str)
@@ -36,7 +36,7 @@ n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 meso = config.meso
 cores = config.cores
 time = config.time
-top_n_features_to_plot = config.top_n_features_to_plot
+top_features_to_plot = config.top_features_to_plot
 
 for seed_range in seed_ranges:
     script_filename = "_".join(["cancer_types", "_".join(config.cancer_types),
@@ -44,7 +44,7 @@ for seed_range in seed_ranges:
                                 "scATAC_cell_number_filter", scATAC_cell_number_filter,
                                 "annotation_dir", annotation_dir,
                                 "seed_range", seed_range,
-                                "top_n_features_to_plot", "_".join(config.top_n_features_to_plot),
+                                "top_features_to_plot", "_".join(config.top_features_to_plot),
                                 "n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
                                 "n_optuna_trials_backward_selection", n_optuna_trials_backward_selection])
     if meso:
@@ -55,7 +55,7 @@ for seed_range in seed_ranges:
                              "--scATAC_cell_number_filter", scATAC_cell_number_filter,
                              "--annotation_dir", annotation_dir,
                              "--seed_range", seed_range,
-                             "--top_n_features_to_plot", " ".join(config.top_n_features_to_plot),
+                             "--top_features_to_plot", " ".join(config.top_features_to_plot),
                              "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
                              "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection])
 
