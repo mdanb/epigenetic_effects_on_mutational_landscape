@@ -59,7 +59,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
                                   combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model,
                                   seed_range, n_optuna_trials_prebackward_selection,
-                                  n_optuna_trials_backward_selection, top_features_to_plot):
+                                  n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
+                                  make_plots):
     ### args used at the end for plot_top_features.R ###
     cancer_types_arg = ",".join(cancer_types)
     datasets_arg = ",".join(datasets)
@@ -108,7 +109,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                 bp_path = f"../../figures/models/{ML_model}/{cancer_type}/{scATAC_dir}/" \
                           f"backwards_elimination_results/bar_plot.png"
                 print(f"Bar plot path: {bp_path}")
-                if not os.path.exists(bp_path):
+                if make_plots:
+                # if not os.path.exists(bp_path):
                     print(f"Plotting top features for seed {seed}...")
                     subprocess.call(["Rscript", "plot_top_features.R",
                                      f"--cancer_types={cancer_types_arg}",
@@ -119,16 +121,18 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                      f"--annotation={annotation_dir}",
                                      f"--top_features_to_plot={top_features_to_plot}"])
                     print(f"Done plotting top features for seed {seed}!")
-            total_num_features = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))) + 1
-            for iter in range(total_num_features - 1):
-                if total_num_features - iter in top_features_to_plot:
-                    save_iter_i_model_test_performance(iter + 1,
-                                                       datasets, ML_model, scATAC_cell_number_filter,
-                                                       tss_fragment_filter,
-                                                       annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
-                                                       histologically_subtyped_mutations, de_novo_seurat_clustering,
-                                                       cancer_types, CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
-                                                       int(seed))
+
+            if save_test_set_perf:
+                total_num_features = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))) + 1
+                for iter in range(total_num_features - 1):
+                    if total_num_features - iter in top_features_to_plot:
+                        save_iter_i_model_test_performance(iter + 1,
+                                                           datasets, ML_model, scATAC_cell_number_filter,
+                                                           tss_fragment_filter,
+                                                           annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
+                                                           histologically_subtyped_mutations, de_novo_seurat_clustering,
+                                                           cancer_types, CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+                                                           int(seed))
 
         else:
             scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
@@ -159,7 +163,7 @@ run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter,
                                histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
                                meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range,
                                n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
-                               top_features_to_plot)
+                               top_features_to_plot, save_test_set_perf, make_plots)
 
 
 

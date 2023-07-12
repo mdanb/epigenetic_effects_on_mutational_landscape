@@ -28,6 +28,9 @@ parser.add_argument('--seed_range', type=str)
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=int, default=None)
 parser.add_argument('--n_optuna_trials_backward_selection', type=int, default=None)
 parser.add_argument('--top_features_to_plot', nargs="+", type=int)
+parser.add_argument("--save_test_set_perf", action="store_true", default=False)
+parser.add_argument("--make_plots", action="store_true", default=False)
+
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--SCLC", action="store_true", default=False)
 group.add_argument("--lung_subtyped", action="store_true", default=False)
@@ -74,5 +77,7 @@ seed_range = range(start, end + 1)
 n_optuna_trials_prebackward_selection = config.n_optuna_trials_prebackward_selection
 n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 top_features_to_plot = config.top_features_to_plot
+save_test_set_perf = config.save_test_set_perf
+make_plots = config.make_plots
 # iters_dont_skip = config.iters_dont_skip
 # num_iter_skips = config.num_iter_skips
