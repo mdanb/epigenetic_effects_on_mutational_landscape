@@ -112,14 +112,36 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                 if make_plots:
                 # if not os.path.exists(bp_path):
                     print(f"Plotting top features for seed {seed}...")
-                    subprocess.call(["Rscript", "plot_top_features.R",
-                                     f"--cancer_types={cancer_types_arg}",
-                                     f"--ML_model={ML_model}",
-                                     f"--datasets={datasets_arg}",
-                                     f"--seed={seed}",
-                                     f"--cell_number_filter={scATAC_cell_number_filter}",
-                                     f"--annotation={annotation_dir}",
-                                     f"--top_features_to_plot={top_features_to_plot}"])
+                    command = ["Rscript", "plot_top_features.R",
+                                         f"--cancer_types={cancer_types_arg}",
+                                         f"--ML_model={ML_model}",
+                                         f"--datasets={datasets_arg}",
+                                         f"--seed={seed}",
+                                         f"--cell_number_filter={scATAC_cell_number_filter}",
+                                         f"--annotation={annotation_dir}",
+                                         f"--top_features_to_plot={top_features_to_plot}"]
+                    if meso:
+                        command = command.append("--meso")
+                    elif SCLC:
+                        command = command.append("--SCLC")
+                    elif lung_subtyped:
+                        command = command.append("--lung_subtyped")
+                    elif woo_pcawg:
+                        command = command.append("--woo_pcawg")
+                    elif histologically_subtyped_mutations:
+                        command = command.append("--histologically_subtyped_mutations")
+                    elif de_novo_seurat_clustering:
+                        command = command.append("--de_novo_seurat_clustering")
+                    elif CPTAC:
+                        command = command.append("--CPTAC")
+                    elif combined_CPTAC_ICGC:
+                        command = command.append("--combined_CPTAC_ICGC")
+                    elif RNA_subtyped:
+                        command = command.append("--RNA_subtyped")
+                    elif per_donor:
+                        command = command.append("--per_donor")
+
+                    subprocess.call(command)
                     print(f"Done plotting top features for seed {seed}!")
 
             if save_test_set_perf:
