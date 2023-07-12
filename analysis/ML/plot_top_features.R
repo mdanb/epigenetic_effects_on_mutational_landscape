@@ -308,17 +308,17 @@ cancer_types = paste(cancer_types, collapse = " ")
 # print(robustness_seed_range)
 # print(robustness_test_perf_boxplot)
 # print(robustness_feature_importance_barplot)
-# SCLC = args$SCLC
-# lung_subtyped = args$lung_subtyped
-# woo_pcawg = args$woo_pcawg
-# histologically_subtyped_mutations = args$histologically_subtyped_mutations
-# de_novo_seurat_clustering = args$de_novo_seurat_clustering
-# per_donor = args$per_donor
-# CPTAC = args$CPTAC
-# meso = args$meso
-# combined_CPTAC_ICGC = args$combined_CPTAC_ICGC
-# donor_range = args$donor_range
-# RNA_subtyped = args$RNA_subtyped
+SCLC = args$SCLC
+lung_subtyped = args$lung_subtyped
+woo_pcawg = args$woo_pcawg
+histologically_subtyped_mutations = args$histologically_subtyped_mutations
+de_novo_seurat_clustering = args$de_novo_seurat_clustering
+per_donor = args$per_donor
+CPTAC = args$CPTAC
+meso = args$meso
+combined_CPTAC_ICGC = args$combined_CPTAC_ICGC
+donor_range = args$donor_range
+RNA_subtyped = args$RNA_subtyped
 
 if (!robustness_analysis) {
   prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_importance_plots.py", 
