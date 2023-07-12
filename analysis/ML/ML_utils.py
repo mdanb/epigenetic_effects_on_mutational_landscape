@@ -18,6 +18,24 @@ import optuna
 # Session = sessionmaker(bind=engine)
 
 ### Load Data helpers ###
+def load_data(meso, SCLC, lung_subtyped, woo_pcawg,
+              histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+              CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+              datasets, scATAC_cell_number_filter, annotation_dir,
+              cancer_type_or_donor_id, tss_filter=None):
+    mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
+                                  histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
+
+    scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
+    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
+    if not pd.isna(mutations_df).any().any():
+        # for compatibility
+        mutations_df = add_na_ranges(mutations_df)
+    scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
+    cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
+    return scATAC_df, cancer_specific_mutations
+
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                    histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
                    CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor):

@@ -5,21 +5,12 @@ from natsort import natsorted
 import subprocess
 import glob
 
-def run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type_or_donor_id, scATAC_dir,
-                                         scATAC_cell_number_filter, annotation_dir,
+def run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
+                                         cancer_type_or_donor_id, scATAC_dir,
                                          tissues_to_consider, ML_model, seed,
                                          n_optuna_trials_prebackward_selection,
                                          n_optuna_trials_backward_selection,
-                                         backwards_elim_dir,
-                                         tss_filter=None):
-    #### Filter data ####
-    scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
-    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
-    if not pd.isna(mutations_df).any().any():
-        # for compatibility
-        mutations_df = add_na_ranges(mutations_df)
-    scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
-    cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
+                                         backwards_elim_dir):
 
     os.makedirs(f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}", exist_ok=True)
 
@@ -75,9 +66,9 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
     # iters_dont_skip_arg = ",".join(iters_dont_skip)
     ####################################################
 
-    mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
-                                  histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
+    # mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
+    #                               histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+    #                               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
     scATAC_sources = construct_scATAC_sources(datasets)
 
     for seed in seed_range:
@@ -102,11 +93,20 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                     backwards_elim_dir=f"models/{ML_model}/" \
                     f"{cancer_type}/{scATAC_dir}/backwards_elimination_results"
 
-                    run_unclustered_data_analysis_helper(datasets, mutations_df, cancer_type, scATAC_dir,
-                                                         scATAC_cell_number_filter, annotation_dir, tissues_to_consider,
+                    scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
+                                                                  histologically_subtyped_mutations,
+                                                                  de_novo_seurat_clustering, cancer_types,
+                                                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+                                                                  datasets, scATAC_cell_number_filter,
+                                                                  annotation_dir, cancer_type)
+
+                    run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
+                                                         cancer_type, scATAC_dir,
+                                                         tissues_to_consider,
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
                                                          n_optuna_trials_backward_selection, backwards_elim_dir)
-                bp_path = f"../../figures/models/{ML_model}/{cancer_type}/{scATAC_dir}/backwards_elimination_results/bar_plot.png"
+                bp_path = f"../../figures/models/{ML_model}/{cancer_type}/{scATAC_dir}/" \
+                          f"backwards_elimination_results/bar_plot.png"
                 print(f"Bar plot path: {bp_path}")
                 if not os.path.exists(bp_path):
                     print(f"Plotting top features for seed {seed}...")
