@@ -479,7 +479,7 @@ def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATA
                          f"--seed={seed}",
                          f"--cell_number_filter={scATAC_cell_number_filter}",
                          f"--annotation={annotation_dir}",
-                         f"--top_features_to_plot={' '.join(top_features_to_plot)}"]
+                         f"--top_features_to_plot={','.join(top_features_to_plot)}"]
     if meso:
         command = command.append("--meso")
     elif SCLC:
