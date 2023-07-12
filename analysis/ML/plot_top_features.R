@@ -358,6 +358,7 @@ if (!robustness_analysis) {
   }
   
   print(paste0("Prepping feature importance dfs for seed ", seed, "..."))
+  print(prep_dfs_command)
   system(prep_dfs_command)
   print(paste0("Done prepping feature importance dfs for seed ", seed, "!"))
   
