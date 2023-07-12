@@ -296,7 +296,6 @@ robustness_feature_importance_barplot = args$robustness_feature_importance_barpl
 cancer_types = paste(cancer_types, collapse = " ")
 
 if (!robustness_analysis) {
-  print("Test")
   prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_importance_plots.py", 
                            "--datasets", 
                            paste(datasets, collapse=" "), 
