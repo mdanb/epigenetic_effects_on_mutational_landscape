@@ -109,7 +109,10 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot,
                                       datasets, scATAC_cell_number_filter,
                                       annotation_dir):
     for backwards_elim_dir in backwards_elim_dirs:
-        cancer_type = backwards_elim_dir.split("/")[-3]
+        temp = backwards_elim_dir.split("/")
+        cancer_type = temp[-4]
+        cancer_type_dir = temp[-3]
+
         scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
                                                           histologically_subtyped_mutations,
                                                           de_novo_seurat_clustering,
@@ -121,9 +124,6 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot,
         df = pd.DataFrame(columns=["features", "default_importance", "permutation_importance", "num_features",
                                    "score"])
 
-        temp = backwards_elim_dir.split("/")
-        cancer_type = temp[-4]
-        cancer_type_dir = temp[-3]
 
         figure_path = os.path.join("../../figures/models",
                                    ML_model,
