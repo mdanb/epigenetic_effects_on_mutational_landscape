@@ -9,12 +9,13 @@ import optuna
 import sys
 import re
 from sklearn.inspection import permutation_importance
-from analysis.ML.ML_utils import get_train_test_split
+from analysis.ML.ML_utils import get_train_test_split, load_data
 # sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML')
 sys.path.insert(0, '/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape')
 sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/')
 
 from analysis.ML.ML_utils import construct_scATAC_dir, construct_scATAC_sources, get_storage_name
+from analysis.ML.config import range_type
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--cancer_types', nargs="+", type=str,
@@ -34,6 +35,20 @@ parser.add_argument('--cell_number_filter', type=int)
 parser.add_argument('--seed', type=int, default=42)
 parser.add_argument('--tss_fragment_filter', nargs="+", type=int, default=[-1])
 parser.add_argument('--top_features_to_plot', nargs="+", type=int)
+group = parser.add_mutually_exclusive_group()
+group.add_argument("--SCLC", action="store_true", default=False)
+group.add_argument("--lung_subtyped", action="store_true", default=False)
+group.add_argument("--woo_pcawg", action="store_true", default=False)
+group.add_argument("--histologically_subtyped_mutations", action="store_true", default=False)
+group.add_argument("--de_novo_seurat_clustering", action="store_true", default=False)
+group.add_argument("--per_donor", action="store_true", default=False)
+group.add_argument("--CPTAC", action="store_true", default=False)
+group.add_argument("--meso", action="store_true", default=False)
+group.add_argument("--combined_CPTAC_ICGC", action="store_true", default=False)
+group.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
+                    default=None)
+group.add_argument("--RNA_subtyped", action="store_true", default=False)
+
 
 
 def construct_backwards_elim_dir(cancer_type, scATAC_source, cell_number_filter,
@@ -85,8 +100,23 @@ def get_relevant_backwards_elim_dirs(config):
     return backward_elim_dirs
 
 def prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot,
-                                      ML_model, optuna_base_dir):
+                                      ML_model, optuna_base_dir,
+                                      meso, SCLC, lung_subtyped, woo_pcawg,
+                                      histologically_subtyped_mutations,
+                                      de_novo_seurat_clustering,
+                                      CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+                                      datasets, scATAC_cell_number_filter,
+                                      annotation_dir):
     for backwards_elim_dir in backwards_elim_dirs:
+        cancer_type = backwards_elim_dir.split("/")[-3]
+        scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
+                                                          histologically_subtyped_mutations,
+                                                          de_novo_seurat_clustering,
+                                                          CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+                                                          datasets, scATAC_cell_number_filter,
+                                                          annotation_dir, cancer_type)
+        _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, config.seed)
+
         df = pd.DataFrame(columns=["features", "default_importance", "permutation_importance", "num_features",
                                    "score"])
 
@@ -111,9 +141,13 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot,
                 best_cv_score = best_trial.value
                 features = model.feature_names_in_
                 default_feature_importances = model.feature_importances_
-                permutation_importances = permutation_importance(model, )
-
+                print("Computing permutation importance...")
+                permutation_importances = permutation_importance(model, X_test.loc[:, features],
+                                                                 y_test, n_repeats=100,
+                                                                 random_state=config.seed)
+                print("Done!")
                 df_curr = pd.DataFrame((features, default_feature_importances,
+                                        permutation_importances,
                                         [len(features)] * len(features),
                                         [best_cv_score] * len(features))).T
                 df_curr.columns = df.columns
@@ -136,5 +170,10 @@ optuna_base_dir = construct_scATAC_dir(scATAC_sources=construct_scATAC_sources(c
                                        tss_filter=None,
                                        annotation_dir=config.annotation,
                                        seed=config.seed)
-_, X_test, _, y_test = get_train_test_split(model, , 0.10, )
-prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot, ML_model, optuna_base_dir)
+prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot, ML_model, optuna_base_dir,
+                                  config.meso, config.SCLC, config.lung_subtyped, config.woo_pcawg,
+                                  config.histologically_subtyped_mutations,
+                                  config.de_novo_seurat_clustering,
+                                  config.CPTAC, config.combined_CPTAC_ICGC, config.RNA_subtyped, config.per_donor,
+                                  config.datasets, config.scATAC_cell_number_filter,
+                                  config.annotation_dir)

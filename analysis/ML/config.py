@@ -19,6 +19,15 @@ parser.add_argument('--scATAC_cell_number_filter', type=int,
                     help='minimum number of cells per cell type in scATAC', default=100)
 parser.add_argument('--annotation_dir', type=str,
                     help='name of annotation directory', default="default_annotation")
+parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
+                    help='tss fragment filters to consider', default="")
+parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
+parser.add_argument("--ML_model", type=str, default="XGB")
+parser.add_argument('--test_backward_selection_iters', type=int, nargs="+", default=None)
+parser.add_argument('--seed_range', type=str)
+parser.add_argument('--n_optuna_trials_prebackward_selection', type=int, default=None)
+parser.add_argument('--n_optuna_trials_backward_selection', type=int, default=None)
+parser.add_argument('--top_features_to_plot', nargs="+", type=int)
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--SCLC", action="store_true", default=False)
 group.add_argument("--lung_subtyped", action="store_true", default=False)
@@ -32,15 +41,6 @@ group.add_argument("--combined_CPTAC_ICGC", action="store_true", default=False)
 group.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
                     default=None)
 group.add_argument("--RNA_subtyped", action="store_true", default=False)
-parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
-                    help='tss fragment filters to consider', default="")
-parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
-parser.add_argument("--ML_model", type=str, default="XGB")
-parser.add_argument('--test_backward_selection_iters', type=int, nargs="+", default=None)
-parser.add_argument('--seed_range', type=str)
-parser.add_argument('--n_optuna_trials_prebackward_selection', type=int, default=None)
-parser.add_argument('--n_optuna_trials_backward_selection', type=int, default=None)
-parser.add_argument('--top_features_to_plot', nargs="+", type=int)
 
 # parser.add_argument('--iters_dont_skip', nargs="+", type=str, default=["18"])
 # parser.add_argument('--num_iter_skips', type=int, default=5)

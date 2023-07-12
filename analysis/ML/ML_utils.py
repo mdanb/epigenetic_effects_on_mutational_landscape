@@ -8,7 +8,7 @@ import pickle
 import os
 from sklearn.metrics import r2_score
 from xgboost import XGBRegressor
-from sklearn.model_selection import cross_val_score, KFold
+from sklearn.model_selection import cross_val_score
 import optuna
 
 # from sqlalchemy.orm import sessionmaker
@@ -19,12 +19,12 @@ import optuna
 
 ### Load Data helpers ###
 def load_data(meso, SCLC, lung_subtyped, woo_pcawg,
-              histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+              histologically_subtyped_mutations, de_novo_seurat_clustering,
               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
               datasets, scATAC_cell_number_filter, annotation_dir,
               cancer_type_or_donor_id, tss_filter=None):
     mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
-                                  histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+                                  histologically_subtyped_mutations, de_novo_seurat_clustering,
                                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
 
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
@@ -37,7 +37,7 @@ def load_data(meso, SCLC, lung_subtyped, woo_pcawg,
     return scATAC_df, cancer_specific_mutations
 
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
-                   histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+                   histologically_subtyped_mutations, de_novo_seurat_clustering,
                    CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor):
     if meso:
         mutations_df = load_meso()
@@ -50,7 +50,7 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
     elif histologically_subtyped_mutations:
         mutations_df = load_histologically_subtyped_mutations()
     elif de_novo_seurat_clustering:
-        mutations_df = load_de_novo_seurat_clustered_cancers(cancer_types)
+        mutations_df = load_de_novo_seurat_clustered_cancers()
     elif CPTAC:
         mutations_df = load_CPTAC()
     elif combined_CPTAC_ICGC:
@@ -58,7 +58,7 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
     elif RNA_subtyped:
         mutations_df = load_RNA_subtyped_mutations()
     elif per_donor:
-        mutations_df = load_per_donor_mutations(cancer_types[0])
+        mutations_df = load_per_donor_mutations()
     else:
         mutations_df = load_agg_mutations()
     return mutations_df
@@ -450,7 +450,7 @@ def save_iter_i_model_test_performance(i, datasets, ML_model, scATAC_cell_number
         scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
         scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
         mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
-                                      histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
+                                      histologically_subtyped_mutations, de_novo_seurat_clustering,
                                       CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
 
         if not pd.isna(mutations_df).any().any():

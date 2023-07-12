@@ -36,6 +36,19 @@ parser <- add_option(parser, c("--robustness_test_perf_boxplot"),
                      default=F)
 parser <- add_option(parser, c("--robustness_seed_range"), type="character",
                      default="1-100")
+parser <- add_option(parser, c("--SCLC"), action="store_true", default=F)
+parser <- add_option(parser, c("--lung_subtyped"), action="store_true", default=F)
+parser <- add_option(parser, c("--woo_pcawg"), action="store_true", default=F)
+parser <- add_option(parser, c("--histologically_subtyped_mutations"), 
+                     action="store_true", default=F)
+parser <- add_option(parser, c("--de_novo_seurat_clustering"), 
+                     action="store_true", default=F)
+parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
+parser <- add_option(parser, c("--CPTAC"), action="store_true", default=F)
+parser <- add_option(parser, c("--meso"), action="store_true", default=F)
+parser <- add_option(parser, c("--combined_CPTAC_ICGC"), action="store_true", default=F)
+parser <- add_option(parser, c("--donor_range"), type="character", default=NULL)
+parser <- add_option(parser, c("--RNA_subtyped"), action="store_true", default=F)
 
 # args = parse_args(parser, args = c("--cancer_types=Lung-AdenoCA",
 #                                    "--robustness_analysis",
@@ -294,6 +307,30 @@ if (!robustness_analysis) {
                                                            collapse = " "),
                            "--ML_model", ML_model,
                            "--cancer_types", cancer_types, "--seed", seed)
+  if (SCLC) {
+    prep_dfs_command = paste(prep_dfs_command, "--SCLC")
+  } else if (woo_pcawg) {
+    prep_dfs_command = paste(prep_dfs_command, "--woo_pcawg")
+  } else if (histologically_subtyped_mutations) {
+    prep_dfs_command = paste(prep_dfs_command, "--histologically_subtyped_mutations")
+  } else if (de_novo_seurat_clustering) {
+    prep_dfs_command = paste(prep_dfs_command, "--de_novo_seurat_clustering")
+  } else if (per_donor) {
+    prep_dfs_command = paste(prep_dfs_command, "--per_donor")
+  } else if (CPTAC) {
+    prep_dfs_command = paste(prep_dfs_command, "--CPTAC")
+  } else if (meso) {
+    prep_dfs_command = paste(prep_dfs_command, "--meso")
+  } else if (combined_CPTAC_ICGC) {
+    prep_dfs_command = paste(prep_dfs_command, "--combined_CPTAC_ICGC")
+  } else if (donor_range) {
+    prep_dfs_command = paste(prep_dfs_command, "--donor_range")
+  } else if (RNA_subtyped) {
+    prep_dfs_command = paste(prep_dfs_command, "--RNA_subtyped")
+  } else if (lung_subtyped) {
+    prep_dfs_command = paste(prep_dfs_command, "--lung_subtyped")
+  }
+  
   print(paste0("Prepping feature importance dfs for seed ", seed, "..."))
   system(prep_dfs_command)
   print(paste0("Done prepping feature importance dfs for seed ", seed, "!"))
