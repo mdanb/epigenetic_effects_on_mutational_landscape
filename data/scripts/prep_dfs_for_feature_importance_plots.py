@@ -9,10 +9,11 @@ import optuna
 import sys
 import re
 from sklearn.inspection import permutation_importance
-from analysis.ML.ML_utils import get_train_test_split, load_data
-# sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML')
 sys.path.insert(0, '/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape')
 sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/')
+
+from analysis.ML.ML_utils import get_train_test_split, load_data
+# sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML')
 
 from analysis.ML.ML_utils import construct_scATAC_dir, construct_scATAC_sources, get_storage_name
 from analysis.ML.config import range_type
