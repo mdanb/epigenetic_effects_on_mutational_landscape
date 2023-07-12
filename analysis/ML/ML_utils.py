@@ -500,7 +500,7 @@ def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATA
         command = command.append("--RNA_subtyped")
     elif per_donor:
         command = command.append("--per_donor")
-
+    print(command)
     subprocess.call(command)
     print(f"Done plotting top features for seed {seed}!")
 
