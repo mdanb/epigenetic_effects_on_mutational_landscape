@@ -324,14 +324,16 @@ if (!robustness_analysis) {
   prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_importance_plots.py", 
                            "--datasets", 
                            paste(datasets, collapse=" "), 
-                           "--annotation", annotation, "--tissues_to_consider",
-                           paste(tissues_to_consider, collapse = " "), 
+                           "--annotation", annotation, 
+                           "--tissues_to_consider",paste(tissues_to_consider, 
+                                                         collapse = " "), 
                            "--cell_number_filter", cell_number_filter, 
                            "--top_features_to_plot", top_features_to_plot,
                            "--tss_fragment_filter",  paste(tss_fragment_filter, 
                                                            collapse = " "),
                            "--ML_model", ML_model,
-                           "--cancer_types", cancer_types, "--seed", seed)
+                           "--cancer_types", cancer_types, 
+                           "--seed", seed)
   if (SCLC) {
     prep_dfs_command = paste(prep_dfs_command, "--SCLC")
   } else if (woo_pcawg) {

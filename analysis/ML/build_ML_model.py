@@ -1,6 +1,6 @@
 #### Imports ####
 from ML_utils import *
-from config import *
+from config import create_parser
 from natsort import natsorted
 import glob
 
@@ -152,6 +152,39 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
 #         except:
 #             pass
 # else:
+parser = create_parser()
+config = parser.parse_args()
+cancer_types = config.cancer_types
+# run_clustered_mutations = config.clustered_mutations
+datasets = sorted(config.datasets)
+scATAC_cell_number_filter = config.scATAC_cell_number_filter
+annotation_dir = config.annotation_dir
+SCLC = config.SCLC
+CPTAC = config.CPTAC
+combined_CPTAC_ICGC = config.combined_CPTAC_ICGC
+tissues_to_consider = config.tissues_to_consider
+# tss_filtered = config.tss_filtered
+tss_fragment_filter = config.tss_fragment_filter
+ML_model = config.ML_model
+lung_subtyped = config.lung_subtyped
+woo_pcawg = config.woo_pcawg
+histologically_subtyped_mutations = config.histologically_subtyped_mutations
+de_novo_seurat_clustering = config.de_novo_seurat_clustering
+meso = config.meso
+RNA_subtyped = config.RNA_subtyped
+per_donor = config.per_donor
+donor_range = config.donor_range
+test_backward_selection_iters = config.test_backward_selection_iters
+seed_range = config.seed_range
+start, end = map(int, seed_range.split('-'))
+seed_range = range(start, end + 1)
+n_optuna_trials_prebackward_selection = config.n_optuna_trials_prebackward_selection
+n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
+top_features_to_plot = config.top_features_to_plot
+save_test_set_perf = config.save_test_set_perf
+make_plots = config.make_plots
+
+
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
