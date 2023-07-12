@@ -307,6 +307,7 @@ donor_range = args$donor_range
 RNA_subtyped = args$RNA_subtyped
 
 if (!robustness_analysis) {
+  print("test")
   prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_importance_plots.py", 
                            "--datasets", 
                            paste(datasets, collapse=" "), 
@@ -318,6 +319,7 @@ if (!robustness_analysis) {
                                                            collapse = " "),
                            "--ML_model", ML_model,
                            "--cancer_types", cancer_types, "--seed", seed)
+  print("test 2")
   if (SCLC) {
     prep_dfs_command = paste(prep_dfs_command, "--SCLC")
   } else if (woo_pcawg) {
