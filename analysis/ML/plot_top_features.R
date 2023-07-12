@@ -294,6 +294,10 @@ robustness_seed_range = as.integer(unlist(strsplit(args$robustness_seed_range, s
 robustness_test_perf_boxplot = args$robustness_test_perf_boxplot
 robustness_feature_importance_barplot = args$robustness_feature_importance_barplot
 cancer_types = paste(cancer_types, collapse = " ")
+print(robustness_analysis)
+print(robustness_seed_range)
+print(robustness_test_perf_boxplot)
+print(robustness_feature_importance_barplot)
 # SCLC = args$SCLC
 # lung_subtyped = args$lung_subtyped
 # woo_pcawg = args$woo_pcawg
