@@ -119,7 +119,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
             if save_test_set_perf:
                 total_num_features = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))) + 1
                 for iter in range(total_num_features - 1):
-                    if total_num_features - iter in top_features_to_plot:
+                    if total_num_features - iter in str(top_features_to_plot):
                         save_iter_i_model_test_performance(iter + 1,
                                                            datasets, ML_model, scATAC_cell_number_filter,
                                                            tss_fragment_filter,
