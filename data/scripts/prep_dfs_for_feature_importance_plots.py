@@ -177,4 +177,4 @@ prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot, ML_
                                   config.de_novo_seurat_clustering,
                                   config.CPTAC, config.combined_CPTAC_ICGC, config.RNA_subtyped, config.per_donor,
                                   config.datasets, config.cell_number_filter,
-                                  config.annotation_dir)
+                                  config.annotation)
