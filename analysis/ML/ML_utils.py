@@ -10,6 +10,7 @@ from sklearn.metrics import r2_score
 from xgboost import XGBRegressor
 from sklearn.model_selection import cross_val_score
 import optuna
+import subprocess
 
 # from sqlalchemy.orm import sessionmaker
 
@@ -464,6 +465,44 @@ def save_iter_i_model_test_performance(i, datasets, ML_model, scATAC_cell_number
                                  f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
                                  f"model_iteration_{i}_test_performance.txt"
         print_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
+
+#### Call other scripts ####
+def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
+                           annotation_dir, top_features_to_plot, meso, SCLC, lung_subtyped, woo_pcawg,
+                           histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
+                           combined_CPTAC_ICGC, RNA_subtyped, per_donor):
+    print(f"Plotting top features for seed {seed}...")
+    command = ["Rscript", "plot_top_features.R",
+                         f"--cancer_types={cancer_types_arg}",
+                         f"--ML_model={ML_model}",
+                         f"--datasets={datasets_arg}",
+                         f"--seed={seed}",
+                         f"--cell_number_filter={scATAC_cell_number_filter}",
+                         f"--annotation={annotation_dir}",
+                         f"--top_features_to_plot={top_features_to_plot}"]
+    if meso:
+        command = command.append("--meso")
+    elif SCLC:
+        command = command.append("--SCLC")
+    elif lung_subtyped:
+        command = command.append("--lung_subtyped")
+    elif woo_pcawg:
+        command = command.append("--woo_pcawg")
+    elif histologically_subtyped_mutations:
+        command = command.append("--histologically_subtyped_mutations")
+    elif de_novo_seurat_clustering:
+        command = command.append("--de_novo_seurat_clustering")
+    elif CPTAC:
+        command = command.append("--CPTAC")
+    elif combined_CPTAC_ICGC:
+        command = command.append("--combined_CPTAC_ICGC")
+    elif RNA_subtyped:
+        command = command.append("--RNA_subtyped")
+    elif per_donor:
+        command = command.append("--per_donor")
+
+    subprocess.call(command)
+    print(f"Done plotting top features for seed {seed}!")
 
 #### Other ####
 def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed):
