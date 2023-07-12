@@ -280,6 +280,7 @@ top_features_to_plot = args$top_features_to_plot
 print(top_features_to_plot)
 top_features_to_plot = as.integer(unlist(strsplit(top_features_to_plot, 
                                                   split = ",")))
+print(top_features_to_plot)
 # iters_dont_skip = args$iters_dont_skip
 # iters_dont_skip = as.integer(unlist(strsplit(iters_dont_skip, split = ",")))
 datasets = unlist(strsplit(args$datasets, split = ","))
