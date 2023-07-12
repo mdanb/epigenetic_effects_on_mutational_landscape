@@ -145,7 +145,7 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot,
                 print("Computing permutation importance...")
                 permutation_importances = permutation_importance(model, X_test.loc[:, features],
                                                                  y_test, n_repeats=100,
-                                                                 random_state=config.seed)
+                                                                 random_state=config.seed).importances_mean
                 print("Done!")
                 df_curr = pd.DataFrame((features, default_feature_importances,
                                         permutation_importances,
