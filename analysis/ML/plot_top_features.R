@@ -203,7 +203,7 @@ construct_pie_charts <- function(args) {
   }
 }
 
-ggplot_barplot_helper <- function(df, title, savepath, accumulated_imp=F) {
+ggplot_barplot_helper <- function(df, title, savepath, y, accumulated_imp=F) {
   df$num_features_f = factor(df$num_features, levels=unique(df$num_features))
   colors = get_n_colors(20, 1)
   
@@ -215,9 +215,9 @@ ggplot_barplot_helper <- function(df, title, savepath, accumulated_imp=F) {
                          sep=""))
   }
   names(to) <- from
-  plot = ggplot(df, aes(x=reorder_within(features, -importance, within=num_features_f,
+  plot = ggplot(df, aes(x=reorder_within(features, -!!sym(y), within=num_features_f,
                                          sep="."), 
-                        y=importance, fill=features)) +
+                        y=!!sym(y), fill=features)) +
     facet_wrap(~num_features_f, nrow=1, 
                labeller = as_labeller(to), scales = "free") +
     geom_bar(stat="identity", width=1, color="white") +
@@ -237,7 +237,8 @@ ggplot_barplot_helper <- function(df, title, savepath, accumulated_imp=F) {
     #               as.character(round(unique(df$score*100), 1)), ")")) +
     ggtitle(title) +
     theme(plot.title = element_text(hjust = 0.5))
-  ggsave(paste(savepath, "bar_plot.png", sep="/"), width = 20, height = 15, plot)
+  ggsave(paste(savepath, paste(y, "bar_plot.png", sep="_"), sep="/"), 
+         width = 20, height = 15, plot)
 }
 
 construct_bar_plots <- function(args) {
@@ -247,7 +248,8 @@ construct_bar_plots <- function(args) {
     df = as_tibble(read.csv(file))
     title = unlist(strsplit(dir, split ="/"))
     title = title[length(title) - 2]
-    ggplot_barplot_helper(df, title, savepath=dir)
+    ggplot_barplot_helper(df, title, savepath=dir, y="permutation_importance" )
+    ggplot_barplot_helper(df, title, savepath=dir, y="default_importance")
   }
 }
 
