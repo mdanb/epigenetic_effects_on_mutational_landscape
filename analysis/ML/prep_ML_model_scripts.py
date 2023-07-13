@@ -20,6 +20,8 @@ group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
 parser.add_argument('--cores', type=str, default="8")
 parser.add_argument('--time', type=str, default="24:00:00")
+parser.add_argument('--feature_importance_method', type=str)
+
 
 config = parser.parse_args()
 # datasets = " ".join(sorted(config.datasets))
@@ -37,6 +39,7 @@ meso = config.meso
 cores = config.cores
 time = config.time
 top_features_to_plot = config.top_features_to_plot
+feature_importance_method = config.feature_importance_method
 
 for seed_range in seed_ranges:
     script_filename = "_".join(["cancer_types", "_".join(config.cancer_types),
@@ -46,7 +49,8 @@ for seed_range in seed_ranges:
                                 "seed_range", seed_range,
                                 "top_features_to_plot", "_".join(config.top_features_to_plot),
                                 "n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
-                                "n_optuna_trials_backward_selection", n_optuna_trials_backward_selection])
+                                "n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
+                                "feature_importance_method", feature_importance_method])
     if meso:
         script_filename = script_filename + "_" + "meso"
     script_filename = f"{script_filename}.sh"
@@ -57,7 +61,8 @@ for seed_range in seed_ranges:
                              "--seed_range", seed_range,
                              "--top_features_to_plot", " ".join(config.top_features_to_plot),
                              "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
-                             "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection])
+                             "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
+                             "--feature_importance_method", feature_importance_method])
 
     if meso:
         command_args = command_args + " " + "--meso"
