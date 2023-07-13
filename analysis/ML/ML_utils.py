@@ -238,7 +238,7 @@ def get_top_n_features_with_importances(clf, n, features, feature_importance_met
     feat_importance_idx = np.argsort(feature_importances)[::-1]
     top_n_feats = features[feat_importance_idx][:n]
 
-    return top_n_feats, feature_importances.iloc[feat_importance_idx][::-1], df
+    return top_n_feats, feature_importances[feat_importance_idx][::-1], df
 
 def print_and_save_features(features, filepath, top=True):
     n = len(features)
