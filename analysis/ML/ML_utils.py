@@ -225,7 +225,7 @@ def get_top_n_features(clf, n, features, feature_importance_method, X, y, seed,
             assert not (X is None or y is None or seed is None)
             print("Computing permutation importance...")
             permutation_importance_out = permutation_importance(clf, X.loc[:, features], y, n_repeats=100,
-                                                                random_state=seed)
+                                                                random_state=seed, n_jobs=-1)
             feature_importances = permutation_importance_out.importances_mean
             std = permutation_importance_out.importances_std
             print("Done!")
