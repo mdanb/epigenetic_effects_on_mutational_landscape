@@ -213,21 +213,33 @@ def get_train_test_split(X, y, test_size, seed):
     return X_train, X_test, y_train, y_test
 
 #### Feature Selection helpers ####
-def get_top_n_features_with_importances(clf, n, features, feature_importance_method, X, y, seed):
-    if feature_importance_method == "default_importance":
-        feature_importances = clf.feature_importances_
-    elif feature_importance_method == "permutation_importance":
-        assert not (X is None or y is None or seed is None)
-        print("Computing permutation importance...")
-        feature_importances = permutation_importance(clf, X.loc[:, features],
-                                                     y, n_repeats=100,
-                                                     random_state=seed).importances_mean
-        print("Done!")
+def get_top_n_features_with_importances(clf, n, features, feature_importance_method, X, y, seed,
+                                        df, best_cv_score, fp_for_fi):
+    std = [np.NaN] * len(features)
+    if n in df["num_features"]:
+        feature_importances = df.loc[df["num_features"] == n][feature_importance_method]
+    else:
+        if feature_importance_method == "default_importance":
+            feature_importances = clf.feature_importances_
+        elif feature_importance_method == "permutation_importance":
+            assert not (X is None or y is None or seed is None)
+            print("Computing permutation importance...")
+            permutation_importance_out = permutation_importance(clf, X.loc[:, features], y, n_repeats=100,
+                                                                random_state=seed)
+            feature_importances = permutation_importance_out.importances_mean
+            std = feature_importances.importances_std
+            print("Done!")
+
+        df_curr = pd.DataFrame((features, feature_importances, [len(features)] * len(features),
+                                [best_cv_score] * len(features), std)).T
+        df_curr.columns = df.columns
+        df = pd.concat((df, df_curr))
+        df.to_csv(fp_for_fi, index=False)
 
     feat_importance_idx = np.argsort(feature_importances)[::-1]
     top_n_feats = features[feat_importance_idx][:n]
 
-    return top_n_feats, feature_importances[feat_importance_idx][::-1]
+    return top_n_feats, feature_importances[feat_importance_idx][::-1], df
 
 def print_and_save_features(features, filepath, top=True):
     n = len(features)
@@ -270,8 +282,21 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 top=False)
         num_iterations = X_train.shape[1]
 
-    df = pd.DataFrame(columns=["features", feature_importance_method, "num_features",
-                                "score"])
+    figure_path = os.path.join("../../figures/models",
+                               ML_model,
+                               cancer_type_or_donor_id,
+                               scATAC_dir,
+                               "backwards_elimination_results")
+    Path(figure_path).mkdir(parents=True, exist_ok=True)
+    filename_df_for_fi = "df_for_feature_importance_plots"
+    if feature_importance_method != "default_importance":
+        filename_df_for_fi = filename_df_for_fi + f"_{feature_importance_method}"
+    filename_df_for_fi = filename_df_for_fi + ".csv"
+    fp_for_fi = figure_path + "/" + filename_df_for_fi
+    if os.path.exists(fp_for_fi):
+        df = pd.read_csv(fp_for_fi)
+    else:
+        df = pd.DataFrame(columns=["features", feature_importance_method, "num_features", "score", "std"])
 
     for idx in range(1, num_iterations):
         filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}"
@@ -299,36 +324,19 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         best_model.fit(X=X_train, y=y_train)
         pickle.dump(best_model, open(f"{backwards_elim_dir}/{model_savefile}", 'wb'))
         # grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
-        top_n_feats, feature_importances = get_top_n_features_with_importances(best_model, len(X_train.columns) - 1,
-                                                                               X_train.columns,
-                                                                               feature_importance_method, X_train,
-                                                                               y_train, seed)
         best_trial = study.best_trial
         best_cv_score = best_trial.value
 
-        df_curr = pd.DataFrame((top_n_feats,
-                                feature_importances,
-                                [len(top_n_feats)] * len(top_n_feats),
-                                [best_cv_score] * len(top_n_feats))).T
-        df_curr.columns = df.columns
-        df = pd.concat((df, df_curr))
+        top_n_feats, feature_importances, df = get_top_n_features_with_importances(best_model, len(X_train.columns) - 1,
+                                                                                   X_train.columns,
+                                                                                   feature_importance_method, X_train,
+                                                                                   y_train, seed, df,
+                                                                                   best_cv_score=best_cv_score,
+                                                                                   fp_for_fi=fp_for_fi)
 
         X_train = X_train.loc[:, top_n_feats]
         if not os.path.exists(filepath):
             print_and_save_features(top_n_feats, filepath=filepath, top=True)
-
-
-    figure_path = os.path.join("../../figures/models",
-                               ML_model,
-                               cancer_type_or_donor_id,
-                               scATAC_dir,
-                               "backwards_elimination_results")
-    Path(figure_path).mkdir(parents=True, exist_ok=True)
-    filename = "df_for_feature_importance_plots"
-    if feature_importance_method != "default_importance":
-        filename = filename + f"_{feature_importance_method}"
-    filename = filename + ".csv"
-    df.to_csv(os.path.join(figure_path, filename), index=False)
 
 #### Model train/val/test helpers ####
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
