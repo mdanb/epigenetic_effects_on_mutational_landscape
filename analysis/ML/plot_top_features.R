@@ -250,7 +250,7 @@ construct_bar_plots <- function(args) {
     df = as_tibble(read.csv(file))
     title = unlist(strsplit(dir, split ="/"))
     title = title[length(title) - 2]
-    df = df[df$top_features_to_plot %in% df$num_features, ]
+    df = df[df$num_features %in% top_features_to_plot, ]
     ggplot_barplot_helper(df, title, savepath=dir, 
                           ylab=gsub("_", " ", args$feature_importance_method), 
                           y=args$feature_importance_method)
