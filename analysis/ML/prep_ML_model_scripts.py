@@ -21,6 +21,7 @@ group.add_argument("--meso", action="store_true", default=False)
 parser.add_argument('--cores', type=str, default="8")
 parser.add_argument('--time', type=str, default="24:00:00")
 parser.add_argument('--feature_importance_method', type=str)
+group.add_argument("--make_plots", action="store_true", default=False)
 
 
 config = parser.parse_args()
@@ -40,6 +41,7 @@ cores = config.cores
 time = config.time
 top_features_to_plot = config.top_features_to_plot
 feature_importance_method = config.feature_importance_method
+make_plots = config.make_plots
 
 for seed_range in seed_ranges:
     script_filename = "_".join(["cancer_types", "_".join(config.cancer_types),
@@ -64,6 +66,8 @@ for seed_range in seed_ranges:
 
     if meso:
         command_args = command_args + " " + "--meso"
+    if make_plots:
+        command_args = command_args + " " + "--make_plots"
 
     python_command = "python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py " + \
                      command_args
