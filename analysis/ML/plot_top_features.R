@@ -36,19 +36,20 @@ parser <- add_option(parser, c("--robustness_test_perf_boxplot"),
                      default=F)
 parser <- add_option(parser, c("--robustness_seed_range"), type="character",
                      default="1-100")
-parser <- add_option(parser, c("--SCLC"), action="store_true", default=F)
-parser <- add_option(parser, c("--lung_subtyped"), action="store_true", default=F)
-parser <- add_option(parser, c("--woo_pcawg"), action="store_true", default=F)
-parser <- add_option(parser, c("--histologically_subtyped_mutations"), 
-                     action="store_true", default=F)
-parser <- add_option(parser, c("--de_novo_seurat_clustering"), 
-                     action="store_true", default=F)
-parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
-parser <- add_option(parser, c("--CPTAC"), action="store_true", default=F)
-parser <- add_option(parser, c("--meso"), action="store_true", default=F)
-parser <- add_option(parser, c("--combined_CPTAC_ICGC"), action="store_true", default=F)
-parser <- add_option(parser, c("--donor_range"), type="character", default=NULL)
-parser <- add_option(parser, c("--RNA_subtyped"), action="store_true", default=F)
+parser <- add_option(parser, c("--feature_importance_method"), type="character")
+# parser <- add_option(parser, c("--SCLC"), action="store_true", default=F)
+# parser <- add_option(parser, c("--lung_subtyped"), action="store_true", default=F)
+# parser <- add_option(parser, c("--woo_pcawg"), action="store_true", default=F)
+# parser <- add_option(parser, c("--histologically_subtyped_mutations"), 
+#                      action="store_true", default=F)
+# parser <- add_option(parser, c("--de_novo_seurat_clustering"), 
+#                      action="store_true", default=F)
+# parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
+# parser <- add_option(parser, c("--CPTAC"), action="store_true", default=F)
+# parser <- add_option(parser, c("--meso"), action="store_true", default=F)
+# parser <- add_option(parser, c("--combined_CPTAC_ICGC"), action="store_true", default=F)
+# parser <- add_option(parser, c("--donor_range"), type="character", default=NULL)
+# parser <- add_option(parser, c("--RNA_subtyped"), action="store_true", default=F)
 
 # args = parse_args(parser, args = c("--cancer_types=Lung-AdenoCA",
 #                                    "--robustness_analysis",
@@ -241,13 +242,17 @@ ggplot_barplot_helper <- function(df, title, savepath, y, ylab,
 construct_bar_plots <- function(args) {
   dirs = get_relevant_backwards_elim_dirs(args)
   for (dir in dirs) {
-    file = paste(dir, "df_for_feature_importance_plots.csv", sep="/")
+    file = paste(dir, "df_for_feature_importance_plots", sep="/")
+    if (args$feature_importance_method != "default_importance") {
+      file = paste(file, args$feature_importance_method, sep="_")
+    }
+    file = paste(file, "csv", sep=".") 
     df = as_tibble(read.csv(file))
     title = unlist(strsplit(dir, split ="/"))
     title = title[length(title) - 2]
-    ggplot_barplot_helper(df, title, savepath=dir, ylab="Permutation Importance", 
-                          y="permutation_importance" )
-    ggplot_barplot_helper(df, title, savepath=dir, y="Default Importance")
+    ggplot_barplot_helper(df, title, savepath=dir, 
+                          ylab=gsub("_", " ", args$feature_importance_method), 
+                          y=args$feature_importance_method)
   }
 }
 
@@ -296,6 +301,7 @@ robustness_seed_range = as.integer(unlist(strsplit(args$robustness_seed_range, s
 robustness_test_perf_boxplot = args$robustness_test_perf_boxplot
 robustness_feature_importance_barplot = args$robustness_feature_importance_barplot
 cancer_types = paste(cancer_types, collapse = " ")
+feature_importance_method = args$feature_importance_method
 # print(top_features_to_plot)
 # print(datasets)
 # print(cell_number_filter)
@@ -308,60 +314,60 @@ cancer_types = paste(cancer_types, collapse = " ")
 # print(robustness_seed_range)
 # print(robustness_test_perf_boxplot)
 # print(robustness_feature_importance_barplot)
-SCLC = args$SCLC
-lung_subtyped = args$lung_subtyped
-woo_pcawg = args$woo_pcawg
-histologically_subtyped_mutations = args$histologically_subtyped_mutations
-de_novo_seurat_clustering = args$de_novo_seurat_clustering
-per_donor = args$per_donor
-CPTAC = args$CPTAC
-meso = args$meso
-combined_CPTAC_ICGC = args$combined_CPTAC_ICGC
-donor_range = args$donor_range
-RNA_subtyped = args$RNA_subtyped
+# SCLC = args$SCLC
+# lung_subtyped = args$lung_subtyped
+# woo_pcawg = args$woo_pcawg
+# histologically_subtyped_mutations = args$histologically_subtyped_mutations
+# de_novo_seurat_clustering = args$de_novo_seurat_clustering
+# per_donor = args$per_donor
+# CPTAC = args$CPTAC
+# meso = args$meso
+# combined_CPTAC_ICGC = args$combined_CPTAC_ICGC
+# donor_range = args$donor_range
+# RNA_subtyped = args$RNA_subtyped
 
 if (!robustness_analysis) {
-  prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_importance_plots.py", 
-                           "--datasets", 
-                           paste(datasets, collapse=" "), 
-                           "--annotation", annotation, 
-                           "--tissues_to_consider",paste(tissues_to_consider, 
-                                                         collapse = " "), 
-                           "--cell_number_filter", cell_number_filter, 
-                           "--top_features_to_plot", top_features_to_plot,
-                           "--tss_fragment_filter",  paste(tss_fragment_filter, 
-                                                           collapse = " "),
-                           "--ML_model", ML_model,
-                           "--cancer_types", cancer_types, 
-                           "--seed", seed)
-  if (SCLC) {
-    prep_dfs_command = paste(prep_dfs_command, "--SCLC")
-  } else if (woo_pcawg) {
-    prep_dfs_command = paste(prep_dfs_command, "--woo_pcawg")
-  } else if (histologically_subtyped_mutations) {
-    prep_dfs_command = paste(prep_dfs_command, "--histologically_subtyped_mutations")
-  } else if (de_novo_seurat_clustering) {
-    prep_dfs_command = paste(prep_dfs_command, "--de_novo_seurat_clustering")
-  } else if (per_donor) {
-    prep_dfs_command = paste(prep_dfs_command, "--per_donor")
-  } else if (CPTAC) {
-    prep_dfs_command = paste(prep_dfs_command, "--CPTAC")
-  } else if (meso) {
-    prep_dfs_command = paste(prep_dfs_command, "--meso")
-  } else if (combined_CPTAC_ICGC) {
-    prep_dfs_command = paste(prep_dfs_command, "--combined_CPTAC_ICGC")
-  } else if (!is.null(donor_range)) {
-    prep_dfs_command = paste(prep_dfs_command, "--donor_range")
-  } else if (RNA_subtyped) {
-    prep_dfs_command = paste(prep_dfs_command, "--RNA_subtyped")
-  } else if (lung_subtyped) {
-    prep_dfs_command = paste(prep_dfs_command, "--lung_subtyped")
-  }
-  
-  print(paste0("Prepping feature importance dfs for seed ", seed, "..."))
-  print(prep_dfs_command)
-  system(prep_dfs_command)
-  print(paste0("Done prepping feature importance dfs for seed ", seed, "!"))
+  # prep_dfs_command = paste("python3 ../../data/scripts/prep_dfs_for_feature_importance_plots.py", 
+  #                          "--datasets", 
+  #                          paste(datasets, collapse=" "), 
+  #                          "--annotation", annotation, 
+  #                          "--tissues_to_consider",paste(tissues_to_consider, 
+  #                                                        collapse = " "), 
+  #                          "--cell_number_filter", cell_number_filter, 
+  #                          "--top_features_to_plot", top_features_to_plot,
+  #                          "--tss_fragment_filter",  paste(tss_fragment_filter, 
+  #                                                          collapse = " "),
+  #                          "--ML_model", ML_model,
+  #                          "--cancer_types", cancer_types, 
+  #                          "--seed", seed)
+  # if (SCLC) {
+  #   prep_dfs_command = paste(prep_dfs_command, "--SCLC")
+  # } else if (woo_pcawg) {
+  #   prep_dfs_command = paste(prep_dfs_command, "--woo_pcawg")
+  # } else if (histologically_subtyped_mutations) {
+  #   prep_dfs_command = paste(prep_dfs_command, "--histologically_subtyped_mutations")
+  # } else if (de_novo_seurat_clustering) {
+  #   prep_dfs_command = paste(prep_dfs_command, "--de_novo_seurat_clustering")
+  # } else if (per_donor) {
+  #   prep_dfs_command = paste(prep_dfs_command, "--per_donor")
+  # } else if (CPTAC) {
+  #   prep_dfs_command = paste(prep_dfs_command, "--CPTAC")
+  # } else if (meso) {
+  #   prep_dfs_command = paste(prep_dfs_command, "--meso")
+  # } else if (combined_CPTAC_ICGC) {
+  #   prep_dfs_command = paste(prep_dfs_command, "--combined_CPTAC_ICGC")
+  # } else if (!is.null(donor_range)) {
+  #   prep_dfs_command = paste(prep_dfs_command, "--donor_range")
+  # } else if (RNA_subtyped) {
+  #   prep_dfs_command = paste(prep_dfs_command, "--RNA_subtyped")
+  # } else if (lung_subtyped) {
+  #   prep_dfs_command = paste(prep_dfs_command, "--lung_subtyped")
+  # }
+  # 
+  # print(paste0("Prepping feature importance dfs for seed ", seed, "..."))
+  # print(prep_dfs_command)
+  # system(prep_dfs_command)
+  # print(paste0("Done prepping feature importance dfs for seed ", seed, "!"))
   
   tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
   
