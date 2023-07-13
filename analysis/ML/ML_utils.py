@@ -213,7 +213,7 @@ def get_train_test_split(X, y, test_size, seed):
     return X_train, X_test, y_train, y_test
 
 #### Feature Selection helpers ####
-def get_top_n_features_with_importances(clf, n, features, feature_importance_method, X, y, seed,
+def get_top_n_features(clf, n, features, feature_importance_method, X, y, seed,
                                         df, best_cv_score, fp_for_fi):
     std = [np.NaN] * len(features)
     if n + 1 in df["num_features"].array:
@@ -237,11 +237,11 @@ def get_top_n_features_with_importances(clf, n, features, feature_importance_met
         df.to_csv(fp_for_fi, index=False)
     feat_importance_idx = np.argsort(feature_importances)[::-1]
     top_n_feats = features[feat_importance_idx][:n]
-    print(feature_importances)
-    print(feat_importance_idx)
-    print(feature_importances[feat_importance_idx])
-    print("Hello")
-    return top_n_feats, feature_importances[feat_importance_idx][::-1], df
+    # print(feature_importances)
+    # print(feat_importance_idx)
+    # print(feature_importances[feat_importance_idx])
+    # print("Hello")
+    return top_n_feats, df
 
 def print_and_save_features(features, filepath, top=True):
     n = len(features)
@@ -261,11 +261,11 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 starting_clf=None, starting_n=None):
     os.makedirs(backwards_elim_dir, exist_ok=True)
     if X_train.shape[1] > 20:
-        top_n_feats, feature_importances = get_top_n_features_with_importances(starting_clf, starting_n,
+        top_n_feats, feature_importances = get_top_n_features(starting_clf, starting_n,
                                                                                X_train.columns.values,
                                                                                feature_importance_method,
                                                                                X_train, y_train, seed)
-        all_feature_rankings, feature_importances = get_top_n_features_with_importances(starting_clf,
+        all_feature_rankings, feature_importances = get_top_n_features(starting_clf,
                                                                                         len(X_train.columns.values),
                                                                        X_train.columns.values, feature_importance_method,
                                                                        X_train, y_train, seed)
@@ -329,12 +329,12 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         best_trial = study.best_trial
         best_cv_score = best_trial.value
 
-        top_n_feats, feature_importances, df = get_top_n_features_with_importances(best_model, len(X_train.columns) - 1,
-                                                                                   X_train.columns,
-                                                                                   feature_importance_method, X_train,
-                                                                                   y_train, seed, df,
-                                                                                   best_cv_score=best_cv_score,
-                                                                                   fp_for_fi=fp_for_fi)
+        top_n_feats, df = get_top_n_features(best_model, len(X_train.columns) - 1,
+                                               X_train.columns,
+                                               feature_importance_method, X_train,
+                                               y_train, seed, df,
+                                               best_cv_score=best_cv_score,
+                                               fp_for_fi=fp_for_fi)
         X_train = X_train.loc[:, top_n_feats]
         if not os.path.exists(filepath):
             print_and_save_features(top_n_feats, filepath=filepath, top=True)
