@@ -11,6 +11,7 @@ from xgboost import XGBRegressor
 from sklearn.model_selection import cross_val_score
 import optuna
 import subprocess
+from sklearn.inspection import permutation_importance
 
 # from sqlalchemy.orm import sessionmaker
 
@@ -211,10 +212,20 @@ def get_train_test_split(X, y, test_size, seed):
     return X_train, X_test, y_train, y_test
 
 #### Feature Selection helpers ####
-def get_top_n_features(clf, n, features):
-    feature_importances = clf.feature_importances_
+def get_top_n_features(clf, n, features, feature_importance_method, X, y, seed):
+    if feature_importance_method == "default_importance":
+        feature_importances = clf.feature_importances_
+    elif feature_importance_method == "permutation_importance":
+        assert not (X is None or y is None or seed is None)
+        print("Computing permutation importance...")
+        feature_importances = permutation_importance(clf, X.loc[:, features],
+                                                     y, n_repeats=100,
+                                                     random_state=seed).importances_mean
+        print("Done!")
+
     feat_importance_idx = np.argsort(feature_importances)[::-1]
     top_n_feats = features[feat_importance_idx][:n]
+
     return top_n_feats
 
 def print_and_save_features(features, filepath, top=True):
@@ -231,16 +242,21 @@ def print_and_save_features(features, filepath, top=True):
 
 def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 ML_model, scATAC_dir, cancer_type_or_donor_id, seed,
-                                n_optuna_trials_backward_selection, starting_clf=None, starting_n=None):
+                                n_optuna_trials_backward_selection, feature_importance_method,
+                                starting_clf=None, starting_n=None):
     os.makedirs(backwards_elim_dir, exist_ok=True)
     if X_train.shape[1] > 20:
-        top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values)
-        all_feature_rankings = get_top_n_features(starting_clf, len(X_train.columns.values), X_train.columns.values)
-        print_and_save_features(all_feature_rankings, filepath=f"{backwards_elim_dir}/all_features_rankings.txt",
+        top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values, feature_importance_method,
+                                         X_train, y_train, seed)
+        all_feature_rankings = get_top_n_features(starting_clf, len(X_train.columns.values), X_train.columns.values,
+                                                  feature_importance_method, X_train, y_train, seed)
+        print_and_save_features(all_feature_rankings, filepath=f"{backwards_elim_dir}/"
+                                f"all_features_rankings_by_{feature_importance_method}.txt",
                                 top=True)
         X_train = X_train.loc[:, top_n_feats]
         print_and_save_features(top_n_feats,
-                                filepath=f"{backwards_elim_dir}/starter_model_top_features.txt",
+                                filepath=f"{backwards_elim_dir}/starter_model_top_features_by_"
+                                         f"{feature_importance_method}.txt",
                                 top=True)
         num_iterations = len(top_n_feats)
     else:
@@ -250,9 +266,20 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         num_iterations = X_train.shape[1]
 
     for idx in range(1, num_iterations):
-        filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}.txt"
+        filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}"
+        model_savefile = f"model_iteration_{idx}"
         # if not os.path.exists(filepath):
-        study = optimize_optuna_study(study_name=f"{cancer_type_or_donor_id}_iter_{idx}_{scATAC_dir}",
+        study_name = f"{cancer_type_or_donor_id}_iter_{idx}_{scATAC_dir}"
+        if feature_importance_method != "default_importance":
+            study_name = study_name + f"_feature_importance_{feature_importance_method}"
+            filepath = filepath + f"_by_{feature_importance_method}"
+            model_savefile = model_savefile + f"_feature_importance_{feature_importance_method}"
+
+        filepath = filepath + ".txt"
+        model_savefile = model_savefile + ".pkl"
+
+
+        study = optimize_optuna_study(study_name=study_name,
                                       ML_model=ML_model, X_train=X_train,
                                       y_train=y_train,
                                       seed=seed,
@@ -262,9 +289,10 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
             best_model = XGBRegressor(**best_params)
 
         best_model.fit(X=X_train, y=y_train)
-        pickle.dump(best_model, open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'wb'))
+        pickle.dump(best_model, open(f"{backwards_elim_dir}/{model_savefile}", 'wb'))
         # grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
-        top_n_feats = get_top_n_features(best_model, len(X_train.columns) - 1, X_train.columns)
+        top_n_feats = get_top_n_features(best_model, len(X_train.columns) - 1, X_train.columns,
+                                         feature_importance_method, X_train, y_train, seed)
         X_train = X_train.loc[:, top_n_feats]
         if not os.path.exists(filepath):
             print_and_save_features(top_n_feats, filepath=filepath, top=True)
@@ -406,7 +434,8 @@ def print_and_save_test_set_perf(X_test, y_test, model, filepath):
 
 def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filepath,
                    ML_model, seed, scATAC_dir, cancer_type_or_donor_id,
-                   n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection):
+                   n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
+                   feature_importance_method):
     X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10, seed)
 
     starting_clf = None
@@ -431,7 +460,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
         print("Running backward feature selection...")
         backward_eliminate_features(X_train, y_train, backwards_elim_dir, ML_model, scATAC_dir,
                                     cancer_type_or_donor_id, seed, n_optuna_trials_backward_selection,
-                                    starting_clf=starting_clf, starting_n=n)
+                                    feature_importance_method, starting_clf=starting_clf, starting_n=n)
     else:
         print("Backward feature selection is already done!")
 

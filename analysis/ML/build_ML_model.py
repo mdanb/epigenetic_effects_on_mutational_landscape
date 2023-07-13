@@ -9,7 +9,8 @@ def run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
                                          tissues_to_consider, ML_model, seed,
                                          n_optuna_trials_prebackward_selection,
                                          n_optuna_trials_backward_selection,
-                                         backwards_elim_dir):
+                                         backwards_elim_dir,
+                                         feature_importance_method):
 
     os.makedirs(f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}", exist_ok=True)
 
@@ -26,7 +27,8 @@ def run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
                        scATAC_dir,
                        cancer_type_or_donor_id,
                        n_optuna_trials_prebackward_selection,
-                       n_optuna_trials_backward_selection)
+                       n_optuna_trials_backward_selection,
+                       feature_importance_method)
 
     # Tissue Specific
     else:
@@ -59,7 +61,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model,
                                   seed_range, n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
-                                  make_plots):
+                                  make_plots, feature_importance_method):
     ### args used at the end for plot_top_features.R ###
     cancer_types_arg = ",".join(cancer_types)
     datasets_arg = ",".join(datasets)
@@ -104,7 +106,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          cancer_type, scATAC_dir,
                                                          tissues_to_consider,
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
-                                                         n_optuna_trials_backward_selection, backwards_elim_dir)
+                                                         n_optuna_trials_backward_selection, backwards_elim_dir,
+                                                         feature_importance_method)
                 bp_path = f"../../figures/models/{ML_model}/{cancer_type}/{scATAC_dir}/" \
                           f"backwards_elimination_results/bar_plot.png"
                 print(f"Bar plot path: {bp_path}")
@@ -183,14 +186,14 @@ n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 top_features_to_plot = config.top_features_to_plot
 save_test_set_perf = config.save_test_set_perf
 make_plots = config.make_plots
-
+feature_importance_method = config.feature_importance_method
 
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
                                meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range,
                                n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
-                               top_features_to_plot, save_test_set_perf, make_plots)
+                               top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method)
 
 
 
