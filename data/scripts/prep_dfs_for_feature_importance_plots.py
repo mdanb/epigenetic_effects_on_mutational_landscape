@@ -8,7 +8,7 @@ from pathlib import Path
 import optuna
 import sys
 import re
-from sklearn.inspection import permutation_importance
+
 sys.path.insert(0, '/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape')
 sys.path.insert(0, '/broad/hptmp/bgiotti/BingRen_scATAC_atlas/')
 
@@ -100,26 +100,26 @@ def get_relevant_backwards_elim_dirs(config):
                                                                    seed))
     return backward_elim_dirs
 
+  # meso, SCLC, lung_subtyped, woo_pcawg,
+  # histologically_subtyped_mutations,
+  # de_novo_seurat_clustering,
+  # CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+  # datasets, scATAC_cell_number_filter,
+  # annotation_dir):
 def prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot,
-                                      ML_model, optuna_base_dir,
-                                      meso, SCLC, lung_subtyped, woo_pcawg,
-                                      histologically_subtyped_mutations,
-                                      de_novo_seurat_clustering,
-                                      CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
-                                      datasets, scATAC_cell_number_filter,
-                                      annotation_dir):
+                                      ML_model, optuna_base_dir):
     for backwards_elim_dir in backwards_elim_dirs:
         temp = backwards_elim_dir.split("/")
         cancer_type = temp[-4]
         cancer_type_dir = temp[-3]
 
-        scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
-                                                          histologically_subtyped_mutations,
-                                                          de_novo_seurat_clustering,
-                                                          CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
-                                                          datasets, scATAC_cell_number_filter,
-                                                          annotation_dir, cancer_type)
-        _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, config.seed)
+        # scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
+        #                                                   histologically_subtyped_mutations,
+        #                                                   de_novo_seurat_clustering,
+        #                                                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+        #                                                   datasets, scATAC_cell_number_filter,
+        #                                                   annotation_dir, cancer_type)
+        # _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, config.seed)
 
         df = pd.DataFrame(columns=["features", "default_importance", "permutation_importance", "num_features",
                                    "score"])
@@ -142,11 +142,6 @@ def prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot,
                 best_cv_score = best_trial.value
                 features = model.feature_names_in_
                 default_feature_importances = model.feature_importances_
-                print("Computing permutation importance...")
-                permutation_importances = permutation_importance(model, X_test.loc[:, features],
-                                                                 y_test, n_repeats=100,
-                                                                 random_state=config.seed).importances_mean
-                print("Done!")
                 df_curr = pd.DataFrame((features, default_feature_importances,
                                         permutation_importances,
                                         [len(features)] * len(features),
@@ -171,10 +166,12 @@ optuna_base_dir = construct_scATAC_dir(scATAC_sources=construct_scATAC_sources(c
                                        tss_filter=None,
                                        annotation_dir=config.annotation,
                                        seed=config.seed)
-prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot, ML_model, optuna_base_dir,
-                                  config.meso, config.SCLC, config.lung_subtyped, config.woo_pcawg,
-                                  config.histologically_subtyped_mutations,
-                                  config.de_novo_seurat_clustering,
-                                  config.CPTAC, config.combined_CPTAC_ICGC, config.RNA_subtyped, config.per_donor,
-                                  config.datasets, config.cell_number_filter,
-                                  config.annotation)
+prep_df_for_feat_importance_plots(backwards_elim_dirs, top_features_to_plot, ML_model, optuna_base_dir)
+
+
+# config.meso, config.SCLC, config.lung_subtyped, config.woo_pcawg,
+# config.histologically_subtyped_mutations,
+# config.de_novo_seurat_clustering,
+# config.CPTAC, config.combined_CPTAC_ICGC, config.RNA_subtyped, config.per_donor,
+# config.datasets, config.cell_number_filter,
+# config.annotation)

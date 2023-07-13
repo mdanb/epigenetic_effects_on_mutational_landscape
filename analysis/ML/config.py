@@ -30,6 +30,7 @@ def create_parser():
     parser.add_argument('--top_features_to_plot', nargs="+", type=int)
     parser.add_argument("--save_test_set_perf", action="store_true", default=False)
     parser.add_argument("--make_plots", action="store_true", default=False)
+    parser.add_argument("--feature_importance_method", type=str, default="permutation_importance")
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--SCLC", action="store_true", default=False)
