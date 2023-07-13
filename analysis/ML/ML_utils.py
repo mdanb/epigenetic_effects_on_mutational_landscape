@@ -216,6 +216,8 @@ def get_train_test_split(X, y, test_size, seed):
 def get_top_n_features_with_importances(clf, n, features, feature_importance_method, X, y, seed,
                                         df, best_cv_score, fp_for_fi):
     std = [np.NaN] * len(features)
+    print(df)
+    print(n)
     if n in df["num_features"]:
         feature_importances = df.loc[df["num_features"] == n][feature_importance_method]
     else:
@@ -335,7 +337,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                                                                    fp_for_fi=fp_for_fi)
         print(top_n_feats)
         print(feature_importances)
-        
+
         X_train = X_train.loc[:, top_n_feats]
         if not os.path.exists(filepath):
             print_and_save_features(top_n_feats, filepath=filepath, top=True)
