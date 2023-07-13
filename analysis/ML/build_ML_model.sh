@@ -18,4 +18,6 @@
 
 #python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py --cancer_types Lung-AdenoCA --datasets Tsankov --scATAC_cell_number_filter 30 --annotation_dir finalized_annotation --seed_range 1-5 --iters_dont_skip 17 15 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50
 
-python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py --cancer_types Lung-SCC --datasets Tsankov --scATAC_cell_number_filter 30 --annotation_dir finalized_annotation --seed_range 1-5 --iters_dont_skip 17 15 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50
+#python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py --cancer_types Lung-SCC --datasets Tsankov --scATAC_cell_number_filter 30 --annotation_dir finalized_annotation --seed_range 1-100 --top_features_to_plot 2 5 10 15 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50
+
+python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py --cancer_types Lung-AdenoCA --datasets Tsankov --scATAC_cell_number_filter 30 --annotation_dir finalized_annotation --seed_range 1-100 --top_features_to_plot 2 5 10 15 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50
