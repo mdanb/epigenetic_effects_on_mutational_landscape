@@ -216,8 +216,6 @@ def get_train_test_split(X, y, test_size, seed):
 def get_top_n_features_with_importances(clf, n, features, feature_importance_method, X, y, seed,
                                         df, best_cv_score, fp_for_fi):
     std = [np.NaN] * len(features)
-    print(df)
-    print(n)
     if n + 1 in df["num_features"].array:
         feature_importances = df.loc[df["num_features"] == n + 1][feature_importance_method]
     else:
@@ -237,10 +235,7 @@ def get_top_n_features_with_importances(clf, n, features, feature_importance_met
         df_curr.columns = df.columns
         df = pd.concat((df, df_curr))
         df.to_csv(fp_for_fi, index=False)
-    print(n)
     feat_importance_idx = np.argsort(feature_importances)[::-1]
-    print(feat_importance_idx)
-    print(features[feat_importance_idx])
     top_n_feats = features[feat_importance_idx][:n]
 
     return top_n_feats, feature_importances[feat_importance_idx][::-1], df
