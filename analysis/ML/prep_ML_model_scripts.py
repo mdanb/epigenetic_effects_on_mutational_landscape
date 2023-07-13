@@ -48,8 +48,6 @@ for seed_range in seed_ranges:
                                 "annotation_dir", annotation_dir,
                                 "seed_range", seed_range,
                                 "top_features_to_plot", "_".join(config.top_features_to_plot),
-                                "n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
-                                "n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
                                 "feature_importance_method", feature_importance_method])
     if meso:
         script_filename = script_filename + "_" + "meso"
