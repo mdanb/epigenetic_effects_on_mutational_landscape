@@ -91,7 +91,6 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                 else:
                     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
                                                       tss_fragment_filter, annotation_dir, seed)
-                    print(f"scATAC_dir is {scATAC_dir}")
                     backwards_elim_dir=f"models/{ML_model}/" \
                     f"{cancer_type}/{scATAC_dir}/backwards_elimination_results"
 
@@ -108,11 +107,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
                                                          n_optuna_trials_backward_selection, backwards_elim_dir,
                                                          feature_importance_method)
-                bp_path = f"../../figures/models/{ML_model}/{cancer_type}/{scATAC_dir}/" \
-                          f"backwards_elimination_results/bar_plot.png"
-                print(f"Bar plot path: {bp_path}")
             if make_plots:
-                print("Making plots")
             # if not os.path.exists(bp_path):
                 call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
                                        annotation_dir, top_features_to_plot, feature_importance_method)
