@@ -551,9 +551,7 @@ def save_iter_i_model_test_performance(i, datasets, ML_model, scATAC_cell_number
 
 #### Call other scripts ####
 def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
-                           annotation_dir, top_features_to_plot, meso, SCLC, lung_subtyped, woo_pcawg,
-                           histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
-                           combined_CPTAC_ICGC, RNA_subtyped, per_donor):
+                           annotation_dir, top_features_to_plot, feature_importance_method):
     print(f"Plotting top features for seed {seed}...")
     command = ["Rscript", "plot_top_features.R",
                          f"--cancer_types={cancer_types_arg}",
@@ -562,27 +560,28 @@ def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATA
                          f"--seed={seed}",
                          f"--cell_number_filter={scATAC_cell_number_filter}",
                          f"--annotation={annotation_dir}",
-                         f"--top_features_to_plot={','.join(list(map(str, top_features_to_plot)))}"]
-    if meso:
-        command = command.append("--meso")
-    elif SCLC:
-        command = command.append("--SCLC")
-    elif lung_subtyped:
-        command = command.append("--lung_subtyped")
-    elif woo_pcawg:
-        command = command.append("--woo_pcawg")
-    elif histologically_subtyped_mutations:
-        command = command.append("--histologically_subtyped_mutations")
-    elif de_novo_seurat_clustering:
-        command = command.append("--de_novo_seurat_clustering")
-    elif CPTAC:
-        command = command.append("--CPTAC")
-    elif combined_CPTAC_ICGC:
-        command = command.append("--combined_CPTAC_ICGC")
-    elif RNA_subtyped:
-        command = command.append("--RNA_subtyped")
-    elif per_donor:
-        command = command.append("--per_donor")
+                         f"--top_features_to_plot={','.join(list(map(str, top_features_to_plot)))}",
+                         f"--feature_importance_method={feature_importance_method}"]
+    # if meso:
+    #     command = command.append("--meso")
+    # elif SCLC:
+    #     command = command.append("--SCLC")
+    # elif lung_subtyped:
+    #     command = command.append("--lung_subtyped")
+    # elif woo_pcawg:
+    #     command = command.append("--woo_pcawg")
+    # elif histologically_subtyped_mutations:
+    #     command = command.append("--histologically_subtyped_mutations")
+    # elif de_novo_seurat_clustering:
+    #     command = command.append("--de_novo_seurat_clustering")
+    # elif CPTAC:
+    #     command = command.append("--CPTAC")
+    # elif combined_CPTAC_ICGC:
+    #     command = command.append("--combined_CPTAC_ICGC")
+    # elif RNA_subtyped:
+    #     command = command.append("--RNA_subtyped")
+    # elif per_donor:
+    #     command = command.append("--per_donor")
     print(command)
     subprocess.call(command)
     print(f"Done plotting top features for seed {seed}!")
