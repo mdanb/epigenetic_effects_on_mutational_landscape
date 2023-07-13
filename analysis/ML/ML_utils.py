@@ -218,7 +218,7 @@ def get_top_n_features_with_importances(clf, n, features, feature_importance_met
     std = [np.NaN] * len(features)
     print(df)
     print(n)
-    if n + 1 in df["num_features"]:
+    if str(n + 1) in df["num_features"]:
         feature_importances = df.loc[df["num_features"] == n + 1][feature_importance_method]
     else:
         if feature_importance_method == "default_importance":
