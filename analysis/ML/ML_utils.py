@@ -12,6 +12,7 @@ from sklearn.model_selection import cross_val_score
 import optuna
 import subprocess
 from sklearn.inspection import permutation_importance
+from pathlib import Path
 
 # from sqlalchemy.orm import sessionmaker
 
@@ -212,7 +213,7 @@ def get_train_test_split(X, y, test_size, seed):
     return X_train, X_test, y_train, y_test
 
 #### Feature Selection helpers ####
-def get_top_n_features(clf, n, features, feature_importance_method, X, y, seed):
+def get_top_n_features_with_importances(clf, n, features, feature_importance_method, X, y, seed):
     if feature_importance_method == "default_importance":
         feature_importances = clf.feature_importances_
     elif feature_importance_method == "permutation_importance":
@@ -226,7 +227,7 @@ def get_top_n_features(clf, n, features, feature_importance_method, X, y, seed):
     feat_importance_idx = np.argsort(feature_importances)[::-1]
     top_n_feats = features[feat_importance_idx][:n]
 
-    return top_n_feats
+    return top_n_feats, feature_importances[feat_importance_idx][::-1]
 
 def print_and_save_features(features, filepath, top=True):
     n = len(features)
@@ -246,10 +247,14 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 starting_clf=None, starting_n=None):
     os.makedirs(backwards_elim_dir, exist_ok=True)
     if X_train.shape[1] > 20:
-        top_n_feats = get_top_n_features(starting_clf, starting_n, X_train.columns.values, feature_importance_method,
-                                         X_train, y_train, seed)
-        all_feature_rankings = get_top_n_features(starting_clf, len(X_train.columns.values), X_train.columns.values,
-                                                  feature_importance_method, X_train, y_train, seed)
+        top_n_feats, feature_importances = get_top_n_features_with_importances(starting_clf, starting_n,
+                                                                               X_train.columns.values,
+                                                                               feature_importance_method,
+                                                                               X_train, y_train, seed)
+        all_feature_rankings, feature_importances = get_top_n_features_with_importances(starting_clf,
+                                                                                        len(X_train.columns.values),
+                                                                       X_train.columns.values, feature_importance_method,
+                                                                       X_train, y_train, seed)
         print_and_save_features(all_feature_rankings, filepath=f"{backwards_elim_dir}/"
                                 f"all_features_rankings_by_{feature_importance_method}.txt",
                                 top=True)
@@ -264,6 +269,9 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 filepath=f"{backwards_elim_dir}/starter_features.txt",
                                 top=False)
         num_iterations = X_train.shape[1]
+
+    df = pd.DataFrame(columns=["features", feature_importance_method, "num_features",
+                                "score"])
 
     for idx in range(1, num_iterations):
         filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}"
@@ -291,11 +299,36 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         best_model.fit(X=X_train, y=y_train)
         pickle.dump(best_model, open(f"{backwards_elim_dir}/{model_savefile}", 'wb'))
         # grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
-        top_n_feats = get_top_n_features(best_model, len(X_train.columns) - 1, X_train.columns,
-                                         feature_importance_method, X_train, y_train, seed)
+        top_n_feats, feature_importances = get_top_n_features_with_importances(best_model, len(X_train.columns) - 1,
+                                                                               X_train.columns,
+                                                                               feature_importance_method, X_train,
+                                                                               y_train, seed)
+        best_trial = study.best_trial
+        best_cv_score = best_trial.value
+
+        df_curr = pd.DataFrame((top_n_feats,
+                                feature_importances,
+                                [len(top_n_feats)] * len(top_n_feats),
+                                [best_cv_score] * len(top_n_feats))).T
+        df_curr.columns = df.columns
+        df = pd.concat((df, df_curr))
+
         X_train = X_train.loc[:, top_n_feats]
         if not os.path.exists(filepath):
             print_and_save_features(top_n_feats, filepath=filepath, top=True)
+
+
+    figure_path = os.path.join("../../figures/models",
+                               ML_model,
+                               cancer_type_or_donor_id,
+                               scATAC_dir,
+                               "backwards_elimination_results")
+    Path(figure_path).mkdir(parents=True, exist_ok=True)
+    filename = "df_for_feature_importance_plots"
+    if feature_importance_method != "default_importance":
+        filename = filename + f"_{feature_importance_method}"
+    filename = filename + ".csv"
+    df.to_csv(os.path.join(figure_path, filename), index=False)
 
 #### Model train/val/test helpers ####
 def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
