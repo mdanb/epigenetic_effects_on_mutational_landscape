@@ -456,7 +456,14 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
         print("Done getting starter model!")
     else:
         print("Starter model not needed! Number of features is less than or equal to 20 already!")
-    if not os.path.exists(f"{backwards_elim_dir}/top_features_iteration_{scATAC_df.shape[1] - 1}.txt"):
+
+    filepath = f"top_features_iteration_{scATAC_df.shape[1] - 1}"
+    if feature_importance_method != "default_importance":
+        filepath = filepath + f"_by_{feature_importance_method}"
+
+    filepath = filepath + ".txt"
+
+    if not os.path.exists(f"{backwards_elim_dir}/{filepath}"):
         print("Running backward feature selection...")
         backward_eliminate_features(X_train, y_train, backwards_elim_dir, ML_model, scATAC_dir,
                                     cancer_type_or_donor_id, seed, n_optuna_trials_backward_selection,
