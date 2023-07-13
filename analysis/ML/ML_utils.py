@@ -333,7 +333,9 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                                                                    y_train, seed, df,
                                                                                    best_cv_score=best_cv_score,
                                                                                    fp_for_fi=fp_for_fi)
-
+        print(top_n_feats)
+        print(feature_importances)
+        
         X_train = X_train.loc[:, top_n_feats]
         if not os.path.exists(filepath):
             print_and_save_features(top_n_feats, filepath=filepath, top=True)
