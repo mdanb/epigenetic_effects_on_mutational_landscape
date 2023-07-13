@@ -282,10 +282,8 @@ construct_test_boxplots <- function(df, title, savepath) {
 cancer_types = args$cancer_types
 cancer_types = unlist(strsplit(cancer_types, split = ","))
 top_features_to_plot = args$top_features_to_plot
-print(top_features_to_plot)
 top_features_to_plot = as.integer(unlist(strsplit(top_features_to_plot, 
                                                   split = ",")))
-print(top_features_to_plot)
 # iters_dont_skip = args$iters_dont_skip
 # iters_dont_skip = as.integer(unlist(strsplit(iters_dont_skip, split = ",")))
 datasets = unlist(strsplit(args$datasets, split = ","))
@@ -302,18 +300,6 @@ robustness_test_perf_boxplot = args$robustness_test_perf_boxplot
 robustness_feature_importance_barplot = args$robustness_feature_importance_barplot
 cancer_types = paste(cancer_types, collapse = " ")
 feature_importance_method = args$feature_importance_method
-# print(top_features_to_plot)
-# print(datasets)
-# print(cell_number_filter)
-# print(tss_fragment_filter)
-# print(annotation)
-# print(tissues_to_consider)
-# print(ML_model)
-# print(seed)
-# print(robustness_analysis)
-# print(robustness_seed_range)
-# print(robustness_test_perf_boxplot)
-# print(robustness_feature_importance_barplot)
 # SCLC = args$SCLC
 # lung_subtyped = args$lung_subtyped
 # woo_pcawg = args$woo_pcawg
