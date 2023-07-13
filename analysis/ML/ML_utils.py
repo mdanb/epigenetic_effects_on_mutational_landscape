@@ -227,7 +227,7 @@ def get_top_n_features_with_importances(clf, n, features, feature_importance_met
             permutation_importance_out = permutation_importance(clf, X.loc[:, features], y, n_repeats=100,
                                                                 random_state=seed)
             feature_importances = permutation_importance_out.importances_mean
-            std = feature_importances.importances_std
+            std = permutation_importance_out.importances_std
             print("Done!")
 
         df_curr = pd.DataFrame((features, feature_importances, [len(features)] * len(features),
