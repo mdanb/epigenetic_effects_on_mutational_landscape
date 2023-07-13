@@ -237,7 +237,7 @@ def get_top_n_features_with_importances(clf, n, features, feature_importance_met
         df_curr.columns = df.columns
         df = pd.concat((df, df_curr))
         df.to_csv(fp_for_fi, index=False)
-
+    print(n)
     feat_importance_idx = np.argsort(feature_importances)[::-1]
     top_n_feats = features[feat_importance_idx][:n]
 
