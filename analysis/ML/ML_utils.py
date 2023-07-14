@@ -214,7 +214,8 @@ def get_train_test_split(X, y, test_size, seed):
 
 #### Feature Selection helpers ####
 def calculate_permutation_importance(estimator, X_valid, y_valid, n_repeats, seed):
-    r = permutation_importance(estimator, X_valid, y_valid, n_repeats=n_repeats, random_state=seed)
+    r = permutation_importance(estimator, X_valid, y_valid, n_repeats=n_repeats, random_state=seed,
+                               n_jobs=-1)
     return r.importances_mean, r.importances_std
 
 
@@ -231,22 +232,26 @@ def get_top_n_features(best_model_fulldatatrained, best_model_perfoldtrained: li
         elif feature_importance_method == "permutation_importance":
             assert not (X is None or y is None or seed is None)
             print("Computing permutation importance per fold...")
+            feature_importances = []
+            std = []
             for i, (train_index, val_index) in enumerate(kf.split(X)):
                 print(f"Computing fold {i + 1} permutation importances")
-                X_valid, y_valid = X[val_index], y[val_index]
+                X_valid, y_valid = X.iloc[val_index], y.iloc[val_index]
                 feature_importance_means, stds = calculate_permutation_importance(best_model_perfoldtrained[i],
                                                                                   X_valid, y_valid, 10, seed)
-                feature_importances = feature_importance_means.mean()
-                std = stds.mean()
+                feature_importances.append(feature_importance_means)
+                std.append(stds)
                 # permutation_importance(clf, X.loc[:, features], y, n_repeats=10,
                 #                                                 random_state=seed, n_jobs=-1)
+            feature_importances = np.stack(feature_importances).mean(axis=0)
+            std = np.stack(std).mean(axis=0)
             print("Done!")
         if df_save is not None:
             df_curr = pd.DataFrame((features, feature_importances, [len(features)] * len(features),
                                     [best_cv_score] * len(features), std)).T
             df_curr.columns = df_save.columns
-            df = pd.concat((df_save, df_curr))
-            df.to_csv(fp_for_fi, index=False)
+            df_save = pd.concat((df_save, df_curr))
+            df_save.to_csv(fp_for_fi, index=False)
     feat_importance_idx = np.argsort(feature_importances)[::-1]
     top_n_feats = features[feat_importance_idx][:n]
     return top_n_feats, df_save
@@ -261,6 +266,7 @@ def print_and_save_features(features, filepath, top=True):
             print(f"{idx+1}. {feature}")
             f.write(f"{idx+1}. {feature}\n")
         else:
+            print(f"-{feature}")
             f.write(f"-{feature}\n")
 
 def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
@@ -270,13 +276,6 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 starting_n):
     os.makedirs(backwards_elim_dir, exist_ok=True)
     if starting_n is not None:
-        # top_n_feats, _ = get_top_n_features(best_model_fulldatatrained,
-        #                                       best_model_perfoldtrained,
-        #                                       starting_n,
-        #                                       X_train.columns.values,
-        #                                       feature_importance_method,
-        #                                       X_train, y_train, seed)
-
         ranked_features, _ = get_top_n_features(best_model_fulldatatrained,
                                                        best_model_perfoldtrained,
                                                        len(X_train.columns.values),
@@ -337,17 +336,21 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                               y_train=y_train, seed=seed,
                                               n_optuna_trials=n_optuna_trials_backward_selection,
                                               sqlite=sqlite)
-
-
-        best_params = study.best_params
-        if ML_model == "XGB":
-            best_model = XGBRegressor(**best_params)
-
-        best_model.fit(X=X_train, y=y_train)
-        pickle.dump(best_model, open(f"{backwards_elim_dir}/{model_savefile}", 'wb'))
-
         best_model_perfoldtrained = model_optimizer.best_model_perfoldtrained
-        pickle.dump(best_model_perfoldtrained, open(f"{backwards_elim_dir}/{per_fold_model_savefile}", 'wb'))
+        if not os.path.exists(f"{backwards_elim_dir}/{model_savefile}"):
+            best_params = study.best_params
+            if ML_model == "XGB":
+                best_model_fulldatatrained = XGBRegressor(**best_params)
+
+            best_model_fulldatatrained.fit(X=X_train, y=y_train)
+            pickle.dump(best_model_fulldatatrained, open(f"{backwards_elim_dir}/{model_savefile}", 'wb'))
+        else:
+            best_model_fulldatatrained = pickle.load(open(f"{backwards_elim_dir}/{model_savefile}", "rb"))
+
+        if not os.path.exists(f"{backwards_elim_dir}/{per_fold_model_savefile}"):
+            pickle.dump(best_model_perfoldtrained, open(f"{backwards_elim_dir}/{per_fold_model_savefile}", 'wb'))
+        else:
+            best_model_perfoldtrained = pickle.load(open(f"{backwards_elim_dir}/{per_fold_model_savefile}", "rb"))
 
         # grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
         best_trial = study.best_trial
@@ -355,7 +358,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 
         top_n_feats, df_save = get_top_n_features(best_model_fulldatatrained,
                                                    best_model_perfoldtrained,
-                                                   len(X_train.columns.values),
+                                                   len(X_train.columns.values) - idx,
                                                    X_train.columns.values,
                                                    feature_importance_method,
                                                    X_train, y_train, seed,
