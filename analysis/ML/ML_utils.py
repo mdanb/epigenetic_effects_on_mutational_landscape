@@ -8,7 +8,7 @@ import pickle
 import os
 from sklearn.metrics import r2_score
 from xgboost import XGBRegressor
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, cross_validate, KFold
 import optuna
 import subprocess
 from sklearn.inspection import permutation_importance
@@ -213,35 +213,43 @@ def get_train_test_split(X, y, test_size, seed):
     return X_train, X_test, y_train, y_test
 
 #### Feature Selection helpers ####
-def get_top_n_features(clf, n, features, feature_importance_method, X, y, seed,
-                                        df, best_cv_score, fp_for_fi):
-    std = [np.NaN] * len(features)
-    if n + 1 in df["num_features"].array:
-        feature_importances = df.loc[df["num_features"] == n + 1][feature_importance_method]
+def calculate_permutation_importance(estimator, X_valid, y_valid, n_repeats, seed):
+    r = permutation_importance(estimator, X_valid, y_valid, n_repeats=n_repeats, random_state=seed)
+    return r.importances_mean, r.importances_std
+
+
+def get_top_n_features(best_model_fulldatatrained, best_model_perfoldtrained: list,
+                       n, features, feature_importance_method, X, y, seed,
+                       df_save=None, fp_for_fi=None, best_cv_score=None):
+    if df_save is not None and n + 1 in df_save["num_features"].array:
+        feature_importances = df_save.loc[df_save["num_features"] == n + 1][feature_importance_method]
     else:
+        kf = KFold(n_splits=10)
+        std = [np.NaN] * len(features)
         if feature_importance_method == "default_importance":
-            feature_importances = clf.feature_importances_
+            feature_importances = best_model_fulldatatrained.feature_importances_
         elif feature_importance_method == "permutation_importance":
             assert not (X is None or y is None or seed is None)
-            print("Computing permutation importance...")
-            permutation_importance_out = permutation_importance(clf, X.loc[:, features], y, n_repeats=100,
-                                                                random_state=seed, n_jobs=-1)
-            feature_importances = permutation_importance_out.importances_mean
-            std = permutation_importance_out.importances_std
+            print("Computing permutation importance per fold...")
+            for i, (train_index, val_index) in enumerate(kf.split(X)):
+                print(f"Computing fold {i + 1} permutation importances")
+                X_valid, y_valid = X[val_index], y[val_index]
+                feature_importance_means, stds = calculate_permutation_importance(best_model_perfoldtrained[i],
+                                                                                  X_valid, y_valid, 10, seed)
+                feature_importances = feature_importance_means.mean()
+                std = stds.mean()
+                # permutation_importance(clf, X.loc[:, features], y, n_repeats=10,
+                #                                                 random_state=seed, n_jobs=-1)
             print("Done!")
-
-        df_curr = pd.DataFrame((features, feature_importances, [len(features)] * len(features),
-                                [best_cv_score] * len(features), std)).T
-        df_curr.columns = df.columns
-        df = pd.concat((df, df_curr))
-        df.to_csv(fp_for_fi, index=False)
+        if df_save is not None:
+            df_curr = pd.DataFrame((features, feature_importances, [len(features)] * len(features),
+                                    [best_cv_score] * len(features), std)).T
+            df_curr.columns = df_save.columns
+            df = pd.concat((df_save, df_curr))
+            df.to_csv(fp_for_fi, index=False)
     feat_importance_idx = np.argsort(feature_importances)[::-1]
     top_n_feats = features[feat_importance_idx][:n]
-    # print(feature_importances)
-    # print(feat_importance_idx)
-    # print(feature_importances[feat_importance_idx])
-    # print("Hello")
-    return top_n_feats, df
+    return top_n_feats, df_save
 
 def print_and_save_features(features, filepath, top=True):
     n = len(features)
@@ -257,27 +265,34 @@ def print_and_save_features(features, filepath, top=True):
 
 def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 ML_model, scATAC_dir, cancer_type_or_donor_id, seed,
-                                n_optuna_trials_backward_selection, feature_importance_method,
-                                starting_clf=None, starting_n=None):
+                                n_optuna_trials_backward_selection, feature_importance_method, sqlite,
+                                best_model_fulldatatrained, best_model_perfoldtrained,
+                                starting_n):
     os.makedirs(backwards_elim_dir, exist_ok=True)
-    if X_train.shape[1] > 20:
-        top_n_feats, feature_importances = get_top_n_features(starting_clf, starting_n,
-                                                                               X_train.columns.values,
-                                                                               feature_importance_method,
-                                                                               X_train, y_train, seed)
-        all_feature_rankings, feature_importances = get_top_n_features(starting_clf,
-                                                                                        len(X_train.columns.values),
-                                                                       X_train.columns.values, feature_importance_method,
-                                                                       X_train, y_train, seed)
-        print_and_save_features(all_feature_rankings, filepath=f"{backwards_elim_dir}/"
+    if starting_n is not None:
+        # top_n_feats, _ = get_top_n_features(best_model_fulldatatrained,
+        #                                       best_model_perfoldtrained,
+        #                                       starting_n,
+        #                                       X_train.columns.values,
+        #                                       feature_importance_method,
+        #                                       X_train, y_train, seed)
+
+        ranked_features, _ = get_top_n_features(best_model_fulldatatrained,
+                                                       best_model_perfoldtrained,
+                                                       len(X_train.columns.values),
+                                                       X_train.columns.values,
+                                                       feature_importance_method,
+                                                       X_train, y_train, seed)
+        print_and_save_features(ranked_features, filepath=f"{backwards_elim_dir}/"
                                 f"all_features_rankings_by_{feature_importance_method}.txt",
                                 top=True)
-        X_train = X_train.loc[:, top_n_feats]
-        print_and_save_features(top_n_feats,
+        top_n_features = ranked_features[:starting_n]
+        X_train = X_train.loc[:, top_n_features]
+        print_and_save_features(top_n_features,
                                 filepath=f"{backwards_elim_dir}/starter_model_top_features_by_"
                                          f"{feature_importance_method}.txt",
                                 top=True)
-        num_iterations = len(top_n_feats)
+        num_iterations = len(top_n_features)
     else:
         print_and_save_features(X_train.columns,
                                 filepath=f"{backwards_elim_dir}/starter_features.txt",
@@ -296,75 +311,118 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
     filename_df_for_fi = filename_df_for_fi + ".csv"
     fp_for_fi = figure_path + "/" + filename_df_for_fi
     if os.path.exists(fp_for_fi):
-        df = pd.read_csv(fp_for_fi)
+        df_save = pd.read_csv(fp_for_fi)
     else:
-        df = pd.DataFrame(columns=["features", feature_importance_method, "num_features", "score", "std"])
+        df_save = pd.DataFrame(columns=["features", feature_importance_method, "num_features", "score", "std"])
 
     for idx in range(1, num_iterations):
+        model_optimizer = ModelOptimizer()
         filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}"
         model_savefile = f"model_iteration_{idx}"
+        per_fold_model_savefile = f"per_fold_model_iteration_{idx}"
+
         # if not os.path.exists(filepath):
         study_name = f"{cancer_type_or_donor_id}_iter_{idx}_{scATAC_dir}"
         if feature_importance_method != "default_importance":
             study_name = study_name + f"_feature_importance_{feature_importance_method}"
             filepath = filepath + f"_by_{feature_importance_method}"
             model_savefile = model_savefile + f"_feature_importance_{feature_importance_method}"
+            per_fold_model_savefile = per_fold_model_savefile + f"_feature_importance_{feature_importance_method}"
 
         filepath = filepath + ".txt"
         model_savefile = model_savefile + ".pkl"
+        per_fold_model_savefile = per_fold_model_savefile + ".pkl"
+
+        study = model_optimizer.optimize_optuna_study(study_name=study_name, ML_model=ML_model, X_train=X_train,
+                                              y_train=y_train, seed=seed,
+                                              n_optuna_trials=n_optuna_trials_backward_selection,
+                                              sqlite=sqlite)
 
 
-        study = optimize_optuna_study(study_name=study_name,
-                                      ML_model=ML_model, X_train=X_train,
-                                      y_train=y_train,
-                                      seed=seed,
-                                      n_optuna_trials=n_optuna_trials_backward_selection)
         best_params = study.best_params
         if ML_model == "XGB":
             best_model = XGBRegressor(**best_params)
 
         best_model.fit(X=X_train, y=y_train)
         pickle.dump(best_model, open(f"{backwards_elim_dir}/{model_savefile}", 'wb'))
+
+        best_model_perfoldtrained = model_optimizer.best_model_perfoldtrained
+        pickle.dump(best_model_perfoldtrained, open(f"{backwards_elim_dir}/{per_fold_model_savefile}", 'wb'))
+
         # grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
         best_trial = study.best_trial
         best_cv_score = best_trial.value
 
-        top_n_feats, df = get_top_n_features(best_model, len(X_train.columns) - 1,
-                                               X_train.columns,
-                                               feature_importance_method, X_train,
-                                               y_train, seed, df,
-                                               best_cv_score=best_cv_score,
-                                               fp_for_fi=fp_for_fi)
+        top_n_feats, df_save = get_top_n_features(best_model_fulldatatrained,
+                                                   best_model_perfoldtrained,
+                                                   len(X_train.columns.values),
+                                                   X_train.columns.values,
+                                                   feature_importance_method,
+                                                   X_train, y_train, seed,
+                                                   df_save=df_save, fp_for_fi=fp_for_fi,
+                                                   best_cv_score=best_cv_score)
         X_train = X_train.loc[:, top_n_feats]
         if not os.path.exists(filepath):
             print_and_save_features(top_n_feats, filepath=filepath, top=True)
 
-#### Model train/val/test helpers ####
-def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
-    # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
-    storage_name = get_storage_name()
-    # storage_name = "sqlite:///example.db"
-    # connection = connect_to_mysqldb()
-    # get_connection_cnt = text("show status where `Variable_name` = 'Threads_connected'")
-    # conn_cnt = conn.execute(get_connection_cnt).fetchall()
 
-    study = optuna.create_study(direction="maximize",
-                                storage=storage_name,
-                                study_name=study_name,
-                                load_if_exists=True,
-                                sampler=optuna.samplers.TPESampler(seed=seed))
-    n_existing_trials = len(study.trials)
-    print(f"Number of existing optuna trials: {n_existing_trials}")
-    n_optuna_trials = n_optuna_trials - n_existing_trials
-    n_optuna_trials_remaining = max(0, n_optuna_trials)
-    if n_optuna_trials > 0:
-        print(f"Running an extra {n_optuna_trials_remaining} trials")
-    else:
-        print(f"Done running {n_optuna_trials} trials!")
-    study.optimize(lambda trial: optuna_objective(trial, ML_model=ML_model, X=X_train, y=y_train,
-                                                  seed=seed), n_trials=n_optuna_trials_remaining)
-    # connection.close()
-    return study
+#### Model train/val/test helpers ####
+class ModelOptimizer:
+    def __init__(self):
+        self.best_model_perfoldtrained = None
+        self._best_score = float('-inf')
+
+    def _optuna_objective(self, trial, ML_model, X, y, seed):
+        if ML_model == "XGB":
+            param = {
+                'n_estimators': trial.suggest_int('n_estimators', 100, 500),
+                'max_depth': trial.suggest_int('max_depth', 3, 10),
+                'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
+                'subsample': trial.suggest_float('subsample', 0.1, 1.0),
+                'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
+                'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
+                'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
+                'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
+            }
+            model = XGBRegressor(**param, random_state=seed)
+
+        # Note that no shuffling of order of genome occurs. This makes the problem "harder" because for the most
+        # part we're training / testing on non-adjacent regions (except at the boundaries)
+        cv_results = cross_validate(model, X, y, cv=10, return_estimator=True, scoring="r2", n_jobs=-1)
+        mean_score = np.mean(cv_results["test_score"])
+        if mean_score > self._best_score:
+            self._best_score = mean_score
+            self.best_model_perfoldtrained = cv_results["estimator"]
+        return mean_score
+
+    def optimize_optuna_study(self, study_name, ML_model, X_train, y_train, seed, n_optuna_trials,
+                              sqlite):
+        # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
+        storage_name = get_storage_name(sqlite)
+        # storage_name = "sqlite:///example.db"
+        # connection = connect_to_mysqldb()
+        # get_connection_cnt = text("show status where `Variable_name` = 'Threads_connected'")
+        # conn_cnt = conn.execute(get_connection_cnt).fetchall()
+
+        study = optuna.create_study(direction="maximize",
+                                    storage=storage_name,
+                                    study_name=study_name,
+                                    load_if_exists=True,
+                                    sampler=optuna.samplers.TPESampler(seed=seed))
+        n_existing_trials = len(study.trials)
+        print(f"Number of existing optuna trials: {n_existing_trials}")
+        n_optuna_trials = n_optuna_trials - n_existing_trials
+        n_optuna_trials_remaining = max(0, n_optuna_trials)
+        if n_optuna_trials > 0:
+            print(f"Running an extra {n_optuna_trials_remaining} trials")
+        else:
+            print(f"Done running {n_optuna_trials} trials!")
+        study.optimize(lambda trial: self._optuna_objective(trial, ML_model=ML_model, X=X_train,
+                                                            y=y_train, seed=seed), n_trials=n_optuna_trials_remaining)
+        # connection.close()
+        return study
+
+
 
 # def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
 #     # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
@@ -450,22 +508,26 @@ def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna
 
 # callbacks=[optuna.integration.XGBoostPruningCallback(trial, "validation-rmse")],
 
-def optuna_objective(trial, ML_model, X, y, seed):
-    if ML_model == "XGB":
-        param = {
-            'n_estimators': trial.suggest_int('n_estimators', 100, 500),
-            'max_depth': trial.suggest_int('max_depth', 3, 10),
-            'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
-            'subsample': trial.suggest_float('subsample', 0.1, 1.0),
-            'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
-            'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
-            'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
-            'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
-        }
-        model = XGBRegressor(**param, random_state=seed)
-
-    score = cross_val_score(model, X=X, y=y, scoring="r2", n_jobs=-1, cv=10, verbose=0)
-    return score.mean()
+# def optuna_objective(trial, ML_model, X, y, seed):
+#     if ML_model == "XGB":
+#         param = {
+#             'n_estimators': trial.suggest_int('n_estimators', 100, 500),
+#             'max_depth': trial.suggest_int('max_depth', 3, 10),
+#             'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
+#             'subsample': trial.suggest_float('subsample', 0.1, 1.0),
+#             'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
+#             'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
+#             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
+#             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
+#         }
+#         model = XGBRegressor(**param, random_state=seed)
+#
+#     cv_results = cross_validate(model, X, y, cv=10, return_estimator=True, scoring="r2", n_jobs=-1)
+#     mean_score = np.mean(cv_results["test_score"])
+#     if mean_score > best_score:
+#         best_score = mean_score
+#         best_model = cv_results["estimator"]
+#     return mean_score
 
 def print_and_save_test_set_perf(X_test, y_test, model, filepath):
     test_preds = model.predict(X_test)
@@ -477,25 +539,33 @@ def print_and_save_test_set_perf(X_test, y_test, model, filepath):
 def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filepath,
                    ML_model, seed, scATAC_dir, cancer_type_or_donor_id,
                    n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
-                   feature_importance_method):
+                   feature_importance_method, sqlite):
     X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10, seed)
 
-    starting_clf = None
+    # Define as None in case scATAC_df.shape[1] <= 20
     n = None
+    best_model_fulldatatrained = None
+    best_model_perfoldtrained = None
 
     if scATAC_df.shape[1] > 20:
         print("Getting a starter model!")
         study_name = f"{cancer_type_or_donor_id}_{scATAC_dir}"
-        study = optimize_optuna_study(study_name=study_name, ML_model=ML_model, X_train=X_train, y_train=y_train, seed=seed,
-                                      n_optuna_trials=n_optuna_trials_prebackward_selection)
+        # study = model_optimizer.optimize_optuna_study()
+        model_optimizer = ModelOptimizer()
+        study = model_optimizer.optimize_optuna_study(study_name=study_name, ML_model=ML_model, X_train=X_train,
+                                                      y_train=y_train, seed=seed,
+                                                      n_optuna_trials=n_optuna_trials_prebackward_selection,
+                                                      sqlite=sqlite)
         best_params = study.best_params
         if ML_model == "XGB":
-            starting_clf = XGBRegressor(**best_params)
-        n = 20
-        starting_clf.fit(X=X_train, y=y_train)
+            best_model_fulldatatrained = XGBRegressor(**best_params)
+        best_model_fulldatatrained.fit(X=X_train, y=y_train)
+        best_model_perfoldtrained = model_optimizer.best_model_perfoldtrained
         # Test Set Performance
-        print_and_save_test_set_perf(X_test, y_test, starting_clf, test_set_perf_filepath)
+        print_and_save_test_set_perf(X_test, y_test, best_model_fulldatatrained, test_set_perf_filepath)
         print("Done getting starter model!")
+        # For backward feature selection
+        n = 20
     else:
         print("Starter model not needed! Number of features is less than or equal to 20 already!")
 
@@ -509,7 +579,11 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
         print("Running backward feature selection...")
         backward_eliminate_features(X_train, y_train, backwards_elim_dir, ML_model, scATAC_dir,
                                     cancer_type_or_donor_id, seed, n_optuna_trials_backward_selection,
-                                    feature_importance_method, starting_clf=starting_clf, starting_n=n)
+                                    feature_importance_method,
+                                    sqlite,
+                                    best_model_fulldatatrained=best_model_fulldatatrained,
+                                    best_model_perfoldtrained=best_model_perfoldtrained,
+                                    starting_n=n)
     else:
         print("Backward feature selection is already done!")
 
@@ -598,12 +672,16 @@ def construct_scATAC_sources(datasets):
             scATAC_sources = "_".join((scATAC_sources, dataset))
     return(scATAC_sources)
 
-def get_storage_name():
-    hostname_file = open(os.path.dirname(os.path.abspath(__file__)) + "/" + "postgresql_hostname.txt", "r")
-    # hostname_file = open("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/postgresql_hostname.txt", "r")
-    hostname = hostname_file.readline().strip()
-    storage_name = f"postgresql://bgiotti:bgiotti@{hostname}:5432/optuna_db"
+def get_storage_name(sqlite=False):
+    if sqlite:
+        storage_name = "sqlite:///temp.db"
+    else:
+        hostname_file = open(os.path.dirname(os.path.abspath(__file__)) + "/" + "postgresql_hostname.txt", "r")
+        # hostname_file = open("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/postgresql_hostname.txt", "r")
+        hostname = hostname_file.readline().strip()
+        storage_name = f"postgresql://bgiotti:bgiotti@{hostname}:5432/optuna_db"
     return storage_name
+
 # def connect_to_mysqldb():
 #     subprocess.Popen(["mysqld_safe",
 #                      f"--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock",
