@@ -363,4 +363,27 @@ if (dataset == "Bingren") {
            annotation=annotation,
            which_interval_ranges=which_interval_ranges,
            mc.cores=cores)
+} else if (dataset == "Greenleaf_Colon") {
+  metadata_epithelial = read.table("../metadata/epithelial_celltypes_atac.tsv", 
+                                   header=1)
+  metadata_stromal = read.table("../metadata/stromal_celltypes_atac.tsv", 
+                                header=1)
+  metadata_immune = read.table("../metadata/immune_celltypes_atac.tsv", 
+                               header=1)
+  metadata = rbind(metadata_epithelial, metadata_stromal, metadata_immune)
+  files_colon_greenleaf = list.files("../bed_files/greenleaf_colon_scATAC/",
+                                     pattern = ".*fragments\\.tsv\\.gz")
+  colnames(metadata)[4] = "cell_type"
+  colnames(metadata)[2] = "sample"
+  # metadata_Yang[, "sample"] = as.character(metadata_Yang$sample)
+  # metadata_Yang[metadata_Yang[3] == 1, "sample"] = "SRR13679156"
+  # metadata_Yang[metadata_Yang[3] == 2, "sample"] = "SRR13679157"
+  
+  mclapply(files_colon_greenleaf, create_count_overlaps_files,
+           metadata=metadata,
+           interval_ranges=interval.ranges,
+           chain=ch,
+           dataset=dataset,
+           annotation=annotation,
+           mc.cores=cores)
 }
