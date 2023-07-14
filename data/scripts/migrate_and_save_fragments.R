@@ -91,6 +91,12 @@ if (dataset == "Bingren") {
   files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/yang_kidney_scATAC",
                      pattern="tsv.gz",
                      full.names=TRUE)
+} else if (dataset == "Greenleaf_Colon") {
+  dir_path = "../bed_files/greenleaf_colon_scATAC/migrated_to_hg19"
+  dir.create(dir_path)
+  files = list.files("../bed_files/greenleaf_colon_scATAC",
+                     pattern="tsv.gz",
+                     full.names=TRUE)
 }
 
 if (tissue == "all") {
