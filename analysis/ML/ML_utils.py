@@ -358,15 +358,15 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 
         top_n_feats, df_save = get_top_n_features(best_model_fulldatatrained,
                                                    best_model_perfoldtrained,
-                                                   len(X_train.columns.values) - idx,
+                                                   len(X_train.columns.values) - 1,
                                                    X_train.columns.values,
                                                    feature_importance_method,
                                                    X_train, y_train, seed,
                                                    df_save=df_save, fp_for_fi=fp_for_fi,
                                                    best_cv_score=best_cv_score)
         X_train = X_train.loc[:, top_n_feats]
-        if not os.path.exists(filepath):
-            print_and_save_features(top_n_feats, filepath=filepath, top=True)
+        # if not os.path.exists(filepath):
+        print_and_save_features(top_n_feats, filepath=filepath, top=True)
 
 
 #### Model train/val/test helpers ####
