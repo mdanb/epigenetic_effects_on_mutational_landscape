@@ -20,6 +20,14 @@
 
 #python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py --cancer_types Lung-SCC --datasets Tsankov --scATAC_cell_number_filter 30 --annotation_dir finalized_annotation --seed_range 1-100 --top_features_to_plot 2 5 10 15 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50
 
-python3 build_ML_model.py --cancer_types Kidney-ChRCC --datasets Bingren Shendure Greenleaf_brain Tsankov Yang_kidney --scATAC_cell_number_filter=1 --annotation_dir=finalized_annotation --ML_model=XGB --seed_range=42-42 --feature_importance_method=permutation_importance --make_plots --top_features_to_plot 2 5 10 15 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50
 
-#python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py --cancer_types Lung-AdenoCA --datasets Tsankov --scATAC_cell_number_filter 30 --annotation_dir finalized_annotation --seed_range 1-100 --top_features_to_plot 2 5 10 15 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50
+##########
+
+#python3 build_ML_model.py --cancer_types CNS-GBM CNS-Medullo CNS-PiloAstro CNS-Oligo --datasets Bingren Shendure Greenleaf_brain Tsankov Yang_kidney --scATAC_cell_number_filter=1 --annotation_dir=finalized_annotation --ML_model=XGB --seed_range=42-42 --feature_importance_method=permutation_importance --make_plots --top_features_to_plot 2 5 10 15 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50
+
+#python3 build_ML_model.py --histologically_subtyped_mutations --cancer_types kidney_papillary kidney_clear_cell --datasets Bingren Shendure Greenleaf_brain Tsankov Yang_kidney --scATAC_cell_number_filter=1 --annotation_dir=finalized_annotation --ML_model=XGB --seed_range=42-42 --feature_importance_method=permutation_importance --make_plots --top_features_to_plot 2 5 10 15 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50
+
+#python3 build_ML_model.py --cancer_types Kidney-ChRCC --datasets Bingren Shendure Greenleaf_brain Tsankov Yang_kidney --scATAC_cell_number_filter=1 --annotation_dir=finalized_annotation --ML_model=XGB --seed_range=42-42 --feature_importance_method=permutation_importance --make_plots --top_features_to_plot 2 5 10 15 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50
+
+python3 build_ML_model.py --cancer_types Lung-AdenoCA Lung-SCC Panc-AdenoCA Panc-Endocrine --datasets Bingren Shendure Greenleaf_brain Tsankov Yang_kidney --scATAC_cell_number_filter=1 --annotation_dir=finalized_annotation --ML_model=XGB --seed_range=42-42 --feature_importance_method=permutation_importance --make_plots --top_features_to_plot 2 5 10 15 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50
+
