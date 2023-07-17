@@ -274,7 +274,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 n_optuna_trials_backward_selection, feature_importance_method, sqlite,
                                 best_model_fulldatatrained, best_model_perfoldtrained,
                                 starting_n):
-    os.makedirs(backwards_elim_dir, exist_ok=True)
+    # os.makedirs(backwards_elim_dir, exist_ok=True)
     if starting_n is not None:
         ranked_features, _ = get_top_n_features(best_model_fulldatatrained,
                                                        best_model_perfoldtrained,
@@ -315,7 +315,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         df_save = pd.DataFrame(columns=["features", feature_importance_method, "num_features", "score", "std"])
 
     for idx in range(1, num_iterations):
-        model_optimizer = ModelOptimizer()
+        model_optimizer = ModelOptimizer(backwards_elim_dir + "/" + f"model_optimizer_iteration_{idx}.pkl")
         filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}"
         model_savefile = f"model_iteration_{idx}"
         per_fold_model_savefile = f"per_fold_model_iteration_{idx}"
@@ -371,9 +371,14 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 
 #### Model train/val/test helpers ####
 class ModelOptimizer:
-    def __init__(self):
+    def __init__(self, savepath):
         self.best_model_perfoldtrained = None
         self._best_score = float('-inf')
+        self._savepath = savepath
+        if os.path.exists(savepath):
+            model_optimizer = pickle.load(open(savepath, "rb"))
+            self._best_score = model_optimizer["best_score"]
+            self.best_model_perfoldtrained = model_optimizer["best_model_perfoldtrained"]
 
     def _optuna_objective(self, trial, ML_model, X, y, seed):
         if ML_model == "XGB":
@@ -396,6 +401,11 @@ class ModelOptimizer:
         if mean_score > self._best_score:
             self._best_score = mean_score
             self.best_model_perfoldtrained = cv_results["estimator"]
+            print("Saving new best optimizer...")
+            pickle.dump({"best_score": self._best_score,
+                         "best_model_perfoldtrained": self.best_model_perfoldtrained},
+                        open(self._savepath, "wb"))
+            print("Done saving")
         return mean_score
 
     def optimize_optuna_study(self, study_name, ML_model, X_train, y_train, seed, n_optuna_trials,
@@ -414,14 +424,15 @@ class ModelOptimizer:
                                     sampler=optuna.samplers.TPESampler(seed=seed))
         n_existing_trials = len(study.trials)
         print(f"Number of existing optuna trials: {n_existing_trials}")
-        n_optuna_trials = n_optuna_trials - n_existing_trials
-        n_optuna_trials_remaining = max(0, n_optuna_trials)
-        if n_optuna_trials > 0:
+        n_optuna_trials_remaining = n_optuna_trials - n_existing_trials
+        n_optuna_trials_remaining = max(0, n_optuna_trials_remaining)
+        if n_optuna_trials_remaining > 0:
             print(f"Running an extra {n_optuna_trials_remaining} trials")
+            study.optimize(lambda trial: self._optuna_objective(trial, ML_model=ML_model, X=X_train,
+                                                                y=y_train, seed=seed),
+                           n_trials=n_optuna_trials_remaining)
         else:
             print(f"Done running {n_optuna_trials} trials!")
-        study.optimize(lambda trial: self._optuna_objective(trial, ML_model=ML_model, X=X_train,
-                                                            y=y_train, seed=seed), n_trials=n_optuna_trials_remaining)
         # connection.close()
         return study
 
@@ -554,7 +565,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
         print("Getting a starter model!")
         study_name = f"{cancer_type_or_donor_id}_{scATAC_dir}"
         # study = model_optimizer.optimize_optuna_study()
-        model_optimizer = ModelOptimizer()
+        model_optimizer = ModelOptimizer(backwards_elim_dir + "/" + "model_optimizer_starter.pkl")
         study = model_optimizer.optimize_optuna_study(study_name=study_name, ML_model=ML_model, X_train=X_train,
                                                       y_train=y_train, seed=seed,
                                                       n_optuna_trials=n_optuna_trials_prebackward_selection,

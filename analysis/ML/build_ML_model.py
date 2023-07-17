@@ -13,7 +13,7 @@ def run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
                                          feature_importance_method,
                                          sqlite):
 
-    os.makedirs(f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}", exist_ok=True)
+    os.makedirs(f"{backwards_elim_dir}", exist_ok=True)
 
     if tissues_to_consider == "all":
         test_set_perf_filepath = f"models/{ML_model}/" \
