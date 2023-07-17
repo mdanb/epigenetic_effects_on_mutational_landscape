@@ -43,7 +43,9 @@ get_files_not_done <- function(files, dir_path) {
   # migrated_filepaths_bgz = paste(dir_path, gsub(".gz", ".bgz", 
   #                                               lapply(strsplit(files, split = "/"), "[", 9)), 
   #                                sep = "/")
-  migrated_filepaths_tbi = paste(dir_path, paste(lapply(strsplit(files, split = "/"), "[", 9), "tbi", sep="."), sep="/")
+  migrated_filepaths_tbi = paste(dir_path, paste(lapply(strsplit(files, split = "/"),
+                                                        "[", 9), "tbi", sep="."), 
+                                 sep="/")
   migrated_filepaths = paste(dir_path, 
                              lapply(strsplit(files, split = "/"), "[", 9),
                              sep = "/")
