@@ -245,7 +245,7 @@ def get_top_n_features(best_model_fulldatatrained, best_model_perfoldtrained: li
                 #                                                 random_state=seed, n_jobs=-1)
             feature_importances = np.stack(feature_importances).mean(axis=0)
             std = np.stack(std).mean(axis=0)
-            print("Done!")
+            print("Done computing feature importances!")
         if df_save is not None:
             df_curr = pd.DataFrame((features, feature_importances, [len(features)] * len(features),
                                     [best_cv_score] * len(features), std)).T
@@ -286,10 +286,6 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         filename_df_for_fi = filename_df_for_fi + f"_{feature_importance_method}"
     filename_df_for_fi = filename_df_for_fi + ".csv"
     fp_for_fi = figure_path + "/" + filename_df_for_fi
-    if os.path.exists(fp_for_fi):
-        df_save = pd.read_csv(fp_for_fi)
-    else:
-        df_save = pd.DataFrame(columns=["features", feature_importance_method, "num_features", "score", "std"])
 
     if starting_n is not None:
         ranked_features, df_save = get_top_n_features(best_model_fulldatatrained,
@@ -308,11 +304,17 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                          f"{feature_importance_method}.txt",
                                 top=True)
         num_iterations = len(top_n_features)
+
     else:
         print_and_save_features(X_train.columns,
                                 filepath=f"{backwards_elim_dir}/starter_features.txt",
                                 top=False)
         num_iterations = X_train.shape[1]
+
+    if os.path.exists(fp_for_fi):
+        df_save = pd.read_csv(fp_for_fi)
+    else:
+        df_save = pd.DataFrame(columns=["features", feature_importance_method, "num_features", "score", "std"])
 
     for idx in range(1, num_iterations):
         model_optimizer = ModelOptimizer(backwards_elim_dir + "/" + f"model_optimizer_iteration_{idx}.pkl")
