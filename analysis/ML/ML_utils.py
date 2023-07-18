@@ -275,8 +275,24 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 best_model_fulldatatrained, best_model_perfoldtrained,
                                 starting_n):
     # os.makedirs(backwards_elim_dir, exist_ok=True)
+    figure_path = os.path.join("../../figures/models",
+                               ML_model,
+                               cancer_type_or_donor_id,
+                               scATAC_dir,
+                               "backwards_elimination_results")
+    Path(figure_path).mkdir(parents=True, exist_ok=True)
+    filename_df_for_fi = "df_for_feature_importance_plots"
+    if feature_importance_method != "default_importance":
+        filename_df_for_fi = filename_df_for_fi + f"_{feature_importance_method}"
+    filename_df_for_fi = filename_df_for_fi + ".csv"
+    fp_for_fi = figure_path + "/" + filename_df_for_fi
+    if os.path.exists(fp_for_fi):
+        df_save = pd.read_csv(fp_for_fi)
+    else:
+        df_save = pd.DataFrame(columns=["features", feature_importance_method, "num_features", "score", "std"])
+
     if starting_n is not None:
-        ranked_features, _ = get_top_n_features(best_model_fulldatatrained,
+        ranked_features, df_save = get_top_n_features(best_model_fulldatatrained,
                                                        best_model_perfoldtrained,
                                                        len(X_train.columns.values),
                                                        X_train.columns.values,
@@ -298,25 +314,9 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 top=False)
         num_iterations = X_train.shape[1]
 
-    figure_path = os.path.join("../../figures/models",
-                               ML_model,
-                               cancer_type_or_donor_id,
-                               scATAC_dir,
-                               "backwards_elimination_results")
-    Path(figure_path).mkdir(parents=True, exist_ok=True)
-    filename_df_for_fi = "df_for_feature_importance_plots"
-    if feature_importance_method != "default_importance":
-        filename_df_for_fi = filename_df_for_fi + f"_{feature_importance_method}"
-    filename_df_for_fi = filename_df_for_fi + ".csv"
-    fp_for_fi = figure_path + "/" + filename_df_for_fi
-    if os.path.exists(fp_for_fi):
-        df_save = pd.read_csv(fp_for_fi)
-    else:
-        df_save = pd.DataFrame(columns=["features", feature_importance_method, "num_features", "score", "std"])
-
     for idx in range(1, num_iterations):
         model_optimizer = ModelOptimizer(backwards_elim_dir + "/" + f"model_optimizer_iteration_{idx}.pkl")
-        filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}"
+        top_features_filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}"
         model_savefile = f"model_iteration_{idx}"
         per_fold_model_savefile = f"per_fold_model_iteration_{idx}"
 
@@ -324,11 +324,11 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         study_name = f"{cancer_type_or_donor_id}_iter_{idx}_{scATAC_dir}"
         if feature_importance_method != "default_importance":
             study_name = study_name + f"_feature_importance_{feature_importance_method}"
-            filepath = filepath + f"_by_{feature_importance_method}"
+            top_features_filepath = top_features_filepath + f"_by_{feature_importance_method}"
             model_savefile = model_savefile + f"_feature_importance_{feature_importance_method}"
             per_fold_model_savefile = per_fold_model_savefile + f"_feature_importance_{feature_importance_method}"
 
-        filepath = filepath + ".txt"
+        top_features_filepath = top_features_filepath + ".txt"
         model_savefile = model_savefile + ".pkl"
         per_fold_model_savefile = per_fold_model_savefile + ".pkl"
 
@@ -366,7 +366,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                                    best_cv_score=best_cv_score)
         X_train = X_train.loc[:, top_n_feats]
         # if not os.path.exists(filepath):
-        print_and_save_features(top_n_feats, filepath=filepath, top=True)
+        print_and_save_features(top_n_feats, filepath=top_features_filepath, top=True)
 
 
 #### Model train/val/test helpers ####
