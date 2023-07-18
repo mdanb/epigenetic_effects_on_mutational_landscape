@@ -24,3 +24,7 @@ analysis/ML/cancer_types_*
 analysis/ML/db.sqlite3
 analysis/create_frag_counts_and_tss_filtered_v_R_plots.sh
 analysis/ArchR_analysis/ArchR_projects/
+analysis/ML/*.pe*
+analysis/ML/*.po*
+analysis/ML/*.o*
+analysis/ML/*.e*
