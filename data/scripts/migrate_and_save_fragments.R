@@ -44,10 +44,10 @@ get_files_not_done <- function(files, dir_path) {
   #                                               lapply(strsplit(files, split = "/"), "[", 9)), 
   #                                sep = "/")
   migrated_filepaths_tbi = paste(dir_path, paste(lapply(strsplit(files, split = "/"),
-                                                        "[", 3), "tbi", sep="."), 
+                                                        "[", 4), "tbi", sep="."), 
                                  sep="/")
   migrated_filepaths = paste(dir_path, 
-                             lapply(strsplit(files, split = "/"), "[", 3),
+                             lapply(strsplit(files, split = "/"), "[", 4),
                              sep = "/")
   files_not_done = c()
   migrated_filepaths_not_done = c()
