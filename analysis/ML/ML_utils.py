@@ -573,9 +573,13 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
                                                       n_optuna_trials=n_optuna_trials_prebackward_selection,
                                                       sqlite=sqlite)
         best_params = study.best_params
-        if ML_model == "XGB":
-            best_model_fulldatatrained = XGBRegressor(**best_params)
-        best_model_fulldatatrained.fit(X=X_train, y=y_train)
+        if os.path.exists(f"{backwards_elim_dir}/best_model_fulldatatrained.pkl"):
+            best_model_fulldatatrained = pickle.load(open(f"{backwards_elim_dir}/best_model_fulldatatrained.pkl", "rb"))
+        else:
+            if ML_model == "XGB":
+                best_model_fulldatatrained = XGBRegressor(**best_params)
+            best_model_fulldatatrained.fit(X=X_train, y=y_train)
+            pickle.dump(best_model_fulldatatrained, open(f"{backwards_elim_dir}/best_model_fulldatatrained.pkl", "wb"))
         best_model_perfoldtrained = model_optimizer.best_model_perfoldtrained
         # Test Set Performance
         print_and_save_test_set_perf(X_test, y_test, best_model_fulldatatrained, test_set_perf_filepath)
@@ -585,7 +589,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
     else:
         print("Starter model not needed! Number of features is less than or equal to 20 already!")
 
-    filepath = f"top_features_iteration_{scATAC_df.shape[1] - 1}"
+    filepath = f"top_features_iteration_{n - 1}"
     if feature_importance_method != "default_importance":
         filepath = filepath + f"_by_{feature_importance_method}"
 
