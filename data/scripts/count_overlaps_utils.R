@@ -42,43 +42,43 @@ import_sample <- function(file, dataset, which_interval_ranges) {
                           "data", "bed_files", "bingren_scATAC", 
                           "migrated_to_hg19", file, sep="/"), 
                     format="bed")
-  }
-  else if (dataset == "Shendure") {
+  } else if (dataset == "Shendure") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", 
                           "data", "bed_files", "JShendure_scATAC", 
                           file, sep="/"), format="bed")
-  }
-  else if (dataset == "Tsankov") {
+  } else if (dataset == "Tsankov") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", "data", "bed_files",
                           "Tsankov_scATAC", "migrated_to_hg19",
                           file, sep="/"), format="bed")
-  }
-  else if (dataset == "Greenleaf_brain") {
+  } else if (dataset == "Greenleaf_brain") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", "data", "bed_files",
                           "greenleaf_brain_scATAC", "migrated_to_hg19",
                           file, sep="/"), format="bed")
-  }
-  else if (dataset == "Greenleaf_pbmc_bm") {
+  } else if (dataset == "Greenleaf_pbmc_bm") {
     sample = import(paste("/broad", "hptmp", "bgiotti", 
                           "BingRen_scATAC_atlas", "data", "bed_files",
                           "greenleaf_pbmc_bm_scATAC", "migrated_to_hg19",
                           file, sep="/"), format="bed")
-  }
-  else if (dataset == "Yang_kidney") {
-    if (which_interval_ranges == "polak") {
-      fp = paste("/broad", "hptmp", "bgiotti", 
-                 "BingRen_scATAC_atlas", "data", "bed_files",
-                 "yang_kidney_scATAC", 
-                 file, sep="/")
-    } else if (which_interval_ranges == "yang") {
-      fp = paste("/broad", "hptmp", "bgiotti", 
-                 "BingRen_scATAC_atlas", "data", "bed_files",
-                 "yang_kidney_scATAC", "migrated_to_hg38", 
-                 file, sep="/")
-    }
+  } else if (dataset == "Greenleaf_colon") {
+      sample = import(paste("/broad", "hptmp", "bgiotti", 
+                            "BingRen_scATAC_atlas", "data", "bed_files",
+                            "greenleaf_colon_scATAC", "migrated_to_hg19",
+                            file, sep="/"), format="bed")
+  } else if (dataset == "Yang_kidney") {
+      if (which_interval_ranges == "polak") {
+        fp = paste("/broad", "hptmp", "bgiotti", 
+                   "BingRen_scATAC_atlas", "data", "bed_files",
+                   "yang_kidney_scATAC", 
+                   file, sep="/")
+      } else if (which_interval_ranges == "yang") {
+        fp = paste("/broad", "hptmp", "bgiotti", 
+                   "BingRen_scATAC_atlas", "data", "bed_files",
+                   "yang_kidney_scATAC", "migrated_to_hg38", 
+                   file, sep="/")
+      }
     print(paste("Importing", fp))
     sample = import(fp, format="bed")
   }
@@ -121,6 +121,11 @@ get_sample_filename <- function(file, dataset) {
                      paste(remove_extension(file),
                      "rds", sep="."), sep="_")
   }
+  else if (dataset == "Greenleaf_colon") {
+    filename = paste("Greenleaf_colon_count_overlaps",
+                     paste(remove_extension(file),
+                           "rds", sep="."), sep="_")
+  }
   return(filename)
 }
 
@@ -153,6 +158,11 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
     sample_barcodes_in_metadata = 
       substr(filtered_metadata[["Cell.Barcode"]], 1, 16)
   }
+  else if (dataset == "Greenleaf_colon") {
+    sample_barcodes_in_metadata = 
+      substr(filtered_metadata[["Cell"]], 14, 
+             nchar(filtered_metadata[["Cell"]]) - 2)
+  }
   return(sample_barcodes_in_metadata)
 }
 
@@ -179,6 +189,9 @@ get_sample_name <- function(file, dataset) {
   }
   else if (dataset == "Greenleaf_pbmc_bm") {
     sample_name =  get_sample_name_greenleaf_pbmc_bm(file)
+  }
+  else if (dataset == "Greenleaf_colon") {
+    sample_name = get_sample_name_greenleaf_colon(file)
   }
   else if (dataset == "Yang_kidney") {
     sample_name =  get_sample_name_yang(file)
@@ -228,6 +241,12 @@ get_sample_name_greenleaf_pbmc_bm <- function(file) {
 get_sample_name_yang <- function(file) {
   sample_name = str_remove(file, ".fragments.tsv.gz")
   sample_name = str_remove(sample_name, ".fragments.tsv.bgz")
+  return(sample_name)
+}
+
+get_sample_name_greenleaf_colon <- function(file) {
+  sample_name = str_remove(file, "_fragments.tsv.bgz")
+  sample_name = unlist(strsplit(sample_name, split="_"))[2]
   return(sample_name)
 }
 

@@ -64,33 +64,33 @@ get_files_not_done <- function(files, dir_path) {
 }
 
 if (dataset == "Bingren") {
-  dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC/migrated_to_hg19"
+  dir_path = "../bed_files/bingren_scATAC/migrated_to_hg19"
   dir.create(dir_path)
-  files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/bingren_scATAC",
+  files = list.files("../bed_files/bingren_scATAC",
                      pattern="bed.bgz",
                      full.names=TRUE)
 } else if (dataset == "Tsankov") {
-  dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC/migrated_to_hg19"
+  dir_path = "../bed_files/Tsankov_scATAC/migrated_to_hg19"
   dir.create(dir_path)
-  files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/Tsankov_scATAC",
+  files = list.files("../bed_files/Tsankov_scATAC",
                      pattern="tsv.gz",
                      full.names=TRUE)
 } else if (dataset == "Greenleaf_brain") {
-  dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_brain_scATAC/migrated_to_hg19"
+  dir_path = "../bed_files/greenleaf_brain_scATAC/migrated_to_hg19"
   dir.create(dir_path)
-  files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_brain_scATAC",
+  files = list.files("../bed_files/greenleaf_brain_scATAC",
                      pattern="tsv.gz",
                      full.names=TRUE)
 } else if (dataset == "Greenleaf_pbmc_bm") {
-  dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_pbmc_bm_scATAC/migrated_to_hg19"
+  dir_path = "../bed_files/greenleaf_pbmc_bm_scATAC/migrated_to_hg19"
   dir.create(dir_path)
-  files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/greenleaf_pbmc_bm_scATAC",
+  files = list.files("../bed_files/greenleaf_pbmc_bm_scATAC",
                      pattern="tsv.gz",
                      full.names=TRUE)
 } else if (dataset == "Yang") {
-  dir_path = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/yang_kidney_scATAC/migrated_to_hg38"
+  dir_path = "../bed_files/yang_kidney_scATAC/migrated_to_hg38"
   dir.create(dir_path)
-  files = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/yang_kidney_scATAC",
+  files = list.files("../bed_files/yang_kidney_scATAC",
                      pattern="tsv.gz",
                      full.names=TRUE)
 } else if (dataset == "Greenleaf_colon") {
@@ -104,6 +104,7 @@ if (dataset == "Bingren") {
 if (tissue == "all") {
    tissue = "*"
 }
+
 files = files[grepl(tissue, files)]
 filepaths = get_files_not_done(files, dir_path)
 files = filepaths[[1]]

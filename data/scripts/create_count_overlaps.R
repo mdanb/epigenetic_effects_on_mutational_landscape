@@ -364,15 +364,17 @@ if (dataset == "Bingren") {
            which_interval_ranges=which_interval_ranges,
            mc.cores=cores)
 } else if (dataset == "Greenleaf_Colon") {
-  metadata_epithelial = read.table("../metadata/epithelial_celltypes_atac.tsv", 
-                                   header=1)
-  metadata_stromal = read.table("../metadata/stromal_celltypes_atac.tsv", 
-                                header=1)
-  metadata_immune = read.table("../metadata/immune_celltypes_atac.tsv", 
-                               header=1)
-  metadata = rbind(metadata_epithelial, metadata_stromal, metadata_immune)
-  files_colon_greenleaf = list.files("../bed_files/greenleaf_colon_scATAC/",
-                                     pattern = ".*fragments\\.tsv\\.gz")
+  if (annotation == "default_annotation") {
+    metadata_epithelial = read.table("../metadata/epithelial_celltypes_atac.tsv", 
+                                     header=1)
+    metadata_stromal = read.table("../metadata/stromal_celltypes_atac.tsv", 
+                                  header=1)
+    metadata_immune = read.table("../metadata/immune_celltypes_atac.tsv", 
+                                 header=1)
+    metadata = rbind(metadata_epithelial, metadata_stromal, metadata_immune)
+  }
+  files_colon_greenleaf = list.files("../bed_files/greenleaf_colon_scATAC/migrated_to_hg19",
+                                     pattern = ".*fragments\\.tsv\\.bgz$")
   colnames(metadata)[4] = "cell_type"
   colnames(metadata)[2] = "sample"
   # metadata_Yang[, "sample"] = as.character(metadata_Yang$sample)
