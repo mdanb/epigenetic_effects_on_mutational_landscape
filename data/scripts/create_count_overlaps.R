@@ -77,7 +77,8 @@ create_count_overlaps_files <- function(file, metadata, interval_ranges, chain,
                                                                     dataset)
       
       if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || 
-          dataset == "Greenleaf_pbmc_bm" || dataset == "Yang_kidney") {
+          dataset == "Greenleaf_pbmc_bm" || dataset == "Yang_kidney" ||
+          dataset == "Greenleaf_colon") {
         sample$name = substr(sample$name, 1, 16)
       }
       
