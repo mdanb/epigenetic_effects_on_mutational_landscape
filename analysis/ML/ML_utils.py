@@ -129,6 +129,7 @@ def load_histologically_subtyped_mutations():
 
 def load_de_novo_seurat_clustered_cancers(cancer_type):
     print("Loading De Novo Seurat clustered cancers")
+    print(cancer_type)
     cancer_type = cancer_type.split("x")[0]
     seurat_cluster_settings = cancer_type.split("x")[1]
     df = pd.read_csv(f"../../data/processed_data/de_novo_seurat_clustered_mutations/{cancer_type}/"
