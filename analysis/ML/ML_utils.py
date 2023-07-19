@@ -28,7 +28,7 @@ def load_data(meso, SCLC, lung_subtyped, woo_pcawg,
               cancer_type_or_donor_id, tss_filter=None):
     mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering,
-                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
+                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type_or_donor_id)
 
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
@@ -41,7 +41,7 @@ def load_data(meso, SCLC, lung_subtyped, woo_pcawg,
 
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                    histologically_subtyped_mutations, de_novo_seurat_clustering,
-                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor):
+                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type):
     if meso:
         mutations_df = load_meso()
     elif SCLC:
@@ -53,7 +53,7 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
     elif histologically_subtyped_mutations:
         mutations_df = load_histologically_subtyped_mutations()
     elif de_novo_seurat_clustering:
-        mutations_df = load_de_novo_seurat_clustered_cancers()
+        mutations_df = load_de_novo_seurat_clustered_cancers(cancer_type)
     elif CPTAC:
         mutations_df = load_CPTAC()
     elif combined_CPTAC_ICGC:
@@ -127,10 +127,10 @@ def load_histologically_subtyped_mutations():
                        index_col=0)
     return(df.loc[natsorted(df.index)])
 
-def load_de_novo_seurat_clustered_cancers(cancer_types):
+def load_de_novo_seurat_clustered_cancers(cancer_type):
     print("Loading De Novo Seurat clustered cancers")
-    cancer_type = cancer_types[0].split("x")[0]
-    seurat_cluster_settings = cancer_types[0].split("x")[1]
+    cancer_type = cancer_type[0].split("x")[0]
+    seurat_cluster_settings = cancer_type[0].split("x")[1]
     df = pd.read_csv(f"../../data/processed_data/de_novo_seurat_clustered_mutations/{cancer_type}/"
                      f"{seurat_cluster_settings}.csv", index_col=0)
     return(df.loc[natsorted(df.index)])
@@ -627,7 +627,7 @@ def save_iter_i_model_test_performance(i, datasets, ML_model, scATAC_cell_number
         scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
         mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                       histologically_subtyped_mutations, de_novo_seurat_clustering,
-                                      CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
+                                      CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type)
 
         if not pd.isna(mutations_df).any().any():
             # for compatibility
