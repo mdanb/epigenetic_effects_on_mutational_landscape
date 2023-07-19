@@ -572,6 +572,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
                                                       y_train=y_train, seed=seed,
                                                       n_optuna_trials=n_optuna_trials_prebackward_selection,
                                                       sqlite=sqlite)
+        print("Done getting starter model!")
         best_params = study.best_params
         if os.path.exists(f"{backwards_elim_dir}/best_model_fulldatatrained.pkl"):
             best_model_fulldatatrained = pickle.load(open(f"{backwards_elim_dir}/best_model_fulldatatrained.pkl", "rb"))
@@ -580,10 +581,10 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
                 best_model_fulldatatrained = XGBRegressor(**best_params)
             best_model_fulldatatrained.fit(X=X_train, y=y_train)
             pickle.dump(best_model_fulldatatrained, open(f"{backwards_elim_dir}/best_model_fulldatatrained.pkl", "wb"))
+
         best_model_perfoldtrained = model_optimizer.best_model_perfoldtrained
         # Test Set Performance
         print_and_save_test_set_perf(X_test, y_test, best_model_fulldatatrained, test_set_perf_filepath)
-        print("Done getting starter model!")
         # For backward feature selection
         n = 20
         filepath = f"top_features_iteration_{n - 1}"

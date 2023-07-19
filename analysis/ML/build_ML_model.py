@@ -80,6 +80,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
         print(f"Using scATAC sources: {scATAC_sources}")
         if not per_donor:
             for cancer_type in cancer_types:
+                print(f"Working on {cancer_type}...")
                 if tss_fragment_filter:
                     for tss_filter in tss_fragment_filter:
                         scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
@@ -109,6 +110,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
                                                          n_optuna_trials_backward_selection, backwards_elim_dir,
                                                          feature_importance_method, sqlite)
+                print(f"Done modeling {cancer_type}!")
             if make_plots:
             # if not os.path.exists(bp_path):
                 call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
