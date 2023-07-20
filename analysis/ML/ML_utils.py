@@ -427,12 +427,12 @@ class ModelOptimizer:
         # connection.close()
         return study
 
-def print_and_save_test_set_perf(X_test, y_test, model, filepath):
+def get_and_save_test_set_perf(X_test, y_test, model, filepath):
     test_preds = model.predict(X_test)
     test_set_performance = r2_score(y_test, test_preds)
     with open(filepath, "w") as f:
         f.write(str(test_set_performance))
-    print(f"Test set performance: {test_set_performance}")
+    return test_set_performance
 
 def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filepath,
                    ML_model, seed, scATAC_dir, cancer_type_or_donor_id,
@@ -466,7 +466,8 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
 
         best_model_perfoldtrained = model_optimizer.best_model_perfoldtrained
         # Test Set Performance
-        print_and_save_test_set_perf(X_test, y_test, best_model_fulldatatrained, test_set_perf_filepath)
+        tsp = get_and_save_test_set_perf(X_test, y_test, best_model_fulldatatrained, test_set_perf_filepath)
+        print(f"Test set performance with all features: {tsp}")
         # For backward feature selection
         n = 20
         filepath = f"top_features_iteration_{n - 1}"
@@ -527,7 +528,8 @@ def save_model_with_n_features_test_performance(n, datasets, ML_model, scATAC_ce
     test_set_perf_filepath = f"models/{ML_model}/" \
                              f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
                              f"model_iteration_{model_iteration}_test_performance.txt"
-    print_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
+    tsp = get_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
+    print(f"Test set performance with {n} features: {tsp}")
 
 #### Call other scripts ####
 def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
