@@ -14,12 +14,6 @@ import subprocess
 from sklearn.inspection import permutation_importance
 from pathlib import Path
 
-# from sqlalchemy.orm import sessionmaker
-
-# engine = create_engine('mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db')
-# conn = engine.connect()
-# Session = sessionmaker(bind=engine)
-
 ### Load Data helpers ###
 def load_data(meso, SCLC, lung_subtyped, woo_pcawg,
               histologically_subtyped_mutations, de_novo_seurat_clustering,
@@ -412,12 +406,7 @@ class ModelOptimizer:
 
     def optimize_optuna_study(self, study_name, ML_model, X_train, y_train, seed, n_optuna_trials,
                               sqlite):
-        # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
         storage_name = get_storage_name(sqlite)
-        # storage_name = "sqlite:///example.db"
-        # connection = connect_to_mysqldb()
-        # get_connection_cnt = text("show status where `Variable_name` = 'Threads_connected'")
-        # conn_cnt = conn.execute(get_connection_cnt).fetchall()
 
         study = optuna.create_study(direction="maximize",
                                     storage=storage_name,
@@ -437,113 +426,6 @@ class ModelOptimizer:
             print(f"Done running {n_optuna_trials} trials!")
         # connection.close()
         return study
-
-
-
-# def optimize_optuna_study(study_name, ML_model, X_train, y_train, seed, n_optuna_trials):
-#     # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
-#     # storage_name = "mysql+pymysql://mdanb:mdanb@localhost:3306/optuna_db"
-#     storage_name = "sqlite:///example.db"
-#     study = optuna.create_study(direction="maximize",
-#                                 storage=storage_name,
-#                                 study_name=study_name,
-#                                 load_if_exists=True,
-#                                 sampler=optuna.samplers.TPESampler(seed=seed),
-#                                 pruner=optuna.pruners.MedianPruner(n_warmup_steps=5))
-#     n_existing_trials = len(study.trials)
-#     print(f"Number of existing optuna trials: {n_existing_trials}")
-#     n_optuna_trials = n_optuna_trials - n_existing_trials
-#     n_optuna_trials_remaining = max(0, n_optuna_trials)
-#     if n_optuna_trials > 0:
-#         print(f"Running an extra {n_optuna_trials_remaining} trials")
-#     else:
-#         print(f"Done running {n_optuna_trials} trials!")
-#     study.optimize(lambda trial: optuna_objective(trial, ML_model=ML_model, X=X_train, y=y_train,
-#                                                   seed=seed), n_trials=n_optuna_trials_remaining)
-#     return study
-#
-# def optuna_objective(trial, ML_model, X, y, seed):
-#     scores = []
-#     kf = KFold(n_splits=10, shuffle=True, random_state=seed)
-#
-#     if ML_model == "XGB":
-#         param = {
-#             'max_depth': trial.suggest_int('max_depth', 3, 10),
-#             'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
-#             'subsample': trial.suggest_float('subsample', 0.1, 1.0),
-#             'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
-#             'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
-#             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
-#             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
-#             'seed': seed,
-#             'nthread': 8
-#         }
-#         num_boost_round = trial.suggest_int('num_boost_round', 100, 500)
-#
-#         for train_index, val_index in kf.split(X):
-#             X_train, X_val = X.iloc[train_index], X.iloc[val_index]
-#             y_train, y_val = y[train_index], y[val_index]
-#
-#             dtrain = xgb.DMatrix(X_train, label=y_train)
-#             dval = xgb.DMatrix(X_val, label=y_val)
-#
-#             watchlist = [(dtrain, 'train'), (dval, 'eval')]
-#             # model = xgb.train(param, dtrain, num_boost_round=num_boost_round, evals=watchlist,
-#             #                   callbacks=[optuna.integration.XGBoostPruningCallback(trial, "eval-rmse")],
-#             #                   early_stopping_rounds=10, verbose_eval=False)
-#             model = xgb.train(param, dtrain, num_boost_round=num_boost_round, evals=watchlist,
-#                               verbose_eval=False)
-#
-#             preds = model.predict(dval)
-#             score = r2_score(y_val, preds)
-#             scores.append(score)
-#     return np.mean(scores)
-
-# def optuna_objective(trial, ML_model, X, y, seed):
-#     if ML_model == "XGB":
-#         param = {
-#             'max_depth': trial.suggest_int('max_depth', 3, 10),
-#             'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
-#             'subsample': trial.suggest_float('subsample', 0.1, 1.0),
-#             'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
-#             'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
-#             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
-#             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
-#             'seed': seed,
-#             'nthread': -1
-#         }
-#         num_boost_round = trial.suggest_int('num_boost_round', 100, 500)
-#
-#         dtrain = xgb.DMatrix(X, label=y)
-#
-#         cv_results = xgb.cv(param, dtrain, num_boost_round=num_boost_round,
-#                         nfold=10, stratified=False,
-#                         seed=seed)
-#
-#     return cv_results['test-rmse-mean'].values[-1]
-
-# callbacks=[optuna.integration.XGBoostPruningCallback(trial, "validation-rmse")],
-
-# def optuna_objective(trial, ML_model, X, y, seed):
-#     if ML_model == "XGB":
-#         param = {
-#             'n_estimators': trial.suggest_int('n_estimators', 100, 500),
-#             'max_depth': trial.suggest_int('max_depth', 3, 10),
-#             'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True),
-#             'subsample': trial.suggest_float('subsample', 0.1, 1.0),
-#             'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
-#             'min_child_weight': trial.suggest_int('min_child_weight', 1, 6),
-#             'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 1.0, log=True),
-#             'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 1.0, log=True),
-#         }
-#         model = XGBRegressor(**param, random_state=seed)
-#
-#     cv_results = cross_validate(model, X, y, cv=10, return_estimator=True, scoring="r2", n_jobs=-1)
-#     mean_score = np.mean(cv_results["test_score"])
-#     if mean_score > best_score:
-#         best_score = mean_score
-#         best_model = cv_results["estimator"]
-#     return mean_score
 
 def print_and_save_test_set_perf(X_test, y_test, model, filepath):
     test_preds = model.predict(X_test)
@@ -610,36 +492,41 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
     else:
         print("Backward feature selection is already done!")
 
-def save_model_with_n_features_test_performance(n, datasets, ML_model, scATAC_cell_number_filter, tss_filter,
+def save_model_with_n_features_test_performance(n, datasets, ML_model, scATAC_cell_number_filter,
                                                 annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
                                                 histologically_subtyped_mutations, de_novo_seurat_clustering,
                                                 cancer_type, CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
-                                                permutation_importance_method, seed):
+                                                feature_importance_method, seed, tss_filter=None):
+    scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
+                                                    histologically_subtyped_mutations,
+                                                    de_novo_seurat_clustering,
+                                                    CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+                                                    datasets, scATAC_cell_number_filter,
+                                                    annotation_dir, cancer_type, tss_filter)
     scATAC_sources = construct_scATAC_sources(datasets)
-    scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter,
-                                      annotation_dir, seed)
-    scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
-    
-    filename = f"model_iteration_{i}.pkl"
+    scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed)
+
+    if scATAC_df.shape[1] > 20:
+       model_iteration = 20 - n
+    else:
+       model_iteration = scATAC_df.shape[1] - n
+
+    filename = f"model_iteration_{model_iteration}"
+
+    if feature_importance_method != "default_importance":
+        filename = filename + f"_feature_importance_{feature_importance_method}"
+    filename = filename + ".pkl"
+
     backwards_elim_model_file = f"models/{ML_model}/" \
                                 f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
     model = pickle.load(open(backwards_elim_model_file, "rb"))
     scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
-    mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
-                                  histologically_subtyped_mutations, de_novo_seurat_clustering,
-                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type)
-
-    if not pd.isna(mutations_df).any().any():
-        # for compatibility
-        mutations_df = add_na_ranges(mutations_df)
-    scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
-    cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
 
     _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, seed)
     test_set_perf_filepath = f"models/{ML_model}/" \
                              f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
-                             f"model_iteration_{i}_test_performance.txt"
+                             f"model_iteration_{model_iteration}_test_performance.txt"
     print_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
 
 #### Call other scripts ####
@@ -655,26 +542,6 @@ def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATA
                          f"--annotation={annotation_dir}",
                          f"--top_features_to_plot={','.join(list(map(str, top_features_to_plot)))}",
                          f"--feature_importance_method={feature_importance_method}"]
-    # if meso:
-    #     command = command.append("--meso")
-    # elif SCLC:
-    #     command = command.append("--SCLC")
-    # elif lung_subtyped:
-    #     command = command.append("--lung_subtyped")
-    # elif woo_pcawg:
-    #     command = command.append("--woo_pcawg")
-    # elif histologically_subtyped_mutations:
-    #     command = command.append("--histologically_subtyped_mutations")
-    # elif de_novo_seurat_clustering:
-    #     command = command.append("--de_novo_seurat_clustering")
-    # elif CPTAC:
-    #     command = command.append("--CPTAC")
-    # elif combined_CPTAC_ICGC:
-    #     command = command.append("--combined_CPTAC_ICGC")
-    # elif RNA_subtyped:
-    #     command = command.append("--RNA_subtyped")
-    # elif per_donor:
-    #     command = command.append("--per_donor")
     subprocess.call(command)
     print(f"Done plotting top features for seed {seed}!")
 
@@ -725,34 +592,3 @@ def post_training_setup():
     cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
 
     _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, seed)
-
-
-# def connect_to_mysqldb():
-#     subprocess.Popen(["mysqld_safe",
-#                      f"--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock",
-#                      f"--log-error=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.log",
-#                      f"--datadir=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql_data",
-#                      f"--pid-file=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mariadb.pid &"
-#                      ])
-#     while True:
-#         try:
-#             subprocess.check_output(["mysqladmin", "ping", "-u mdanb -pmdanb",
-#                                      "--socket=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock"])
-#             break
-#         except subprocess.CalledProcessError:
-#             time.sleep(1)
-
-# def connect_to_mysqldb():
-#     while True:
-#         try:
-#             connection = mysql.connector.connect(unix_socket='/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/mysql.sock',
-#                                                  database='optuna_db',
-#                                                  user='mdanb',
-#                                                  password='mdanb')
-#             if connection.is_connected():
-#                 print("Connected to MySQL")
-#                 break
-#         except Error as e:
-#             print("Error while connecting to MySQL", e)
-#             time.sleep(1)
-#     return connection
