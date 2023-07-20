@@ -116,7 +116,11 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                     total_num_features = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))) + 1
                     for curr_num_feats in range(1, total_num_features):
                         if curr_num_feats in test_set_perf_num_features:
-                            save_model_with_n_features_test_performance(curr_num_feats, datasets, ML_model,
+                            save_model_with_n_features_test_performance(scATAC_df,
+                                                                        cancer_specific_mutations,
+                                                                        scATAC_sources,
+                                                                        scATAC_dir,
+                                                                        curr_num_feats, datasets, ML_model,
                                                                         scATAC_cell_number_filter,
                                                                         annotation_dir, meso, SCLC, lung_subtyped,
                                                                         woo_pcawg,

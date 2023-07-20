@@ -497,19 +497,20 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
     else:
         print("Backward feature selection is already done!")
 
-def save_model_with_n_features_test_performance(n, datasets, ML_model, scATAC_cell_number_filter,
+def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_sources, scATAC_dir,
+                                                n, datasets, ML_model, scATAC_cell_number_filter,
                                                 annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
                                                 histologically_subtyped_mutations, de_novo_seurat_clustering,
                                                 cancer_type, CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
                                                 feature_importance_method, seed, tss_filter=None):
-    scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
-                                                    histologically_subtyped_mutations,
-                                                    de_novo_seurat_clustering,
-                                                    CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
-                                                    datasets, scATAC_cell_number_filter,
-                                                    annotation_dir, cancer_type, tss_filter)
-    scATAC_sources = construct_scATAC_sources(datasets)
-    scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed)
+    # scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
+    #                                                 histologically_subtyped_mutations,
+    #                                                 de_novo_seurat_clustering,
+    #                                                 CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+    #                                                 datasets, scATAC_cell_number_filter,
+    #                                                 annotation_dir, cancer_type, tss_filter)
+    # scATAC_sources = construct_scATAC_sources(datasets)
+    # scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed)
     if scATAC_df.shape[1] > 20:
        model_iteration = 20 - n
     else:
