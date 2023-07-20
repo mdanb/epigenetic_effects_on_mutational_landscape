@@ -99,6 +99,12 @@ if (dataset == "Bingren") {
   files = list.files("../bed_files/greenleaf_colon_scATAC",
                      pattern="tsv.gz",
                      full.names=TRUE)
+} else if (dataset == "Rawlins_fetal_lung") {
+  dir_path = "../bed_files/rawlins_fetal_lung_scATAC/migrated_to_hg19"
+  dir.create(dir_path)
+  files = list.files("../bed_files/rawlins_fetal_lung_scATAC",
+                     pattern="tsv.gz",
+                     full.names=TRUE)
 }
 
 if (tissue == "all") {
