@@ -117,6 +117,8 @@ files = files[grepl(tissue, files)]
 filepaths = get_files_not_done(files, dir_path)
 files = filepaths[[1]]
 migrated_filepaths = filepaths[[2]]
+print("Will process:")
+print(files)
 split_files = split(files, ceiling(seq_along(files)/cores))
 split_migrated_filepaths = split(migrated_filepaths, 
                                  ceiling(seq_along(files)/cores))
