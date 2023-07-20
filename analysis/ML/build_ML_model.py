@@ -63,7 +63,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model,
                                   seed_range, n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
-                                  make_plots, feature_importance_method, sqlite):
+                                  make_plots, feature_importance_method, sqlite, test_set_perf_num_features):
     ### args used at the end for plot_top_features.R ###
     cancer_types_arg = ",".join(cancer_types)
     datasets_arg = ",".join(datasets)
@@ -115,7 +115,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                     print("Saving test set performances...")
                     total_num_features = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))) + 1
                     for curr_num_feats in range(1, total_num_features):
-                        if curr_num_feats in top_features_to_plot:
+                        if curr_num_feats in test_set_perf_num_features:
                             save_model_with_n_features_test_performance(curr_num_feats, datasets, ML_model,
                                                                scATAC_cell_number_filter,
                                                                tss_fragment_filter, annotation_dir, meso, SCLC,
@@ -185,6 +185,7 @@ save_test_set_perf = config.save_test_set_perf
 make_plots = config.make_plots
 feature_importance_method = config.feature_importance_method
 sqlite = config.sqlite
+test_set_perf_num_features = config.test_set_perf_num_features
 
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
@@ -192,7 +193,7 @@ run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter,
                                meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range,
                                n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method,
-                               sqlite)
+                               sqlite, test_set_perf_num_features)
 
 
 
