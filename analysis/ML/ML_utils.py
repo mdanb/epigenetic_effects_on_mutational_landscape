@@ -610,36 +610,37 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
     else:
         print("Backward feature selection is already done!")
 
-def save_iter_i_model_test_performance(i, datasets, ML_model, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                       meso, SCLC, lung_subtyped, woo_pcawg,
-                                       histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-                                       CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, seed):
-    for cancer_type in cancer_types:
-        scATAC_sources = construct_scATAC_sources(datasets)
-        scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter,
-                                         annotation_dir, seed)
-        filename = f"model_iteration_{i}.pkl"
-        backwards_elim_model_file = f"models/{ML_model}/" \
-                                    f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
-        model = pickle.load(open(backwards_elim_model_file, "rb"))
-        scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
-        scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
-        scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
-        mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
-                                      histologically_subtyped_mutations, de_novo_seurat_clustering,
-                                      CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type)
+def save_model_with_n_features_test_performance(n, datasets, ML_model, scATAC_cell_number_filter, tss_filter,
+                                                annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
+                                                histologically_subtyped_mutations, de_novo_seurat_clustering,
+                                                cancer_type, CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+                                                permutation_importance_method, seed):
+    scATAC_sources = construct_scATAC_sources(datasets)
+    scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter,
+                                      annotation_dir, seed)
+    scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
+    
+    filename = f"model_iteration_{i}.pkl"
+    backwards_elim_model_file = f"models/{ML_model}/" \
+                                f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
+    model = pickle.load(open(backwards_elim_model_file, "rb"))
+    scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
+    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
+    mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
+                                  histologically_subtyped_mutations, de_novo_seurat_clustering,
+                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type)
 
-        if not pd.isna(mutations_df).any().any():
-            # for compatibility
-            mutations_df = add_na_ranges(mutations_df)
-        scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
-        cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
+    if not pd.isna(mutations_df).any().any():
+        # for compatibility
+        mutations_df = add_na_ranges(mutations_df)
+    scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
+    cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
 
-        _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, seed)
-        test_set_perf_filepath = f"models/{ML_model}/" \
-                                 f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
-                                 f"model_iteration_{i}_test_performance.txt"
-        print_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
+    _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, seed)
+    test_set_perf_filepath = f"models/{ML_model}/" \
+                             f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
+                             f"model_iteration_{i}_test_performance.txt"
+    print_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
 
 #### Call other scripts ####
 def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
@@ -704,6 +705,27 @@ def get_storage_name(sqlite=False):
         hostname = hostname_file.readline().strip()
         storage_name = f"postgresql://bgiotti:bgiotti@{hostname}:5432/optuna_db"
     return storage_name
+
+def post_training_setup():
+    scATAC_sources = construct_scATAC_sources()
+    scATAC_dir = construct_scATAC_dir()
+    filename = f"model_iteration_{i}.pkl"
+    backwards_elim_model_file = f"models/{ML_model}/" \
+                                f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
+    model = pickle.load(open(backwards_elim_model_file, "rb"))
+    scATAC_df = construct_scATAC_df()
+    scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
+    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
+    mutations_df = load_mutations()
+
+    if not pd.isna(mutations_df).any().any():
+        # for compatibility
+        mutations_df = add_na_ranges(mutations_df)
+    scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
+    cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
+
+    _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, seed)
+
 
 # def connect_to_mysqldb():
 #     subprocess.Popen(["mysqld_safe",
