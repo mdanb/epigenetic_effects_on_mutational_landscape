@@ -506,7 +506,8 @@ def save_model_with_n_features_test_performance(n, datasets, ML_model, scATAC_ce
                                                     annotation_dir, cancer_type, tss_filter)
     scATAC_sources = construct_scATAC_sources(datasets)
     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed)
-
+    print(scATAC_sources)
+    print(scATAC_dir)
     if scATAC_df.shape[1] > 20:
        model_iteration = 20 - n
     else:
