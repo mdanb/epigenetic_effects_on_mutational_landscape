@@ -179,15 +179,19 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
     datasets_combined_count_overlaps = []
     for dataset in datasets:
         if (tss_filter):
+            print(f"Loading TSS filtered scATAC from {dataset}...")
             tss_filtered_root = "../../data/processed_data/count_overlap_data/tsse_filtered"
             chr_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
             scATAC_df = load_scATAC(f"{tss_filtered_root}/{dataset}/combined/{annotation_dir}/" \
                                     f"combined_{tss_filter}_fragments.rds").T
+            print("Loaded!")
             scATAC_df.index = chr_ranges["x"].values
             datasets_combined_count_overlaps.append(scATAC_df)
         else:
+            print(f"Loading scATAC from {dataset}...")
             scATAC_df = load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" \
             f"/{annotation_dir}/{dataset}_combined_count_overlaps.rds")
+            print("Loaded!")
             metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" \
             f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds")
             scATAC_df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
@@ -506,8 +510,6 @@ def save_model_with_n_features_test_performance(n, datasets, ML_model, scATAC_ce
                                                     annotation_dir, cancer_type, tss_filter)
     scATAC_sources = construct_scATAC_sources(datasets)
     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed)
-    print(scATAC_sources)
-    print(scATAC_dir)
     if scATAC_df.shape[1] > 20:
        model_iteration = 20 - n
     else:
