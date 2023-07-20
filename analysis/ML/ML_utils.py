@@ -314,7 +314,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
     else:
         df_save = pd.DataFrame(columns=["features", feature_importance_method, "num_features", "score", "std"])
 
-    for idx in range(1, num_iterations):
+    for idx in range(1, num_iterations + 1):
         model_optimizer = ModelOptimizer(backwards_elim_dir + "/" + f"model_optimizer_iteration_{idx}.pkl")
         top_features_filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}"
         model_savefile = f"model_iteration_{idx}"
@@ -528,7 +528,7 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
     scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
 
-    _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, seed)
+    _, X_test, _, y_test = get_train_test_split(scATAC_df, mutations_df, 0.10, seed)
     test_set_perf_filepath = f"models/{ML_model}/" \
                              f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
                              f"model_iteration_{model_iteration}_test_performance.txt"
