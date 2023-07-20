@@ -112,17 +112,20 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          feature_importance_method, sqlite)
                 print(f"Done modeling {cancer_type}!")
                 if save_test_set_perf:
-                    print("Saving test set performances...")
+                    print("Saving test set performances for backward elimination...")
                     total_num_features = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))) + 1
                     for curr_num_feats in range(1, total_num_features):
                         if curr_num_feats in test_set_perf_num_features:
                             save_model_with_n_features_test_performance(curr_num_feats, datasets, ML_model,
-                                                               scATAC_cell_number_filter,
-                                                               tss_fragment_filter, annotation_dir, meso, SCLC,
-                                                               lung_subtyped, woo_pcawg,
-                                                               histologically_subtyped_mutations,
-                                                               de_novo_seurat_clustering, cancer_types, CPTAC,
-                                                               combined_CPTAC_ICGC, RNA_subtyped, per_donor, int(seed))
+                                                                        scATAC_cell_number_filter,
+                                                                        annotation_dir, meso, SCLC, lung_subtyped,
+                                                                        woo_pcawg,
+                                                                        histologically_subtyped_mutations,
+                                                                        de_novo_seurat_clustering,
+                                                                        cancer_type, CPTAC, combined_CPTAC_ICGC,
+                                                                        RNA_subtyped, per_donor,
+                                                                        feature_importance_method, seed,
+                                                                        tss_filter=tss_fragment_filter)
                     print("Done saving test set performances!")
             if make_plots:
             # if not os.path.exists(bp_path):
