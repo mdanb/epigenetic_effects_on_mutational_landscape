@@ -40,14 +40,16 @@ helper <- function(files, migrated_filepaths, ch, cores) {
 }
 
 get_files_not_done <- function(files, dir_path) {
-  # migrated_filepaths_bgz = paste(dir_path, gsub(".gz", ".bgz", 
-  #                                               lapply(strsplit(files, split = "/"), "[", 9)), 
+  # migrated_filepaths_bgz = paste(dir_path, gsub(".gz", ".bgz",
+  #                                               lapply(strsplit(files, split = "/"), "[", 4)),
   #                                sep = "/")
-  migrated_filepaths_tbi = paste(dir_path, paste(lapply(strsplit(files, split = "/"),
-                                                        "[", 4), "tbi", sep="."), 
+  migrated_filepaths_tbi = paste(dir_path, gsub(".gz", ".bgz", 
+                                      paste(lapply(strsplit(files, split = "/"),
+                                      "[", 4), "tbi", sep=".")),
                                  sep="/")
   migrated_filepaths = paste(dir_path, 
-                             lapply(strsplit(files, split = "/"), "[", 4),
+                             gsub(".gz", ".bgz",
+                             lapply(strsplit(files, split = "/"), "[", 4)),
                              sep = "/")
   files_not_done = c()
   migrated_filepaths_not_done = c()
