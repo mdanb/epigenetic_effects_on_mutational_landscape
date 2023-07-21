@@ -362,19 +362,21 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         best_trial = study.best_trial
         best_cv_score = best_trial.value
 
-        top_n_feats, df_save = get_top_n_features(best_model_fulldatatrained,
-                                                   best_model_perfoldtrained,
-                                                   len(X_train.columns.values) - 1,
-                                                   X_train.columns.values,
-                                                   feature_importance_method,
-                                                   X_train, y_train, seed,
-                                                   df_save=df_save, fp_for_fi=fp_for_fi,
-                                                   best_cv_score=best_cv_score)
-        removed_feature = X_train.columns[~(X_train.columns.isin(top_n_feats))].item()
-        print(f"Removing: {removed_feature}")
-        X_train = X_train.loc[:, top_n_feats]
-        # if not os.path.exists(filepath):
-        print_and_save_features(top_n_feats, filepath=top_features_filepath, top=True)
+        # No feature elimination if only 1 feature is left
+        if idx != num_iterations:
+            top_n_feats, df_save = get_top_n_features(best_model_fulldatatrained,
+                                                       best_model_perfoldtrained,
+                                                       len(X_train.columns.values) - 1,
+                                                       X_train.columns.values,
+                                                       feature_importance_method,
+                                                       X_train, y_train, seed,
+                                                       df_save=df_save, fp_for_fi=fp_for_fi,
+                                                       best_cv_score=best_cv_score)
+            removed_feature = X_train.columns[~(X_train.columns.isin(top_n_feats))].item()
+            print(f"Removing: {removed_feature}")
+            X_train = X_train.loc[:, top_n_feats]
+            # if not os.path.exists(filepath):
+            print_and_save_features(top_n_feats, filepath=top_features_filepath, top=True)
 
 
 #### Model train/val/test helpers ####
