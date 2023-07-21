@@ -66,6 +66,11 @@ if (dataset == "Greenleaf_pbmc_bm") {
   default_annotation_fp = paste(root, "default_annotation", 
                                 default_annotation_fn, sep="/")
   default_combined_count_ovs = readRDS(default_annotation_fp)
+  default_annotation_metadata_fn = "Greenleaf_pbmc_bm_combined_count_overlaps_metadata.rds"
+  default_annotation_metadata_fp = paste(root, "default_annotation", 
+                                         default_annotation_metadata_fn, sep="/")
+  
+  default_combined_metadata = readRDS(default_annotation_metadata_fp)
   
   if (annotation == "Greenleaf_pbmc_bm_CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm") {
     # pattern --> replacement (collapsing)
@@ -77,10 +82,14 @@ if (dataset == "Greenleaf_pbmc_bm") {
       c("bonemarrow B|bonemarrow Pre\\.B", "bonemarrow B"),
       c("bonemarrow .*Eryth", "bonemarrow Eryth"))
     
-    df = collapse_using_mapping(mapping, default_combined_count_ovs,
-                                grep)
+    l = collapse_using_mapping(mapping, default_combined_count_ovs,
+                                default_combined_metadata)
+    df = l[[1]]
     df = df[-grep("Unk", rownames(df)), ]
-    save_collapsed_df(df, dataset, annotation)
+    df_metadata = l[[2]]
+    df_metadata = df_metadata[-grep("Unk", df_metadata[["cell_type"]]), ]
+    
+    save_collapsed_df(df, df_metadata, dataset, annotation)
   } 
 } else if (dataset == "Greenleaf_brain") {
   lowest_level_annotation_fn = "Greenleaf_brain_combined_count_overlaps.rds"
