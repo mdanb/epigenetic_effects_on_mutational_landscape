@@ -337,6 +337,7 @@ if (dataset == "Bingren") {
              chain=ch,
              dataset=dataset,
              annotation=annotation,
+             which_interval_ranges=which_interval_ranges,
              mc.cores=cores)
 } else if (dataset == "Yang_kidney") {
   metadata_Yang = read_excel("../metadata/41467_2021_27660_MOESM4_ESM.xlsx", 
