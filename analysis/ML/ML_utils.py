@@ -519,9 +519,9 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
     # scATAC_sources = construct_scATAC_sources(datasets)
     # scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed)
     if scATAC_df.shape[1] > 20:
-       model_iteration = 20 - n
+       model_iteration = 20 - n + 1
     else:
-       model_iteration = scATAC_df.shape[1] - n
+       model_iteration = scATAC_df.shape[1] - n + 1
 
     filename = f"model_iteration_{model_iteration}"
 
