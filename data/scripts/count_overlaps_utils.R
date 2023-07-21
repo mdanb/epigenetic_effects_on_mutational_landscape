@@ -37,45 +37,35 @@ filter_samples_to_contain_only_cells_in_metadata <- function(i,
 
 import_sample <- function(file, dataset, which_interval_ranges) {
   if (dataset == "Bingren") {
-    sample = import(paste("/broad", "hptmp", "bgiotti", 
-                          "BingRen_scATAC_atlas", 
-                          "data", "bed_files", "bingren_scATAC", 
+    sample = import(paste("..", "bed_files", "bingren_scATAC", 
                           "migrated_to_hg19", file, sep="/"), 
                     format="bed")
   } else if (dataset == "Shendure") {
-    sample = import(paste("/broad", "hptmp", "bgiotti", 
-                          "BingRen_scATAC_atlas", 
-                          "data", "bed_files", "JShendure_scATAC", 
+    sample = import(paste("..", "bed_files", "JShendure_scATAC", 
                           file, sep="/"), format="bed")
   } else if (dataset == "Tsankov") {
-    sample = import(paste("/broad", "hptmp", "bgiotti", 
-                          "BingRen_scATAC_atlas", "data", "bed_files",
+    sample = import(paste("..", "bed_files",
                           "Tsankov_scATAC", "migrated_to_hg19",
                           file, sep="/"), format="bed")
   } else if (dataset == "Greenleaf_brain") {
-    sample = import(paste("/broad", "hptmp", "bgiotti", 
-                          "BingRen_scATAC_atlas", "data", "bed_files",
+    sample = import(paste("..", "bed_files",
                           "greenleaf_brain_scATAC", "migrated_to_hg19",
                           file, sep="/"), format="bed")
   } else if (dataset == "Greenleaf_pbmc_bm") {
-    sample = import(paste("/broad", "hptmp", "bgiotti", 
-                          "BingRen_scATAC_atlas", "data", "bed_files",
-                          "greenleaf_pbmc_bm_scATAC", "migrated_to_hg19",
+    sample = import(paste("..", "bed_files",
+                          "greenleaf_pbmc_bm_scATAC",
                           file, sep="/"), format="bed")
   } else if (dataset == "Greenleaf_colon") {
-      sample = import(paste("/broad", "hptmp", "bgiotti", 
-                            "BingRen_scATAC_atlas", "data", "bed_files",
+      sample = import(paste("..", "bed_files",
                             "greenleaf_colon_scATAC", "migrated_to_hg19",
                             file, sep="/"), format="bed")
   } else if (dataset == "Yang_kidney") {
       if (which_interval_ranges == "polak") {
-        fp = paste("/broad", "hptmp", "bgiotti", 
-                   "BingRen_scATAC_atlas", "data", "bed_files",
+        fp = paste("..", "bed_files",
                    "yang_kidney_scATAC", 
                    file, sep="/")
       } else if (which_interval_ranges == "yang") {
-        fp = paste("/broad", "hptmp", "bgiotti", 
-                   "BingRen_scATAC_atlas", "data", "bed_files",
+        fp = paste("..",
                    "yang_kidney_scATAC", "migrated_to_hg38", 
                    file, sep="/")
       }
