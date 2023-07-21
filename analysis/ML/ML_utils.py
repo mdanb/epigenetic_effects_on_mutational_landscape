@@ -13,6 +13,7 @@ import optuna
 import subprocess
 from sklearn.inspection import permutation_importance
 from pathlib import Path
+import re
 
 ### Load Data helpers ###
 def load_data(meso, SCLC, lung_subtyped, woo_pcawg,
@@ -286,15 +287,20 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
     fp_for_fi = figure_path + "/" + filename_df_for_fi
 
     if starting_n is not None:
-        ranked_features, df_save = get_top_n_features(best_model_fulldatatrained,
-                                                       best_model_perfoldtrained,
-                                                       len(X_train.columns.values),
-                                                       X_train.columns.values,
-                                                       feature_importance_method,
-                                                       X_train, y_train, seed)
-        print_and_save_features(ranked_features, filepath=f"{backwards_elim_dir}/"
-                                f"all_features_rankings_by_{feature_importance_method}.txt",
-                                top=True)
+        if not os.path.exists(f"all_features_rankings_by_{feature_importance_method}.txt"):
+            ranked_features, df_save = get_top_n_features(best_model_fulldatatrained,
+                                                           best_model_perfoldtrained,
+                                                           len(X_train.columns.values),
+                                                           X_train.columns.values,
+                                                           feature_importance_method,
+                                                           X_train, y_train, seed)
+            print_and_save_features(ranked_features, filepath=f"{backwards_elim_dir}/"
+                                    f"all_features_rankings_by_{feature_importance_method}.txt",
+                                    top=True)
+        else:
+            with open(f"all_features_rankings_by_{feature_importance_method}.txt", "r") as f:
+                ranked_features = f.read().splitlines()
+                ranked_features = [re.sub("^\d+\.\s*", "", feature) for feature in ranked_features]
         top_n_features = ranked_features[:starting_n]
         X_train = X_train.loc[:, top_n_features]
         print_and_save_features(top_n_features,
@@ -497,12 +503,9 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
     else:
         print("Backward feature selection is already done!")
 
-def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_sources, scATAC_dir,
-                                                n, datasets, ML_model, scATAC_cell_number_filter,
-                                                annotation_dir, meso, SCLC, lung_subtyped, woo_pcawg,
-                                                histologically_subtyped_mutations, de_novo_seurat_clustering,
-                                                cancer_type, CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
-                                                feature_importance_method, seed, tss_filter=None):
+def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_dir,
+                                                n, ML_model, cancer_type, feature_importance_method,
+                                                seed):
     # scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
     #                                                 histologically_subtyped_mutations,
     #                                                 de_novo_seurat_clustering,
@@ -579,22 +582,22 @@ def get_storage_name(sqlite=False):
         storage_name = f"postgresql://bgiotti:bgiotti@{hostname}:5432/optuna_db"
     return storage_name
 
-def post_training_setup():
-    scATAC_sources = construct_scATAC_sources()
-    scATAC_dir = construct_scATAC_dir()
-    filename = f"model_iteration_{i}.pkl"
-    backwards_elim_model_file = f"models/{ML_model}/" \
-                                f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
-    model = pickle.load(open(backwards_elim_model_file, "rb"))
-    scATAC_df = construct_scATAC_df()
-    scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
-    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
-    mutations_df = load_mutations()
-
-    if not pd.isna(mutations_df).any().any():
-        # for compatibility
-        mutations_df = add_na_ranges(mutations_df)
-    scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
-    cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
-
-    _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, seed)
+# def post_training_setup():
+#     scATAC_sources = construct_scATAC_sources()
+#     scATAC_dir = construct_scATAC_dir()
+#     filename = f"model_iteration_{i}.pkl"
+#     backwards_elim_model_file = f"models/{ML_model}/" \
+#                                 f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
+#     model = pickle.load(open(backwards_elim_model_file, "rb"))
+#     scATAC_df = construct_scATAC_df()
+#     scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
+#     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
+#     mutations_df = load_mutations()
+#
+#     if not pd.isna(mutations_df).any().any():
+#         # for compatibility
+#         mutations_df = add_na_ranges(mutations_df)
+#     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
+#     cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
+#
+#     _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, seed)
