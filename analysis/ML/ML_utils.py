@@ -221,8 +221,8 @@ def calculate_permutation_importance(estimator, X_valid, y_valid, n_repeats, see
 def get_top_n_features(best_model_fulldatatrained, best_model_perfoldtrained: list,
                        n, features, feature_importance_method, X, y, seed,
                        df_save=None, fp_for_fi=None, best_cv_score=None):
-    if df_save is not None and n in df_save["num_features"].array:
-        feature_importances = df_save.loc[df_save["num_features"] == n][feature_importance_method]
+    if df_save is not None and n + 1 in df_save["num_features"].array:
+        feature_importances = df_save.loc[df_save["num_features"] == n + 1][feature_importance_method]
     else:
         kf = KFold(n_splits=10)
         std = [np.NaN] * len(features)
@@ -370,6 +370,8 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                                    X_train, y_train, seed,
                                                    df_save=df_save, fp_for_fi=fp_for_fi,
                                                    best_cv_score=best_cv_score)
+        removed_feature = X_train.columns[~(X_train.columns.isin(top_n_feats))].item()
+        print(f"Removing: {removed_feature}")
         X_train = X_train.loc[:, top_n_feats]
         # if not os.path.exists(filepath):
         print_and_save_features(top_n_feats, filepath=top_features_filepath, top=True)
