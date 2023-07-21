@@ -43,7 +43,7 @@ get_files_not_done <- function(files, dir_path) {
   # migrated_filepaths_bgz = paste(dir_path, gsub(".gz", ".bgz",
   #                                               lapply(strsplit(files, split = "/"), "[", 4)),
   #                                sep = "/")
-  migrated_filepaths_tbi = paste(dir_path, gsub(".gz", "", 
+  migrated_filepaths_tbi = paste(dir_path, gsub(".gz", ".bgz", 
                                       paste(lapply(strsplit(files, split = "/"),
                                       "[", 4), "tbi", sep=".")),
                                  sep="/")
@@ -54,9 +54,8 @@ get_files_not_done <- function(files, dir_path) {
   files_not_done = c()
   migrated_filepaths_not_done = c()
   for (i in 1:length(migrated_filepaths)) {
-    bgz_file = files[i]
-    tbi_file = migrated_filepaths_tbi[i]
-    if (!file.exists(migrated_filepaths[i]) || !file.exists(migrated_filepaths_tbi[i])) {
+    bgz_file = paste(migrated_filepaths[i], ".bgz", sep="")
+    if (!file.exists(bgz_file) || !file.exists(migrated_filepaths_tbi[i])) {
       migrated_filepaths_not_done = append(migrated_filepaths_not_done, 
                                            migrated_filepaths[i])
       files_not_done = append(files_not_done, files[i])
