@@ -287,7 +287,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
     fp_for_fi = figure_path + "/" + filename_df_for_fi
 
     if starting_n is not None:
-        if not os.path.exists(f"all_features_rankings_by_{feature_importance_method}.txt"):
+        if not os.path.exists(f"{backwards_elim_dir}/all_features_rankings_by_{feature_importance_method}.txt"):
             ranked_features, df_save = get_top_n_features(best_model_fulldatatrained,
                                                            best_model_perfoldtrained,
                                                            len(X_train.columns.values),
@@ -298,7 +298,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                     f"all_features_rankings_by_{feature_importance_method}.txt",
                                     top=True)
         else:
-            with open(f"all_features_rankings_by_{feature_importance_method}.txt", "r") as f:
+            with open(f"{backwards_elim_dir}/all_features_rankings_by_{feature_importance_method}.txt", "r") as f:
                 ranked_features = f.read().splitlines()
                 ranked_features = [re.sub("^\d+\.\s*", "", feature) for feature in ranked_features]
         top_n_features = ranked_features[:starting_n]
