@@ -67,12 +67,6 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
     ### args used at the end for plot_top_features.R ###
     cancer_types_arg = ",".join(cancer_types)
     datasets_arg = ",".join(datasets)
-    # iters_dont_skip_arg = ",".join(iters_dont_skip)
-    ####################################################
-
-    # mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
-    #                               histologically_subtyped_mutations, de_novo_seurat_clustering, cancer_types,
-    #                               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor)
     scATAC_sources = construct_scATAC_sources(datasets)
 
     for seed in seed_range:
