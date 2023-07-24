@@ -8,7 +8,7 @@ import pickle
 import os
 from sklearn.metrics import r2_score
 from xgboost import XGBRegressor
-from sklearn.model_selection import cross_val_score, cross_validate, KFold
+from sklearn.model_selection import cross_validate, KFold
 import optuna
 import subprocess
 from sklearn.inspection import permutation_importance
@@ -33,6 +33,7 @@ def load_data(meso, SCLC, lung_subtyped, woo_pcawg,
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
     cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
     return scATAC_df, cancer_specific_mutations
+
 
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                    histologically_subtyped_mutations, de_novo_seurat_clustering,
@@ -61,66 +62,79 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
         mutations_df = load_agg_mutations()
     return mutations_df
 
+
 def load_scATAC(scATAC_path):
     scATAC_df = pyreadr.read_r(scATAC_path)
     scATAC_df = scATAC_df[None]
     scATAC_df = scATAC_df.T
     return scATAC_df
 
+
 def load_scATAC_metadata(metadata_path):
     metadata = pyreadr.read_r(metadata_path)
     metadata = metadata[None]
     return metadata
 
+
 def load_per_donor_mutations(cancer_type):
     df = pd.read_csv(f"../../data/processed_data/per_patient_mutations/{cancer_type}_per_donor.csv",
                      index_col=0)
-    return(df.loc[natsorted(df.index)])
+    return df.loc[natsorted(df.index)]
+
 
 def load_CPTAC():
     df = pd.read_csv(f"../../data/processed_data/CPTAC_mutations.csv",
                      index_col=0)
-    return(df.loc[natsorted(df.index)])
+    return df.loc[natsorted(df.index)]
+
 
 def load_combined_CPTAC_ICGC():
     df = pd.read_csv(f"../../data/processed_data/combined_CPTAC_ICGC_mutations.csv",
                      index_col=0)
-    return(df.loc[natsorted(df.index)])
+    return df.loc[natsorted(df.index)]
+
 
 def load_agg_mutations():
     df = pd.read_csv("../../data/processed_data/mut_count_data.csv",
                        index_col=0)
-    return(df.loc[natsorted(df.index)])
+    return df.loc[natsorted(df.index)]
+
 
 def load_woo_pcawg_mutations():
     df = pd.read_csv("../../data/processed_data/pcawg_agg_woo.csv",
                        index_col=0)
-    return(df.loc[natsorted(df.index)])
+    return df.loc[natsorted(df.index)]
+
 
 def load_RNA_subtyped_mutations():
     df = pd.read_csv("../../data/processed_data/RNA_subtyped_cancers.csv",
                        index_col=0)
-    return(df.loc[natsorted(df.index)])
+    return df.loc[natsorted(df.index)]
+
 
 def load_meso():
     df = pd.read_csv("../../data/processed_data/mesothelioma.csv",
                        index_col=0)
-    return(df.loc[natsorted(df.index)])
+    return df.loc[natsorted(df.index)]
+
 
 def load_sclc_mutations():
     df = pd.read_csv("../../data/processed_data/sclc_count_overlaps.csv",
                        index_col=0)
-    return(df.loc[natsorted(df.index)])
+    return df.loc[natsorted(df.index)]
+
 
 def load_subtyped_lung_mutations():
     df = pd.read_csv("../../data/processed_data/lung_subtyped_mutation.csv",
                        index_col=0)
-    return(df.loc[natsorted(df.index)])
+    return df.loc[natsorted(df.index)]
+
 
 def load_histologically_subtyped_mutations():
     df = pd.read_csv("../../data/processed_data/histologically_subtyped_mutations.csv",
                        index_col=0)
-    return(df.loc[natsorted(df.index)])
+    return df.loc[natsorted(df.index)]
+
 
 def load_de_novo_seurat_clustered_cancers(cancer_type):
     print("Loading De Novo Seurat clustered cancers")
@@ -128,7 +142,8 @@ def load_de_novo_seurat_clustered_cancers(cancer_type):
     cancer_type = cancer_type.split("x")[0]
     df = pd.read_csv(f"../../data/processed_data/de_novo_seurat_clustered_mutations/{cancer_type}/"
                      f"{seurat_cluster_settings}.csv", index_col=0)
-    return(df.loc[natsorted(df.index)])
+    return df.loc[natsorted(df.index)]
+
 
 #### Filter Data Helpers ####
 def filter_agg_data(scATAC_df, mutations_df):
@@ -137,13 +152,16 @@ def filter_agg_data(scATAC_df, mutations_df):
     mutations_df = mutations_df[idx_select]
     return scATAC_df, mutations_df
 
+
 def filter_mutations_by_cancer(mutations_df, cancer_type):
     cancer_type_specific_mut_idx = [i for i, s in enumerate(mutations_df.columns.values) if cancer_type == s][0]
     cancer_specific_mutations = mutations_df.iloc[:, cancer_type_specific_mut_idx]
     return cancer_specific_mutations
 
+
 def filter_clustered_data(scATAC_df, mutations_df):
     return pd.DataFrame(scATAC_df, index=mutations_df.index)
+
 
 def filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata):
     metadata = metadata.loc[metadata["num_cells"].astype(int) >= scATAC_cell_number_filter, :]
@@ -152,14 +170,15 @@ def filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_fil
     except KeyError:
         keep = [tissue + " " + cell_type for tissue, cell_type in zip(metadata["tissue"], metadata["cell_type"])]
     scATAC_df = scATAC_df.loc[:, scATAC_df.columns.isin(keep)]
-    return(scATAC_df)
+    return scATAC_df
 
 #### Dataframe curation helpers ####
 def add_na_ranges(mutations_df):
     full_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
     mutations_df = pd.merge(full_ranges, mutations_df, left_on = "x", right_index=True,
                             how="outer").set_index("x")
-    return(mutations_df.loc[natsorted(mutations_df.index)])
+    return mutations_df.loc[natsorted(mutations_df.index)]
+
 
 def add_dataset_origin_to_cell_types(df, dataset):
     if (dataset == "Bingren"):
@@ -174,7 +193,8 @@ def add_dataset_origin_to_cell_types(df, dataset):
         df.columns = [c + " GL_BlBm" for c in df.columns]
     elif (dataset == "Yang_kidney"):
         df.columns = [c + " Y_K" for c in df.columns]
-    return(df)
+    return df
+
 
 def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir):
     datasets_combined_count_overlaps = []
@@ -202,7 +222,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
         datasets_combined_count_overlaps[idx] = [add_dataset_origin_to_cell_types(datasets_combined_count_overlaps[idx],
                                                  dataset)]
     scATAC_df = pd.concat(chain(*datasets_combined_count_overlaps), axis=1)
-    return(scATAC_df)
+    return scATAC_df
 
 
 #### Split Train/Test helpers ####
@@ -210,6 +230,7 @@ def get_train_test_split(X, y, test_size, seed):
     X_train, X_test, y_train, y_test = train_test_split(X, y,
                                                         test_size=test_size, random_state=seed)
     return X_train, X_test, y_train, y_test
+
 
 #### Feature Selection helpers ####
 def calculate_permutation_importance(estimator, X_valid, y_valid, n_repeats, seed):
@@ -255,6 +276,7 @@ def get_top_n_features(best_model_fulldatatrained, best_model_perfoldtrained: li
     top_n_feats = features[feat_importance_idx][:n]
     return top_n_feats, df_save
 
+
 def print_and_save_features(features, filepath, top=True):
     n = len(features)
     if top:
@@ -267,6 +289,7 @@ def print_and_save_features(features, filepath, top=True):
         else:
             print(f"-{feature}")
             f.write(f"-{feature}\n")
+
 
 def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 ML_model, scATAC_dir, cancer_type_or_donor_id, seed,
@@ -418,6 +441,7 @@ class ModelOptimizer:
             print("Done saving")
         return mean_score
 
+
     def optimize_optuna_study(self, study_name, ML_model, X_train, y_train, seed, n_optuna_trials,
                               sqlite):
         storage_name = get_storage_name(sqlite)
@@ -441,12 +465,14 @@ class ModelOptimizer:
         # connection.close()
         return study
 
+
 def get_and_save_test_set_perf(X_test, y_test, model, filepath):
     test_preds = model.predict(X_test)
     test_set_performance = r2_score(y_test, test_preds)
     with open(filepath, "w") as f:
         f.write(str(test_set_performance))
     return test_set_performance
+
 
 def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filepath,
                    ML_model, seed, scATAC_dir, cancer_type_or_donor_id,
@@ -489,7 +515,6 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
         print("Starter model not needed! Number of features is less than or equal to 20 already!")
         filepath = f"top_features_iteration_{X_train.shape[1]}"
 
-
     if feature_importance_method != "default_importance":
         filepath = filepath + f"_by_{feature_importance_method}"
 
@@ -507,9 +532,9 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
     else:
         print("Backward feature selection is already done!")
 
-def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_dir,
-                                                n, ML_model, cancer_type, feature_importance_method,
-                                                seed):
+
+def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_dir, n, ML_model, cancer_type,
+                                                feature_importance_method, seed):
     # scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
     #                                                 histologically_subtyped_mutations,
     #                                                 de_novo_seurat_clustering,
@@ -518,22 +543,30 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
     #                                                 annotation_dir, cancer_type, tss_filter)
     # scATAC_sources = construct_scATAC_sources(datasets)
     # scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed)
+
+    # if scATAC_df.shape[1] > 20:
+    #    model_iteration = 20 - n + 1
+    # else:
+    #    model_iteration = scATAC_df.shape[1] - n + 1
+    #
+    # filename = f"model_iteration_{model_iteration}"
+    #
+    # if feature_importance_method != "default_importance":
+    #     filename = filename + f"_feature_importance_{feature_importance_method}"
+    # filename = filename + ".pkl"
+    #
+    # backwards_elim_model_file = f"models/{ML_model}/" \
+    #                             f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
+    # model = pickle.load(open(backwards_elim_model_file, "rb"))
+    model = load_n_features_backwards_elim_model(n, scATAC_df.shape[1], cancer_type, ML_model, scATAC_dir,
+                                                 feature_importance_method)
+    scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
+    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
+
     if scATAC_df.shape[1] > 20:
        model_iteration = 20 - n + 1
     else:
        model_iteration = scATAC_df.shape[1] - n + 1
-
-    filename = f"model_iteration_{model_iteration}"
-
-    if feature_importance_method != "default_importance":
-        filename = filename + f"_feature_importance_{feature_importance_method}"
-    filename = filename + ".pkl"
-
-    backwards_elim_model_file = f"models/{ML_model}/" \
-                                f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
-    model = pickle.load(open(backwards_elim_model_file, "rb"))
-    scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
-    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
 
     _, X_test, _, y_test = get_train_test_split(scATAC_df, mutations_df, 0.10, seed)
     test_set_perf_filepath = f"models/{ML_model}/" \
@@ -541,6 +574,7 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
                              f"model_iteration_{model_iteration}_test_performance.txt"
     tsp = get_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
     print(f"Test set performance with {n} features: {tsp}")
+
 
 #### Call other scripts ####
 def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
@@ -558,33 +592,55 @@ def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATA
     subprocess.call(command)
     print(f"Done plotting top features for seed {seed}!")
 
+
 #### Other ####
 def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed):
     scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
-    if (tss_filter):
+    if tss_filter:
         scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
     scATAC_dir = scATAC_dir + f"_annotation_{annotation_dir}_seed_{seed}"
-    return(scATAC_dir)
+    return scATAC_dir
+
 
 def construct_scATAC_sources(datasets):
     scATAC_sources = ""
 
     for idx, dataset in enumerate(datasets):
-        if (scATAC_sources == ""):
+        if scATAC_sources == "":
             scATAC_sources = dataset
         else:
             scATAC_sources = "_".join((scATAC_sources, dataset))
-    return(scATAC_sources)
+    return scATAC_sources
+
 
 def get_storage_name(sqlite=False):
     if sqlite:
         storage_name = "sqlite:///temp.db"
     else:
         hostname_file = open(os.path.dirname(os.path.abspath(__file__)) + "/" + "postgresql_hostname.txt", "r")
-        # hostname_file = open("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/postgresql_hostname.txt", "r")
         hostname = hostname_file.readline().strip()
         storage_name = f"postgresql://bgiotti:bgiotti@{hostname}:5432/optuna_db"
     return storage_name
+
+
+def load_n_features_backwards_elim_model(n, total_num_features, cancer_type, ML_model, scATAC_dir,
+                                         feature_importance_method):
+    if total_num_features > 20:
+        model_iteration = 20 - n + 1
+    else:
+        model_iteration = total_num_features - n + 1
+
+    filename = f"model_iteration_{model_iteration}"
+
+    if feature_importance_method != "default_importance":
+        filename = filename + f"_feature_importance_{feature_importance_method}"
+    filename = filename + ".pkl"
+
+    backwards_elim_model_file = f"models/{ML_model}/" \
+                                f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
+    model = pickle.load(open(backwards_elim_model_file, "rb"))
+    return model
+
 
 # def post_training_setup():
 #     scATAC_sources = construct_scATAC_sources()
