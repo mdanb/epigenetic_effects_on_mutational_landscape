@@ -62,6 +62,9 @@ if (dataset == "Bingren") {
 } else if (dataset == "Greenleaf_colon") {
   output_dir = paste(root, "arrow/Greenleaf_colon", sep="/")
   files_dir = paste(root, "bed_files/greenleaf_colon_scATAC/migrated_to_hg19", sep="/")
+} else if (dataset == "Rawling_fetal_lung") {
+  output_dir = paste(root, "arrow/Rawlins_fetal_lung", sep="/")
+  files_dir = paste(root, "bed_files/rawlins_fetal_lung_scATAC/migrated_to_hg19", sep="/")
 }
 
 
