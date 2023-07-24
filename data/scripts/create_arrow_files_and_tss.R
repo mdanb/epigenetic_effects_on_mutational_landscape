@@ -69,5 +69,5 @@ if (dataset == "Bingren") {
 
 dir.create(output_dir)
 setwd(output_dir)
-
+files_dir = paste("..", files_dir, sep="/")
 create_arrow_files(list.files(files_dir, full.names=T, pattern = "bgz$"))
