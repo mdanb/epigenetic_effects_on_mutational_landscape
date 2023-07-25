@@ -566,7 +566,7 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
        model_iteration = 20 - n + 1
     else:
        model_iteration = scATAC_df.shape[1] - n + 1
-
+    print(model_iteration)
     _, X_test, _, y_test = get_train_test_split(scATAC_df, mutations_df, 0.10, seed)
     test_set_perf_filepath = f"models/{ML_model}/" \
                              f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
