@@ -559,14 +559,16 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
     # model = pickle.load(open(backwards_elim_model_file, "rb"))
     model = load_n_features_backwards_elim_models(n, scATAC_df.shape[1], cancer_type, ML_model, scATAC_dir,
                                                  feature_importance_method)
-    scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
-    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
     print(scATAC_df.shape[1])
+    print(model_iteration)
+
     if scATAC_df.shape[1] > 20:
        model_iteration = 20 - n + 1
     else:
        model_iteration = scATAC_df.shape[1] - n + 1
-    print(model_iteration)
+
+    scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
+    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
     _, X_test, _, y_test = get_train_test_split(scATAC_df, mutations_df, 0.10, seed)
     test_set_perf_filepath = f"models/{ML_model}/" \
                              f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
