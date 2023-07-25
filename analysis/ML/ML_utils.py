@@ -574,7 +574,7 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
     if feature_importance_method != "default_importance":
         test_set_perf_filepath = test_set_perf_filepath + f"_feature_importance_{feature_importance_method}"
 
-    test_set_perf_filepath = test_set_perf_filepath + "test_performance.txt"
+    test_set_perf_filepath = test_set_perf_filepath + "_test_performance.txt"
     tsp = get_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
     print(f"Test set performance with {n} features: {tsp}")
 
