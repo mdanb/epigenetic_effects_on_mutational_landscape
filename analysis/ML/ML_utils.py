@@ -227,16 +227,23 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
 
 #### Split Train/Test helpers ####
 def get_train_test_split(X, y, test_size, seed):
+    # Don't shuffle, to make problem harder as explained elsewhere
     X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                        test_size=test_size, random_state=seed)
+                                                        test_size=test_size, random_state=seed,
+                                                        shuffle=False)
     return X_train, X_test, y_train, y_test
 
 
 #### Feature Selection helpers ####
-def calculate_permutation_importance(estimator, X_valid, y_valid, n_repeats, seed):
-    r = permutation_importance(estimator, X_valid, y_valid, n_repeats=n_repeats, random_state=seed,
-                               n_jobs=-1)
-    return r.importances_mean, r.importances_std
+def calculate_permutation_importance(X_valid, y_valid, **kwargs):
+    estimator = kwargs["estimator"]
+    n_repeats = kwargs["n_repeats"]
+    seed = kwargs["seed"]
+    if kwargs["i"] is not None:
+        estimator = estimator[kwargs["i"]]
+        print(f"Calculating permutation importance for fold {kwargs['i']}...")
+    out = permutation_importance(estimator, X_valid, y_valid, n_repeats=n_repeats, random_state=seed, n_jobs=-1)
+    return out
 
 
 def get_top_n_features(best_model_fulldatatrained, best_model_perfoldtrained: list,
@@ -245,25 +252,29 @@ def get_top_n_features(best_model_fulldatatrained, best_model_perfoldtrained: li
     if df_save is not None and n + 1 in df_save["num_features"].array:
         feature_importances = df_save.loc[df_save["num_features"] == n + 1][feature_importance_method]
     else:
-        kf = KFold(n_splits=10)
+        # kf = KFold(n_splits=10)
         std = [np.NaN] * len(features)
         if feature_importance_method == "default_importance":
             feature_importances = best_model_fulldatatrained.feature_importances_
         elif feature_importance_method == "permutation_importance":
             assert not (X is None or y is None or seed is None)
             print("Computing permutation importance per fold...")
-            feature_importances = []
+            func_out = apply_func_to_kfolds(X, y, calculate_permutation_importance, n_repeats=10,
+                                                     seed=seed, estimator=best_model_perfoldtrained)
+            feature_importance_means = []
             std = []
-            for i, (train_index, val_index) in enumerate(kf.split(X)):
-                print(f"Computing fold {i + 1} permutation importances")
-                X_valid, y_valid = X.iloc[val_index], y.iloc[val_index]
-                feature_importance_means, stds = calculate_permutation_importance(best_model_perfoldtrained[i],
-                                                                                  X_valid, y_valid, 10, seed)
-                feature_importances.append(feature_importance_means)
-                std.append(stds)
-                # permutation_importance(clf, X.loc[:, features], y, n_repeats=10,
-                #                                                 random_state=seed, n_jobs=-1)
-            feature_importances = np.stack(feature_importances).mean(axis=0)
+            for fold_results in func_out:
+                feature_importance_means.append(fold_results["importances_mean"])
+                std.append(fold_results["importances_std"])
+
+            # for i, (train_index, val_index) in enumerate(kf.split(X)):
+            #     print(f"Computing fold {i + 1} permutation importances")
+            #     X_valid, y_valid = X.iloc[val_index], y.iloc[val_index]
+            #     feature_importance_means, stds = calculate_permutation_importance(best_model_perfoldtrained[i],
+            #                                                                       X_valid, y_valid, 10, seed)
+            #     feature_importances.append(feature_importance_means)
+            #     std.append(stds)
+            feature_importances = np.stack(feature_importance_means).mean(axis=0)
             std = np.stack(std).mean(axis=0)
             print("Done computing feature importances!")
         if df_save is not None:
@@ -576,6 +587,18 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
     print(f"Test set performance with {n} features: {tsp}")
 
 
+def apply_func_to_kfolds(X, y, func, **kwargs):
+    kf = KFold(n_splits=10)
+    func_out = []
+    for i, (train_index, val_index) in enumerate(kf.split(X)):
+        X_train, y_train = X.iloc[train_index], y.iloc[train_index]
+        X_valid, y_valid = X.iloc[val_index], y.iloc[val_index]
+        kwargs["i"] = i
+        kwargs["X_train"] = X_train
+        kwargs["y_train"] = y_train
+        func_out.append(func(X_valid, y_valid, **kwargs))
+    return func_out
+
 #### Call other scripts ####
 def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
                            annotation_dir, top_features_to_plot, feature_importance_method):
@@ -623,14 +646,16 @@ def get_storage_name(sqlite=False):
     return storage_name
 
 
-def load_n_features_backwards_elim_model(n, total_num_features, cancer_type, ML_model, scATAC_dir,
-                                         feature_importance_method):
+def load_n_features_backwards_elim_models(n, total_num_features, cancer_type, ML_model, scATAC_dir,
+                                         feature_importance_method, full_data_trained=True):
     if total_num_features > 20:
         model_iteration = 20 - n + 1
     else:
         model_iteration = total_num_features - n + 1
-
-    filename = f"model_iteration_{model_iteration}"
+    if full_data_trained:
+        filename = f"model_iteration_{model_iteration}"
+    else:
+        filename = f"per_fold_model_iteration_{model_iteration}"
 
     if feature_importance_method != "default_importance":
         filename = filename + f"_feature_importance_{feature_importance_method}"
@@ -641,6 +666,17 @@ def load_n_features_backwards_elim_model(n, total_num_features, cancer_type, ML_
     model = pickle.load(open(backwards_elim_model_file, "rb"))
     return model
 
+def compute_error(X_val, y_val, **kwargs):
+    estimator = kwargs["estimator"]
+    if kwargs["train_new_model"]:
+        estimator = XGBRegressor(**estimator.get_params())
+        estimator.fit(X=kwargs["X_train"], y=kwargs["y_train"])
+    if kwargs["i"] is not None:
+        print(f"Calculating error for fold {kwargs['i'] + 1}...")
+    preds = estimator.predict(X_val)
+    abs_err = np.absolute(y_val - preds)
+    percent_error = abs_err / (y_val + 1) * 100
+    return {"abs_err": abs_err, "percent_err": percent_error, "preds": preds}
 
 # def post_training_setup():
 #     scATAC_sources = construct_scATAC_sources()
