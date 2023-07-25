@@ -266,14 +266,6 @@ def get_top_n_features(best_model_fulldatatrained, best_model_perfoldtrained: li
             for fold_results in func_out:
                 feature_importance_means.append(fold_results["importances_mean"])
                 std.append(fold_results["importances_std"])
-
-            # for i, (train_index, val_index) in enumerate(kf.split(X)):
-            #     print(f"Computing fold {i + 1} permutation importances")
-            #     X_valid, y_valid = X.iloc[val_index], y.iloc[val_index]
-            #     feature_importance_means, stds = calculate_permutation_importance(best_model_perfoldtrained[i],
-            #                                                                       X_valid, y_valid, 10, seed)
-            #     feature_importances.append(feature_importance_means)
-            #     std.append(stds)
             feature_importances = np.stack(feature_importance_means).mean(axis=0)
             std = np.stack(std).mean(axis=0)
             print("Done computing feature importances!")
@@ -307,7 +299,6 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 n_optuna_trials_backward_selection, feature_importance_method, sqlite,
                                 best_model_fulldatatrained, best_model_perfoldtrained,
                                 starting_n):
-    # os.makedirs(backwards_elim_dir, exist_ok=True)
     figure_path = os.path.join("../../figures/models",
                                ML_model,
                                cancer_type_or_donor_id,
@@ -392,7 +383,6 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         else:
             best_model_perfoldtrained = pickle.load(open(f"{backwards_elim_dir}/{per_fold_model_savefile}", "rb"))
 
-        # grid_search_results = pickle.load(open(f"{backwards_elim_dir}/model_iteration_{idx}.pkl", 'rb'))
         best_trial = study.best_trial
         best_cv_score = best_trial.value
 
@@ -473,7 +463,6 @@ class ModelOptimizer:
                            n_trials=n_optuna_trials_remaining)
         else:
             print(f"Done running {n_optuna_trials} trials!")
-        # connection.close()
         return study
 
 
@@ -499,7 +488,6 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
     if scATAC_df.shape[1] > 20:
         print("Getting a starter model!")
         study_name = f"{cancer_type_or_donor_id}_{scATAC_dir}"
-        # study = model_optimizer.optimize_optuna_study()
         model_optimizer = ModelOptimizer(backwards_elim_dir + "/" + "model_optimizer_starter.pkl")
         study = model_optimizer.optimize_optuna_study(study_name=study_name, ML_model=ML_model, X_train=X_train,
                                                       y_train=y_train, seed=seed,
@@ -569,7 +557,7 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
     # backwards_elim_model_file = f"models/{ML_model}/" \
     #                             f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
     # model = pickle.load(open(backwards_elim_model_file, "rb"))
-    model = load_n_features_backwards_elim_model(n, scATAC_df.shape[1], cancer_type, ML_model, scATAC_dir,
+    model = load_n_features_backwards_elim_models(n, scATAC_df.shape[1], cancer_type, ML_model, scATAC_dir,
                                                  feature_importance_method)
     scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]

@@ -1,11 +1,6 @@
-import pickle
-
-import pandas as pd
-
 from ML_utils import *
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import figure
 from config import create_parser
 
 parser = create_parser()
@@ -65,11 +60,11 @@ for seed in seed_range:
         percent_errors = pd.concat(percent_errors)
         preds = np.concatenate(preds)
         # errors = [err for err_list in errors for err in err_list]
-        fig, ax = plt.subplots(4, 1, figsize=(15,15), sharex=True)
+        fig, ax = plt.subplots(5, 1, figsize=(15,15), sharex=True)
         x = np.arange(len(abs_errors))
-        to_plot = [abs_errors, percent_errors, cancer_specific_mutations, preds]
-        ylabel_list = ["Absolute error", "Percent error", "Mutation counts", "Predictions"]
-        for i in range(4):
+        to_plot = [abs_errors, percent_errors, cancer_specific_mutations, preds, scATAC_df.to_numpy().reshape(-1)]
+        ylabel_list = ["Absolute error", "Percent error", "Mutation counts", "Predictions", "scATAC"]
+        for i in range(5):
             ax[i].bar(x, np.asarray(to_plot[i], dtype=np.float32), width=4)
             # for j in range(0, 2200, 213):
             #     ax[i].axvline(x=j, c="red")
@@ -79,4 +74,4 @@ for seed in seed_range:
         ax[-1].set_xlabel("Bin")
         for a in ax:
             a.tick_params(axis='x', labelsize=8)
-        plt.savefig("../../figures/errors.png")
+        plt.savefig(f"../../figures/models/{ML_model}/{cancer_type}/{scATAC_dir}/errors.png")
