@@ -389,5 +389,6 @@ if (dataset == "Bingren") {
            chain=ch,
            dataset=dataset,
            annotation=annotation,
+           which_interval_ranges=which_interval_ranges,
            mc.cores=cores)
 }
