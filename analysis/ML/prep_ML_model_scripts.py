@@ -16,6 +16,9 @@ parser.add_argument('--top_features_to_plot', nargs="+", type=str,
                     default=["18"])
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=str)
 parser.add_argument('--n_optuna_trials_backward_selection', type=str)
+parser.add_argument("--save_test_set_perf", action="store_true", default=False)
+parser.add_argument('--test_set_perf_num_features', nargs="+", type=int)
+
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
 parser.add_argument('--cores', type=str, default="8")
@@ -41,6 +44,8 @@ time = config.time
 top_features_to_plot = config.top_features_to_plot
 feature_importance_method = config.feature_importance_method
 make_plots = config.make_plots
+save_test_set_perf = config.save_test_set_perf
+test_set_perf_num_features = config.test_set_perf_num_features
 
 for seed_range in seed_ranges:
     script_filename = "_".join(["cancer_types", "_".join(config.cancer_types),
@@ -61,12 +66,16 @@ for seed_range in seed_ranges:
                              "--top_features_to_plot", " ".join(config.top_features_to_plot),
                              "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
                              "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
-                             "--feature_importance_method", feature_importance_method])
+                             "--feature_importance_method", feature_importance_method,
+                             "--test_set_perf_num_features", test_set_perf_num_features])
+
 
     if meso:
         command_args = command_args + " " + "--meso"
     if make_plots:
         command_args = command_args + " " + "--make_plots"
+    if save_test_set_perf:
+        command_args = command_args + " " + "--save_test_set_perf"
 
     python_command = "python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py " + \
                      command_args
