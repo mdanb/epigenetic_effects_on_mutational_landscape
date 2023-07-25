@@ -28,7 +28,7 @@ create_arrow_files <- function(fragment_paths) {
                      addGeneScoreMat = T,
                      force = F,
 		                 cleanTmp = T,
-		                 QCDir = "../../../analysis/ArchR_analysis/ArchR_projects/QC")
+		               QCDir = "../../../analysis/ArchR_analysis/ArchR_projects/QC")
 				   
     #archp = ArchRProject(ArrowFiles = arrow_files, 
     #                     outputDirectory = output_dir,
@@ -61,10 +61,13 @@ if (dataset == "Bingren") {
     files_dir = paste(root, "bed_files/yang_kidney_scATAC", sep="/")
 } else if (dataset == "Greenleaf_colon") {
   output_dir = paste(root, "arrow/Greenleaf_colon", sep="/")
-  files_dir = paste(root, "bed_files/greenleaf_colon_scATAC/migrated_to_hg19", sep="/")
+  files_dir = paste(root, "bed_files/greenleaf_colon_scATAC/migrated_to_hg19", 
+                    sep="/")
 } else if (dataset == "Rawlins_fetal_lung") {
   output_dir = paste(root, "arrow/Rawlins_fetal_lung", sep="/")
-  files_dir = paste(root, "bed_files/rawlins_fetal_lung_scATAC/migrated_to_hg19", sep="/")
+  files_dir = paste(root, 
+                    "bed_files/rawlins_fetal_lung_scATAC/migrated_to_hg19", 
+                    sep="/")
 }
 
 dir.create(output_dir)

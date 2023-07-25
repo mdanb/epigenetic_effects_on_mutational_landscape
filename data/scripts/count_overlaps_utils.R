@@ -71,6 +71,10 @@ import_sample <- function(file, dataset, which_interval_ranges) {
       }
     print(paste("Importing", fp))
     sample = import(fp, format="bed")
+  } else if (dataset == "Rawlins_fetal_lung") {
+    sample = import(paste("..", "bed_files",
+                          "rawlins_fetal_lung_scATAC", "migrated_to_hg19",
+                          file, sep="/"), format="bed")
   }
   return(sample)
 }
@@ -116,6 +120,12 @@ get_sample_filename <- function(file, dataset) {
                      paste(remove_extension(file),
                            "rds", sep="."), sep="_")
   }
+  else if (dataset == "Rawlins_fetal_lung") {
+    filename = get_sample_name_rawlins_fetal_lung(file)
+    filename = paste("Rawlins_fetal_lung_count_overlaps",
+                     paste(filename, "fragments",
+                           "rds", sep="."), sep="_")
+  }
   return(filename)
 }
 
@@ -153,6 +163,12 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
       substr(filtered_metadata[["Cell"]], 14, 
              nchar(filtered_metadata[["Cell"]]) - 2)
   }
+  else if (dataset == "Rawlins_fetal_lung") {
+    sample_barcodes_in_metadata =  get_sample_barcodes_in_metadata_helper(filtered_metadata, 
+                                                                          "X",
+                                                                          "#")
+    sample_barcodes_in_metadata = substr(sample_barcodes_in_metadata, 1, 16)
+  }
   return(sample_barcodes_in_metadata)
 }
 
@@ -184,7 +200,23 @@ get_sample_name <- function(file, dataset) {
     sample_name = get_sample_name_greenleaf_colon(file)
   }
   else if (dataset == "Yang_kidney") {
-    sample_name =  get_sample_name_yang(file)
+    sample_name = get_sample_name_yang(file)
+  }
+  else if (dataset == "Rawlins_fetal_lung") {
+    sample_name = get_sample_name_rawlins_fetal_lung(file)
+  }
+  return(sample_name)
+}
+
+get_sample_name_rawlins_fetal_lung <- function(file) {
+  if (file == "cellranger-atac200_count_5891STDY8038657_GRCh38-2020-A-2_0_0.tsv.bgz" || 
+      file == "cellranger-atac200_count_5891STDY8038658_GRCh38-2020-A-2_0_0.tsv.bgz") {
+    file = str_extract(file, "[a-zA-Z0-9]+_GRCh38")
+    sample_name = unlist(strsplit(file, split="_"))[1]
+  } 
+  else {
+    file = str_extract(file, "_count_.+_GRCh38")
+    sample_name = gsub("_count_\\d+_|_GRCh38", "", file)
   }
   return(sample_name)
 }

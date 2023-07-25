@@ -78,7 +78,7 @@ create_count_overlaps_files <- function(file, metadata, interval_ranges, chain,
       
       if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || 
           dataset == "Greenleaf_pbmc_bm" || dataset == "Yang_kidney" ||
-          dataset == "Greenleaf_colon") {
+          dataset == "Greenleaf_colon" || dataset == "Rawlins_fetal_lung") {
         sample$name = substr(sample$name, 1, 16)
       }
       
@@ -384,6 +384,20 @@ if (dataset == "Bingren") {
   # metadata_Yang[metadata_Yang[3] == 2, "sample"] = "SRR13679157"
   
   mclapply(files_colon_greenleaf, create_count_overlaps_files,
+           metadata=metadata,
+           interval_ranges=interval.ranges,
+           chain=ch,
+           dataset=dataset,
+           annotation=annotation,
+           which_interval_ranges=which_interval_ranges,
+           mc.cores=cores)
+} else if (dataset == "Rawlins_fetal_lung") {
+  if (annotation == "default_annotation") {
+    metadata = read.csv("../metadata/rawlins_fetal_lung_metadata.csv")
+  }
+  files_rawlins_fetal_lung = list.files("../bed_files/rawlins_fetal_lung_scATAC/migrated_to_hg19",
+                                     pattern = "\\.tsv\\.bgz$")
+  mclapply(files_rawlins_fetal_lung, create_count_overlaps_files,
            metadata=metadata,
            interval_ranges=interval.ranges,
            chain=ch,
