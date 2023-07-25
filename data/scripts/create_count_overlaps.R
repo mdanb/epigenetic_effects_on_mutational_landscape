@@ -365,7 +365,7 @@ if (dataset == "Bingren") {
            annotation=annotation,
            which_interval_ranges=which_interval_ranges,
            mc.cores=cores)
-} else if (dataset == "Greenleaf_Colon") {
+} else if (dataset == "Greenleaf_colon") {
   if (annotation == "default_annotation") {
     metadata_epithelial = read.table("../metadata/epithelial_celltypes_atac.tsv", 
                                      header=1)
