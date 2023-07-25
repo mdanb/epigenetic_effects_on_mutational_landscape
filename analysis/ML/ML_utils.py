@@ -570,7 +570,11 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
     _, X_test, _, y_test = get_train_test_split(scATAC_df, mutations_df, 0.10, seed)
     test_set_perf_filepath = f"models/{ML_model}/" \
                              f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
-                             f"model_iteration_{model_iteration}_test_performance.txt"
+                             f"model_iteration_{model_iteration}"
+    if feature_importance_method != "default_importance":
+        test_set_perf_filepath = test_set_perf_filepath + f"_feature_importance_{feature_importance_method}"
+
+    test_set_perf_filepath = test_set_perf_filepath + "test_performance.txt"
     tsp = get_and_save_test_set_perf(X_test, y_test, model, test_set_perf_filepath)
     print(f"Test set performance with {n} features: {tsp}")
 

@@ -43,16 +43,17 @@ parser <- add_option(parser, c("--feature_importance_method"), type="character")
 #                                    "--annotation=finalized_annotation",
 #                                    "--iters_dont_skip=17",
 #                                    "--robustness_top_ns=2,4"))
-# args = parse_args(parser, args =
-#                     c("--datasets=Tsankov",
-#                       "--cancer_types=Lung-SCC",
-#                       "--cell_number_filter=30",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--robustness_analysis",
-#                       "--robustness_seed_range=1-100",
-#                       "--top_features_to_plot=15,10,5,2",
-#                       "--robustness_test_perf_boxplot"))
+args = parse_args(parser, args =
+                    c("--datasets=Tsankov",
+                      "--cancer_types=meso",
+                      "--cell_number_filter=1",
+                      "--top_features_to_plot=2,5,10,15",
+                      "--ML_model=XGB",
+                      "--annotation=finalized_annotation",
+                      "--robustness_analysis",
+                      "--robustness_seed_range=1-100",
+                      "--robustness_test_perf_boxplot",
+                      "--feature_importance_method=permutation_importance"))
 
 args = parse_args(parser)
 
@@ -298,9 +299,18 @@ if (!robustness_analysis) {
     all_seeds_dirs = all_seeds_dirs[!grepl("all_seeds", all_seeds_dirs)]
     df_feature_importances_all_seeds = tibble()
     for (dir in all_seeds_dirs) {
-      df_feature_importances = as_tibble(read.csv(paste(dir, "backwards_elimination_results", 
-                                     "df_for_feature_importance_plots.csv",
-                                     sep="/")))
+      df_feature_importance_path = paste(dir, "backwards_elimination_results", 
+                                         "df_for_feature_importance_plots",
+                                         sep="/")
+      if (feature_importance_method != "default_importance") {
+        df_feature_importance_path = paste(df_feature_importance_path,
+                                           feature_importance_method,
+                                           sep = "_")
+      }
+      df_feature_importance_path = paste(df_feature_importance_path, 
+                                         "csv",
+                                         sep=".")
+      df_feature_importances = as_tibble(read.csv(df_feature_importance_path))
       df_feature_importances = df_feature_importances %>%
                                 filter(num_features %in% top_features_to_plot)
       temp = unlist(strsplit(dir, split="_"))
@@ -333,6 +343,11 @@ if (!robustness_analysis) {
                 test_set_perf = double(0),
                 seed = integer(0))
     
+    model_pattern = "^model_iteration_[0-9].*"
+    if (feature_importance_method != "default_importance") {
+      model_pattern = paste(model_pattern, feature_importance_method, sep="_")
+    }
+    
     for (seed in seq(robustness_seed_range[1], robustness_seed_range[2])) {
         test_dir = construct_backwards_elim_dir(cancer_type,
                                                 construct_sources_string(datasets),
@@ -344,7 +359,7 @@ if (!robustness_analysis) {
                                                 seed,
                                                 test=T)
         total_num_features = length(list.files(test_dir,
-                                      pattern="model_iteration_[0-9]*\\.pkl")) + 1
+                                      pattern=model_pattern))
         test_file_idx = total_num_features - top_features_to_plot + 1
         test_perf_filenames = paste("model_iteration", test_file_idx, "test_performance.txt",
                         sep = "_")
