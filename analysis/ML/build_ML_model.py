@@ -107,13 +107,15 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                 print(f"Done modeling {cancer_type}!")
                 if save_test_set_perf:
                     print("Saving test set performances for backward elimination...")
-                    total_num_features = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))) + 1
-                    for curr_num_feats in range(1, total_num_features):
-                        if curr_num_feats in test_set_perf_num_features:
-                            save_model_with_n_features_test_performance(scATAC_df, cancer_specific_mutations, scATAC_dir,
-                                                                        curr_num_feats, ML_model, cancer_type,
-                                                                        feature_importance_method,
-                                                                        seed)
+                    # total_num_features = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))) + 1
+                    # for curr_num_feats in range(1, total_num_features):
+                        # if curr_num_feats in test_set_perf_num_features:
+                    #range(1, total_num_features)
+                    for curr_num_feats in test_set_perf_num_features:
+                        save_model_with_n_features_test_performance(scATAC_df, cancer_specific_mutations, scATAC_dir,
+                                                                    curr_num_feats, ML_model, cancer_type,
+                                                                    feature_importance_method,
+                                                                    seed)
                     print("Done saving test set performances!")
             if make_plots:
             # if not os.path.exists(bp_path):
