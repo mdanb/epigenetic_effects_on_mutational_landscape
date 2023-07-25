@@ -4,7 +4,7 @@ library(BSgenome.Hsapiens.UCSC.hg19)
 library(stringr)
 library(dplyr)
 library(ComplexHeatmap)
-
+source("../../utils.R")
 option_list <- list( 
   make_option("--cores", type="integer"),
   make_option("--dataset", type="character", default="all"),
@@ -495,6 +495,7 @@ if (reannotate) {
    #     idx_2 = cell_col_data[["DoubletEnrichment"]] >= 10
    #     proj = proj[!(idx & idx_2)]
    # }
+
    cell_col_data["new_annotation"] = cell_col_data["cell_type"]
    cell_col_data[grepl("Sec-Ciliated", cell_col_data[["new_annotation"]]), 
                   "new_annotation"] = "proximal Ciliated"
@@ -512,7 +513,7 @@ if (reannotate) {
     # cell_col_data[all_except_idx, "new_annotation"] = gsub("(proximal|distal) ", 
     #                                                        "", 
     #                                                        cell_col_data[["new_annotation"]][all_except_idx])
-   cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C3", 
+   cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C3",
                  "new_annotation"] = "Myeloid"
    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C2", 
                  "new_annotation"] = "Myeloid"
@@ -520,11 +521,11 @@ if (reannotate) {
                   "new_annotation"] = "Fibroblast.WT1-"
     cell_col_data[cell_col_data[["cell_type"]] == "B_cells", 
                   "new_annotation"] = "T.cells"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C5", 
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C5",
                   "new_annotation"] = "T.cells"
     cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C4", 
                   "new_annotation"] = "B.cells"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C16", 
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C16",
                   "new_annotation"] = "Fibroblast.WT1+"
     cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C17", 
                   "new_annotation"] = "Fibroblast.WT1-"
@@ -566,11 +567,14 @@ if (plot_cell_types) {
   p <- p + 
     scale_color_manual(values = cols,
                        guide = guide_legend(override.aes = 
-                                              list(shape = 15)))  
+                                              list(shape = 15)))
   fn = paste("cell_type_UMAP", setting, sep="_")
   # if (filter_doublets) {
   #   fn = paste(fn, "filter_doublets", sep="_")
   # }
+  if (reannotate) {
+    fn = paste(fn, "reannotated", sep="_")
+  }
   if (reannotate) {
     fn = paste(fn, "reannotated", sep="_")
   }
@@ -632,7 +636,7 @@ if (!(is.null(marker_genes))) {
     print(paste("Saving", fn, "to temp.pdf"))
     fp = paste(path, "temp.pdf", sep="/")
   }
-  pdf(fp, width = 20, height = 20)
+  pdf(fp, width = 50, height = 50)
   do.call(cowplot::plot_grid, c(list(ncol = 5), p2))
   dev.off()
 }
