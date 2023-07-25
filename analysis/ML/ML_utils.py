@@ -559,9 +559,7 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
     # model = pickle.load(open(backwards_elim_model_file, "rb"))
     model = load_n_features_backwards_elim_models(n, scATAC_df.shape[1], cancer_type, ML_model, scATAC_dir,
                                                  feature_importance_method)
-    print(scATAC_df.shape[1])
-    print(model_iteration)
-
+    # print(scATAC_df.shape[1])
     if scATAC_df.shape[1] > 20:
        model_iteration = 20 - n + 1
     else:
