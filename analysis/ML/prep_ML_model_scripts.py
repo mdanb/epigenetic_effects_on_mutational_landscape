@@ -67,7 +67,7 @@ for seed_range in seed_ranges:
                              "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
                              "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
                              "--feature_importance_method", feature_importance_method,
-                             "--test_set_perf_num_features", " ".join(test_set_perf_num_features)])
+                             "--test_set_perf_num_features", " ".join(map(str, test_set_perf_num_features))])
 
 
     if meso:
