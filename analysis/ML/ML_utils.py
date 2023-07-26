@@ -249,7 +249,6 @@ def calculate_permutation_importance(X_valid, y_valid, **kwargs):
 def get_top_n_features(best_model_fulldatatrained, best_model_perfoldtrained: list,
                        n, features, feature_importance_method, X, y, seed,
                        df_save=None, fp_for_fi=None, best_cv_score=None):
-    print(f"n: {n}")
     if df_save is not None and n + 1 in df_save["num_features"].array:
         feature_importances = df_save.loc[df_save["num_features"] == n + 1][feature_importance_method]
     else:
@@ -276,7 +275,6 @@ def get_top_n_features(best_model_fulldatatrained, best_model_perfoldtrained: li
             df_curr.columns = df_save.columns
             df_save = pd.concat((df_save, df_curr))
             df_save.to_csv(fp_for_fi, index=False)
-    print(feature_importances)
     feat_importance_idx = np.argsort(feature_importances)[::-1]
     top_n_feats = features[feat_importance_idx][:n]
     return top_n_feats, df_save
@@ -390,7 +388,6 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 
         # No feature elimination if only 1 feature is left
         if idx != num_iterations:
-            print(idx)
             top_n_feats, df_save = get_top_n_features(best_model_fulldatatrained,
                                                        best_model_perfoldtrained,
                                                        len(X_train.columns.values) - 1,
