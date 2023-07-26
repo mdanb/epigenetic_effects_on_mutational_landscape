@@ -276,6 +276,7 @@ def get_top_n_features(best_model_fulldatatrained, best_model_perfoldtrained: li
             df_curr.columns = df_save.columns
             df_save = pd.concat((df_save, df_curr))
             df_save.to_csv(fp_for_fi, index=False)
+    print(feature_importances)
     feat_importance_idx = np.argsort(feature_importances)[::-1]
     top_n_feats = features[feat_importance_idx][:n]
     return top_n_feats, df_save
