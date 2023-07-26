@@ -388,6 +388,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
 
         # No feature elimination if only 1 feature is left
         if idx != num_iterations:
+            print(idx)
             top_n_feats, df_save = get_top_n_features(best_model_fulldatatrained,
                                                        best_model_perfoldtrained,
                                                        len(X_train.columns.values) - 1,
