@@ -512,6 +512,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
         filepath = f"top_features_iteration_{n}"
     else:
         print("Starter model not needed! Number of features is less than or equal to 20 already!")
+        print(X_train.shape[1])
         filepath = f"top_features_iteration_{X_train.shape[1]}"
 
     if feature_importance_method != "default_importance":

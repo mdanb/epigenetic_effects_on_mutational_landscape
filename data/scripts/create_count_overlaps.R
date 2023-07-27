@@ -367,13 +367,8 @@ if (dataset == "Bingren") {
            mc.cores=cores)
 } else if (dataset == "Greenleaf_colon") {
   if (annotation == "default_annotation") {
-    metadata_epithelial = read.table("../metadata/epithelial_celltypes_atac.tsv", 
-                                     header=1)
-    metadata_stromal = read.table("../metadata/stromal_celltypes_atac.tsv", 
-                                  header=1)
-    metadata_immune = read.table("../metadata/immune_celltypes_atac.tsv", 
-                                 header=1)
-    metadata = rbind(metadata_epithelial, metadata_stromal, metadata_immune)
+    # TODO: MUST FIX NAMING OF SAMPLES
+    metadata = read.csv("../metadata/greenleaf_colon_metadata.csv")
   }
   files_colon_greenleaf = list.files("../bed_files/greenleaf_colon_scATAC/migrated_to_hg19",
                                      pattern = ".*fragments\\.tsv\\.bgz$")

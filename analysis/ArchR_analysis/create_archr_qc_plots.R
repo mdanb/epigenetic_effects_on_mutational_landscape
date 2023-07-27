@@ -12,13 +12,13 @@ cores = args$cores
 addArchRThreads(threads = cores)
 addArchRGenome("hg19")
 
-ArrowFiles = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/arrow", 
+ArrowFiles = list.files("../../data/arrow", 
                     			recursive=T,
                     			full.names=T,
                     			pattern=".arrow")
 ArchR_proj <- ArchRProject(ArrowFiles = ArrowFiles,
 			                     copyArrows=F,
-    			      outputDirectory = "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj")
+    			      outputDirectory = "../../analysis/ArchR_analysis/ArchR_projects/ArchR_proj")
 
 ggplot(as_tibble(getCellColData(ArchR_proj)), 
         aes(x = Sample, y = TSSEnrichment)) +
@@ -40,7 +40,7 @@ ggplot(as_tibble(getCellColData(ArchR_proj)),
 
 ggsave("../../figures/archr_log_frags_vs_sample.png", width=20)
 
-# saveArchRProject(ArchRProj = ArchR_proj)
+saveArchRProject(ArchRProj = ArchR_proj)
 #bingren_cells = ArchR_proj
 
 # tss_p <-plotGroups(

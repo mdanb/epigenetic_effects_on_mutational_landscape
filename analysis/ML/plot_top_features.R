@@ -45,9 +45,9 @@ parser <- add_option(parser, c("--feature_importance_method"), type="character")
 #                                    "--robustness_top_ns=2,4"))
 args = parse_args(parser, args =
                     c("--datasets=Tsankov",
-                      "--cancer_types=meso",
+                      "--cancer_types=blum_bottom_10_perc",
                       "--cell_number_filter=1",
-                      "--top_features_to_plot=2,5,10,15",
+                      "--top_features_to_plot=1,2,5,10,15",
                       "--ML_model=XGB",
                       "--annotation=finalized_annotation",
                       "--robustness_analysis",
@@ -299,29 +299,35 @@ if (!robustness_analysis) {
     all_seeds_dirs = all_seeds_dirs[!grepl("all_seeds", all_seeds_dirs)]
     df_feature_importances_all_seeds = tibble()
     for (dir in all_seeds_dirs) {
-      df_feature_importance_path = paste(dir, "backwards_elimination_results", 
-                                         "df_for_feature_importance_plots",
-                                         sep="/")
-      if (feature_importance_method != "default_importance") {
-        df_feature_importance_path = paste(df_feature_importance_path,
-                                           feature_importance_method,
-                                           sep = "_")
+      tryCatch(
+        {
+        df_feature_importance_path = paste(dir, "backwards_elimination_results", 
+                                           "df_for_feature_importance_plots",
+                                           sep="/")
+        if (feature_importance_method != "default_importance") {
+          df_feature_importance_path = paste(df_feature_importance_path,
+                                             feature_importance_method,
+                                             sep = "_")
+        }
+        df_feature_importance_path = paste(df_feature_importance_path, 
+                                           "csv",
+                                           sep=".")
+        df_feature_importances = as_tibble(read.csv(df_feature_importance_path))
+        df_feature_importances = df_feature_importances %>%
+                                  filter(num_features %in% top_features_to_plot)
+        temp = unlist(strsplit(dir, split="_"))
+        seed = temp[length(temp)]
+        df_feature_importances["seed"] = seed
+        if (nrow(df_feature_importances_all_seeds) == 0) {
+          df_feature_importances_all_seeds = df_feature_importances
+        } else {
+          df_feature_importances_all_seeds = rbind(df_feature_importances_all_seeds,
+                                                   df_feature_importances)
+        }
+      },
+      error = function(e) {
       }
-      df_feature_importance_path = paste(df_feature_importance_path, 
-                                         "csv",
-                                         sep=".")
-      df_feature_importances = as_tibble(read.csv(df_feature_importance_path))
-      df_feature_importances = df_feature_importances %>%
-                                filter(num_features %in% top_features_to_plot)
-      temp = unlist(strsplit(dir, split="_"))
-      seed = temp[length(temp)]
-      df_feature_importances["seed"] = seed
-      if (nrow(df_feature_importances_all_seeds) == 0) {
-        df_feature_importances_all_seeds = df_feature_importances
-      } else {
-        df_feature_importances_all_seeds = rbind(df_feature_importances_all_seeds,
-                                                 df_feature_importances)
-      }
+      )
     }
     # }
     if (robustness_accumulated_feature_importance_barplot) {
@@ -343,11 +349,6 @@ if (!robustness_analysis) {
                 test_set_perf = double(0),
                 seed = integer(0))
     
-    model_pattern = "^model_iteration_[0-9].*"
-    if (feature_importance_method != "default_importance") {
-      model_pattern = paste(model_pattern, feature_importance_method, sep="_")
-    }
-    
     for (seed in seq(robustness_seed_range[1], robustness_seed_range[2])) {
         test_dir = construct_backwards_elim_dir(cancer_type,
                                                 construct_sources_string(datasets),
@@ -358,35 +359,65 @@ if (!robustness_analysis) {
                                                 ML_model,
                                                 seed,
                                                 test=T)
-        total_num_features = length(list.files(test_dir,
-                                      pattern=model_pattern))
-        test_file_idx = total_num_features - top_features_to_plot + 1
-        test_perf_filenames = paste("model_iteration", test_file_idx, "test_performance.txt",
+
+        if (feature_importance_method != "default_importance") {
+          model_pattern = paste("^model_iteration_[0-9]+_feature_importance",
+                                feature_importance_method, sep="_")
+          model_pattern = paste(model_pattern, "pkl", sep=".")
+        } else {
+          model_pattern = "^model_iteration_[0-9]+\\.pkl"
+        }
+        total_num_features = list.files(test_dir,
+                                        pattern=model_pattern)
+        total_num_features = length(total_num_features)
+        # sort so that later the first test_file_idx can be checked for 
+        # total_num_features == test_file_idx
+        test_file_idx = total_num_features - sort(top_features_to_plot) + 1
+        test_perf_filenames = paste("model_iteration", test_file_idx,
                         sep = "_")
+        if (feature_importance_method != "default_importance") {
+          test_perf_filenames = paste(test_perf_filenames,
+                                      "feature_importance", 
+                                      feature_importance_method, 
+                                      sep = "_")
+        }
+        test_perf_filenames = paste(test_perf_filenames, 
+                                    "test_performance.txt", sep="_")
         test_set_perf_files = paste(test_dir, test_perf_filenames, sep="/")
         
         idx = 1
         for (file in test_set_perf_files) {
-          tryCatch(
-              {
-                top_feature_file = paste0("top_features_iteration_",
-                                        test_file_idx[idx],
-                                        ".txt")
-                top_feature_fp = paste(test_dir, top_feature_file, sep="/")
-                top_feature = readLines(top_feature_fp, n = 1)
-                top_feature = substring(top_feature, 4, nchar(top_feature))
-                suppressWarnings({
-                  perf = read.table(file)[1,1]
-                })
-                df = df %>% add_row(top_feature = top_feature,
-                                    top_n = top_features_to_plot[idx],
-                                    test_set_perf = perf,
-                                    seed = seed)
-                idx = idx + 1
-              },
-              error = function(e) {
+          # tryCatch(
+          #     {
+          top_feature = NA
+          if (!(idx == 1 && test_file_idx[1] == total_num_features)) {
+              top_feature_file = paste0("top_features_iteration_",
+                                      test_file_idx[idx])
+              
+              if (feature_importance_method != "default_importance") {
+                top_feature_file = paste(top_feature_file,
+                                         "by", 
+                                          feature_importance_method, 
+                                          sep = "_")
               }
-          )
+              
+              top_feature_file = paste0(top_feature_file, ".txt")
+              top_feature_fp = paste(test_dir, top_feature_file, sep="/")
+              top_feature = readLines(top_feature_fp, n = 1)
+              top_feature = substring(top_feature, 4, nchar(top_feature))
+          }
+          suppressWarnings({
+            perf = read.table(file, header=F)[1,1]
+          })
+          df = df %>% add_row(top_feature = top_feature,
+                              top_n = top_features_to_plot[idx],
+                              test_set_perf = perf,
+                              seed = seed)
+          idx = idx + 1
+              # },
+              # error = function(e) {
+              # }
+          #)
         }
     }
     df = df %>% 

@@ -158,19 +158,16 @@ option_list <- list(
 # )
 args = parse_args(OptionParser(option_list=option_list), args=
                     c("--cores=8",
-                      "--dataset=Tsankov",
-                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+                      "--dataset=Greenleaf_colon",
+                      "--metadata_for_celltype_fn=greenleaf_colon_metadata.csv",
                       "--sep_for_metadata=,",
-                      "--cell_type_col_in_metadata=celltypes",
+                      "--cell_type_col_in_metadata=CellType",
                       "--tissue=all",
                       "--nfrags_filter=1",
                       "--tss_filter=0",
                       "--cell_types=all",
                       "--min_cells_per_cell_type=1",
-                      "--de_novo_marker_discovery",
                       "--cluster_res=0.6",
-                      "--filter_doublets",
-                      "--reannotate",
                       "--filter_per_cell_type"
 ))
 
@@ -194,6 +191,28 @@ add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
   else if (dataset == "Tsankov") {
     rownames_archr = rownames(cell_col_data)
     to_match = metadata[["X"]]
+  }
+  else if (dataset == "Greenleaf_colon") {
+    # rownames_archr = unlist(lapply(rownames(cell_col_data), 
+    #                               function(x) substr(x, 1, nchar(x) - 2)))
+    rownames_archr = strsplit(rownames(cell_col_data), split = "_")
+    rownames_archr = lapply(rownames_archr, function(x) x[2:length(x)])
+    
+    exceptions = c("A001-C-104-D_20200214", "A001-C-104-D_20200811",
+                   "A001-C-124-D_20200214", "A001-C-124-D_20200702",
+                   "A001-C-023-D_20200214", "A001-C-023-D_20200715",
+                   "A002-C-010-D_20200310", "A002-C-010-D_20200702",
+                   "B004-A-004-D_20200817")
+    exceptions = paste(exceptions, collapse = "|")
+    exceptions = grep(exceptions, rownames(cell_col_data))
+    rownames_archr[exceptions] = lapply(rownames_archr[exceptions],
+                                       paste,
+                                       collapse="_")
+    rownames_archr[-exceptions] = 
+      unlist(lapply(rownames_archr[-exceptions], function(x) 
+             paste(x[1], unlist(strsplit(x[2], "#"))[2], sep="#")))
+    to_match = metadata[["Cell"]]
+    rownames_archr = unlist(rownames_archr)
   }
   idx_cell_id = match(rownames_archr, to_match)
   cell_types = metadata[[cell_type_col_in_orig_metadata]][idx_cell_id]
@@ -323,7 +342,7 @@ reduce_dims <- function(proj, force=F) {
                   metric = "cosine",
                   force=force)
   
-  proj <- saveArchRProject(ArchRProj = proj, 
+  proj <- saveArchRProject(ArchRProj = proj,
                            outputDirectory = proj_dir,
                            load = TRUE)
   return(proj)
@@ -418,22 +437,22 @@ if (dir.exists(proj_dir)) {
     }
   }
 } else {
-  dir = "ArchR_projects/ArchR_proj/"
+  dir = "ArchR_projects/ArchR_proj"
   print("Loading full ArchR data object")
   ArchR_proj <- loadArchRProject(dir)
   print("Creating new project")
-  proj <- filter_proj(proj = ArchR_proj, nfrags_filter, tss_filter, tss_percentile, 
-                      nfrags_percentile, filter_per_cell_type, 
-                      dataset, tissue, cell_types,
-                      min_cells_per_cell_type, metadata)
+  proj <- filter_proj(proj=ArchR_proj, nfrags_filter, tss_filter, tss_percentile,
+                      nfrags_percentile, filter_per_cell_type,
+                      dataset, tissue, cell_types, min_cells_per_cell_type, 
+                      metadata)
   
   print("Saving new project")
   proj <- saveArchRProject(ArchRProj = proj, 
                            outputDirectory = proj_dir,
                            load = TRUE)
   print("Done saving new project")
-  proj = reduce_dims(proj)
-}
+
+  }
 
 if (plot_doublet_scores) {
   proj <- addDoubletScores(
@@ -499,7 +518,7 @@ if (reannotate) {
    cell_col_data["new_annotation"] = cell_col_data["cell_type"]
    cell_col_data[grepl("Sec-Ciliated", cell_col_data[["new_annotation"]]), 
                   "new_annotation"] = "proximal Ciliated"
-   distal_idx = grepl("RPL", rownames(cell_col_data)) 
+   distal_idx = grepl("RPL", rownames(cell_col_data))
    proximal_idx = !distal_idx
    ciliated_idx = grepl("Ciliated", cell_col_data[["cell_type"]])
    secretory_idx = grepl("Secretory", cell_col_data[["cell_type"]])
@@ -529,7 +548,7 @@ if (reannotate) {
                   "new_annotation"] = "Fibroblast.WT1+"
     cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C17", 
                   "new_annotation"] = "Fibroblast.WT1-"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C1", 
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C1",
                   "new_annotation"] = "Neuronal"
     proj@cellColData = cell_col_data
     
@@ -819,7 +838,7 @@ if (dataset == "Tsankov" && tissue == "all" && nfrags_filter == 1000 &&
                                     imputeWeights = getImputeWeights(proj), 
                                     plotAs="points")
   }
-  markers_p2 = lapply(1:length(markers_p), function(x){ 
+  markers_p2 = lapply(1:length(markers_p), function(x) { 
     markers_p[[x]] + guides(color = FALSE, fill = FALSE) + 
       theme_ArchR(baseSize = 6) + 
       theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) + 
