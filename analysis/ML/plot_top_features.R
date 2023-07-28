@@ -43,17 +43,17 @@ parser <- add_option(parser, c("--feature_importance_method"), type="character")
 #                                    "--annotation=finalized_annotation",
 #                                    "--iters_dont_skip=17",
 #                                    "--robustness_top_ns=2,4"))
-args = parse_args(parser, args =
-                    c("--datasets=Tsankov",
-                      "--cancer_types=blum_bottom_10_perc",
-                      "--cell_number_filter=1",
-                      "--top_features_to_plot=1,2,5,10,15",
-                      "--ML_model=XGB",
-                      "--annotation=finalized_annotation",
-                      "--robustness_analysis",
-                      "--robustness_seed_range=1-100",
-                      "--robustness_test_perf_boxplot",
-                      "--feature_importance_method=permutation_importance"))
+# args = parse_args(parser, args =
+#                     c("--datasets=Tsankov",
+#                       "--cancer_types=blum_bottom_10_perc",
+#                       "--cell_number_filter=1",
+#                       "--top_features_to_plot=1,2,5,10,15",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--robustness_analysis",
+#                       "--robustness_seed_range=1-100",
+#                       "--robustness_test_perf_boxplot",
+#                       "--feature_importance_method=permutation_importance"))
 
 args = parse_args(parser)
 
