@@ -291,6 +291,9 @@ get_tissue_name <- function(file, dataset, annotation) {
   else if (dataset == "Yang_kidney") {
     tissue_name = "kidney"
   }
+  else if (dataset == "Rawlins_fetal_lung") {
+    tissue_name = "fetal_lung"
+  }
   return(tissue_name)
 }
 
