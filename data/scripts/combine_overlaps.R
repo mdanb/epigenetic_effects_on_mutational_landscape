@@ -11,10 +11,10 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-args = parse_args(OptionParser(option_list=option_list), args =
-                    c("--datasets=Rawlins_fetal_lung",
-                      "--annotation=default_annotation",
-                      "--which_interval_ranges=polak"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--datasets=Rawlins_fetal_lung",
+#                       "--annotation=default_annotation",
+#                       "--which_interval_ranges=polak"))
 
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
@@ -27,7 +27,7 @@ get_cell_counts_df <- function(count_overlaps_filename, annotation) {
                                          split="/"))[5], 
                                          "_"))
   if (grepl("Rawlins_fetal_lung", count_overlaps_filename)) {
-    pattern = unlist(strsplit(cell_counts_filename, split="\\."))[1]
+    pattern = unlist(strsplit(cell_counts_filename, split="\\."))[6]
     files = list.files(paste("../processed_data/cell_counts_per_sample",
                              annotation, 
                              sep="/"))
