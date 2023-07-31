@@ -11,13 +11,13 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                     c("--datasets=Tsankov",
-#                       "--cell_number_filter=1",
-#                       "--annotation=default_annotation"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--datasets=Rawlins_fetal_lung",
+                      "--annotation=default_annotation",
+                      "--which_interval_ranges=polak"))
 
 annotation = args$annotation
-cell_number_filter = args$cell_number_filter
+# cell_number_filter = args$cell_number_filter
 datasets = unlist(strsplit(args$datasets, split = ","))
 which_interval_ranges = args$which_interval_ranges
 
@@ -26,6 +26,18 @@ get_cell_counts_df <- function(count_overlaps_filename, annotation) {
                                          strsplit(count_overlaps_filename,
                                          split="/"))[5], 
                                          "_"))
+  if (grepl("Rawlins_fetal_lung", count_overlaps_filename)) {
+    pattern = unlist(strsplit(cell_counts_filename, split="\\."))[1]
+    files = list.files(paste("../processed_data/cell_counts_per_sample",
+                             annotation, 
+                             sep="/"))
+    f = files[grep(pattern, files)]
+    cell_counts_path = paste("..", "processed_data", 
+                             "cell_counts_per_sample", annotation,
+                             f, sep = "/")
+    df = readRDS(cell_counts_path)
+    return(df)
+  }
   start_index = grep("overlaps", cell_counts_filename) + 1
   cell_counts_filename = 
     cell_counts_filename[start_index:length(cell_counts_filename)]
