@@ -53,8 +53,9 @@ for seed_range in seed_ranges:
                                 "scATAC_cell_number_filter", scATAC_cell_number_filter,
                                 "annotation_dir", annotation_dir,
                                 "seed_range", seed_range,
-                                "top_features_to_plot", "_".join(config.top_features_to_plot),
                                 "feature_importance_method", feature_importance_method])
+                                    # "top_features_to_plot", "_".join(config.top_features_to_plot),
+
     if meso:
         script_filename = script_filename + "_" + "meso"
     script_filename = f"{script_filename}.sh"
