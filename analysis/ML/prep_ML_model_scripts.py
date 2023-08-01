@@ -52,8 +52,8 @@ for seed_range in seed_ranges:
                                 "datasets", "_".join(sorted(config.datasets)),
                                 "scATAC_cell_number_filter", scATAC_cell_number_filter,
                                 "annotation_dir", annotation_dir,
-                                "seed_range", seed_range,
-                                "feature_importance_method", feature_importance_method])
+                                "seed_range", seed_range])
+                                # "feature_importance_method", feature_importance_method])
                                     # "top_features_to_plot", "_".join(config.top_features_to_plot),
 
     if meso:
