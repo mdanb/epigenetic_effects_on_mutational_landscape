@@ -11,16 +11,16 @@ cores = args$cores
 addArchRThreads(threads = cores)
 addArchRGenome("hg19")
 
-ArrowFiles = list.files("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj/ArrowFiles", 
+ArrowFiles = list.files("../arrow", 
                         recursive=T,
                         full.names=T,
                         pattern=".arrow")
 ArchR_proj <- ArchRProject(ArrowFiles = ArrowFiles,
                            copyArrows=F,
                            outputDirectory = 
-                          "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ArchR_proj")
+                      "../../analysis/ArchR_analysis/ArchR_projects/ArchR_proj")
 
-dataset = unlist(lapply(strsplit(ArrowFiles, split = "/"), "[", 8))
+dataset = unlist(lapply(strsplit(ArrowFiles, split = "/"), "[", 3))
 sample_col_data = getSampleColData(ArchRProj =  ArchR_proj)
 ArchR_proj = addSampleColData(ArchRProj = ArchR_proj, 
                               data=dataset, name="dataset", 

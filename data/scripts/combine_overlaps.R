@@ -28,6 +28,10 @@ get_cell_counts_df <- function(count_overlaps_filename, annotation) {
                                          "_"))
   if (grepl("Rawlins_fetal_lung", count_overlaps_filename)) {
     pattern = unlist(strsplit(cell_counts_filename, split="\\."))[6]
+    if (pattern == "WSSS") {
+      pattern = paste(unlist(strsplit(cell_counts_filename, split="\\."))[6:8], 
+                      collapse="_")
+    }
     files = list.files(paste("../processed_data/cell_counts_per_sample",
                              annotation, 
                              sep="/"))

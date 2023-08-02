@@ -214,4 +214,45 @@ if (dataset == "Greenleaf_pbmc_bm") {
     save_collapsed_df(combined_count_ovs, combined_metadata, 
                       dataset, annotation)
   }
+} else if (dataset == "Rawlins_fetal_lung") {
+  default_annotation_fn = "Rawlins_fetal_lung_combined_count_overlaps.rds"
+  default_annotation_fp = paste(root, "default_annotation", 
+                                default_annotation_fn, sep="/")
+  default_combined_count_ovs = readRDS(default_annotation_fp)
+  default_annotation_metadata_fn = "Rawlins_fetal_lung_combined_count_overlaps_metadata.rds"
+  default_annotation_metadata_fp = paste(root, "default_annotation", 
+                                         default_annotation_metadata_fn, sep="/")
+  
+  default_combined_metadata = readRDS(default_annotation_metadata_fp)
+
+  if (annotation == "triangle_cells_combine_meso_and_neuroendocrine_no_schwann") {
+    mapping = list(
+      c("fetal_lung (Pulmonary NE|GHRL\\+ NE)", "fetal_lung Neuroendocrine"),
+      c("fetal_lung (Mid/late meso|Early meso)", "fetal_lung Mesothelium"))
+      l = collapse_using_mapping(mapping, default_combined_count_ovs, 
+                               default_combined_metadata)
+    df = l[[1]]
+    df_metadata = l[[2]]
+    keep = c("Neuroendocrine", "Neuron", "Early fibro", "Mesothelium",
+             "Mid fibro", "Myofibro", "Airway SMC", "Airway fibro",
+             "Alveolar fibro", "Interm fibro", "Adventitial fibro", 
+             "Vascular SMC", "Pericyte")
+    df_metadata = df_metadata %>% filter(cell_type %in% keep)
+    df = df[rownames(df) %in% paste("fetal_lung", keep), ]
+    save_collapsed_df(df, df_metadata, dataset, annotation)
+  } else if (annotation == "triangle_cells_combine_meso_no_schwann") {
+    mapping = list(
+      c("fetal_lung (Mid/late meso|Early meso)", "fetal_lung Mesothelium"))
+    l = collapse_using_mapping(mapping, default_combined_count_ovs, 
+                               default_combined_metadata)
+    df = l[[1]]
+    df_metadata = l[[2]]
+    keep = c("Neuroendocrine", "Neuron", "Early fibro", "Mesothelium",
+             "Mid fibro", "Myofibro", "Airway SMC", "Airway fibro",
+             "Alveolar fibro", "Interm fibro", "Adventitial fibro", 
+             "Vascular SMC", "Pericyte")
+    df_metadata = df_metadata %>% filter(cell_type %in% keep)
+    df = df[rownames(df) %in% paste("fetal_lung", keep), ]
+    save_collapsed_df(df, df_metadata, dataset, annotation)
+  }
 }

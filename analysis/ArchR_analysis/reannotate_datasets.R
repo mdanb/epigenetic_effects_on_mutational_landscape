@@ -14,7 +14,9 @@ option_list <- list(
   # make_option("--cell_name_col_in_metadata", type="character"),
   make_option("--cluster", action="store_true", default=F),
   make_option("--cluster_res", type="double"),
-  make_option("--plot_cell_types", action="store_true", default=F),
+  make_option("--plot_custom_column", action="store_true", default=F),
+  make_option("--embedding_column_name", type="character", default="cell_type"),
+  make_option("--plus_to_add_to_metadata", type="character", default=NULL),
   make_option("--tissue", type="character", default="all"),
   make_option("--nfrags_filter", type="integer", default=1),
   make_option("--tss_filter", type="integer", default=0),
@@ -156,24 +158,86 @@ option_list <- list(
 #                       "--filter_doublets",
 #                       "--marker_genes=CEBPE,GFI1,IRF1,GNL2,ELANE,PPARG,BHLHE41,EGR2,FABP4,HBA1,MARCO,MME,F13A1,SLC40A1,SELP,STAB1,FOLR2,CD1C,CD1A,FCER1A,HLA-DQA1,CLEC10A,PKIB,CLEC9A,GCSAM,BATF3,WDFY4,LILRA4,GZMB,IL3RX,LAMP3,CCR7,FSCN1,CCL22,MARCKSL1,EBI3,IDO1,S100A8,S100A9,S100A12,FCN1,CD14,VCAN,PTX3,LRG1,LYPD2,LST1,LILRB2,FCGR3A,NKG7,NCR1,SPON2,KLRD1,GNLY,KLRC1,KLRF1,FGFBP2,KIT,TPSAB1,CPA3,CTSG,BACH2,ITGA2B,GP1BA,VWF,FLI1,MS4A1,SDC1,KLK1,EBF1,CD79A,CD79B,PAX5,VPREB3,POU2AF1,MZB1,XBP1,CD3D,LEF1,TCF7,TCF3,IL7R,CD8A,CD4,BCL11B,FOXP3,IL2RA,TNFRSF4,TNFRSF18,CTLA4,EPCAM,CLU,CLDN18,HNF1B,PECAM1,KDR,PLVAP,MCAM,COL1A1,COL1A2,SPARCL1,PDGFRA,NEUROG1,OLIG2,RFX2,NOTO,POU2F1,RFX5,C1QA,C1QC,CD68,CD163,THBS1,FN1,C5AR2")
 # )
+
 args = parse_args(OptionParser(option_list=option_list), args=
                     c("--cores=8",
                       "--dataset=Greenleaf_colon",
                       "--metadata_for_celltype_fn=greenleaf_colon_metadata.csv",
                       "--sep_for_metadata=,",
-                      "--cell_type_col_in_metadata=CellType",
+                      "--cell_type_col_in_metadata=general_cell_type",
+                      "--tissue=all",
+                      "--nfrags_filter=1",
+                      "--tss_filter=0",
+                      "--cell_types=epithelial",
+                      "--min_cells_per_cell_type=1",
+                      "--cluster_res=0.6",
+                      "--filter_per_cell_type",
+                      "--plot_custom_column",
+                      "--plus_to_add_to_metadata=GrossPathology,CellType",
+                      "--embedding_column_name=GrossPathology",
+                      "--marker_genes=MSLN,AQP5,TACSTD2,FSCN1,TFF2,ANXA1,ANXA10,REG4,MUC17,S100P,GSDMB,GSDMD,IL18,RELB,MDK,AHR,PDX1"
+))
+
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=8",
+                      "--dataset=Greenleaf_colon",
+                      "--metadata_for_celltype_fn=greenleaf_colon_metadata.csv",
+                      "--sep_for_metadata=,",
+                      "--cell_type_col_in_metadata=general_cell_type",
+                      "--tissue=all",
+                      "--nfrags_filter=1",
+                      "--tss_filter=0",
+                      "--cell_types=epithelial",
+                      "--min_cells_per_cell_type=1",
+                      "--cluster_res=0.6",
+                      "--filter_per_cell_type",
+                      "--plot_custom_column",
+                      "--plus_to_add_to_metadata=GrossPathology,CellType",
+                      "--embedding_column_name=GrossPathology",
+                      "--marker_genes=CLDN2,CD44,AXIN2,RNF43,TGFBI,EPHB2,TEAD2,CDX2,LGR5,OLFM4,ASCL2"
+                    ))
+
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=8",
+                      "--dataset=Greenleaf_colon",
+                      "--metadata_for_celltype_fn=greenleaf_colon_metadata.csv",
+                      "--sep_for_metadata=,",
+                      "--cell_type_col_in_metadata=general_cell_type",
+                      "--tissue=all",
+                      "--nfrags_filter=1",
+                      "--tss_filter=0",
+                      "--cell_types=epithelial",
+                      "--min_cells_per_cell_type=1",
+                      "--cluster_res=0.6",
+                      "--filter_per_cell_type",
+                      "--plot_custom_column",
+                      "--plus_to_add_to_metadata=GrossPathology,CellType",
+                      "--embedding_column_name=GrossPathology",
+                      "--marker_genes=MDK,ELF3,MSLN,RAB15,CXCL16,ADAM9,HES4,HES1,AQP5,ABHD4,AHNAK,AK1,AKR1B10,ANXA1,ANXA3,BMP8B,BOK,CD55,CLIC3,CRIP2,EPS8L1,DAPK1,DCXR,ECM1,FOSL1,GJB3,GSN,HSPB1,HYAL1,IL1RN,ITGB4,KIFC3,LMNA,PHLDA2,PHLDA3,PDLIM7,P2RY2,PDZK1IP1,PLAUR,PRSS22,CAVIN3,PLCD3,PSCA,RHOD,S100A11,S100A14,S100A16,S100A4,SERPINB5,SLC45A3,TACSTD2,TIMP2,TTC9,VAMP5,VNN1,VSIG1,WWC2"
+                    ))
+# general_cell_type
+
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=8",
+                      "--dataset=Rawlins_fetal_lung",
+                      "--metadata_for_celltype_fn=rawlins_fetal_lung_metadata.csv",
+                      "--sep_for_metadata=,",
+                      "--cell_type_col_in_metadata=cell_type",
                       "--tissue=all",
                       "--nfrags_filter=1",
                       "--tss_filter=0",
                       "--cell_types=all",
                       "--min_cells_per_cell_type=1",
                       "--cluster_res=0.6",
-                      "--filter_per_cell_type"
-))
+                      "--filter_per_cell_type",
+                      "--plot_custom_column",
+                      "--embedding_column_name=cell_type"
+                    ))
 
-add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
-                                            cell_type_col_in_orig_metadata, 
-                                            dataset) {
+# plus means other stuff as well
+add_cell_types_plus_to_cell_col_data <- function(cell_col_data, metadata,
+                                                 cell_type_col_in_orig_metadata, 
+                                                 dataset, plus_to_add_to_metadata) {
   if (dataset == "Shendure") {
     to_match = paste(metadata[["sample_name"]], metadata[["cell"]], sep="#")
     rownames_archr = rownames(cell_col_data)
@@ -213,18 +277,46 @@ add_cell_types_to_cell_col_data <- function(cell_col_data, metadata,
              paste(x[1], unlist(strsplit(x[2], "#"))[2], sep="#")))
     to_match = metadata[["Cell"]]
     rownames_archr = unlist(rownames_archr)
+  } else if (dataset == "Rawlins_fetal_lung") {
+      WSSS_F_idx = grep("WSSS_F", rownames(cell_col_data))
+      WSSS_F_names = lapply(strsplit(rownames(cell_col_data)[WSSS_F_idx], split="_"),
+                                      "[", 4:6)
+      WSSS_F_names = unlist(lapply(WSSS_F_names, paste, collapse="_"))
+      other = strsplit(rownames(cell_col_data)[-WSSS_F_idx], split="_")
+      length_other = lapply(other, length)
+      l_6_idx = length_other == 6
+      l_6_names = unlist(lapply(other[l_6_idx], "[", 3))
+      l_8_idx = length_other == 8
+      l_8_names = unlist(lapply(other[l_8_idx], "[", 4))
+      other[l_6_idx] = l_6_names
+      other[l_8_idx] = l_8_names
+      other = unlist(other)
+      cell_ids = unlist(lapply(strsplit(rownames(cell_col_data), "#"), "[", 2))
+      rownames_archr = unlist(lapply(strsplit(rownames(cell_col_data), "#"), "[", 1))
+      rownames_archr[WSSS_F_idx] = WSSS_F_names
+      rownames_archr[-WSSS_F_idx] = other
+      rownames_archr = paste(rownames_archr, cell_ids, sep="#")
+      to_match = metadata[["X"]]
   }
   idx_cell_id = match(rownames_archr, to_match)
   cell_types = metadata[[cell_type_col_in_orig_metadata]][idx_cell_id]
   cell_col_data$cell_type = cell_types
+  if (!is.null(plus_to_add_to_metadata)) {
+    for (col in plus_to_add_to_metadata) {
+      data = metadata[[col]][idx_cell_id]
+      cell_col_data[, col] = data
+    }
+  }
+  
   return(cell_col_data)
 }
 
-filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile,
-                        nfrags_percentile, filter_per_cell_type,
-                        dataset, tissue, cell_types, min_cells_per_cell_type, 
-                        metadata) {
+filter_proj_and_add_metadata <- function(proj, nfrags_filter, tss_filter, tss_percentile,
+                                         nfrags_percentile, filter_per_cell_type,
+                                         dataset, tissue, cell_types, min_cells_per_cell_type, 
+                                         metadata, plus_to_add_to_metadata=NULL) {
   cell_col_data = getCellColData(proj)
+  
   if (tissue == "all") {
     tissue = "*"
   }
@@ -236,48 +328,55 @@ filter_proj <- function(proj, nfrags_filter, tss_filter, tss_percentile,
   }
 
   # Filter by Dataset
+  print("Filtering by Dataset...")
   dataset_filter = grepl(dataset, cell_col_data[["dataset_per_cell"]])
   proj = proj[dataset_filter]
   cell_col_data = getCellColData(proj)
+  print("Done!")
   ##################
   
   # Filter by Tissue
+  print("Filtering by tissue...")
   sample_names = unlist(lapply(strsplit(rownames(cell_col_data), split="#"), 
                                "[", 1))
   tissue_filter = grepl(tissue, sample_names)
   proj = proj[tissue_filter]
   cell_col_data = getCellColData(proj)
+  print("Done!")
   #################
   
   # Add cell types to cell_col_data
-  cell_col_data = add_cell_types_to_cell_col_data(cell_col_data, metadata, 
+  print("Adding cell types to cell_col_data...")
+  cell_col_data = add_cell_types_plus_to_cell_col_data(cell_col_data, metadata, 
                                                   cell_type_col_in_metadata,
-                                                  dataset)
+                                                  dataset, plus_to_add_to_metadata)
   proj = proj[!is.na(cell_col_data[["cell_type"]])]
   cell_col_data_with_celltypes = cell_col_data[!is.na(cell_col_data[["cell_type"]]), ]
   proj@cellColData = cell_col_data_with_celltypes
   cell_col_data = cell_col_data_with_celltypes
+  print("Done!")
   ################################
   
   # Filter by cell type
+  print("Filtering by cell type...")
   cell_type_filter = grepl(cell_types, cell_col_data[["cell_type"]])
   proj = proj[cell_type_filter]
   cell_col_data = getCellColData(proj)
+  print("Done!")
   #####################
   
   # Filter by cell number, and TSS/nFrags 
+  print("Filtering by TSS/nFrags...")
   counts_per_cell_type = table(cell_col_data[["cell_type"]])
   counts_per_cell_type_filter = counts_per_cell_type >= min_cells_per_cell_type
   cell_types_to_keep = names(counts_per_cell_type)[counts_per_cell_type_filter]
   proj = proj[cell_col_data[["cell_type"]] %in% cell_types_to_keep]
   cell_col_data = getCellColData(proj)
-  
   counts_per_cell_type = table(cell_col_data[["cell_type"]])
   cell_col_data = as.data.frame(cell_col_data)
   if (filter_per_cell_type) {
     cell_col_data = group_by(cell_col_data, cell_type)
   }
-  
   if (!is.null(nfrags_percentile)) {
     temp1 = cell_col_data %>% 
               mutate(throw_away = nFrags < quantile(nFrags, nfrags_percentile))
@@ -363,7 +462,7 @@ tss_percentile=args$tss_percentile
 nfrags_percentile=args$nfrags_percentile
 filter_per_cell_type = args$filter_per_cell_type
 cell_types=args$cell_types
-plot_cell_types = args$plot_cell_types
+plot_custom_column = args$plot_custom_column
 sep_for_metadata = args$sep_for_metadata
 # cell_name_col_in_metadata = args$cell_name_col_in_metadata
 cell_type_col_in_metadata = args$cell_type_col_in_metadata
@@ -373,6 +472,12 @@ plot_doublet_scores = args$plot_doublet_scores
 save_clusters = args$save_clusters
 de_novo_marker_discovery = args$de_novo_marker_discovery
 reannotate = args$reannotate
+embedding_column_name = args$embedding_column_name
+plus_to_add_to_metadata = args$plus_to_add_to_metadata
+if (!is.null(args$plus_to_add_to_metadata)) {
+  plus_to_add_to_metadata = unlist(strsplit(args$plus_to_add_to_metadata, 
+                                            split=","))
+}
 print("Done collecting cmd line args")
 
 addArchRThreads(threads = cores)
@@ -441,18 +546,23 @@ if (dir.exists(proj_dir)) {
   print("Loading full ArchR data object")
   ArchR_proj <- loadArchRProject(dir)
   print("Creating new project")
-  proj <- filter_proj(proj=ArchR_proj, nfrags_filter, tss_filter, tss_percentile,
-                      nfrags_percentile, filter_per_cell_type,
-                      dataset, tissue, cell_types, min_cells_per_cell_type, 
-                      metadata)
+  proj <- filter_proj_and_add_metadata(proj=ArchR_proj, nfrags_filter = nfrags_filter, 
+                      tss_filter = tss_filter, tss_percentile = tss_percentile,
+                      nfrags_percentile = nfrags_percentile, 
+                      filter_per_cell_type = filter_per_cell_type,
+                      dataset = dataset, 
+                      tissue = tissue, cell_types = cell_types,
+                      min_cells_per_cell_type = min_cells_per_cell_type, 
+                      metadata = metadata, 
+                      plus_to_add_to_metadata = plus_to_add_to_metadata)
   
   print("Saving new project")
   proj <- saveArchRProject(ArchRProj = proj, 
                            outputDirectory = proj_dir,
                            load = TRUE)
   print("Done saving new project")
-
-  }
+  proj = reduce_dims(proj, force=T)
+}
 
 if (plot_doublet_scores) {
   proj <- addDoubletScores(
@@ -562,7 +672,7 @@ if (reannotate) {
   }
 }
 
-if (plot_cell_types) {
+if (plot_custom_column) {
   if (reannotate) {
     p <- plotEmbedding(
       ArchRProj = proj, 
@@ -575,28 +685,33 @@ if (plot_cell_types) {
     p <- plotEmbedding(
       ArchRProj = proj, 
       colorBy = "cellColData", 
-      name = "cell_type", 
+      name = embedding_column_name, 
       embedding = "UMAP",
       quantCut = c(0.01, 0.95))
   }
-  cols <- c("#000075", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
-            "#FF0000", "#42d4f4", "#f032e6", "#bfef45", "#fabed4",
-            "#469990", "#dcbeff", "#9A6324", "#7F00FF", "#800000",
-            "#aaffc3", "#808000", "#ffd8b1", "#000000")
-  p <- p + 
-    scale_color_manual(values = cols,
-                       guide = guide_legend(override.aes = 
-                                              list(shape = 15)))
-  fn = paste("cell_type_UMAP", setting, sep="_")
+  if (dataset == "Tsankov") {
+    cols <- c("#000075", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
+              "#FF0000", "#42d4f4", "#f032e6", "#bfef45", "#fabed4",
+              "#469990", "#dcbeff", "#9A6324", "#7F00FF", "#800000",
+              "#aaffc3", "#808000", "#ffd8b1", "#000000")
+    p <- p + 
+      scale_color_manual(values = cols,
+                         guide = guide_legend(override.aes = 
+                                                list(shape = 15)))
+  }
+  # else {
+  # p <- p + 
+  #   scale_color_manual(guide = guide_legend(override.aes = 
+  #                                             list(shape = 15)))
+  # }
+  fn = paste(embedding_column_name, "UMAP", setting, sep="_")
   # if (filter_doublets) {
   #   fn = paste(fn, "filter_doublets", sep="_")
   # }
   if (reannotate) {
     fn = paste(fn, "reannotated", sep="_")
   }
-  if (reannotate) {
-    fn = paste(fn, "reannotated", sep="_")
-  }
+
   fn = paste0(fn, ".pdf")
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
   

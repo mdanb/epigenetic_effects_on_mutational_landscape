@@ -18,11 +18,11 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Bingren",
-#                    "--cell_number_filter=1",
-#                    "--cores=8",
-#                    "--annotation=bingren_remove_same_celltype_indexing"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                 c("--dataset=Rawlins_fetal_lung",
+                   "--cores=8",
+                   "--annotation=default_annotation",
+                   "--which_interval_ranges=polak"))
 
 cores = args$cores
 dataset = args$dataset
