@@ -193,8 +193,8 @@ def add_dataset_origin_to_cell_types(df, dataset):
         df.columns = [c + " GL_BlBm" for c in df.columns]
     elif (dataset == "Yang_kidney"):
         df.columns = [c + " Y_K" for c in df.columns]
-    elif (dataset == "Rawlins_fetal_lung"):
-        df.columns = [c + " R_Fl" for c in df.columns]
+    # elif (dataset == "Rawlins_fetal_lung"):
+    #     df.columns = [c + " R_Fl" for c in df.columns]
     elif (dataset == "Greenleaf_colon"):
         df.columns = [c + " GL_Co" for c in df.columns]
     return df
@@ -510,6 +510,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
         if os.path.exists(f"{backwards_elim_dir}/best_model_fulldatatrained.pkl"):
             print("Loading existing full data trained model...")
             best_model_fulldatatrained = pickle.load(open(f"{backwards_elim_dir}/best_model_fulldatatrained.pkl", "rb"))
+            best_model_fulldatatrained
         else:
             if ML_model == "XGB":
                 best_model_fulldatatrained = XGBRegressor(**best_params)
