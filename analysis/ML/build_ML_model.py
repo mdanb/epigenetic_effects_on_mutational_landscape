@@ -11,7 +11,8 @@ def run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
                                          n_optuna_trials_backward_selection,
                                          backwards_elim_dir,
                                          feature_importance_method,
-                                         sqlite):
+                                         sqlite,
+                                         bfs_debug):
 
     os.makedirs(f"{backwards_elim_dir}", exist_ok=True)
 
@@ -30,7 +31,8 @@ def run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
                        n_optuna_trials_prebackward_selection,
                        n_optuna_trials_backward_selection,
                        feature_importance_method,
-                       sqlite)
+                       sqlite,
+                       bfs_debug)
 
     # Tissue Specific
     else:
@@ -63,7 +65,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model,
                                   seed_range, n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
-                                  make_plots, feature_importance_method, sqlite, test_set_perf_num_features):
+                                  make_plots, feature_importance_method, sqlite, test_set_perf_num_features,
+                                  bfs_debug):
     ### args used at the end for plot_top_features.R ###
     cancer_types_arg = ",".join(cancer_types)
     datasets_arg = ",".join(datasets)
@@ -103,7 +106,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          tissues_to_consider,
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
                                                          n_optuna_trials_backward_selection, backwards_elim_dir,
-                                                         feature_importance_method, sqlite)
+                                                         feature_importance_method, sqlite, bfs_debug)
                 print(f"Done modeling {cancer_type}!")
                 if save_test_set_perf:
                     print("Saving test set performances for backward elimination...")
@@ -179,6 +182,7 @@ make_plots = config.make_plots
 feature_importance_method = config.feature_importance_method
 sqlite = config.sqlite
 test_set_perf_num_features = config.test_set_perf_num_features
+bfs_debug = config.bfs_debug
 
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
@@ -186,7 +190,7 @@ run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter,
                                meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range,
                                n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method,
-                               sqlite, test_set_perf_num_features)
+                               sqlite, test_set_perf_num_features, bfs_debug)
 
 
 

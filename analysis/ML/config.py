@@ -32,6 +32,8 @@ def create_parser():
     parser.add_argument("--sqlite", action="store_true", default=False)
     parser.add_argument('--test_set_perf_num_features', nargs="+", type=int)
     parser.add_argument('--error_analysis_num_features', type=int)
+    parser.add_argument('--debug_bfs', action="store_true", default=False)
+
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--SCLC", action="store_true", default=False)
     group.add_argument("--lung_subtyped", action="store_true", default=False)
