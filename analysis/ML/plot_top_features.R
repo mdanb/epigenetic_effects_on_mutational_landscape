@@ -477,7 +477,9 @@ if (!robustness_analysis) {
     # the boxplot. 
     df_feat_imp = df_feature_importances_all_seeds %>% 
           group_by(num_features, features) %>%
-          mutate(n_feature = n(), y_position = max(permutation_importance))
+          mutate(n_feature = n(), y_position = max(permutation_importance)) %>%
+          filter(num_features %in% top_features_to_plot_feat_imp)
+      
     # df_feat_imp = df_feat_imp %>% filter(num_features %in% c(2,5))
     construct_boxplots(df_feat_imp, x="features", y="permutation_importance", 
                        color="features", title=cancer_type, savepath=savepath,
@@ -498,7 +500,6 @@ if (!robustness_analysis) {
             mutate(max_feature_importance=max(permutation_importance)) %>%
             filter(permutation_importance == max_feature_importance) %>%
             ungroup() %>%
-            filter(num_features %in% top_features_to_plot_feat_imp) %>%
             group_by(num_features, features) %>%
             mutate(n_feature = n(), y_position = max(score))
 
