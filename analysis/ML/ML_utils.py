@@ -508,10 +508,12 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
         print("Done getting starter model!")
         best_params = study.best_params
         if os.path.exists(f"{backwards_elim_dir}/best_model_fulldatatrained.pkl"):
+            print("Loading existing full data trained model...")
             best_model_fulldatatrained = pickle.load(open(f"{backwards_elim_dir}/best_model_fulldatatrained.pkl", "rb"))
         else:
             if ML_model == "XGB":
                 best_model_fulldatatrained = XGBRegressor(**best_params)
+            print("Training full train data model...")
             best_model_fulldatatrained.fit(X=X_train, y=y_train)
             pickle.dump(best_model_fulldatatrained, open(f"{backwards_elim_dir}/best_model_fulldatatrained.pkl", "wb"))
 
