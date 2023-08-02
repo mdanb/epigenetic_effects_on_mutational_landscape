@@ -18,6 +18,8 @@ parser <- add_option(parser, c("--tss_fragment_filter"),
 parser <- add_option(parser, c("--ML_model"), type="character")
 parser <- add_option(parser, c("--top_features_to_plot"),
                      type="character")
+parser <- add_option(parser, c("--top_features_to_plot_feat_imp"),
+                     type="character")
 parser <- add_option(parser, c("--tissues_to_consider"), 
                      type="character", default="all")
 parser <- add_option(parser, c("--annotation"), 
@@ -42,16 +44,17 @@ parser <- add_option(parser, c("--feature_importance_method"), type="character")
 #                                    "--robustness_top_ns=2,4"))
 # args = parse_args(parser, args =
 #                     c("--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-#                       "--cancer_types=Lung-AdenoCA",
+#                       "--cancer_types=Lung-AdenoCA,Lung-SCC",
 #                       "--cell_number_filter=100",
 #                       "--top_features_to_plot=1,2,5,10,15",
 #                       "--ML_model=XGB",
 #                       "--annotation=finalized_annotation",
 #                       "--robustness_analysis",
 #                       "--robustness_seed_range=1-100",
-#                       "--feature_importance_method=permutation_importance"))
+#                       "--feature_importance_method=permutation_importance",
+#                       "--top_features_to_plot_feat_imp=1,2,5"))
 
-args = parse_args(parser)
+# args = parse_args(parser)
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter,
@@ -100,23 +103,28 @@ construct_sources_string <- function(datasets) {
   return(scATAC_sources)
 }
 
-get_relevant_backwards_elim_dirs <- function(args, accumulated_seeds=F) {
-    cancer_types = args$cancer_types
-    cancer_types = unlist(strsplit(cancer_types, split = ","))
-    combined_datasets = args$combined_datasets
-    tissues_to_consider = paste(unlist(strsplit(args$tissues_to_consider, 
-                                                split=","), 
-                                       "_"))
-    datasets = unlist(strsplit(args$datasets, split = ","))
-    cell_number_filter = args$cell_number_filter
-    tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
-    annotation = args$annotation
-    ML_model = args$ML_model
-    if (!accumulated_seeds) {
-      seed = args$seed
-    } else {
+get_relevant_backwards_elim_dirs <- function(cancer_types, 
+                                             combined_datasets,
+                                             tissues_to_consider,
+                                             datasets,
+                                             cell_number_filter,
+                                             tss_fragment_filter,
+                                             annotation,
+                                             ML_model,
+                                             seed,
+                                             accumulated_seeds=F) {
+    # tissues_to_consider = paste(unlist(strsplit(args$tissues_to_consider, 
+    #                                             split=","), 
+    #                                    "_"))
+    # datasets = unlist(strsplit(args$datasets, split = ","))
+    # cell_number_filter = args$cell_number_filter
+    # tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
+    # annotation = args$annotation
+    # ML_model = args$ML_model
+    if (accumulated_seeds) {
       seed = "all_seeds"
     }
+  
     scATAC_sources = construct_sources_string(datasets)
 
     backward_elim_dirs = list()
@@ -202,12 +210,31 @@ ggplot_barplot_helper <- function(df, title, savepath, y, ylab,
          width = 20, height = 15, plot)
 }
 
-construct_bar_plots <- function(args) {
-  dirs = get_relevant_backwards_elim_dirs(args)
+construct_bar_plots <- function(cancer_type, 
+                                combined_datasets,
+                                tissues_to_consider,
+                                datasets,
+                                cell_number_filter,
+                                tss_fragment_filter,
+                                annotation,
+                                ML_model,
+                                seed,
+                                accumulated_seeds,
+                                feature_importance_method) {
+  dirs = get_relevant_backwards_elim_dirs(cancer_type, 
+                                          combined_datasets,
+                                          tissues_to_consider,
+                                          datasets,
+                                          cell_number_filter,
+                                          tss_fragment_filter,
+                                          annotation,
+                                          ML_model,
+                                          seed,
+                                          accumulated_seeds)
   for (dir in dirs) {
     file = paste(dir, "df_for_feature_importance_plots", sep="/")
-    if (args$feature_importance_method != "default_importance") {
-      file = paste(file, args$feature_importance_method, sep="_")
+    if (feature_importance_method != "default_importance") {
+      file = paste(file, feature_importance_method, sep="_")
     }
     file = paste(file, "csv", sep=".") 
     df = as_tibble(read.csv(file))
@@ -215,8 +242,8 @@ construct_bar_plots <- function(args) {
     title = title[length(title) - 2]
     df = df[df$num_features %in% top_features_to_plot, ]
     ggplot_barplot_helper(df, title, savepath=dir, 
-                          ylab=gsub("_", " ", args$feature_importance_method), 
-                          y=args$feature_importance_method)
+                          ylab=gsub("_", " ", feature_importance_method), 
+                          y=feature_importance_method)
   }
 }
 
@@ -262,8 +289,11 @@ robustness_analysis = args$robustness_analysis
 robustness_seed_range = as.integer(unlist(strsplit(args$robustness_seed_range, split="-")))
 robustness_accumulated_feature_importance_barplot = 
   args$robustness_accumulated_feature_importance_barplot
-cancer_types = paste(cancer_types, collapse = " ")
+# cancer_types = paste(cancer_types, collapse = " ")
 feature_importance_method = args$feature_importance_method
+top_features_to_plot_feat_imp = as.numeric(unlist(strsplit(
+                                            args$top_features_to_plot_feat_imp, 
+                                            split=",")))
 
 if (!robustness_analysis) {
   tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
@@ -271,7 +301,19 @@ if (!robustness_analysis) {
   if (args$pie_chart) {
     construct_pie_charts(args)
   } else {
-    construct_bar_plots(args)
+    for (cancer_type in cancer_types) {
+      construct_bar_plots(cancer_type, 
+                          combined_datasets,
+                          tissues_to_consider,
+                          datasets,
+                          cell_number_filter,
+                          tss_fragment_filter,
+                          annotation,
+                          ML_model,
+                          seed,
+                          accumulated_seeds,
+                          feature_importance_method)
+    }
   }
 } else {
   for (cancer_type in cancer_types) {
@@ -291,7 +333,16 @@ if (!robustness_analysis) {
     
     scATAC_source = paste(scATAC_source, "annotation", annotation, 
                           sep="_")
-    savepath = get_relevant_backwards_elim_dirs(args, accumulated_seeds = T)
+    savepath = get_relevant_backwards_elim_dirs(cancer_type, 
+                                                combined_datasets,
+                                                tissues_to_consider,
+                                                datasets,
+                                                cell_number_filter,
+                                                tss_fragment_filter,
+                                                annotation,
+                                                ML_model,
+                                                seed,
+                                                accumulated_seeds = T)
     dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type, 
                            sep="/"), recursive = F)
     all_seeds_dirs = dirs[grepl(scATAC_source, dirs)]
@@ -447,6 +498,7 @@ if (!robustness_analysis) {
             mutate(max_feature_importance=max(permutation_importance)) %>%
             filter(permutation_importance == max_feature_importance) %>%
             ungroup() %>%
+            filter(num_features %in% top_features_to_plot_feat_imp) %>%
             group_by(num_features, features) %>%
             mutate(n_feature = n(), y_position = max(score))
 
