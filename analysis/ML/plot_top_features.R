@@ -239,7 +239,7 @@ construct_boxplots <- function(df, x, y, color, title, savepath, savefile,
           # xlab("Cell type") +
           ylab(ylabel) +
           ggtitle(title) +
-          scale_y_continuous(breaks = seq(min(df$y), max(df$y), by = 0.05)) + 
+          scale_y_continuous(breaks = seq(round(min(df[[y]]), 2), round(max(df[[y]]), 2), by = 0.05)) + 
           theme(plot.title = element_text(hjust = 0.5),
                 axis.text.x = element_blank())
   ggsave(paste(savepath, savefile, sep="/"), 
