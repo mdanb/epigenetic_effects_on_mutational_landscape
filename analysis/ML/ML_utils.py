@@ -314,7 +314,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         filename_df_for_fi = filename_df_for_fi + f"_{feature_importance_method}"
     filename_df_for_fi = filename_df_for_fi + ".csv"
     fp_for_fi = figure_path + "/" + filename_df_for_fi
-
+    print(f"starting_n is {starting_n}")
     if starting_n is not None:
         if not os.path.exists(f"{backwards_elim_dir}/all_features_rankings_by_{feature_importance_method}.txt"):
             ranked_features, df_save = get_top_n_features(best_model_fulldatatrained,
@@ -350,6 +350,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         df_save = pd.DataFrame(columns=["features", feature_importance_method, "num_features", "score", "std"])
 
     for idx in range(1, num_iterations + 1):
+        print(f"Running BFS iteration {idx}...")
         model_optimizer = ModelOptimizer(backwards_elim_dir + "/" + f"model_optimizer_iteration_{idx}.pkl")
         top_features_filepath = f"{backwards_elim_dir}/top_features_iteration_{idx}"
         model_savefile = f"model_iteration_{idx}"
@@ -368,9 +369,9 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         per_fold_model_savefile = per_fold_model_savefile + ".pkl"
 
         study = model_optimizer.optimize_optuna_study(study_name=study_name, ML_model=ML_model, X_train=X_train,
-                                              y_train=y_train, seed=seed,
-                                              n_optuna_trials=n_optuna_trials_backward_selection,
-                                              sqlite=sqlite)
+                                                      y_train=y_train, seed=seed,
+                                                      n_optuna_trials=n_optuna_trials_backward_selection,
+                                                      sqlite=sqlite)
         best_model_perfoldtrained = model_optimizer.best_model_perfoldtrained
         if not os.path.exists(f"{backwards_elim_dir}/{model_savefile}"):
             best_params = study.best_params
