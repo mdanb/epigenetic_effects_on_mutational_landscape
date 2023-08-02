@@ -536,7 +536,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
 
     filepath = filepath + ".txt"
 
-    if not os.path.exists(f"{backwards_elim_dir}/{filepath}") and not debug_bfs:
+    if not os.path.exists(f"{backwards_elim_dir}/{filepath}") or debug_bfs:
         print("Running backward feature selection...")
         backward_eliminate_features(X_train, y_train, backwards_elim_dir, ML_model, scATAC_dir,
                                     cancer_type_or_donor_id, seed, n_optuna_trials_backward_selection,
