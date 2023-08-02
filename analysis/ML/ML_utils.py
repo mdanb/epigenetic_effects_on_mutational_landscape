@@ -181,21 +181,21 @@ def add_na_ranges(mutations_df):
 
 
 def add_dataset_origin_to_cell_types(df, dataset):
-    if (dataset == "Bingren"):
+    if dataset == "Bingren":
         df.columns = [c + " BR" for c in df.columns]
-    elif (dataset == "Shendure"):
+    elif dataset == "Shendure":
         df.columns = [c + " SH" for c in df.columns]
-    elif (dataset == "Tsankov"):
+    elif dataset == "Tsankov":
         df.columns = [c + " TS" for c in df.columns]
-    elif (dataset == "Greenleaf_brain"):
+    elif dataset == "Greenleaf_brain":
         df.columns = [c + " GL_Br" for c in df.columns]
-    elif (dataset == "Greenleaf_pbmc_bm"):
+    elif dataset == "Greenleaf_pbmc_bm":
         df.columns = [c + " GL_BlBm" for c in df.columns]
-    elif (dataset == "Yang_kidney"):
+    elif dataset == "Yang_kidney":
         df.columns = [c + " Y_K" for c in df.columns]
-    elif (dataset == "Rawlins_fetal_lung"):
+    elif dataset == "Rawlins_fetal_lung":
         df.columns = [c + " R_Fl" for c in df.columns]
-    elif (dataset == "Greenleaf_colon"):
+    elif dataset == "Greenleaf_colon":
         df.columns = [c + " GL_Co" for c in df.columns]
     return df
 
