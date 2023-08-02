@@ -54,7 +54,7 @@ parser <- add_option(parser, c("--feature_importance_method"), type="character")
 #                       "--feature_importance_method=permutation_importance",
 #                       "--top_features_to_plot_feat_imp=1,2,5"))
 
-# args = parse_args(parser)
+args = parse_args(parser)
 
 construct_backwards_elim_dir <- function(cancer_type, scATAC_source, 
                                          cell_number_filter,
