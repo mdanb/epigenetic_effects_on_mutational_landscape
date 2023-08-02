@@ -408,7 +408,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
             print_and_save_features(top_n_feats, filepath=top_features_filepath, top=True)
         else:
             # top_n_feats here would just be the most important feature
-            df_curr = pd.DataFrame((top_n_feats, np.nan, 1,
+            df_curr = pd.DataFrame((top_n_feats[0], np.nan, 1,
                                     best_cv_score, np.nan)).T
             df_curr.columns = df_save.columns
             df_save = pd.concat((df_save, df_curr))
