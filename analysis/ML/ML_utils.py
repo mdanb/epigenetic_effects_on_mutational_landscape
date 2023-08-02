@@ -193,8 +193,8 @@ def add_dataset_origin_to_cell_types(df, dataset):
         df.columns = [c + " GL_BlBm" for c in df.columns]
     elif dataset == "Yang_kidney":
         df.columns = [c + " Y_K" for c in df.columns]
-    elif dataset == "Rawlins_fetal_lung":
-        df.columns = [c + " R_Fl" for c in df.columns]
+    # elif dataset == "Rawlins_fetal_lung":
+    #     df.columns = [c + " R_Fl" for c in df.columns]
     elif dataset == "Greenleaf_colon":
         df.columns = [c + " GL_Co" for c in df.columns]
     return df
@@ -391,28 +391,30 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         best_trial = study.best_trial
         best_cv_score = best_trial.value
 
-        # No feature elimination if only 1 feature is left
+        # # No feature elimination if only 1 feature is left
+        # if idx != num_iterations:
+        top_n_feats, df_save = get_top_n_features(best_model_fulldatatrained,
+                                                   best_model_perfoldtrained,
+                                                   len(X_train.columns.values) - 1,
+                                                   X_train.columns.values,
+                                                   feature_importance_method,
+                                                   X_train, y_train, seed,
+                                                   df_save=df_save, fp_for_fi=fp_for_fi,
+                                                   best_cv_score=best_cv_score)
+        removed_feature = X_train.columns[~(X_train.columns.isin(top_n_feats))].item()
+        print(f"Removing: {removed_feature}")
+        X_train = X_train.loc[:, top_n_feats]
+        # if not os.path.exists(filepath):
+        # Don't save 0 features
         if idx != num_iterations:
-            top_n_feats, df_save = get_top_n_features(best_model_fulldatatrained,
-                                                       best_model_perfoldtrained,
-                                                       len(X_train.columns.values) - 1,
-                                                       X_train.columns.values,
-                                                       feature_importance_method,
-                                                       X_train, y_train, seed,
-                                                       df_save=df_save, fp_for_fi=fp_for_fi,
-                                                       best_cv_score=best_cv_score)
-            removed_feature = X_train.columns[~(X_train.columns.isin(top_n_feats))].item()
-            print(f"Removing: {removed_feature}")
-            X_train = X_train.loc[:, top_n_feats]
-            # if not os.path.exists(filepath):
             print_and_save_features(top_n_feats, filepath=top_features_filepath, top=True)
-        else:
-            # top_n_feats here would just be the most important feature
-            df_curr = pd.DataFrame((top_n_feats[0], np.nan, 1,
-                                    best_cv_score, np.nan)).T
-            df_curr.columns = df_save.columns
-            df_save = pd.concat((df_save, df_curr))
-            df_save.to_csv(fp_for_fi, index=False)
+        # else:
+        #     # top_n_feats here would just be the most important feature
+        #     df_curr = pd.DataFrame((top_n_feats[0], np.nan, 1,
+        #                             best_cv_score, np.nan)).T
+        #     df_curr.columns = df_save.columns
+        #     df_save = pd.concat((df_save, df_curr))
+        #     df_save.to_csv(fp_for_fi, index=False)
 
 
 #### Model train/val/test helpers ####
