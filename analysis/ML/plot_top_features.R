@@ -446,7 +446,8 @@ if (!robustness_analysis) {
             group_by(num_features, seed) %>%
             mutate(max_feature_importance=max(permutation_importance)) %>%
             filter(permutation_importance == max_feature_importance) %>%
-            group_by(features) %>%
+            ungroup() %>%
+            group_by(num_features, features) %>%
             mutate(n_feature = n(), y_position = max(score))
 
     construct_boxplots(df_val, x="features", y="score", 
