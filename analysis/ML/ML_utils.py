@@ -517,6 +517,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
 
         best_model_perfoldtrained = model_optimizer.best_model_perfoldtrained
         # Test Set Performance
+        print("Getting test set performance using full feature space...")
         tsp = get_and_save_test_set_perf(X_test, y_test, best_model_fulldatatrained, test_set_perf_filepath)
         print(f"Test set performance with all features: {tsp}")
         # For backward feature selection
