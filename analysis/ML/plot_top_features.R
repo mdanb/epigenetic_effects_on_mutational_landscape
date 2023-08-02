@@ -40,16 +40,16 @@ parser <- add_option(parser, c("--feature_importance_method"), type="character")
 #                                    "--annotation=finalized_annotation",
 #                                    "--iters_dont_skip=17",
 #                                    "--robustness_top_ns=2,4"))
-args = parse_args(parser, args =
-                    c("--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-                      "--cancer_types=Lung-AdenoCA",
-                      "--cell_number_filter=100",
-                      "--top_features_to_plot=1,2,5,10,15",
-                      "--ML_model=XGB",
-                      "--annotation=finalized_annotation",
-                      "--robustness_analysis",
-                      "--robustness_seed_range=1-100",
-                      "--feature_importance_method=permutation_importance"))
+# args = parse_args(parser, args =
+#                     c("--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
+#                       "--cancer_types=Lung-AdenoCA",
+#                       "--cell_number_filter=100",
+#                       "--top_features_to_plot=1,2,5,10,15",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--robustness_analysis",
+#                       "--robustness_seed_range=1-100",
+#                       "--feature_importance_method=permutation_importance"))
 
 args = parse_args(parser)
 
