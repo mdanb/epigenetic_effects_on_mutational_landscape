@@ -488,7 +488,7 @@ def get_and_save_test_set_perf(X_test, y_test, model, filepath):
 def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filepath,
                    ML_model, seed, scATAC_dir, cancer_type_or_donor_id,
                    n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
-                   feature_importance_method, sqlite):
+                   feature_importance_method, sqlite, bfs_debug):
     X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10, seed)
 
     # Define as None in case scATAC_df.shape[1] <= 20
@@ -531,7 +531,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
 
     filepath = filepath + ".txt"
 
-    if not os.path.exists(f"{backwards_elim_dir}/{filepath}"):
+    if not os.path.exists(f"{backwards_elim_dir}/{filepath}") and not bfs_debug:
         print("Running backward feature selection...")
         backward_eliminate_features(X_train, y_train, backwards_elim_dir, ML_model, scATAC_dir,
                                     cancer_type_or_donor_id, seed, n_optuna_trials_backward_selection,
