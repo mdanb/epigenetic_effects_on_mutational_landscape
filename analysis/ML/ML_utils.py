@@ -193,6 +193,10 @@ def add_dataset_origin_to_cell_types(df, dataset):
         df.columns = [c + " GL_BlBm" for c in df.columns]
     elif (dataset == "Yang_kidney"):
         df.columns = [c + " Y_K" for c in df.columns]
+    elif (dataset == "Rawlins_fetal_lung"):
+        df.columns = [c + " R_Fl" for c in df.columns]
+    elif (dataset == "Greenleaf_colon"):
+        df.columns = [c + " GL_Co" for c in df.columns]
     return df
 
 
@@ -401,6 +405,13 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
             X_train = X_train.loc[:, top_n_feats]
             # if not os.path.exists(filepath):
             print_and_save_features(top_n_feats, filepath=top_features_filepath, top=True)
+        else:
+            # top_n_feats here would just be the most important feature
+            df_curr = pd.DataFrame((top_n_feats, np.nan, 1,
+                                    best_cv_score, np.nan)).T
+            df_curr.columns = df_save.columns
+            df_save = pd.concat((df_save, df_curr))
+            df_save.to_csv(fp_for_fi, index=False)
 
 
 #### Model train/val/test helpers ####
