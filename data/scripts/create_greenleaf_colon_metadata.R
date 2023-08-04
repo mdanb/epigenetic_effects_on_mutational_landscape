@@ -27,7 +27,7 @@ names[names == "B004-A-004-D"] = "B004-A-004"
 metadata["my_sample_names"] = names
 
 cancer_status = read_excel("../metadata/41588_2022_1088_MOESM3_ESM.xlsx",
-                           sheet=2)
+                           sheet=2, skip=1)
 cancer_status = cancer_status %>% select(Sample, GrossPathology)
 metadata = left_join(metadata, cancer_status, by=c("my_sample_names" = "Sample"))
 
@@ -38,20 +38,25 @@ old_new_names = list(c("A001-C-104-D-R1", "A001-C-104-D_20200214"),
                       c("A001-C-023-D-R1", "A001-C-023-D_20200214"),
                       c("A001-C-023-D-R2", "A001-C-023-D_20200715"),
                       c("A002-C-010-D-R1", "A002-C-010-D_20200310"),
-                      c("A015-C-010-D-R2", "A002-C-010-D_20200702"),
-                      c("B004-A-004-D-R2", "B004-A-004-D_20200817"))
+                      c("A002-C-010-D", "A002-C-010-D_20200702"),
+                      c("B004-A-004-D-R2", "B004-A-004-D_20200817"),
+                      c("A015-C-010-D-R2", "A015-C-010-D"))
 
-rename_cells_in_metadata <- function(metadata, old, new) {
-  idx = grepl(old, metadata[["Cell"]])
+# ,
+# c("A015-C-010-D-R2", "A015-C-010-D_20200715"))
+
+rename_cells_in_metadata <- function(metadata_names, old, new) {
+  idx = metadata_names == old
   metadata[idx, "Cell"] = gsub(old, new, 
                                metadata[idx, "Cell"])
   
   return(metadata)
 }
 
+metadata_names = unlist(lapply(strsplit(metadata[["Cell"]], "#"), "[", 1))
 for (old_new in old_new_names) {
   metadata[metadata["Sample"] == old_new[[1]], "Sample"] = old_new[[2]]
-  metadata = rename_cells_in_metadata(metadata, old_new[[1]], old_new[[2]])
+  metadata = rename_cells_in_metadata(metadata_names, old_new[[1]], old_new[[2]])
 }
 
 write.csv(metadata, "../metadata/greenleaf_colon_metadata.csv")
