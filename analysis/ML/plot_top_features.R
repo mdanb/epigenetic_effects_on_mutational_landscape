@@ -33,6 +33,7 @@ parser <- add_option(parser, c("--robustness_accumulated_feature_importance_barp
 parser <- add_option(parser, c("--robustness_seed_range"), type="character",
                      default="1-100")
 parser <- add_option(parser, c("--feature_importance_method"), type="character")
+parser <- add_option(parser, c("--skip_seeds"), default="")
 
 # args = parse_args(parser, args = c("--cancer_types=Lung-AdenoCA",
 #                                    "--robustness_analysis",
@@ -43,8 +44,8 @@ parser <- add_option(parser, c("--feature_importance_method"), type="character")
 #                                    "--iters_dont_skip=17",
 #                                    "--robustness_top_ns=2,4"))
 # args = parse_args(parser, args =
-#                     c("--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-#                       "--cancer_types=Lung-AdenoCA,Lung-SCC",
+#                     c("--datasets=Rawlins_fetal_lung,Tsankov",
+#                       "--cancer_types=blum_bottom_10_perc,nmf_bottom_10_perc,blum_50_bottom_10_perc",
 #                       "--cell_number_filter=100",
 #                       "--top_features_to_plot=1,2,5,10,15",
 #                       "--ML_model=XGB",
@@ -294,6 +295,10 @@ feature_importance_method = args$feature_importance_method
 top_features_to_plot_feat_imp = as.numeric(unlist(strsplit(
                                             args$top_features_to_plot_feat_imp, 
                                             split=",")))
+skip_seeds = args$skip_seeds
+if (!is.null(skip_seeds)) {
+  skip_seeds = unlist(strsplit(args$skip_seeds, split=","))
+}
 
 if (!robustness_analysis) {
   tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
@@ -401,75 +406,77 @@ if (!robustness_analysis) {
     
     top_features_to_plot = sort(top_features_to_plot, decreasing = T)
     for (seed in seq(robustness_seed_range[1], robustness_seed_range[2])) {
-        test_dir = construct_backwards_elim_dir(cancer_type,
-                                                construct_sources_string(datasets),
-                                                cell_number_filter,
-                                                tss_fragment_filter, 
-                                                annotation,
-                                                tissues_to_consider, 
-                                                ML_model,
-                                                seed,
-                                                test=T)
-
-        if (feature_importance_method != "default_importance") {
-          model_pattern = paste("^model_iteration_[0-9]+_feature_importance",
-                                feature_importance_method, sep="_")
-          model_pattern = paste(model_pattern, "pkl", sep=".")
-        } else {
-          model_pattern = "^model_iteration_[0-9]+\\.pkl"
-        }
-        total_num_features = list.files(test_dir,
-                                        pattern=model_pattern)
-        total_num_features = length(total_num_features)
-        # sort so that later the first test_file_idx can be checked for 
-        # total_num_features == test_file_idx
-        test_file_idx = sort(total_num_features - top_features_to_plot + 1)
-        test_perf_filenames = paste("model_iteration", test_file_idx,
-                        sep = "_")
-        if (feature_importance_method != "default_importance") {
-          test_perf_filenames = paste(test_perf_filenames,
-                                      "feature_importance", 
-                                      feature_importance_method, 
-                                      sep = "_")
-        }
-        test_perf_filenames = paste(test_perf_filenames, 
-                                    "test_performance.txt", sep="_")
-        test_set_perf_files = paste(test_dir, test_perf_filenames, sep="/")
-        
-        idx = 1
-        for (file in test_set_perf_files) {
-          # tryCatch(
-          #     {
-          # top_feature = NA
-          if (!(idx == length(test_set_perf_files) &&
-                test_file_idx[length(test_file_idx)] == total_num_features)) {
-            top_feature_file = paste0("top_features_iteration_",
-                                    test_file_idx[idx])
-            
-            if (feature_importance_method != "default_importance") {
-              top_feature_file = paste(top_feature_file,
-                                       "by", 
+        if (!(seed %in% skip_seeds)) {
+          test_dir = construct_backwards_elim_dir(cancer_type,
+                                                  construct_sources_string(datasets),
+                                                  cell_number_filter,
+                                                  tss_fragment_filter, 
+                                                  annotation,
+                                                  tissues_to_consider, 
+                                                  ML_model,
+                                                  seed,
+                                                  test=T)
+  
+          if (feature_importance_method != "default_importance") {
+            model_pattern = paste("^model_iteration_[0-9]+_feature_importance",
+                                  feature_importance_method, sep="_")
+            model_pattern = paste(model_pattern, "pkl", sep=".")
+          } else {
+            model_pattern = "^model_iteration_[0-9]+\\.pkl"
+          }
+          total_num_features = list.files(test_dir,
+                                          pattern=model_pattern)
+          total_num_features = length(total_num_features)
+          # sort so that later the first test_file_idx can be checked for 
+          # total_num_features == test_file_idx
+          test_file_idx = sort(total_num_features - top_features_to_plot + 1)
+          test_perf_filenames = paste("model_iteration", test_file_idx,
+                          sep = "_")
+          if (feature_importance_method != "default_importance") {
+            test_perf_filenames = paste(test_perf_filenames,
+                                        "feature_importance", 
                                         feature_importance_method, 
                                         sep = "_")
-            }
-            
-            top_feature_file = paste0(top_feature_file, ".txt")
-            top_feature_fp = paste(test_dir, top_feature_file, sep="/")
-            top_feature = readLines(top_feature_fp, n = 1)
-            top_feature = substring(top_feature, 4, nchar(top_feature))
           }
-          suppressWarnings({
-            perf = read.table(file, header=F)[1,1]
-          })
-          df = df %>% add_row(top_feature = top_feature,
-                              top_n = top_features_to_plot[idx],
-                              test_set_perf = perf,
-                              seed = seed)
-          idx = idx + 1
-              # },
-              # error = function(e) {
-              # }
-          #)
+          test_perf_filenames = paste(test_perf_filenames, 
+                                      "test_performance.txt", sep="_")
+          test_set_perf_files = paste(test_dir, test_perf_filenames, sep="/")
+          
+          idx = 1
+          for (file in test_set_perf_files) {
+            # tryCatch(
+            #     {
+            # top_feature = NA
+            if (!(idx == length(test_set_perf_files) &&
+                  test_file_idx[length(test_file_idx)] == total_num_features)) {
+              top_feature_file = paste0("top_features_iteration_",
+                                      test_file_idx[idx])
+              
+              if (feature_importance_method != "default_importance") {
+                top_feature_file = paste(top_feature_file,
+                                         "by", 
+                                          feature_importance_method, 
+                                          sep = "_")
+              }
+              
+              top_feature_file = paste0(top_feature_file, ".txt")
+              top_feature_fp = paste(test_dir, top_feature_file, sep="/")
+              top_feature = readLines(top_feature_fp, n = 1)
+              top_feature = substring(top_feature, 4, nchar(top_feature))
+            }
+            suppressWarnings({
+              perf = read.table(file, header=F)[1,1]
+            })
+            df = df %>% add_row(top_feature = top_feature,
+                                top_n = top_features_to_plot[idx],
+                                test_set_perf = perf,
+                                seed = seed)
+            idx = idx + 1
+                # },
+                # error = function(e) {
+                # }
+            #)
+          }
         }
     }
     
