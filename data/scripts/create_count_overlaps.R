@@ -18,11 +18,11 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-args = parse_args(OptionParser(option_list=option_list), args =
-                 c("--dataset=Rawlins_fetal_lung",
-                   "--cores=8",
-                   "--annotation=default_annotation",
-                   "--which_interval_ranges=polak"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                  c("--dataset=Rawlins_fetal_lung",
+#                    "--cores=8",
+#                    "--annotation=default_annotation",
+#                    "--which_interval_ranges=polak"))
 
 cores = args$cores
 dataset = args$dataset
@@ -140,6 +140,15 @@ if (which_interval_ranges == "polak") {
   load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 } else if (which_interval_ranges == "yang") {
   load("../peak_set_yang.Rdata")
+} else if (which_interval_ranges == "10kb") {
+  if (file.exists("10kb_interval_ranges.Rdata")) {
+    load("../10kb_interval_ranges.Rdata")
+  } else {
+    interval.ranges = read.table("../chr_Sorted_interval_ranges_10kb.tsv")[, 1:3]
+    colnames(interval.ranges) = c("seqnames", "start","end")
+    interval.ranges = GRanges(interval.ranges)
+    save(interval.ranges, file="../10kb_interval_ranges.Rdata")
+  }
 }
 
 dir.create("../processed_data/count_overlap_data", recursive=TRUE)   
