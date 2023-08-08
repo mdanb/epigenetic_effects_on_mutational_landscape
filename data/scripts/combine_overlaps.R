@@ -11,10 +11,10 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                     c("--datasets=Rawlins_fetal_lung",
-#                       "--annotation=default_annotation",
-#                       "--which_interval_ranges=polak"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--datasets=Wang_lung",
+                      "--annotation=default_annotation",
+                      "--which_interval_ranges=polak"))
 
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
@@ -53,7 +53,7 @@ get_cell_counts_df <- function(count_overlaps_filename, annotation, dataset) {
     # cell_counts_filename = paste("fragments", cell_counts_filename, sep="_")
   }
   if (dataset == "Wang_lung") {
-    cell_counts_filename = str_remove(cell_counts_filename[5], ".fragments.rds")
+    cell_counts_filename = str_remove(cell_counts_filename, ".fragments.rds")
     cell_counts_filename = paste0(cell_counts_filename, ".rds")
   }
   cell_counts_filename = paste("cell_counts", cell_counts_filename, sep="_")
