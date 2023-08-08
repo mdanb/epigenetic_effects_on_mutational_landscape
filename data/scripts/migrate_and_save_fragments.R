@@ -68,7 +68,7 @@ if (dataset == "Bingren") {
   dir_path = "../bed_files/bingren_scATAC/migrated_to_hg19"
   dir.create(dir_path)
   files = list.files("../bed_files/bingren_scATAC",
-                     pattern="bed.bgz",
+                     pattern="bed.gz",
                      full.names=TRUE)
 } else if (dataset == "Tsankov") {
   dir_path = "../bed_files/Tsankov_scATAC/migrated_to_hg19"
