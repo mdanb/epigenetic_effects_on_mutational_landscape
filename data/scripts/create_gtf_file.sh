@@ -1,4 +1,4 @@
-cellranger mkgtf Homo_sapiens.GRCh37.75.ensembl.gtf Homo_sapiens.GRCh37.75.ensembl.filtered.gtf \
+../../software/cellranger mkgtf Homo_sapiens.GRCh37.75.ensembl.gtf Homo_sapiens.GRCh37.75.ensembl.filtered.gtf \
                    --attribute=gene_biotype:protein_coding \
                    --attribute=gene_biotype:lincRNA \
                    --attribute=gene_biotype:antisense \
