@@ -75,12 +75,16 @@ import_sample <- function(file, dataset, which_interval_ranges) {
     sample = import(paste("..", "bed_files",
                           "rawlins_fetal_lung_scATAC", "migrated_to_hg19",
                           file, sep="/"), format="bed")
+  } else if (dataset == "Wang_lung") {
+    sample = import(paste("..", "bed_files",
+                          "wang_adult_lung",
+                          file, sep="/"), format="bed")
   }
   return(sample)
 }
 
 remove_extension <- function(path) {
-  return(gsub("\\.(tsv|txt)\\.b*gz$", "", path))
+  return(gsub("\\.(tsv|txt|bed)\\.b*gz$", "", path))
 }
 
 get_sample_filename <- function(file, dataset) {
@@ -119,10 +123,14 @@ get_sample_filename <- function(file, dataset) {
     filename = paste("Greenleaf_colon_count_overlaps",
                      paste(remove_extension(file),
                            "rds", sep="."), sep="_")
-  }
-  else if (dataset == "Rawlins_fetal_lung") {
+  } else if (dataset == "Rawlins_fetal_lung") {
     filename = get_sample_name_rawlins_fetal_lung(file)
     filename = paste("Rawlins_fetal_lung_count_overlaps",
+                     paste(filename, "fragments",
+                           "rds", sep="."), sep="_")
+  } else if (dataset == "Wang_lung") {
+    filename = remove_extension(file)
+    filename = paste("Wang_lung_count_overlaps",
                      paste(filename, "fragments",
                            "rds", sep="."), sep="_")
   }
@@ -141,7 +149,7 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
                                                                          "cellID",
                                                                          "\\+")
   }
-  else if (dataset == "Shendure") {
+  else if (dataset == "Shendure" || dataset == "Wang_lung") {
     sample_barcodes_in_metadata = filtered_metadata[["cell"]]
   }
   else if (dataset == "Tsankov") {
@@ -183,27 +191,22 @@ get_sample_barcodes_in_metadata_helper <- function(metadata, cellID_col_name,
 get_sample_name <- function(file, dataset) {
   if (dataset == "Bingren") {
     sample_name = get_sample_name_bingren(file)
-  }
-  else if (dataset == "Shendure") {
+  } else if (dataset == "Shendure") {
     sample_name = get_sample_name_shendure(file)
-  }
-  else if (dataset == "Tsankov") {
+  } else if (dataset == "Tsankov") {
     sample_name = get_sample_name_tsankov(file)
-  }
-  else if (dataset == "Greenleaf_brain") {
+  } else if (dataset == "Greenleaf_brain") {
     sample_name = get_sample_name_greenleaf_brain(file)
-  }
-  else if (dataset == "Greenleaf_pbmc_bm") {
+  } else if (dataset == "Greenleaf_pbmc_bm") {
     sample_name =  get_sample_name_greenleaf_pbmc_bm(file)
-  }
-  else if (dataset == "Greenleaf_colon") {
+  } else if (dataset == "Greenleaf_colon") {
     sample_name = get_sample_name_greenleaf_colon(file)
-  }
-  else if (dataset == "Yang_kidney") {
+  } else if (dataset == "Yang_kidney") {
     sample_name = get_sample_name_yang(file)
-  }
-  else if (dataset == "Rawlins_fetal_lung") {
+  } else if (dataset == "Rawlins_fetal_lung") {
     sample_name = get_sample_name_rawlins_fetal_lung(file)
+  } else if (dataset == "Wang_lung") {
+    sample_name = get_sample_name_wang_lung(file)
   }
   return(sample_name)
 }
@@ -269,6 +272,11 @@ get_sample_name_yang <- function(file) {
 get_sample_name_greenleaf_colon <- function(file) {
   sample_name = str_remove(file, "_fragments.tsv.bgz")
   sample_name = unlist(strsplit(sample_name, split="_"))[2]
+  return(sample_name)
+}
+
+get_sample_name_wang_lung <- function(file) {
+  sample_name = str_remove(file, ".bed.gz")
   return(sample_name)
 }
 

@@ -409,4 +409,30 @@ if (dataset == "Bingren") {
            annotation=annotation,
            which_interval_ranges=which_interval_ranges,
            mc.cores=cores)
+} else if (dataset == "Wang_lung") {
+  if (annotation == "default_annotation") {
+    if (file.exists("../metadata/wang_adult_metadata.csv")) {
+      metadata = read.csv("../metadata/wang_adult_metadata.csv", row.names = 1)
+    }
+    else {
+      metadata = read.table("../metadata/GSE161381_lung_snATAC.UMAP.cluster_labels.txt.gz",
+                            sep="\t", header=1)
+      temp = strsplit(metadata[["cell"]], split="_")
+      metadata["sample"] = unlist(lapply(temp, "[", 1))
+      # metadata["cell"] = unlist(lapply(temp, "[", 2))
+      metadata = metadata[, c(1, 4, 5)]
+      colnames(metadata)[2] = "cell_type"
+      write.csv(metadata, "../metadata/wang_adult_metadata.csv")
+    }
+  }
+  files_wang_lung = list.files("../bed_files/wang_adult_lung",
+                                        pattern = "D.*")
+  mclapply(files_wang_lung, create_count_overlaps_files,
+           metadata=metadata,
+           interval_ranges=interval.ranges,
+           chain=ch,
+           dataset=dataset,
+           annotation=annotation,
+           which_interval_ranges=which_interval_ranges,
+           mc.cores=cores)
 }
