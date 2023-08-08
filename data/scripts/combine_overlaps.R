@@ -21,7 +21,7 @@ annotation = args$annotation
 datasets = unlist(strsplit(args$datasets, split = ","))
 which_interval_ranges = args$which_interval_ranges
 
-get_cell_counts_df <- function(count_overlaps_filename, annotation) {
+get_cell_counts_df <- function(count_overlaps_filename, annotation, dataset) {
   cell_counts_filename = unlist(strsplit(unlist(
                                          strsplit(count_overlaps_filename,
                                          split="/"))[5], 
@@ -51,6 +51,10 @@ get_cell_counts_df <- function(count_overlaps_filename, annotation) {
     cell_counts_filename = paste(unlist(strsplit(cell_counts_filename, "[.]"))[1], 
                                  "fragments.rds", sep = "_")
     # cell_counts_filename = paste("fragments", cell_counts_filename, sep="_")
+  }
+  if (dataset == "Wang_lung") {
+    cell_counts_filename = str_remove(cell_counts_filename[5], ".fragments.rds")
+    cell_counts_filename = paste0(cell_counts_filename, ".rds")
   }
   cell_counts_filename = paste("cell_counts", cell_counts_filename, sep="_")
   cell_counts_path = paste("..", "processed_data", 
@@ -117,7 +121,7 @@ save_combined_overlaps <- function(filepaths,
     count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
                                    row.names = paste(tissue_name,
                                                      cell_types))
-    cell_counts = get_cell_counts_df(f, annotation)  
+    cell_counts = get_cell_counts_df(f, annotation, dataset)  
     dfs = add_to_combined_dataframes(count_overlaps, combined_count_overlaps,
                                      tissue_name, cell_types, cell_counts,
                                      combined_count_overlaps_metadata,
