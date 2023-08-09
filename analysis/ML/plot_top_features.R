@@ -285,7 +285,7 @@ tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
 annotation = args$annotation
 tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
 ML_model = args$ML_model
-seed_range = unlist(strsplit(seed_range, split = "-"))
+seed_range = unlist(strsplit(args$seed_range, split = "-"))
 seed_range = seq(seed_range[1], seed_range[2])
 robustness_analysis = args$robustness_analysis
 robustness_seed_range = as.integer(unlist(strsplit(args$robustness_seed_range, split="-")))
