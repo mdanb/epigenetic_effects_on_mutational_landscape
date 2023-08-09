@@ -254,7 +254,8 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df_metadata = df_metadata %>% filter(cell_type %in% keep)
     df = df[rownames(df) %in% paste("fetal_lung", keep), ]
     save_collapsed_df(df, df_metadata, dataset, annotation)
-  } else if (dataset == "Tsankov") {
+  }
+} else if (dataset == "Tsankov") {
     refined_annotation_fn = "Tsankov_combined_count_overlaps.rds"
     refined_annotation_fp = paste(root, "Tsankov_refined", 
                                   refined_annotation_fn, sep="/")
