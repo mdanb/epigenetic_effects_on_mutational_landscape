@@ -12,7 +12,7 @@ parser <- OptionParser()
 parser <- add_option(parser, c("--datasets"), type="character")
 parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
-parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
+# parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
 parser <- add_option(parser, c("--tss_fragment_filter"),
                      type="character", default="-1")
 parser <- add_option(parser, c("--ML_model"), type="character")
@@ -24,7 +24,7 @@ parser <- add_option(parser, c("--tissues_to_consider"),
                      type="character", default="all")
 parser <- add_option(parser, c("--annotation"), 
                      type="character", default="default_annotation")
-parser <- add_option(parser, c("--seed"), default="42")
+parser <- add_option(parser, c("--seed_range"), default="42-42")
 parser <- add_option(parser, c("--robustness_analysis"), action="store_true", 
                      default=F)
 parser <- add_option(parser, c("--robustness_accumulated_feature_importance_barplot"), 
@@ -33,7 +33,7 @@ parser <- add_option(parser, c("--robustness_accumulated_feature_importance_barp
 parser <- add_option(parser, c("--robustness_seed_range"), type="character",
                      default="1-100")
 parser <- add_option(parser, c("--feature_importance_method"), type="character")
-parser <- add_option(parser, c("--skip_seeds"), default="")
+parser <- add_option(parser, c("--skip_seeds_robustness"), default="")
 
 # args = parse_args(parser, args = c("--cancer_types=Lung-AdenoCA",
 #                                    "--robustness_analysis",
@@ -285,7 +285,8 @@ tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
 annotation = args$annotation
 tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
 ML_model = args$ML_model
-seed = args$seed
+seed_range = unlist(strsplit(seed_range, split = "-"))
+seed_range = seq(seed_range[1], seed_range[2])
 robustness_analysis = args$robustness_analysis
 robustness_seed_range = as.integer(unlist(strsplit(args$robustness_seed_range, split="-")))
 robustness_accumulated_feature_importance_barplot = 
@@ -297,17 +298,15 @@ if (!is.null(args$top_features_to_plot_feat_imp)) {
                                               args$top_features_to_plot_feat_imp, 
                                               split=",")))
 }
-skip_seeds = args$skip_seeds
-if (!is.null(skip_seeds)) {
-  skip_seeds = unlist(strsplit(args$skip_seeds, split=","))
+skip_seeds_robustness = args$skip_seeds_robustness
+if (!is.null(skip_seeds_robustness)) {
+  skip_seeds_robustness = unlist(strsplit(args$skip_seeds_robustness, split=","))
 }
 
 if (!robustness_analysis) {
   tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
-  
-  if (args$pie_chart) {
-    construct_pie_charts(args)
-  } else {
+
+  for (seed in seed_range) {
     for (cancer_type in cancer_types) {
       construct_bar_plots(cancer_type, 
                           combined_datasets,
@@ -408,7 +407,7 @@ if (!robustness_analysis) {
     
     top_features_to_plot = sort(top_features_to_plot, decreasing = T)
     for (seed in seq(robustness_seed_range[1], robustness_seed_range[2])) {
-        if (!(seed %in% skip_seeds)) {
+        if (!(seed %in% skip_seeds_robustness)) {
           test_dir = construct_backwards_elim_dir(cancer_type,
                                                   construct_sources_string(datasets),
                                                   cell_number_filter,
