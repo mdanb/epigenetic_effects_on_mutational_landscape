@@ -8,4 +8,3 @@ cd ..
                  --fasta=Homo_sapiens.GRCh37.dna.primary_assembly.fa \
                  --genes=Homo_sapiens.GRCh37.87.filtered.gtf \
                  --ref-version=3.1.0
-
