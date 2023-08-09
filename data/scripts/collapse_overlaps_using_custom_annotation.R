@@ -254,5 +254,38 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df_metadata = df_metadata %>% filter(cell_type %in% keep)
     df = df[rownames(df) %in% paste("fetal_lung", keep), ]
     save_collapsed_df(df, df_metadata, dataset, annotation)
+  } else if (dataset == "Tsankov") {
+    refined_annotation_fn = "Tsankov_combined_count_overlaps.rds"
+    refined_annotation_fp = paste(root, "Tsankov_refined", 
+                                  refined_annotation_fn, sep="/")
+    refined_combined_count_ovs = readRDS(refined_annotation_fp)
+    refined_annotation_metadata_fn = "Tsankov_combined_count_overlaps_metadata.rds"
+    refined_annotation_metadata_fp = paste(root, "Tsankov_refined", 
+                                           refined_annotation_metadata_fn, sep="/")
+    
+    refined_combined_metadata = readRDS(refined_annotation_metadata_fp)
+    if (annotation == "remove_basal") {
+      df = refined_combined_count_ovs
+      df_metadata = refined_combined_metadata
+      df = df[-grep("Basal", rownames(df)), ]
+      df_metadata = df_metadata[-grep("Basal", df_metadata[["cell_type"]]), ]
+      save_collapsed_df(df, df_metadata, dataset, annotation)
+    } else if (dataset == "Wang_lung") {
+      default_annotation_fn = "Wang_lung_combined_count_overlaps.rds"
+      default_annotation_fp = paste(root, "default_annotation", 
+                                    default_annotation_fn, sep="/")
+      default_combined_count_ovs = readRDS(default_annotation_fp)
+      default_annotation_metadata_fn = "Wang_lung_combined_count_overlaps_metadata.rds"
+      default_annotation_metadata_fp = paste(root, "default_annotation", 
+                                             default_annotation_metadata_fn, sep="/")
+      
+      default_combined_metadata = readRDS(default_annotation_metadata_fp)
+      if (annotation == "remove_basal") {
+        df = default_combined_count_ovs
+        df_metadata = default_combined_metadata
+        df = df[-grep("basal", rownames(df)), ]
+        df_metadata = df_metadata[-grep("basal", df_metadata[["cell_type"]]), ]
+        save_collapsed_df(df, df_metadata, dataset, annotation)
+      }
   }
 }
