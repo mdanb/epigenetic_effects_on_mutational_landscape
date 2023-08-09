@@ -318,7 +318,7 @@ if (!robustness_analysis) {
                           annotation,
                           ML_model,
                           seed,
-                          accumulated_seeds,
+                          accumulated_seeds=F,
                           feature_importance_method)
     }
   }
