@@ -19,7 +19,7 @@ parser <- add_option(parser, c("--ML_model"), type="character")
 parser <- add_option(parser, c("--top_features_to_plot"),
                      type="character")
 parser <- add_option(parser, c("--top_features_to_plot_feat_imp"),
-                     type="character")
+                     type="character", default=NULL)
 parser <- add_option(parser, c("--tissues_to_consider"), 
                      type="character", default="all")
 parser <- add_option(parser, c("--annotation"), 
@@ -292,9 +292,11 @@ robustness_accumulated_feature_importance_barplot =
   args$robustness_accumulated_feature_importance_barplot
 # cancer_types = paste(cancer_types, collapse = " ")
 feature_importance_method = args$feature_importance_method
-top_features_to_plot_feat_imp = as.numeric(unlist(strsplit(
-                                            args$top_features_to_plot_feat_imp, 
-                                            split=",")))
+if (!is.null(args$top_features_to_plot_feat_imp)) {
+  top_features_to_plot_feat_imp = as.numeric(unlist(strsplit(
+                                              args$top_features_to_plot_feat_imp, 
+                                              split=",")))
+}
 skip_seeds = args$skip_seeds
 if (!is.null(skip_seeds)) {
   skip_seeds = unlist(strsplit(args$skip_seeds, split=","))
