@@ -659,6 +659,7 @@ def get_storage_name(sqlite=False):
 
 def load_n_features_backwards_elim_models(n, total_num_features, cancer_type, ML_model, scATAC_dir,
                                          feature_importance_method, full_data_trained=True):
+    print(n)
     if total_num_features > 20:
         model_iteration = 20 - n + 1
     else:
