@@ -197,6 +197,8 @@ def add_dataset_origin_to_cell_types(df, dataset):
         df.columns = [c + " R_Fl" for c in df.columns]
     elif dataset == "Greenleaf_colon":
         df.columns = [c + " GL_Co" for c in df.columns]
+    elif dataset == "Wang_lung":
+        df.columns = [c + " W_L" for c in df.columns]
     return df
 
 
