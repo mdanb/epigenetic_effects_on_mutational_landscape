@@ -97,8 +97,8 @@ create_count_overlaps_files <- function(file, metadata, interval_ranges, chain,
       sample <- get_sample_cell_types(sample[[1]], sample_barcodes_in_metadata,
                                       filtered_metadata)
       counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, 
-                                                             gsub(".rds|.*count_overlaps_|_fragments", 
-                                                                  "", filename),
+                                                             gsub(".rds", 
+                                                                  filename),
                                                              annotation)
       # sample <- filter_sample_by_cell_number(sample,
       #                                        counts_per_cell_type, 
