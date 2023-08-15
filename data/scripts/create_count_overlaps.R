@@ -224,7 +224,7 @@ if (dataset == "Bingren") {
     metadata_basal = read.csv("../metadata/tsankov_basal_refined_annotation.csv")
     metadata[match(metadata_basal[["X"]], metadata[["X"]]), "new_annotation"] = 
       metadata_basal[["new_annotation"]]
-    colnames(metadata_basal) = c("sample", "cell_type")
+    colnames(metadata) = c("sample", "cell_type")
     files_Tsankov_distal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
                                       pattern="RPL.*bgz$")
     files_Tsankov_proximal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
