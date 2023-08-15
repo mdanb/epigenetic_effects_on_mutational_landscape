@@ -177,6 +177,7 @@ if (dataset == "Bingren") {
   mclapply(files_bingren, create_count_overlaps_files,
            metadata=metadata_bingren,
            interval_ranges=interval.ranges,
+           which_interval_ranges=which_interval_ranges,
            chain=ch,
            dataset=dataset,
            annotation=annotation,
