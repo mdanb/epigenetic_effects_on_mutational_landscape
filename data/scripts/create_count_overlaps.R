@@ -177,10 +177,10 @@ if (dataset == "Bingren") {
   mclapply(files_bingren, create_count_overlaps_files,
            metadata=metadata_bingren,
            interval_ranges=interval.ranges,
-           which_interval_ranges=which_interval_ranges,
            chain=ch,
            dataset=dataset,
            annotation=annotation,
+           which_interval_ranges=which_interval_ranges,
            mc.cores=cores)
 } else if (dataset == "Shendure") {
   metadata_Shendure = read.table("../metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
@@ -195,6 +195,7 @@ if (dataset == "Bingren") {
          chain=ch,
          dataset=dataset,
          annotation=annotation,
+         which_interval_ranges=which_interval_ranges,
          mc.cores=cores)
 } else if (dataset == "Tsankov") {
   # metadata_tsankov_proximal = 
@@ -324,6 +325,7 @@ if (dataset == "Bingren") {
            chain=ch,
            dataset=dataset,
            annotation=annotation,
+           which_interval_ranges=which_interval_ranges,
            mc.cores=cores)
 } else if (dataset == "Greenleaf_pbmc_bm") {
     if (!(file.exists("../metadata/greenleaf_pbmc_bm.txt"))) {
