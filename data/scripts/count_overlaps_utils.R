@@ -362,7 +362,8 @@ get_tissue_name_tsankov <- function(filename, annotation) {
     else {
       tissue_name = "proximal lung"
     }
-  } else if (annotation == "Tsankov_refined") {
+  } else if (annotation == "Tsankov_refined" || 
+             annotation == "Tsankov_basal_refined") {
     tissue_name = "lung"
   }
   return(tissue_name)
