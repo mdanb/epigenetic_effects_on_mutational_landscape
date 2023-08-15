@@ -219,6 +219,21 @@ if (dataset == "Bingren") {
              annotation=annotation,
              which_interval_ranges=which_interval_ranges,
              mc.cores=cores)
+  } else if (annotation == "Tsankov_basal_refined") {
+    metadata_basal = read.csv("../metadata/tsankov_basal_refined_annotation.csv")
+    colnames(metadata_basal) = c("sample", "cell_type")
+    files = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
+                                        pattern="IC.*bgz$")
+    mclapply(files, 
+             create_count_overlaps_files,
+             metadata=metadata,
+             interval_ranges=interval.ranges,
+             chain=ch,
+             dataset=dataset,
+             annotation=annotation,
+             which_interval_ranges=which_interval_ranges,
+             mc.cores=cores)
+    
   }
   # if (annotation == "Tsankov_separate_fibroblasts") {
   #   if (!file.exists("../metadata/Tsankov_fibro-fibro+C12+fibro+C14.csv")) {
