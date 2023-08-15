@@ -22,41 +22,45 @@ datasets = unlist(strsplit(args$datasets, split = ","))
 which_interval_ranges = args$which_interval_ranges
 
 get_cell_counts_df <- function(count_overlaps_filename, annotation, dataset) {
-  cell_counts_filename = unlist(strsplit(unlist(
-                                         strsplit(count_overlaps_filename,
-                                         split="/"))[5], 
-                                         "_"))
-  if (grepl("Rawlins_fetal_lung", count_overlaps_filename)) {
-    pattern = unlist(strsplit(cell_counts_filename, split="\\."))[6]
-    if (pattern == "WSSS") {
-      pattern = paste(unlist(strsplit(cell_counts_filename, split="\\."))[6:8], 
-                      collapse="_")
-    }
-    files = list.files(paste("../processed_data/cell_counts_per_sample",
-                             annotation, 
-                             sep="/"))
-    f = files[grep(pattern, files)]
-    cell_counts_path = paste("..", "processed_data", 
-                             "cell_counts_per_sample", annotation,
-                             f, sep = "/")
-    df = readRDS(cell_counts_path)
-    return(df)
-  }
-  start_index = grep("overlaps", cell_counts_filename) + 1
-  cell_counts_filename = 
-    cell_counts_filename[start_index:length(cell_counts_filename)]
-  cell_counts_filename = paste(cell_counts_filename, collapse="_")
-  if (grepl("IC", cell_counts_filename) || grepl("RPL", 
-                                                       cell_counts_filename)) {
-    cell_counts_filename = paste(unlist(strsplit(cell_counts_filename, "[.]"))[1], 
-                                 "fragments.rds", sep = "_")
-    # cell_counts_filename = paste("fragments", cell_counts_filename, sep="_")
-  }
-  if (dataset == "Wang_lung") {
-    cell_counts_filename = str_remove(cell_counts_filename, ".fragments.rds")
-    cell_counts_filename = paste0(cell_counts_filename, ".rds")
-  }
+  # cell_counts_filename = unlist(strsplit(unlist(
+  #                                        strsplit(count_overlaps_filename,
+  #                                        split="/"))[5], 
+  #                                        "_"))
+  # if (grepl("Rawlins_fetal_lung", count_overlaps_filename)) {
+  #   pattern = unlist(strsplit(cell_counts_filename, split="\\."))[6]
+  #   if (pattern == "WSSS") {
+  #     pattern = paste(unlist(strsplit(cell_counts_filename, split="\\."))[6:8], 
+  #                     collapse="_")
+  #   }
+  #   files = list.files(paste("../processed_data/cell_counts_per_sample",
+  #                            annotation, 
+  #                            sep="/"))
+  #   f = files[grep(pattern, files)]
+  #   cell_counts_path = paste("..", "processed_data", 
+  #                            "cell_counts_per_sample", annotation,
+  #                            f, sep = "/")
+  #   df = readRDS(cell_counts_path)
+  #   return(df)
+  # }
+  # start_index = grep("overlaps", cell_counts_filename) + 1
+  # cell_counts_filename = 
+  #   cell_counts_filename[start_index:length(cell_counts_filename)]
+  # cell_counts_filename = paste(cell_counts_filename, collapse="_")
+  # if (grepl("IC", cell_counts_filename) || grepl("RPL", 
+  #                                                      cell_counts_filename)) {
+  #   cell_counts_filename = paste(unlist(strsplit(cell_counts_filename, "[.]"))[1], 
+  #                                "fragments.rds", sep = "_")
+  #   # cell_counts_filename = paste("fragments", cell_counts_filename, sep="_")
+  # }
+  # if (dataset == "Wang_lung") {
+  #   cell_counts_filename = str_remove(cell_counts_filename, ".fragments.rds")
+  #   cell_counts_filename = paste0(cell_counts_filename, ".rds")
+  # }
+  cell_counts_filename = unlist(strsplit(count_overlaps_filename, split="/"))[5]
+                                         
   cell_counts_filename = paste("cell_counts", cell_counts_filename, sep="_")
+  
+  # cell_counts_filename = paste("cell_counts", cell_counts_filename, sep="_")
   cell_counts_path = paste("..", "processed_data", 
                            "cell_counts_per_sample", annotation,
                            cell_counts_filename, sep = "/")
