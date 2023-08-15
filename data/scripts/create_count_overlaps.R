@@ -32,8 +32,9 @@ which_interval_ranges = args$which_interval_ranges
 
 get_and_save_num_cells_per_sample <- function(sample, sample_file_name,
                                               annotation) {
-  sample_file_name = paste0("cell_counts_", file_path_sans_ext(sample_file_name, 
-                                                               TRUE), ".rds")
+  sample_file_name = paste0("cell_counts_", sample_file_name, ".rds")
+  # sample_file_name = paste0("cell_counts_", file_path_sans_ext(sample_file_name, 
+  #                                                              TRUE), ".rds")
   counts_per_cell_type = get_num_cells_per_sample(sample)
   path = "../processed_data/cell_counts_per_sample"
   file_path = paste(path, annotation, sample_file_name, sep="/")
@@ -95,8 +96,10 @@ create_count_overlaps_files <- function(file, metadata, interval_ranges, chain,
       
       sample <- get_sample_cell_types(sample[[1]], sample_barcodes_in_metadata,
                                       filtered_metadata)
-      counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, file,
-                                                                annotation)
+      counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, 
+                                                             gsub(".rds|.*count_overlaps_|_fragments", 
+                                                                  "", filename),
+                                                             annotation)
       # sample <- filter_sample_by_cell_number(sample,
       #                                        counts_per_cell_type, 
       #                                        cell_number_filter)
