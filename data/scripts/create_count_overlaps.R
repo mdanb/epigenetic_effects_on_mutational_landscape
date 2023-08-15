@@ -220,10 +220,16 @@ if (dataset == "Bingren") {
              which_interval_ranges=which_interval_ranges,
              mc.cores=cores)
   } else if (annotation == "Tsankov_basal_refined") {
+    metadata = read.csv("../metadata/tsankov_refined_annotation.csv")
     metadata_basal = read.csv("../metadata/tsankov_basal_refined_annotation.csv")
+    metadata[match(metadata_basal[["X"]], metadata[["X"]]), "new_annotation"] = 
+      metadata_basal[["new_annotation"]]
     colnames(metadata_basal) = c("sample", "cell_type")
-    files = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
+    files_Tsankov_distal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
+                                      pattern="RPL.*bgz$")
+    files_Tsankov_proximal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
                                         pattern="IC.*bgz$")
+    files = c(files_Tsankov_distal, files_Tsankov_proximal)
     mclapply(files, 
              create_count_overlaps_files,
              metadata=metadata,
