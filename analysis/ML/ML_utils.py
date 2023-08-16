@@ -641,7 +641,7 @@ def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, 
     scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
     if tss_filter:
         scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
-    scATAC_dir = scATAC_dir + f"_annotation_{annotation_dir}_seed_{seed}_fold_for_test_set_{fold_for_test_set}"
+    scATAC_dir = scATAC_dir + f"_annotation_{annotation_dir}_seed_{seed}_fold_for_test_set_{fold_for_test_set + 1}"
     return scATAC_dir
 
 
