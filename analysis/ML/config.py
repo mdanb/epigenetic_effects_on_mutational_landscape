@@ -23,6 +23,7 @@ def create_parser():
     parser.add_argument("--ML_model", type=str, default="XGB")
     parser.add_argument('--test_backward_selection_iters', type=int, nargs="+", default=None)
     parser.add_argument('--seed_range', type=str)
+    parser.add_argument('--fold_for_test_set', type=int)
     parser.add_argument('--n_optuna_trials_prebackward_selection', type=int, default=None)
     parser.add_argument('--n_optuna_trials_backward_selection', type=int, default=None)
     parser.add_argument('--top_features_to_plot', nargs="+", type=int)

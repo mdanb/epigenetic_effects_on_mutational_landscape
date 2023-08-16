@@ -232,11 +232,18 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
 
 
 #### Split Train/Test helpers ####
-def get_train_test_split(X, y, test_size, seed):
+def get_train_test_split(X, y, n_splits, fold_for_test_set):
     # Don't shuffle, to make problem harder as explained elsewhere
-    X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                        test_size=test_size, random_state=seed,
-                                                        shuffle=False)
+    kf = KFold(n_splits=n_splits, shuffle=False)
+    train_index = -1
+    test_index = -1
+    for i, (train_idx, test_idx) in enumerate(kf.split(X)):
+        if fold_for_test_set == i:
+            train_index = train_idx
+            test_index = test_idx
+            break
+    X_train, y_train = X.iloc[train_index], y.iloc[train_index]
+    X_test, y_test = X.iloc[test_index], y.iloc[test_index]
     return X_train, X_test, y_train, y_test
 
 
@@ -493,8 +500,8 @@ def get_and_save_test_set_perf(X_test, y_test, model, filepath):
 def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filepath,
                    ML_model, seed, scATAC_dir, cancer_type_or_donor_id,
                    n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
-                   feature_importance_method, sqlite, debug_bfs):
-    X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 0.10, seed)
+                   feature_importance_method, sqlite, debug_bfs, fold_for_test_set):
+    X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 10, fold_for_test_set)
 
     # Define as None in case scATAC_df.shape[1] <= 20
     n = None
@@ -553,7 +560,7 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
 
 
 def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_dir, n, ML_model, cancer_type,
-                                                feature_importance_method, seed):
+                                                feature_importance_method, fold_for_test_set):
     # scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
     #                                                 histologically_subtyped_mutations,
     #                                                 de_novo_seurat_clustering,
@@ -578,7 +585,7 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
     #                             f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
     # model = pickle.load(open(backwards_elim_model_file, "rb"))
     model = load_n_features_backwards_elim_models(n, scATAC_df.shape[1], cancer_type, ML_model, scATAC_dir,
-                                                 feature_importance_method)
+                                                  feature_importance_method)
     # print(scATAC_df.shape[1])
     if scATAC_df.shape[1] > 20:
        model_iteration = 20 - n + 1
@@ -587,7 +594,7 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
 
     scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
-    _, X_test, _, y_test = get_train_test_split(scATAC_df, mutations_df, 0.10, seed)
+    _, X_test, _, y_test = get_train_test_split(scATAC_df, mutations_df, 10, fold_for_test_set)
     test_set_perf_filepath = f"models/{ML_model}/" \
                              f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
                              f"model_iteration_{model_iteration}"
@@ -629,11 +636,12 @@ def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATA
 
 
 #### Other ####
-def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed):
+def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed,
+                         fold_for_test_set):
     scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
     if tss_filter:
         scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
-    scATAC_dir = scATAC_dir + f"_annotation_{annotation_dir}_seed_{seed}"
+    scATAC_dir = scATAC_dir + f"_annotation_{annotation_dir}_seed_{seed}_fold_for_test_set_{fold_for_test_set}"
     return scATAC_dir
 
 
