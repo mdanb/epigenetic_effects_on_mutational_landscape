@@ -141,9 +141,9 @@ save_combined_overlaps <- function(filepaths,
   temp = unlist(strsplit(combined_filepath, "/"))[6]
   metadata_filename = paste(unlist(strsplit(temp, "[.]"))[1], "metadata.rds", 
                             sep="_")
-  if (which_interval_ranges != "polak") {
-    metadata_filename = paste("interval_ranges", metadata_filename, sep="_")
-  }
+  # if (which_interval_ranges != "polak") {
+  #   metadata_filename = paste("interval_ranges", metadata_filename, sep="_")
+  # }
   
   metadata_filepath = paste("..", "processed_data", "count_overlap_data", 
                             "combined_count_overlaps", annotation, 
