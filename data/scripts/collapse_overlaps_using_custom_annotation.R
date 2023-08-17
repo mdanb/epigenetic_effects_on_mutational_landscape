@@ -63,14 +63,19 @@ collapse_using_mapping <- function(mapping, df, df_metadata) {
 root = "../processed_data/count_overlap_data/combined_count_overlaps"
 if (dataset == "Greenleaf_pbmc_bm") {
   default_annotation_fn = "Greenleaf_pbmc_bm_combined_count_overlaps.rds"
+  default_annotation_metadata_fn = "Greenleaf_pbmc_bm_combined_count_overlaps_metadata.rds"
+  
   if (which_interval_ranges != "polak") {
     default_annotation_fn = paste("interval_ranges", which_interval_ranges,
                                   default_annotation_fn, sep="_")
+    default_annotation_metadata_fn = paste("interval_ranges", 
+                                           which_interval_ranges,
+                                           default_annotation_metadata_fn,
+                                           sep="_")
   }
   default_annotation_fp = paste(root, "default_annotation", 
                                 default_annotation_fn, sep="/")
   default_combined_count_ovs = readRDS(default_annotation_fp)
-  default_annotation_metadata_fn = "Greenleaf_pbmc_bm_combined_count_overlaps_metadata.rds"
   default_annotation_metadata_fp = paste(root, "default_annotation", 
                                          default_annotation_metadata_fn, sep="/")
   
@@ -97,15 +102,20 @@ if (dataset == "Greenleaf_pbmc_bm") {
   } 
 } else if (dataset == "Greenleaf_brain") {
   lowest_level_annotation_fn = "Greenleaf_brain_combined_count_overlaps.rds"
+  lowest_level_annotation_metadata_fn = "Greenleaf_brain_combined_count_overlaps_metadata.rds"
+
   if (which_interval_ranges != "polak") {
     lowest_level_annotation_fn = paste("interval_ranges", which_interval_ranges,
                                        lowest_level_annotation_fn, sep="_")
+    lowest_level_annotation_metadata_fn = paste("interval_ranges", 
+                                                which_interval_ranges,
+                                                lowest_level_annotation_metadata_fn, 
+                                                sep="_")
   }
   lowest_level_annotation_fp = paste(root, "Greenleaf_brain_lowest_level_annotation", 
                                      lowest_level_annotation_fn, sep="/")
   lowest_level_combined_count_ovs = readRDS(lowest_level_annotation_fp)
   
-  lowest_level_annotation_metadata_fn = "Greenleaf_brain_combined_count_overlaps_metadata.rds"
   lowest_level_annotation_metadata_fp = paste(root, "Greenleaf_brain_lowest_level_annotation", 
                                               lowest_level_annotation_metadata_fn, sep="/")
   
@@ -134,15 +144,18 @@ if (dataset == "Greenleaf_pbmc_bm") {
   }
 } else if (dataset == "Yang_kidney") {
   default_annotation_fn = "Yang_kidney_combined_count_overlaps.rds"
+  default_annotation_metadata_fn = "Yang_kidney_combined_count_overlaps_metadata.rds"
+  
   if (which_interval_ranges != "polak") {
     default_annotation_fn = paste("interval_ranges", which_interval_ranges,
                                   default_annotation_fn, sep="_")
+    default_annotation_metadata_fn = paste("interval_ranges", which_interval_ranges,
+                                           default_annotation_metadata_fn, sep="_")
   }
 
   default_annotation_fp = paste(root, "default_annotation", 
                                 default_annotation_fn, sep="/")
   default_combined_count_ovs = readRDS(default_annotation_fp)
-  default_annotation_metadata_fn = "Yang_kidney_combined_count_overlaps_metadata.rds"
   default_annotation_metadata_fp = paste(root, "default_annotation", 
                                          default_annotation_metadata_fn, sep="/")
   
@@ -163,12 +176,21 @@ if (dataset == "Greenleaf_pbmc_bm") {
 } else if (dataset == "Bingren") {
   if (annotation == "Bingren_remove_same_celltype_indexing") {
     default_annotation_fn = "Bingren_combined_count_overlaps.rds"
+    default_annotation_metadata_fn = "Bingren_combined_count_overlaps_metadata.rds"
+    
     if (which_interval_ranges != "polak") {
       default_annotation_fn = paste("interval_ranges", which_interval_ranges,
                                     default_annotation_fn, sep="_")
+      default_annotation_metadata_fn = paste("interval_ranges", 
+                                             which_interval_ranges,
+                                             default_annotation_metadata_fn, 
+                                             sep="_")
     }
     default_annotation_fp = paste(root, "default_annotation", 
                                   default_annotation_fn, sep="/")
+    default_annotation_metadata_fp = paste(root, "default_annotation", 
+                                           default_annotation_metadata_fn, sep="/")
+    
     default_combined_count_ovs = readRDS(default_annotation_fp)
     cell_types = gsub(" \\d+", "", rownames(default_combined_count_ovs))
     default_combined_count_ovs = as_tibble(default_combined_count_ovs) %>%
@@ -180,9 +202,6 @@ if (dataset == "Greenleaf_pbmc_bm") {
     default_combined_count_ovs = as.data.frame(default_combined_count_ovs)[, 
                                                                            2:ncol(default_combined_count_ovs)]
     rownames(default_combined_count_ovs) = cell_types
-    default_annotation_metadata_fn = "Bingren_combined_count_overlaps_metadata.rds"
-    default_annotation_metadata_fp = paste(root, "default_annotation", 
-                                           default_annotation_metadata_fn, sep="/")
     default_combined_metadata = readRDS(default_annotation_metadata_fp)
     prev_tissue = default_combined_metadata[["tissue_name"]]
     prev_cell_type = default_combined_metadata[["cell_type"]]
@@ -207,9 +226,13 @@ if (dataset == "Greenleaf_pbmc_bm") {
 } else if (dataset == "Shendure") {
   if (annotation == "Shendure_remove_unknown_unsure") {
     default_annotation_fn = "Shendure_combined_count_overlaps.rds"
+    default_annotation_metadata_fn = "Shendure_combined_count_overlaps_metadata.rds"
+    
     if (which_interval_ranges != "polak") {
       default_annotation_fn = paste("interval_ranges", which_interval_ranges,
                                     default_annotation_fn, sep="_")
+      default_annotation_metadata_fn = paste("interval_ranges", which_interval_ranges,
+                                             default_annotation_metadata_fn, sep="_")
     }
     default_annotation_fp = paste(root, "default_annotation", 
                                   default_annotation_fn, sep="/")
@@ -219,7 +242,6 @@ if (dataset == "Greenleaf_pbmc_bm") {
     combined_count_ovs = combined_count_ovs[!grepl("\\?", 
                                                    rownames(combined_count_ovs)), ]
     
-    default_annotation_metadata_fn = "Shendure_combined_count_overlaps_metadata.rds"
     default_annotation_metadata_fp = paste(root, "default_annotation", 
                                            default_annotation_metadata_fn, sep="/")
     default_combined_metadata = readRDS(default_annotation_metadata_fp)
@@ -232,14 +254,18 @@ if (dataset == "Greenleaf_pbmc_bm") {
   }
 } else if (dataset == "Rawlins_fetal_lung") {
   default_annotation_fn = "Rawlins_fetal_lung_combined_count_overlaps.rds"
+  default_annotation_metadata_fn = "Rawlins_fetal_lung_combined_count_overlaps_metadata.rds"
+  
   if (which_interval_ranges != "polak") {
     default_annotation_fn = paste("interval_ranges", which_interval_ranges,
                                   default_annotation_fn, sep="_")
+    default_annotation_metadata_fn = paste("interval_ranges", which_interval_ranges,
+                                           default_annotation_metadata_fn, sep="_")
+    
   }
   default_annotation_fp = paste(root, "default_annotation", 
                                 default_annotation_fn, sep="/")
   default_combined_count_ovs = readRDS(default_annotation_fp)
-  default_annotation_metadata_fn = "Rawlins_fetal_lung_combined_count_overlaps_metadata.rds"
   default_annotation_metadata_fp = paste(root, "default_annotation", 
                                          default_annotation_metadata_fn, sep="/")
   
@@ -277,14 +303,17 @@ if (dataset == "Greenleaf_pbmc_bm") {
   }
 } else if (dataset == "Tsankov") {
     refined_annotation_fn = "Tsankov_combined_count_overlaps.rds"
+    refined_annotation_metadata_fn = "Tsankov_combined_count_overlaps_metadata.rds"
+    
     if (which_interval_ranges != "polak") {
       refined_annotation_fn = paste("interval_ranges", which_interval_ranges,
                                     refined_annotation_fn, sep="_")
+      refined_annotation_metadata_fn = paste("interval_ranges", which_interval_ranges,
+                                             refined_annotation_metadata_fn, sep="_")
     }
     refined_annotation_fp = paste(root, "Tsankov_refined", 
                                   refined_annotation_fn, sep="/")
     refined_combined_count_ovs = readRDS(refined_annotation_fp)
-    refined_annotation_metadata_fn = "Tsankov_combined_count_overlaps_metadata.rds"
     refined_annotation_metadata_fp = paste(root, "Tsankov_refined", 
                                            refined_annotation_metadata_fn, sep="/")
     
