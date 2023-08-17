@@ -45,7 +45,7 @@ parser <- add_option(parser, c("--skip_seeds_robustness"), default="")
 #                                    "--robustness_top_ns=2,4"))
 # args = parse_args(parser, args =
 #                     c("--datasets=Rawlins_fetal_lung,Tsankov",
-#                       "--cancer_types=blum_bottom_10_perc,nmf_bottom_10_perc,blum_50_bottom_10_perc",
+#                       "--cancer_types=blum_50_top_10_perc",
 #                       "--cell_number_filter=100",
 #                       "--top_features_to_plot=1,2,5,10,15",
 #                       "--ML_model=XGB",
@@ -53,7 +53,8 @@ parser <- add_option(parser, c("--skip_seeds_robustness"), default="")
 #                       "--robustness_analysis",
 #                       "--robustness_seed_range=1-100",
 #                       "--feature_importance_method=permutation_importance",
-#                       "--top_features_to_plot_feat_imp=1,2,5"))
+#                       "--top_features_to_plot_feat_imp=1,2,5",
+#                       "--skip_seeds_robustness=70"))
 
 args = parse_args(parser)
 
