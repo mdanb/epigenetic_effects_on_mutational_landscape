@@ -24,12 +24,21 @@ dataset = args$dataset
 annotation = args$annotation
 which_interval_ranges = args$which_interval_ranges
 
-save_collapsed_df <- function(df, df_metadata, dataset, annotation) {
+save_collapsed_df <- function(df, df_metadata, dataset, annotation, 
+                              which_interval_ranges) {
   save_dir = paste("../processed_data/count_overlap_data/combined_count_overlaps",
                    annotation, sep="/")
   save_file = paste(dataset, "combined_count_overlaps.rds", sep = "_")
   save_file_metadata = paste(dataset, "combined_count_overlaps_metadata.rds", 
                              sep = "_")
+  
+  if (which_interval_ranges != "polak") {
+    save_file = paste(which_interval_ranges,
+                      dataset, "combined_count_overlaps.rds", sep = "_")
+    save_file_metadata = paste(which_interval_ranges,
+                               dataset, "combined_count_overlaps_metadata.rds", 
+                               sep = "_")
+  }
   
   dir.create(save_dir)
   saveRDS(df, paste(save_dir, save_file, sep="/"))
