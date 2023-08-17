@@ -14,17 +14,19 @@ parser.add_argument('--seed_interval', type=str)
 parser.add_argument('--seed_interval_step', type=int)
 parser.add_argument('--top_features_to_plot', nargs="+", type=str,
                     default=["18"])
+parser.add_argument('--fold_for_test_set_range', type=str)
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=str)
 parser.add_argument('--n_optuna_trials_backward_selection', type=str)
 parser.add_argument("--save_test_set_perf", action="store_true", default=False)
 parser.add_argument('--test_set_perf_num_features', nargs="+", type=int)
-
-group = parser.add_mutually_exclusive_group()
-group.add_argument("--meso", action="store_true", default=False)
 parser.add_argument('--cores', type=str, default="8")
 parser.add_argument('--time', type=str, default="24:00:00")
 parser.add_argument('--feature_importance_method', type=str)
-group.add_argument("--make_plots", action="store_true", default=False)
+parser.add_argument("--make_plots", action="store_true", default=False)
+
+
+group = parser.add_mutually_exclusive_group()
+group.add_argument("--meso", action="store_true", default=False)
 
 
 config = parser.parse_args()
@@ -36,6 +38,8 @@ start, end = map(int, seed_interval.split('-'))
 seed_interval_step = config.seed_interval_step
 seed_ranges = list(range(start - 1, end + 1, seed_interval_step))
 seed_ranges = [f"{seed_ranges[i] + 1}-{seed_ranges[i+1]}" for i in range(len(seed_ranges)-1)]
+start, end = map(int, config.fold_for_test_set_range.split('-'))
+fold_for_test_set_range = range(start, end + 1)
 n_optuna_trials_prebackward_selection = config.n_optuna_trials_prebackward_selection
 n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 meso = config.meso
@@ -46,6 +50,7 @@ feature_importance_method = config.feature_importance_method
 make_plots = config.make_plots
 save_test_set_perf = config.save_test_set_perf
 test_set_perf_num_features = config.test_set_perf_num_features
+
 
 for seed_range in seed_ranges:
     script_filename = "_".join(["cancer_types", "_".join(config.cancer_types),

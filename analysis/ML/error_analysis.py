@@ -30,6 +30,7 @@ n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 feature_importance_method = config.feature_importance_method
 tss_filter = config.tss_fragment_filter
 num_features = config.error_analysis_num_features
+fold_for_test_set = config.fold_for_test_set
 
 for seed in seed_range:
     for cancer_type in cancer_types:
@@ -40,10 +41,11 @@ for seed in seed_range:
                                                           datasets, scATAC_cell_number_filter,
                                                           annotation_dir, cancer_type)
         scATAC_sources = construct_scATAC_sources(datasets)
-        scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed)
+        scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed,
+                                          fold_for_test_set)
 
         model = load_n_features_backwards_elim_models(num_features, scATAC_df.shape[1], cancer_type, ML_model,
-                                                       scATAC_dir, feature_importance_method, full_data_trained=True)
+                                                      scATAC_dir, feature_importance_method, full_data_trained=True)
         top_features = model.feature_names_in_
         scATAC_df = scATAC_df.loc[:, top_features]
         # X_train, _, y_train, _ = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, seed)

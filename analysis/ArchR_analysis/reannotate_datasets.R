@@ -99,19 +99,19 @@ option_list <- list(
 #                       "--marker_genes=CD3D,CD3E,CD3G,CD247,CD4,CD8A,CD8B,IL2RA,FOXP3,IL7R,PTPRC,MS4A1,CD19,NCAM1,ITGAM,CD14,FCGR3A,FCGR3B,FCGR2A,FCGR2B")
 # )
 
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--marker_genes=SCGB3A1,SCGB3A2,TP63,KRT5")
-# )
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=4",
+                      "--dataset=Tsankov",
+                      "--metadata_for_celltype_fn=tsankov_refined_annotation.csv",
+                      "--sep_for_metadata=,",
+                      "--cell_type_col_in_metadata=new_annotation",
+                      "--tissue=all",
+                      "--nfrags_filter=1",
+                      "--tss_filter=0",
+                      "--cell_types=Basal",
+                      "--min_cells_per_cell_type=1",
+                      "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,MUC5B,SCGB1A1,SCGB3A1,SCGB3A2")
+)
 
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
@@ -617,7 +617,23 @@ if (cluster) {
 }
 
 if (reannotate) {
-  if (dataset == "Tsankov" && cluster_res==0.6) {
+  if (dataset == "Tsankov" && cluster_res==0.6 && cell_types=="Basal") {
+    cell_col_data = getCellColData(proj)
+    cell_col_data["new_annotation"] = cell_col_data["cell_type"]
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C5", 
+                  "new_annotation"] = "Basal.Secretory"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C6" |
+                  cell_col_data[["Clusters_res_0.6"]] == "C4", 
+                  "new_annotation"] = "Basal.HES2"
+    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C1" |
+                  cell_col_data[["Clusters_res_0.6"]] == "C2" |
+                  cell_col_data[["Clusters_res_0.6"]] == "C3", 
+                  "new_annotation"] = "Basal.TP63+"
+    proj = saveArchRProject(ArchRProj = proj, 
+                            outputDirectory = setting,
+                            load=T)
+  }
+  if (dataset == "Tsankov" && cluster_res==0.6 && cell_types=="all") {
    cell_col_data = getCellColData(proj)
    # if (filter_doublets) {
    #     idx = cell_col_data[["cell_type"]] == "AT2"

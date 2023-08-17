@@ -88,9 +88,9 @@ if (dataset == "Bingren") {
   files = list.files("../bed_files/greenleaf_pbmc_bm_scATAC",
                      pattern="tsv.gz",
                      full.names=TRUE)
-} else if (dataset == "Yang") {
-  dir_path = "../bed_files/yang_kidney_scATAC/migrated_to_hg38"
-  dir.create(dir_path)
+} else if (dataset == "Yang_kidney") {
+  # dir_path = "../bed_files/yang_kidney_scATAC/migrated_to_hg38"
+  # dir.create(dir_path)
   files = list.files("../bed_files/yang_kidney_scATAC",
                      pattern="tsv.gz",
                      full.names=TRUE)

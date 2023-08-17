@@ -22,7 +22,7 @@ args = parse_args(OptionParser(option_list=option_list))
 #                  c("--dataset=Rawlins_fetal_lung",
 #                    "--cores=8",
 #                    "--annotation=default_annotation",
-#                    "--which_interval_ranges=polak"))
+#                    "--which_interval_ranges=10kb"))
 
 cores = args$cores
 dataset = args$dataset
@@ -165,11 +165,13 @@ if (dataset == "Bingren") {
     metadata_bingren = read.table("../metadata/GSE184462_metadata.tsv", 
                           sep="\t",
                           header=T)
-  } else if (annotation == "bingren_remove_same_celltype_indexing") {
-    metadata_bingren = read.table("../metadata/bingren_remove_same_celltype_indexing.csv", 
-                                  sep=",",
-                                  header=T)
-  }
+  } 
+  # Can do below without re-counting 
+  # else if (annotation == "bingren_remove_same_celltype_indexing") {
+  #   metadata_bingren = read.table("../metadata/bingren_remove_same_celltype_indexing.csv", 
+  #                                 sep=",",
+  #                                 header=T)
+  # }
   colnames(metadata_bingren)[grepl("cell.type", colnames(metadata_bingren))] = "cell_type"
   files_bingren = list.files("../bed_files/bingren_scATAC/migrated_to_hg19",
                               pattern=".*fragments\\.bed\\.bgz$")
