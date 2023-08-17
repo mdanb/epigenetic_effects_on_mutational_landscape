@@ -149,6 +149,7 @@ ranked_mesomics_agg = cbind(blum_top_10_perc, blum_bottom_10_perc,
 
 unranked_agg = cbind(agg_epithelioid, agg_sarcomatoid, agg_biphasic)
 meso_df = cbind(ranked_mesomics_agg, unranked_agg)
+meso_df["combined_meso"] = agg_epithelioid + agg_sarcomatoid + agg_biphasic
 write.csv(meso_df, "../processed_data/mesothelioma.csv")
 # nmf_top_10_perc_ids = get_top_bottom_n_perc(ranked_mesomics, 0.1, 
 #                                          "top", "Sarcomatoid.nmf.old.rank")
