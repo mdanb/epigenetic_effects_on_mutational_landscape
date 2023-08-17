@@ -63,6 +63,10 @@ collapse_using_mapping <- function(mapping, df, df_metadata) {
 root = "../processed_data/count_overlap_data/combined_count_overlaps"
 if (dataset == "Greenleaf_pbmc_bm") {
   default_annotation_fn = "Greenleaf_pbmc_bm_combined_count_overlaps.rds"
+  if (which_interval_ranges != "polak") {
+    default_annotation_fn = paste("interval_ranges", which_interval_ranges,
+                                  default_annotation_fn, sep="_")
+  }
   default_annotation_fp = paste(root, "default_annotation", 
                                 default_annotation_fn, sep="/")
   default_combined_count_ovs = readRDS(default_annotation_fp)
@@ -93,6 +97,10 @@ if (dataset == "Greenleaf_pbmc_bm") {
   } 
 } else if (dataset == "Greenleaf_brain") {
   lowest_level_annotation_fn = "Greenleaf_brain_combined_count_overlaps.rds"
+  if (which_interval_ranges != "polak") {
+    lowest_level_annotation_fn = paste("interval_ranges", which_interval_ranges,
+                                       lowest_level_annotation_fn, sep="_")
+  }
   lowest_level_annotation_fp = paste(root, "Greenleaf_brain_lowest_level_annotation", 
                                      lowest_level_annotation_fn, sep="/")
   lowest_level_combined_count_ovs = readRDS(lowest_level_annotation_fp)
@@ -125,12 +133,12 @@ if (dataset == "Greenleaf_pbmc_bm") {
     save_collapsed_df(df, df_metadata, dataset, annotation)
   }
 } else if (dataset == "Yang_kidney") {
+  default_annotation_fn = "Yang_kidney_combined_count_overlaps.rds"
   if (which_interval_ranges != "polak") {
-    default_annotation_fn = "interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"
+    default_annotation_fn = paste("interval_ranges", which_interval_ranges,
+                                  default_annotation_fn, sep="_")
   }
-  else {
-    default_annotation_fn = "Yang_kidney_combined_count_overlaps.rds"
-  }
+
   default_annotation_fp = paste(root, "default_annotation", 
                                 default_annotation_fn, sep="/")
   default_combined_count_ovs = readRDS(default_annotation_fp)
@@ -155,6 +163,10 @@ if (dataset == "Greenleaf_pbmc_bm") {
 } else if (dataset == "Bingren") {
   if (annotation == "Bingren_remove_same_celltype_indexing") {
     default_annotation_fn = "Bingren_combined_count_overlaps.rds"
+    if (which_interval_ranges != "polak") {
+      default_annotation_fn = paste("interval_ranges", which_interval_ranges,
+                                    default_annotation_fn, sep="_")
+    }
     default_annotation_fp = paste(root, "default_annotation", 
                                   default_annotation_fn, sep="/")
     default_combined_count_ovs = readRDS(default_annotation_fp)
@@ -195,6 +207,10 @@ if (dataset == "Greenleaf_pbmc_bm") {
 } else if (dataset == "Shendure") {
   if (annotation == "Shendure_remove_unknown_unsure") {
     default_annotation_fn = "Shendure_combined_count_overlaps.rds"
+    if (which_interval_ranges != "polak") {
+      default_annotation_fn = paste("interval_ranges", which_interval_ranges,
+                                    default_annotation_fn, sep="_")
+    }
     default_annotation_fp = paste(root, "default_annotation", 
                                   default_annotation_fn, sep="/")
     default_combined_count_ovs = readRDS(default_annotation_fp)
@@ -216,6 +232,10 @@ if (dataset == "Greenleaf_pbmc_bm") {
   }
 } else if (dataset == "Rawlins_fetal_lung") {
   default_annotation_fn = "Rawlins_fetal_lung_combined_count_overlaps.rds"
+  if (which_interval_ranges != "polak") {
+    default_annotation_fn = paste("interval_ranges", which_interval_ranges,
+                                  default_annotation_fn, sep="_")
+  }
   default_annotation_fp = paste(root, "default_annotation", 
                                 default_annotation_fn, sep="/")
   default_combined_count_ovs = readRDS(default_annotation_fp)
@@ -257,6 +277,10 @@ if (dataset == "Greenleaf_pbmc_bm") {
   }
 } else if (dataset == "Tsankov") {
     refined_annotation_fn = "Tsankov_combined_count_overlaps.rds"
+    if (which_interval_ranges != "polak") {
+      refined_annotation_fn = paste("interval_ranges", which_interval_ranges,
+                                    refined_annotation_fn, sep="_")
+    }
     refined_annotation_fp = paste(root, "Tsankov_refined", 
                                   refined_annotation_fn, sep="/")
     refined_combined_count_ovs = readRDS(refined_annotation_fp)
