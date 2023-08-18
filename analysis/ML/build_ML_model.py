@@ -126,7 +126,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
             if make_plots:
             # if not os.path.exists(bp_path):
                 call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
-                                       annotation_dir, top_features_to_plot, feature_importance_method)
+                                       annotation_dir, top_features_to_plot, feature_importance_method,
+                                       fold_for_test_set)
         else:
             scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
                                               tss_fragment_filter, annotation_dir, seed, fold_for_test_set)
