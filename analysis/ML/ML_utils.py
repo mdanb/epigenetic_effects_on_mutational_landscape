@@ -205,7 +205,7 @@ def add_dataset_origin_to_cell_types(df, dataset):
 def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir):
     datasets_combined_count_overlaps = []
     for dataset in datasets:
-        if (tss_filter):
+        if tss_filter:
             print(f"Loading TSS filtered scATAC from {dataset}...")
             tss_filtered_root = "../../data/processed_data/count_overlap_data/tsse_filtered"
             chr_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
@@ -620,7 +620,7 @@ def apply_func_to_kfolds(X, y, func, **kwargs):
 
 #### Call other scripts ####
 def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
-                           annotation_dir, top_features_to_plot, feature_importance_method):
+                           annotation_dir, top_features_to_plot, feature_importance_method, fold_for_test_set):
     print(f"Plotting top features for seed {seed}...")
     command = ["Rscript", "plot_top_features.R",
                          f"--cancer_types={cancer_types_arg}",
@@ -630,7 +630,8 @@ def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATA
                          f"--cell_number_filter={scATAC_cell_number_filter}",
                          f"--annotation={annotation_dir}",
                          f"--top_features_to_plot={','.join(list(map(str, top_features_to_plot)))}",
-                         f"--feature_importance_method={feature_importance_method}"]
+                         f"--feature_importance_method={feature_importance_method}",
+                         f"--fold_for_test_set={fold_for_test_set}"]
     subprocess.call(command)
     print(f"Done plotting top features for seed {seed}!")
 
