@@ -66,6 +66,7 @@ construct_backwards_elim_dir <- function(cancer_type, scATAC_source,
                                          tissues_to_consider, 
                                          ML_model,
                                          seed,
+                                         fold_for_test_set,
                                          test=F) {
   scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
                         cell_number_filter, sep="_")
@@ -76,7 +77,7 @@ construct_backwards_elim_dir <- function(cancer_type, scATAC_source,
   }
 
   scATAC_source = paste(scATAC_source, "annotation", annotation, "seed", seed, 
-                        sep="_")
+                        "fold_for_test_set", fold_for_test_set, sep="_")
   dir = paste("models", ML_model, cancer_type, scATAC_source,
               "backwards_elimination_results", sep="/")
   
@@ -115,6 +116,7 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
                                              annotation,
                                              ML_model,
                                              seed,
+                                             fold_for_test_set,
                                              accumulated_seeds=F) {
     # tissues_to_consider = paste(unlist(strsplit(args$tissues_to_consider, 
     #                                             split=","), 
@@ -141,7 +143,8 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
                                                                  annotation,
                                                                  tissues_to_consider,
                                                                  ML_model,
-                                                                 seed))
+                                                                 seed,
+                                                                 fold_for_test_set))
       }
     }
     return(unlist(backward_elim_dirs))
@@ -223,7 +226,8 @@ construct_bar_plots <- function(cancer_type,
                                 ML_model,
                                 seed,
                                 accumulated_seeds,
-                                feature_importance_method) {
+                                feature_importance_method, 
+                                fold_for_test_set) {
   dirs = get_relevant_backwards_elim_dirs(cancer_type, 
                                           combined_datasets,
                                           tissues_to_consider,
@@ -233,6 +237,7 @@ construct_bar_plots <- function(cancer_type,
                                           annotation,
                                           ML_model,
                                           seed,
+                                          fold_for_test_set,
                                           accumulated_seeds)
   for (dir in dirs) {
     file = paste(dir, "df_for_feature_importance_plots", sep="/")
@@ -322,7 +327,8 @@ if (!robustness_analysis) {
                           ML_model,
                           seed,
                           accumulated_seeds=F,
-                          feature_importance_method)
+                          feature_importance_method=feature_importance_method,
+                          fold_for_test_set=fold_for_test_set)
     }
   }
 } else {
@@ -420,6 +426,7 @@ if (!robustness_analysis) {
                                                   tissues_to_consider, 
                                                   ML_model,
                                                   seed,
+                                                  fold_for_test_set,
                                                   test=T)
   
           if (feature_importance_method != "default_importance") {
