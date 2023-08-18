@@ -34,6 +34,7 @@ parser <- add_option(parser, c("--robustness_seed_range"), type="character",
                      default="1-100")
 parser <- add_option(parser, c("--feature_importance_method"), type="character")
 parser <- add_option(parser, c("--skip_seeds_robustness"), default="")
+parser <- add_option(parser, c("--fold_for_test_set"), type="character")
 
 # args = parse_args(parser, args = c("--cancer_types=Lung-AdenoCA",
 #                                    "--robustness_analysis",
@@ -304,6 +305,8 @@ if (!is.null(skip_seeds_robustness)) {
   skip_seeds_robustness = unlist(strsplit(args$skip_seeds_robustness, split=","))
 }
 
+fold_for_test_set = args$fold_for_test_set
+
 if (!robustness_analysis) {
   tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
 
@@ -339,7 +342,7 @@ if (!robustness_analysis) {
     # }
     
     scATAC_source = paste(scATAC_source, "annotation", annotation, 
-                          sep="_")
+                          "fold_for_test_set", fold_for_test_set, sep="_")
     savepath = get_relevant_backwards_elim_dirs(cancer_type, 
                                                 combined_datasets,
                                                 tissues_to_consider,
