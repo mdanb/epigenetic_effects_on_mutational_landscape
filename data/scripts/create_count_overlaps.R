@@ -382,7 +382,7 @@ if (dataset == "Bingren") {
                              skip=1)
   if (which_interval_ranges == "polak") {
     files_Yang = list.files("../bed_files/yang_kidney_scATAC/",
-                                pattern = ".*fragments\\.tsv\\.gz")
+                            pattern = ".*fragments\\.tsv\\.gz")
   }
   else {
     files_Yang = list.files("../bed_files/yang_kidney_scATAC/migrated_to_hg38",

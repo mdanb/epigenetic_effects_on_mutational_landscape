@@ -82,7 +82,6 @@ for fold in fold_for_test_set_range:
                                  "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
                                  "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
                                  "--feature_importance_method", feature_importance_method,
-                                 "--test_set_perf_num_features", " ".join(map(str, test_set_perf_num_features)),
                                  "--fold_for_test_set", fold])
 
 
@@ -95,6 +94,8 @@ for fold in fold_for_test_set_range:
             command_args = command_args + " " + "--make_plots"
         if save_test_set_perf:
             command_args = command_args + " " + "--save_test_set_perf"
+            command_args = command_args + " " + "--test_set_perf_num_features", \
+                           " ".join(map(str, test_set_perf_num_features)),
 
         python_command = "python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py " + \
                          command_args
