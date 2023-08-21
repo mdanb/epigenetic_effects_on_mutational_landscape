@@ -52,60 +52,62 @@ save_test_set_perf = config.save_test_set_perf
 test_set_perf_num_features = config.test_set_perf_num_features
 
 
-for seed_range in seed_ranges:
-    script_filename = "_".join(["cancer_types", "_".join(config.cancer_types),
-                                "datasets", "_".join(sorted(config.datasets)),
-                                "scATAC_cell_number_filter", scATAC_cell_number_filter,
-                                "annotation_dir", annotation_dir,
-                                "seed_range", seed_range])
-                                # "feature_importance_method", feature_importance_method])
-                                    # "top_features_to_plot", "_".join(config.top_features_to_plot),
+for fold in fold_for_test_set_range:
+    for seed_range in seed_ranges:
+        script_filename = "_".join(["cancer_types", "_".join(config.cancer_types),
+                                    "datasets", "_".join(sorted(config.datasets)),
+                                    "scATAC_cell_number_filter", scATAC_cell_number_filter,
+                                    "annotation_dir", annotation_dir,
+                                    "seed_range", seed_range, "fold_for_test_set", fold])
+                                    # "feature_importance_method", feature_importance_method])
+                                        # "top_features_to_plot", "_".join(config.top_features_to_plot),
 
-    if meso:
-        script_filename = script_filename + "_" + "meso"
-    script_filename = f"{script_filename}.sh"
-    command_args = " ".join(["--cancer_types", " ".join(config.cancer_types),
-                             "--datasets", " ".join(sorted(config.datasets)),
-                             "--scATAC_cell_number_filter", scATAC_cell_number_filter,
-                             "--annotation_dir", annotation_dir,
-                             "--seed_range", seed_range,
-                             "--top_features_to_plot", " ".join(config.top_features_to_plot),
-                             "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
-                             "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
-                             "--feature_importance_method", feature_importance_method,
-                             "--test_set_perf_num_features", " ".join(map(str, test_set_perf_num_features))])
+        if meso:
+            script_filename = script_filename + "_" + "meso"
+        script_filename = f"{script_filename}.sh"
+        command_args = " ".join(["--cancer_types", " ".join(config.cancer_types),
+                                 "--datasets", " ".join(sorted(config.datasets)),
+                                 "--scATAC_cell_number_filter", scATAC_cell_number_filter,
+                                 "--annotation_dir", annotation_dir,
+                                 "--seed_range", seed_range,
+                                 "--top_features_to_plot", " ".join(config.top_features_to_plot),
+                                 "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
+                                 "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
+                                 "--feature_importance_method", feature_importance_method,
+                                 "--test_set_perf_num_features", " ".join(map(str, test_set_perf_num_features)),
+                                 "--fold_for_test_set", fold])
 
 
-    if meso:
-        command_args = command_args + " " + "--meso"
-    if make_plots:
-        command_args = command_args + " " + "--make_plots"
-    if save_test_set_perf:
-        command_args = command_args + " " + "--save_test_set_perf"
+        if meso:
+            command_args = command_args + " " + "--meso"
+        if make_plots:
+            command_args = command_args + " " + "--make_plots"
+        if save_test_set_perf:
+            command_args = command_args + " " + "--save_test_set_perf"
 
-    python_command = "python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py " + \
-                     command_args
+        python_command = "python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py " + \
+                         command_args
 
-    job_script = "\n".join(["#!/bin/bash",
-                            "#$ -cwd",
-                            f"#$ -l h_rt={time}",
-                            "#$ -l os=RedHat7",
-                            f"#$ -pe smp {cores}",
-                            "#$ -l h_vmem=8G",
-                            f"#$ -N {config.cancer_types[0]}_seed_range_{seed_range}",
-                            "#$ -o /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
-                            "#$ -e /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
-                            f"#$ -binding linear:{cores}",
-                            "#$ -M bgiotti@broadinstitute.org",
-                            "#$ -m bea",
-                            "",
-                            "source /broad/software/scripts/useuse",
-                            "use Anaconda",
-                            "source activate /home/unix/bgiotti/conda/coo",
-                            "",
-                            python_command])
-    with open(script_filename, "w") as f:
-        f.write(job_script)
+        job_script = "\n".join(["#!/bin/bash",
+                                "#$ -cwd",
+                                f"#$ -l h_rt={time}",
+                                "#$ -l os=RedHat7",
+                                f"#$ -pe smp {cores}",
+                                "#$ -l h_vmem=8G",
+                                f"#$ -N {config.cancer_types[0]}_seed_range_{seed_range}",
+                                "#$ -o /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
+                                "#$ -e /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
+                                f"#$ -binding linear:{cores}",
+                                "#$ -M bgiotti@broadinstitute.org",
+                                "#$ -m bea",
+                                "",
+                                "source /broad/software/scripts/useuse",
+                                "use Anaconda",
+                                "source activate /home/unix/bgiotti/conda/coo",
+                                "",
+                                python_command])
+        with open(script_filename, "w") as f:
+            f.write(job_script)
 
-    subprocess.run(["qsub", f"{script_filename}"])
+        subprocess.run(["qsub", f"{script_filename}"])
 
