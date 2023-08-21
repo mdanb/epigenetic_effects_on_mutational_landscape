@@ -69,6 +69,9 @@ for fold in fold_for_test_set_range:
 
         if meso:
             script_filename = script_filename + "_" + "meso"
+        elif SCLC:
+            script_filename = script_filename + "_" + "SCLC"
+
         script_filename = f"{script_filename}.sh"
         command_args = " ".join(["--cancer_types", " ".join(config.cancer_types),
                                  "--datasets", " ".join(sorted(config.datasets)),
@@ -85,6 +88,9 @@ for fold in fold_for_test_set_range:
 
         if meso:
             command_args = command_args + " " + "--meso"
+        elif SCLC:
+            command_args = command_args + " " + "--SCLC"
+
         if make_plots:
             command_args = command_args + " " + "--make_plots"
         if save_test_set_perf:
