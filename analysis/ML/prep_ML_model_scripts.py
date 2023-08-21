@@ -7,7 +7,7 @@ parser.add_argument('--cancer_types', nargs="+", type=str,
 parser.add_argument('--datasets', nargs="+", type=str,
                     help='which sc-ATACseq datasets to analyze', required=True)
 parser.add_argument('--scATAC_cell_number_filter', type=str,
-                    help='minimum number of cells per cell type in scATAC', default=100)
+                    help='minimum number of cells per cell type in scATAC', default="100")
 parser.add_argument('--annotation_dir', type=str,
                     help='name of annotation directory', default="default_annotation")
 parser.add_argument('--seed_interval', type=str)
