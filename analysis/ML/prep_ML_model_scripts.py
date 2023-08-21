@@ -63,7 +63,7 @@ for fold in fold_for_test_set_range:
                                     "datasets", "_".join(sorted(config.datasets)),
                                     "scATAC_cell_number_filter", scATAC_cell_number_filter,
                                     "annotation_dir", annotation_dir,
-                                    "seed_range", seed_range, "fold_for_test_set", fold])
+                                    "seed_range", seed_range, "fold_for_test_set", str(fold)])
                                     # "feature_importance_method", feature_importance_method])
                                         # "top_features_to_plot", "_".join(config.top_features_to_plot),
 
