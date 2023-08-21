@@ -30,7 +30,7 @@ parser.add_argument("--submit_jobs", action="store_true", default=False)
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
 group.add_argument("--SCLC", action="store_true", default=False)
-
+group.add_argument("--cleanup", action="store_true", default=False)
 
 config = parser.parse_args()
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
@@ -56,6 +56,7 @@ make_plots = config.make_plots
 save_test_set_perf = config.save_test_set_perf
 test_set_perf_num_features = config.test_set_perf_num_features
 submit_jobs = config.submit_jobs
+cleanup = config.cleanup
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
@@ -118,10 +119,14 @@ for fold in fold_for_test_set_range:
                                 "source activate /home/unix/bgiotti/conda/coo",
                                 "",
                                 python_command])
-        if create_bash_scripts:
-            with open(script_filename, "w") as f:
-                f.write(job_script)
+
+        with open(script_filename, "w") as f:
+            f.write(job_script)
 
         if submit_jobs:
             subprocess.run(["qsub", f"{script_filename}"])
+
+        if cleanup:
+            subprocess.run(["rm", f"{script_filename}"])
+
 
