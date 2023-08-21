@@ -82,7 +82,7 @@ for fold in fold_for_test_set_range:
                                  "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
                                  "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
                                  "--feature_importance_method", feature_importance_method,
-                                 "--fold_for_test_set", fold])
+                                 "--fold_for_test_set", str(fold)])
 
 
         if meso:
