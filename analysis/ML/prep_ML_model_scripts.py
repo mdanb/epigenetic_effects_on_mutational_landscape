@@ -23,10 +23,13 @@ parser.add_argument('--cores', type=str, default="8")
 parser.add_argument('--time', type=str, default="24:00:00")
 parser.add_argument('--feature_importance_method', type=str)
 parser.add_argument("--make_plots", action="store_true", default=False)
+parser.add_argument("--create_bash_scripts", action="store_true", default=False)
+parser.add_argument("--submit_jobs", action="store_true", default=False)
 
 
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
+group.add_argument("--SCLC", action="store_true", default=False)
 
 
 config = parser.parse_args()
@@ -40,9 +43,11 @@ seed_ranges = list(range(start - 1, end + 1, seed_interval_step))
 seed_ranges = [f"{seed_ranges[i] + 1}-{seed_ranges[i+1]}" for i in range(len(seed_ranges)-1)]
 start, end = map(int, config.fold_for_test_set_range.split('-'))
 fold_for_test_set_range = range(start, end + 1)
+create_bash_scripts = config.create_bash_scripts
 n_optuna_trials_prebackward_selection = config.n_optuna_trials_prebackward_selection
 n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 meso = config.meso
+SCLC = config.SCLC
 cores = config.cores
 time = config.time
 top_features_to_plot = config.top_features_to_plot
@@ -50,7 +55,7 @@ feature_importance_method = config.feature_importance_method
 make_plots = config.make_plots
 save_test_set_perf = config.save_test_set_perf
 test_set_perf_num_features = config.test_set_perf_num_features
-
+submit_jobs = config.submit_jobs
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
@@ -106,8 +111,10 @@ for fold in fold_for_test_set_range:
                                 "source activate /home/unix/bgiotti/conda/coo",
                                 "",
                                 python_command])
-        with open(script_filename, "w") as f:
-            f.write(job_script)
+        if create_bash_scripts:
+            with open(script_filename, "w") as f:
+                f.write(job_script)
 
-        subprocess.run(["qsub", f"{script_filename}"])
+        if submit_jobs:
+            subprocess.run(["qsub", f"{script_filename}"])
 
