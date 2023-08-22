@@ -24,7 +24,6 @@ parser.add_argument('--time', type=str, default="24:00:00")
 parser.add_argument('--feature_importance_method', type=str)
 parser.add_argument("--make_plots", action="store_true", default=False)
 parser.add_argument("--create_bash_scripts", action="store_true", default=False)
-parser.add_argument("--submit_jobs", action="store_true", default=False)
 parser.add_argument("--cleanup", action="store_true", default=False)
 
 group = parser.add_mutually_exclusive_group()
