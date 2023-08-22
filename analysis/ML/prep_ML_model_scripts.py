@@ -97,7 +97,7 @@ for fold in fold_for_test_set_range:
             command_args = command_args + " " + "--make_plots"
         if save_test_set_perf:
             command_args = command_args + " " + "--save_test_set_perf"
-            command_args = command_args + " " + "--test_set_perf_num_features" + " ".join(map(str,
+            command_args = command_args + " " + "--test_set_perf_num_features" + " " + " ".join(map(str,
                                                                                         test_set_perf_num_features))
 
         print(command_args)
