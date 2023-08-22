@@ -25,12 +25,14 @@ parser.add_argument('--feature_importance_method', type=str)
 parser.add_argument("--make_plots", action="store_true", default=False)
 parser.add_argument("--create_bash_scripts", action="store_true", default=False)
 parser.add_argument("--submit_jobs", action="store_true", default=False)
-
+parser.add_argument("--cleanup", action="store_true", default=False)
 
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
 group.add_argument("--SCLC", action="store_true", default=False)
-group.add_argument("--cleanup", action="store_true", default=False)
+group_run_loc = parser.add_mutually_exclusive_group()
+group_run_loc.add_argument("--submit_jobs", action="store_true", default=False)
+group_run_loc.add_argument("--run_locally", action="store_true", default=False)
 
 config = parser.parse_args()
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
@@ -57,6 +59,7 @@ save_test_set_perf = config.save_test_set_perf
 test_set_perf_num_features = config.test_set_perf_num_features
 submit_jobs = config.submit_jobs
 cleanup = config.cleanup
+run_locally = config.run_locally
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
@@ -107,7 +110,7 @@ for fold in fold_for_test_set_range:
                                 "#$ -l os=RedHat7",
                                 f"#$ -pe smp {cores}",
                                 "#$ -l h_vmem=8G",
-                                f"#$ -N {config.cancer_types[0]}_seed_range_{seed_range}",
+                                f"#$ -N {config.cancer_types[0]}_seed_range_{seed_range}_fold_for_test_{fold}",
                                 "#$ -o /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
                                 "#$ -e /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
                                 f"#$ -binding linear:{cores}",
@@ -125,6 +128,9 @@ for fold in fold_for_test_set_range:
 
         if submit_jobs:
             subprocess.run(["qsub", f"{script_filename}"])
+
+        if run_locally:
+            subprocess.run(["sh", f"{script_filename}"])
 
         if cleanup:
             subprocess.run(["rm", f"{script_filename}"])
