@@ -100,7 +100,6 @@ for fold in fold_for_test_set_range:
             command_args = command_args + " " + "--test_set_perf_num_features" + " " + " ".join(map(str,
                                                                                         test_set_perf_num_features))
 
-        print(command_args)
         python_command = "python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py " + \
                          command_args
 
