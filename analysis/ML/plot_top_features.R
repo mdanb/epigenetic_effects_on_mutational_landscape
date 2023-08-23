@@ -44,18 +44,18 @@ parser <- add_option(parser, c("--folds_for_test_set"), type="character")
 #                                    "--annotation=finalized_annotation",
 #                                    "--iters_dont_skip=17",
 #                                    "--robustness_top_ns=2,4"))
-args = parse_args(parser, args =
-                    c("--datasets=Bingren,Shendure,Greenleaf_pbmc_bm,Greenleaf_brain,Rawlins_fetal_lung,Tsankov,Yang_kidney",
-                      "--cancer_types=SCLC",
-                      "--cell_number_filter=100",
-                      "--top_features_to_plot=1,2,5,10,15,20",
-                      "--ML_model=XGB",
-                      "--annotation=finalized_annotation",
-                      "--robustness_analysis",
-                      "--seed_range=1-10",
-                      "--feature_importance_method=permutation_importance",
-                      "--top_features_to_plot_feat_imp=1,2,5,10,15,20",
-                      "--folds_for_test_set=1-10"))
+# args = parse_args(parser, args =
+#                     c("--datasets=Bingren,Shendure,Greenleaf_pbmc_bm,Greenleaf_brain,Rawlins_fetal_lung,Tsankov,Yang_kidney",
+#                       "--cancer_types=SCLC",
+#                       "--cell_number_filter=100",
+#                       "--top_features_to_plot=1,2,5,10,15,20",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--robustness_analysis",
+#                       "--seed_range=1-10",
+#                       "--feature_importance_method=permutation_importance",
+#                       "--top_features_to_plot_feat_imp=1,2,5,10,15,20",
+#                       "--folds_for_test_set=1-10"))
 
 args = parse_args(parser)
 
