@@ -6,7 +6,8 @@ if (!requireNamespace("devtools", quietly = TRUE)) {
 
 library(devtools)
 
+
 # Install ArchR from GitHub
 devtools::install_github("GreenleafLab/ArchR", ref="v1.0.1", 
-                         repos = BiocManager::repositories())
-
+                         repos = BiocManager::repositories(), dependencies=T)
+remotes::install_github("satijalab/seurat", "seurat5", quiet = TRUE, dependencies=T)
