@@ -24,6 +24,6 @@ if (!requireNamespace("seurat5", quietly = TRUE)) {
 }
 
 if (!requireNamespace("exomeCopy", quietly = TRUE)) {
-        BiocManager::install("exomeCopy", version="3.17")
+        BiocManager::install("exomeCopy", version="3.14")
 }
 
