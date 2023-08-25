@@ -10,6 +10,20 @@ if (!requireNamespace("devtools", quietly = TRUE)) {
 }
 
 library(devtools)
-devtools::install_github("GreenleafLab/ArchR", ref="v1.0.1", 
-                         repos = BiocManager::repositories(), dependencies=T)
-remotes::install_github("satijalab/seurat", "seurat5", quiet = TRUE, dependencies=T)
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager", version="1.30.22")
+
+if (!requireNamespace("ArchR", quietly = TRUE)) {
+	devtools::install_github("GreenleafLab/ArchR", ref="v1.0.1", 
+                         	 repos = BiocManager::repositories(), dependencies=T)
+}
+
+if (!requireNamespace("seurat5", quietly = TRUE)) {
+	remotes::install_github("satijalab/seurat", "seurat5", quiet = TRUE, dependencies=T)
+}
+
+if (!requireNamespace("exomeCopy", quietly = TRUE)) {
+        BiocManager::install("exomeCopy", version="3.17")
+}
+
