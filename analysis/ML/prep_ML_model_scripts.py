@@ -133,8 +133,9 @@ for fold in fold_for_test_set_range:
             with open(script_filename, "w") as f:
                 f.write(job_script)
         except:
-            import uuid
-            with open(f'{str(uuid.uuid4())}.sh', "w") as f:
+            name = re.search("cluster_[0-9]+", script_filename).group()
+            name = f"{name}.sh"
+            with open(name, "w") as f:
                 f.write(job_script)
 
         if submit_jobs:
