@@ -1,5 +1,6 @@
 import argparse
 import subprocess
+import re
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--cancer_types', nargs="+", type=str,
@@ -65,7 +66,11 @@ run_locally = config.run_locally
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
-        script_filename = "_".join(["cancer_types", "_".join(config.cancer_types),
+        cancer_types = config.cancer_types
+        match = re.search(r'cluster_[0-9]+', config.cancer_types)
+        if match:
+            cancer_types = match.group()
+        script_filename = "_".join(["cancer_types", "_".join(cancer_types),
                                     "datasets", "_".join(sorted(config.datasets)),
                                     "scATAC_cell_number_filter", scATAC_cell_number_filter,
                                     "annotation_dir", annotation_dir,
