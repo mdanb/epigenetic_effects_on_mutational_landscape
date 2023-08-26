@@ -44,7 +44,7 @@ count_overlaps_and_save <- function(df, interval_ranges, cohort) {
                                       ranges=irange_patient_mutation)
     count_overlaps = as.data.frame(countOverlaps(interval_ranges, 
                                                  grange_patient_mutation))
-    regions_to_use = read.csv("../mutation_data/regions_to_use.csv")["x"]
+    regions_to_use = read.csv("../processed_data/chr_keep.csv")["x"]
     count_overlaps = count_overlaps[rownames(count_overlaps) %in% regions_to_use[["x"]], ]
     # colnames(count_overlaps) <- "num_mutations"
     filename = paste0("binned_mutations_", unique(df["Donor_ID"]), ".csv")
