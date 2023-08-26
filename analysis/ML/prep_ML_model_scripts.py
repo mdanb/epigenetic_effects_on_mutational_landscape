@@ -29,6 +29,8 @@ parser.add_argument("--cleanup", action="store_true", default=False)
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
 group.add_argument("--SCLC", action="store_true", default=False)
+group.add_argument("--de_novo_seurat_clustering", action="store_true", default=False)
+
 group_run_loc = parser.add_mutually_exclusive_group()
 group_run_loc.add_argument("--submit_jobs", action="store_true", default=False)
 group_run_loc.add_argument("--run_locally", action="store_true", default=False)
@@ -49,6 +51,7 @@ n_optuna_trials_prebackward_selection = config.n_optuna_trials_prebackward_selec
 n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 meso = config.meso
 SCLC = config.SCLC
+de_novo_seurat_clustering = config.de_novo_seurat_clustering
 cores = config.cores
 time = config.time
 top_features_to_plot = config.top_features_to_plot
@@ -70,28 +73,28 @@ for fold in fold_for_test_set_range:
                                     # "feature_importance_method", feature_importance_method])
                                         # "top_features_to_plot", "_".join(config.top_features_to_plot),
 
+        command_args = " ".join(["--cancer_types", " ".join(config.cancer_types),
+                         "--datasets", " ".join(sorted(config.datasets)),
+                         "--scATAC_cell_number_filter", scATAC_cell_number_filter,
+                         "--annotation_dir", annotation_dir,
+                         "--seed_range", seed_range,
+                         "--top_features_to_plot", " ".join(config.top_features_to_plot),
+                         "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
+                         "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
+                         "--feature_importance_method", feature_importance_method,
+                         "--fold_for_test_set", str(fold)])
+
         if meso:
             script_filename = script_filename + "_" + "meso"
-        elif SCLC:
-            script_filename = script_filename + "_" + "SCLC"
-
-        script_filename = f"{script_filename}.sh"
-        command_args = " ".join(["--cancer_types", " ".join(config.cancer_types),
-                                 "--datasets", " ".join(sorted(config.datasets)),
-                                 "--scATAC_cell_number_filter", scATAC_cell_number_filter,
-                                 "--annotation_dir", annotation_dir,
-                                 "--seed_range", seed_range,
-                                 "--top_features_to_plot", " ".join(config.top_features_to_plot),
-                                 "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
-                                 "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
-                                 "--feature_importance_method", feature_importance_method,
-                                 "--fold_for_test_set", str(fold)])
-
-
-        if meso:
             command_args = command_args + " " + "--meso"
         elif SCLC:
+            script_filename = script_filename + "_" + "SCLC"
             command_args = command_args + " " + "--SCLC"
+        elif de_novo_seurat_clustering:
+            script_filename = script_filename + "_" + "de_novo_seurat_clustering"
+            command_args = command_args + " " + "--de_novo_seurat_clustering"
+
+        script_filename = f"{script_filename}.sh"
 
         if make_plots:
             command_args = command_args + " " + "--make_plots"
