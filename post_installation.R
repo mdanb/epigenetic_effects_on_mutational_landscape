@@ -23,7 +23,16 @@ if (!requireNamespace("seurat5", quietly = TRUE)) {
 	remotes::install_github("satijalab/seurat", "seurat5", quiet = TRUE, dependencies=T)
 }
 
+if (!requireNamespace("DoubletFinder", quietly = TRUE)) {
+        remotes::install_github('chris-mcginnis-ucsf/DoubletFinder', quiet=T, dependencies=T)
+}
+
 if (!requireNamespace("exomeCopy", quietly = TRUE)) {
         BiocManager::install("exomeCopy", version="3.14")
+}
+
+if (!requireNamespace("harmony", quietly = TRUE)) {
+	devtools::install_github("immunogenomics/harmony",
+				 ref="0.1")
 }
 
