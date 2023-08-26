@@ -67,7 +67,7 @@ run_locally = config.run_locally
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
         cancer_types = config.cancer_types
-        match = re.search(r'cluster_[0-9]+', config.cancer_types)
+        match = re.search(r'cluster_[0-9]+', config.cancer_types[0])
         if match:
             cancer_types = match.group()
         script_filename = "_".join(["cancer_types", "_".join(cancer_types),
