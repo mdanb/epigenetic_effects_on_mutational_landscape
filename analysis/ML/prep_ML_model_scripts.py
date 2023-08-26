@@ -133,15 +133,14 @@ for fold in fold_for_test_set_range:
             with open(script_filename, "w") as f:
                 f.write(job_script)
         except:
-            script_filename = re.search("cluster_[0-9]+", script_filename).group()
-            script_filename = script_filename + "_" + re.search("seed_range_.*", script_filename).group()
+            name = re.search("cluster_[0-9]+", script_filename).group()
+            script_filename = name + "_" + re.search("seed_range_.*", script_filename).group()
             with open(script_filename, "w") as f:
                 f.write(job_script)
 
         if submit_jobs:
             subprocess.run(["qsub", f"{script_filename}"])
-
-        if run_locally:
+        elif run_locally:
             subprocess.run(["sh", f"{script_filename}"])
 
         if cleanup:
