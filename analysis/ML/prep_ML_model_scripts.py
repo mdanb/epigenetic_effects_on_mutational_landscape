@@ -134,7 +134,7 @@ for fold in fold_for_test_set_range:
                 f.write(job_script)
         except:
             name = re.search("cluster_[0-9]+", script_filename).group()
-            name = f"{name}.sh"
+            name = name + "_" + re.search("seed_range_.*", script_filename).group()
             with open(name, "w") as f:
                 f.write(job_script)
 
