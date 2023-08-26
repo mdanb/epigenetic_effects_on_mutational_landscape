@@ -66,11 +66,11 @@ run_locally = config.run_locally
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
-        cancer_types = config.cancer_types
-        match = re.search(r'cluster_[0-9]+', config.cancer_types[0])
-        if match:
-            cancer_types = match.group()
-        script_filename = "_".join(["cancer_types", "_".join(cancer_types),
+        # cancer_types = config.cancer_types
+        # match = re.search(r'cluster_[0-9]+', config.cancer_types[0])
+        # if match:
+        #     cancer_types = match.group()
+        script_filename = "_".join(["cancer_types", "_".join(config.cancer_types),
                                     "datasets", "_".join(sorted(config.datasets)),
                                     "scATAC_cell_number_filter", scATAC_cell_number_filter,
                                     "annotation_dir", annotation_dir,
@@ -129,9 +129,13 @@ for fold in fold_for_test_set_range:
                                 "source activate /home/unix/bgiotti/conda/coo",
                                 "",
                                 python_command])
-
-        with open(script_filename, "w") as f:
-            f.write(job_script)
+        try:
+            with open(script_filename, "w") as f:
+                f.write(job_script)
+        except:
+            import uuid
+            with open(f'{str(uuid.uuid4())}.sh', "w") as f:
+                f.write(job_script)
 
         if submit_jobs:
             subprocess.run(["qsub", f"{script_filename}"])
