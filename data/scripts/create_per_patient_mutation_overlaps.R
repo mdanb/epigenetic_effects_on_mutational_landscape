@@ -56,7 +56,7 @@ count_overlaps_and_save <- function(df, interval_ranges, cohort) {
 }
 
 count_overlaps_and_save_helper <- function(cancer_cohort) {
-  root = "../mutation_data/icgc/per_cohort_mutations/"
+  root = "../mutation_data/icgc/per_cohort_mutations"
   cohort_file = paste0(cancer_cohort, "_SNV_without_SEX.txt")
   cohort_df = as_tibble(read.csv(paste(root, cohort_file, sep="/"), sep="\t"))
   header = colnames(read.csv(paste(root, "maf_header.txt", sep="/"), sep="\t"))
