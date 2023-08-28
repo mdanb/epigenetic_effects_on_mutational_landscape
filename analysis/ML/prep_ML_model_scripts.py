@@ -101,7 +101,7 @@ for fold in fold_for_test_set_range:
             script_filename = script_filename + "_" + "de_novo_seurat_clustering"
             command_args = command_args + " " + "--de_novo_seurat_clustering"
         elif histologically_subtyped_mutations:
-            script_filename = script_filename + "_" + "histologically_subtyped_mutations"
+            # script_filename = script_filename + "_" + "histologically_subtyped_mutations"
             command_args = command_args + " " + "--histologically_subtyped_mutations"
 
         script_filename = f"{script_filename}.sh"
