@@ -31,6 +31,7 @@ group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
 group.add_argument("--SCLC", action="store_true", default=False)
 group.add_argument("--de_novo_seurat_clustering", action="store_true", default=False)
+group.add_argument("--histologically_subtyped_mutations", action="store_true", default=False)
 
 group_run_loc = parser.add_mutually_exclusive_group()
 group_run_loc.add_argument("--submit_jobs", action="store_true", default=False)
@@ -53,6 +54,7 @@ n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 meso = config.meso
 SCLC = config.SCLC
 de_novo_seurat_clustering = config.de_novo_seurat_clustering
+histologically_subtyped_mutations = config.histologically_subtyped_mutations
 cores = config.cores
 time = config.time
 top_features_to_plot = config.top_features_to_plot
@@ -98,6 +100,9 @@ for fold in fold_for_test_set_range:
         elif de_novo_seurat_clustering:
             script_filename = script_filename + "_" + "de_novo_seurat_clustering"
             command_args = command_args + " " + "--de_novo_seurat_clustering"
+        elif histologically_subtyped_mutations:
+            script_filename = script_filename + "_" + "histologically_subtyped_mutations"
+            command_args = command_args + " " + "--histologically_subtyped_mutations"
 
         script_filename = f"{script_filename}.sh"
 
