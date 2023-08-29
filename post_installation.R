@@ -32,7 +32,6 @@ if (!requireNamespace("exomeCopy", quietly = TRUE)) {
 }
 
 if (!requireNamespace("harmony", quietly = TRUE)) {
-	devtools::install_github("immunogenomics/harmony",
-				 ref="0.1")
+	devtools::install_github("immunogenomics/harmony@63ebd73")
 }
 
