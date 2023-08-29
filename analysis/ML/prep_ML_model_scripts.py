@@ -126,7 +126,6 @@ for fold in fold_for_test_set_range:
                                 "#$ -o /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
                                 "#$ -e /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
                                 f"#$ -binding linear:{cores}",
-                                "#$ -M bgiotti@broadinstitute.org",
                                 "#$ -m bea",
                                 "",
                                 "source /broad/software/scripts/useuse",
