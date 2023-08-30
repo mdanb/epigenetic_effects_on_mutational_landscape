@@ -30,23 +30,13 @@ parser <- add_option(parser, c("--robustness_analysis"), action="store_true",
 parser <- add_option(parser, c("--robustness_accumulated_feature_importance_barplot"), 
                      action="store_true", 
                      default=F)
-# parser <- add_option(parser, c("--robustness_seed_range"), type="character",
-#                      default="1-100")
 parser <- add_option(parser, c("--feature_importance_method"), type="character")
 parser <- add_option(parser, c("--skip_seeds_robustness"), default="")
 parser <- add_option(parser, c("--folds_for_test_set"), type="character")
 
-# args = parse_args(parser, args = c("--cancer_types=Lung-AdenoCA",
-#                                    "--robustness_analysis",
-#                                    "--datasets=Tsankov",
-#                                    "--cell_number_filter=30",
-#                                    "--ML_model=XGB",
-#                                    "--annotation=finalized_annotation",
-#                                    "--iters_dont_skip=17",
-#                                    "--robustness_top_ns=2,4"))
 # args = parse_args(parser, args =
 #                     c("--datasets=Bingren,Shendure,Greenleaf_pbmc_bm,Greenleaf_brain,Rawlins_fetal_lung,Tsankov,Yang_kidney",
-#                       "--cancer_types=SCLC",
+#                       "--cancer_types=kidney_clear_cell",
 #                       "--cell_number_filter=100",
 #                       "--top_features_to_plot=1,2,5,10,15,20",
 #                       "--ML_model=XGB",
@@ -54,7 +44,7 @@ parser <- add_option(parser, c("--folds_for_test_set"), type="character")
 #                       "--robustness_analysis",
 #                       "--seed_range=1-10",
 #                       "--feature_importance_method=permutation_importance",
-#                       "--top_features_to_plot_feat_imp=1,2,5,10,15,20",
+#                       "--top_features_to_plot_feat_imp=1,2,5,10",
 #                       "--folds_for_test_set=1-10"))
 
 args = parse_args(parser)
@@ -125,14 +115,6 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
                                              fold_for_test_set = "-1",
                                              seed = "-1",
                                              accumulated_seeds=F) {
-    # tissues_to_consider = paste(unlist(strsplit(args$tissues_to_consider, 
-    #                                             split=","), 
-    #                                    "_"))
-    # datasets = unlist(strsplit(args$datasets, split = ","))
-    # cell_number_filter = args$cell_number_filter
-    # tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
-    # annotation = args$annotation
-    # ML_model = args$ML_model
     if (accumulated_seeds) {
       seed = "all_seeds"
     }
@@ -270,7 +252,7 @@ construct_boxplots <- function(df, x, y, color, title, savepath, savefile,
   names(to) <- from
   df[[facet_var]] <- factor(df[[facet_var]], levels = unique(df[[facet_var]]))
   
-  reorder_within <- function(x, by, within, fun = median, sep = "___", ...) {
+  reorder_within <- function(x, by, within, fun = median, sep = "___") {
     new_x <- paste(x, within, sep = sep)
     ordered_factor <- stats::reorder(new_x, by, FUN = fun)
     levels_reversed <- rev(levels(ordered_factor))
@@ -469,10 +451,8 @@ ML_model = args$ML_model
 seed_range = unlist(strsplit(args$seed_range, split = "-"))
 seed_range = seq(seed_range[1], seed_range[2])
 robustness_analysis = args$robustness_analysis
-# robustness_seed_range = as.integer(unlist(strsplit(args$robustness_seed_range, split="-")))
 robustness_accumulated_feature_importance_barplot = 
   args$robustness_accumulated_feature_importance_barplot
-# cancer_types = paste(cancer_types, collapse = " ")
 feature_importance_method = args$feature_importance_method
 if (!is.null(args$top_features_to_plot_feat_imp)) {
   top_features_to_plot_feat_imp = as.numeric(unlist(strsplit(
@@ -548,7 +528,6 @@ if (!robustness_analysis) {
   
     all_seeds_dirs = dirs[basename(dirs) %in% seed_fold_for_test_combinations]
     
-    # all_seeds_dirs = all_seeds_dirs[!grepl("all_seeds", all_seeds_dirs)]
     df_feature_importances_all_seeds = 
           construct_df_feature_importances_all_seeds(all_seeds_dirs,
                                                      feature_importance_method,
@@ -577,9 +556,6 @@ if (!robustness_analysis) {
     # the boxplot. 
     df_feat_imp = df_feature_importances_all_seeds %>% 
           group_by(num_features, seed, fold_for_test_set) %>%
-          mutate(max_feature_importance=max(permutation_importance)) %>% # Comment this and next 2 lines out if 
-          filter(permutation_importance == max_feature_importance) %>% # want to consider all features,
-          ungroup() %>% # not just top
           group_by(num_features, features) %>%
           mutate(n_feature = n(), y_position = max(permutation_importance)) %>%
           filter(num_features %in% top_features_to_plot_feat_imp)
@@ -589,6 +565,33 @@ if (!robustness_analysis) {
                        savefile="feature_importance.png", 
                        n_name="n_feature", facet_var="num_features",
                        ylabel="Permutation Importance")
+    
+    df_feat_imp_at_least_50_n = df_feat_imp %>% 
+      filter(n_feature >= 50)
+    
+    construct_boxplots(df=df_feat_imp_at_least_50_n, x="features", 
+                       y="permutation_importance", 
+                       color="features", title=cancer_type, savepath=savepath,
+                       savefile="feature_importance_50_n_min.png", 
+                       n_name="n_feature", facet_var="num_features",
+                       ylabel="Permutation Importance")
+    
+    df_feat_imp = df_feature_importances_all_seeds %>% 
+      group_by(num_features, seed, fold_for_test_set) %>%
+      mutate(max_feature_importance=max(permutation_importance)) %>%
+      filter(permutation_importance == max_feature_importance) %>%
+      ungroup() %>%
+      group_by(num_features, features) %>%
+      mutate(n_feature = n(), y_position = max(permutation_importance)) %>%
+      filter(num_features %in% top_features_to_plot_feat_imp)
+    
+    construct_boxplots(df=df_feat_imp, x="features", 
+                       y="permutation_importance", 
+                       color="features", title=cancer_type, savepath=savepath,
+                       savefile="feature_importance_top_feat_only.png", 
+                       n_name="n_feature", facet_var="num_features",
+                       ylabel="Permutation Importance")
+    
     df_test = df %>% 
       group_by(top_n, top_feature) %>%
       mutate(n_top_feature = n(), y_position = max(test_set_perf))
