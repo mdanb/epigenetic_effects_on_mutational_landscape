@@ -8,7 +8,7 @@ while read link; do
 	file_end_pattern=$3
 	wget -nc -P $output_dir "$link/suppl/*$file_end_pattern"
     else
-    	wget -nc -P $output_dir $link
+    	wget -nc -r -A $file_end_pattern -P $output_dir "$link"
     fi
 done < $links_file
 

@@ -142,41 +142,41 @@ args = parse_args(OptionParser(option_list=option_list), args=
 # )
 # 
 
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--de_novo_marker_discovery",
-#                       "--cluster_res=0.6",
-#                       "--filter_doublets",
-#                       "--marker_genes=CEBPE,GFI1,IRF1,GNL2,ELANE,PPARG,BHLHE41,EGR2,FABP4,HBA1,MARCO,MME,F13A1,SLC40A1,SELP,STAB1,FOLR2,CD1C,CD1A,FCER1A,HLA-DQA1,CLEC10A,PKIB,CLEC9A,GCSAM,BATF3,WDFY4,LILRA4,GZMB,IL3RX,LAMP3,CCR7,FSCN1,CCL22,MARCKSL1,EBI3,IDO1,S100A8,S100A9,S100A12,FCN1,CD14,VCAN,PTX3,LRG1,LYPD2,LST1,LILRB2,FCGR3A,NKG7,NCR1,SPON2,KLRD1,GNLY,KLRC1,KLRF1,FGFBP2,KIT,TPSAB1,CPA3,CTSG,BACH2,ITGA2B,GP1BA,VWF,FLI1,MS4A1,SDC1,KLK1,EBF1,CD79A,CD79B,PAX5,VPREB3,POU2AF1,MZB1,XBP1,CD3D,LEF1,TCF7,TCF3,IL7R,CD8A,CD4,BCL11B,FOXP3,IL2RA,TNFRSF4,TNFRSF18,CTLA4,EPCAM,CLU,CLDN18,HNF1B,PECAM1,KDR,PLVAP,MCAM,COL1A1,COL1A2,SPARCL1,PDGFRA,NEUROG1,OLIG2,RFX2,NOTO,POU2F1,RFX5,C1QA,C1QC,CD68,CD163,THBS1,FN1,C5AR2")
-# )
-
 args = parse_args(OptionParser(option_list=option_list), args=
                     c("--cores=8",
-                      "--dataset=Greenleaf_colon",
-                      "--metadata_for_celltype_fn=greenleaf_colon_metadata.csv",
+                      "--dataset=Tsankov",
+                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
                       "--sep_for_metadata=,",
-                      "--cell_type_col_in_metadata=general_cell_type",
+                      "--cell_type_col_in_metadata=celltypes",
                       "--tissue=all",
                       "--nfrags_filter=1",
                       "--tss_filter=0",
-                      "--cell_types=epithelial",
+                      "--cell_types=all",
                       "--min_cells_per_cell_type=1",
+                      "--de_novo_marker_discovery",
                       "--cluster_res=0.6",
                       "--filter_per_cell_type",
-                      "--plot_custom_column",
-                      "--plus_to_add_to_metadata=GrossPathology,CellType",
-                      "--embedding_column_name=GrossPathology",
-                      "--marker_genes=MSLN,AQP5,TACSTD2,FSCN1,TFF2,ANXA1,ANXA10,REG4,MUC17,S100P,GSDMB,GSDMD,IL18,RELB,MDK,AHR,PDX1"
-))
+                      "--filter_doublets")
+)
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Greenleaf_colon",
+#                       "--metadata_for_celltype_fn=greenleaf_colon_metadata.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=general_cell_type",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=epithelial",
+#                       "--min_cells_per_cell_type=1",
+#                       "--cluster_res=0.6",
+#                       "--filter_per_cell_type",
+#                       "--plot_custom_column",
+#                       "--plus_to_add_to_metadata=GrossPathology,CellType",
+#                       "--embedding_column_name=GrossPathology",
+#                       "--marker_genes=MSLN,AQP5,TACSTD2,FSCN1,TFF2,ANXA1,ANXA10,REG4,MUC17,S100P,GSDMB,GSDMD,IL18,RELB,MDK,AHR,PDX1"
+# ))
 
 args = parse_args(OptionParser(option_list=option_list), args=
                     c("--cores=8",
@@ -197,42 +197,42 @@ args = parse_args(OptionParser(option_list=option_list), args=
                       "--marker_genes=CLDN2,CD44,AXIN2,RNF43,TGFBI,EPHB2,TEAD2,CDX2,LGR5,OLFM4,ASCL2"
                     ))
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=8",
-                      "--dataset=Greenleaf_colon",
-                      "--metadata_for_celltype_fn=greenleaf_colon_metadata.csv",
-                      "--sep_for_metadata=,",
-                      "--cell_type_col_in_metadata=general_cell_type",
-                      "--tissue=all",
-                      "--nfrags_filter=1",
-                      "--tss_filter=0",
-                      "--cell_types=epithelial",
-                      "--min_cells_per_cell_type=1",
-                      "--cluster_res=0.6",
-                      "--filter_per_cell_type",
-                      "--plot_custom_column",
-                      "--plus_to_add_to_metadata=GrossPathology,CellType",
-                      "--embedding_column_name=GrossPathology",
-                      "--marker_genes=MDK,ELF3,MSLN,RAB15,CXCL16,ADAM9,HES4,HES1,AQP5,ABHD4,AHNAK,AK1,AKR1B10,ANXA1,ANXA3,BMP8B,BOK,CD55,CLIC3,CRIP2,EPS8L1,DAPK1,DCXR,ECM1,FOSL1,GJB3,GSN,HSPB1,HYAL1,IL1RN,ITGB4,KIFC3,LMNA,PHLDA2,PHLDA3,PDLIM7,P2RY2,PDZK1IP1,PLAUR,PRSS22,CAVIN3,PLCD3,PSCA,RHOD,S100A11,S100A14,S100A16,S100A4,SERPINB5,SLC45A3,TACSTD2,TIMP2,TTC9,VAMP5,VNN1,VSIG1,WWC2"
-                    ))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Greenleaf_colon",
+#                       "--metadata_for_celltype_fn=greenleaf_colon_metadata.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=general_cell_type",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=epithelial",
+#                       "--min_cells_per_cell_type=1",
+#                       "--cluster_res=0.6",
+#                       "--filter_per_cell_type",
+#                       "--plot_custom_column",
+#                       "--plus_to_add_to_metadata=GrossPathology,CellType",
+#                       "--embedding_column_name=GrossPathology",
+#                       "--marker_genes=MDK,ELF3,MSLN,RAB15,CXCL16,ADAM9,HES4,HES1,AQP5,ABHD4,AHNAK,AK1,AKR1B10,ANXA1,ANXA3,BMP8B,BOK,CD55,CLIC3,CRIP2,EPS8L1,DAPK1,DCXR,ECM1,FOSL1,GJB3,GSN,HSPB1,HYAL1,IL1RN,ITGB4,KIFC3,LMNA,PHLDA2,PHLDA3,PDLIM7,P2RY2,PDZK1IP1,PLAUR,PRSS22,CAVIN3,PLCD3,PSCA,RHOD,S100A11,S100A14,S100A16,S100A4,SERPINB5,SLC45A3,TACSTD2,TIMP2,TTC9,VAMP5,VNN1,VSIG1,WWC2"
+#                     ))
 # general_cell_type
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=8",
-                      "--dataset=Rawlins_fetal_lung",
-                      "--metadata_for_celltype_fn=rawlins_fetal_lung_metadata.csv",
-                      "--sep_for_metadata=,",
-                      "--cell_type_col_in_metadata=cell_type",
-                      "--tissue=all",
-                      "--nfrags_filter=1",
-                      "--tss_filter=0",
-                      "--cell_types=all",
-                      "--min_cells_per_cell_type=1",
-                      "--cluster_res=0.6",
-                      "--filter_per_cell_type",
-                      "--plot_custom_column",
-                      "--embedding_column_name=cell_type"
-                    ))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Rawlins_fetal_lung",
+#                       "--metadata_for_celltype_fn=rawlins_fetal_lung_metadata.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=1",
+#                       "--cluster_res=0.6",
+#                       "--filter_per_cell_type",
+#                       "--plot_custom_column",
+#                       "--embedding_column_name=cell_type"
+#                     ))
 
 # plus means other stuff as well
 add_cell_types_plus_to_cell_col_data <- function(cell_col_data, metadata,

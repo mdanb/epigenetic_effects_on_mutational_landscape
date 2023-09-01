@@ -1,8 +1,6 @@
 #### Imports ####
 from ML_utils import *
 from config import create_parser
-from natsort import natsorted
-import glob
 
 def run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
                                          cancer_type_or_donor_id, scATAC_dir,
@@ -96,6 +94,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                     backwards_elim_dir=f"models/{ML_model}/" \
                     f"{cancer_type}/{scATAC_dir}/backwards_elimination_results"
 
+                    # Note that the loading process arranges the bins so that it's in the correct order of the genome
+                    # ensuring that splits truly split based on contiguous genomic regions
                     scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
                                                                   histologically_subtyped_mutations,
                                                                   de_novo_seurat_clustering,

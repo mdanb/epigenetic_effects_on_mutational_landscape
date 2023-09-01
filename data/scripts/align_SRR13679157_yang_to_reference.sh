@@ -4,22 +4,24 @@
 #$ -l h_rt=48:00:00
 #$ -l os=RedHat7
 #$ -pe smp 1 # SET THIS
-#$ -l h_vmem=8G # SET THIS
+#$ -l h_vmem=16G # SET THIS
 #$ -N SRR13679157
-#$ -o /ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/SRR13679157.out # SET THIS
-#$ -e /ahg/regevdata/projects/ICA_Lung/Mohamad/cell_of_origin/SRR13679157.err # SET THIS
+#$ -o /broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/yang_kidney_scATAC/SRR13679157.out # SET THIS
+#$ -e /broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/bed_files/yang_kidney_scATAC/SRR13679157.err # SET THIS
 #$ -binding linear:8 # SET THIS
 #$ -M bgiotti@broadinstitute.org 
 #$ -m bea
 
 source /broad/software/scripts/useuse
-use .anaconda3-5.3.1
+use Anaconda
 source activate /home/unix/bgiotti/conda/coo
 
-./software/cellranger-atac-2.1.0/cellranger-atac count \
+cd ../bed_files/yang_kidney_scATAC
+
+/seq/regev_genome_portal/SOFTWARE/10X/cellranger-atac-1.1.0/cellranger-atac count \
 --jobmode=local \
 --localcores=8 \
---localmem=64 \
+--localmem=16 \
 --id=SRR13679157 \
---reference=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/GRCh37 \
---fastqs=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/raw_dir/fastq/SRR13679157 \
+--reference=/seq/regev_genome_portal/RESOURCES/10x_genomes/new/refdata-cellranger-atac-hg19-1.1.0 \
+--fastqs=/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/fastq/SRR13679157 \

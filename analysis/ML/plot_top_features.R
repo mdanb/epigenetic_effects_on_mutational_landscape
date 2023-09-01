@@ -34,18 +34,18 @@ parser <- add_option(parser, c("--feature_importance_method"), type="character")
 parser <- add_option(parser, c("--skip_seeds_robustness"), default="")
 parser <- add_option(parser, c("--folds_for_test_set"), type="character")
 
-# args = parse_args(parser, args =
-#                     c("--datasets=Bingren,Shendure,Greenleaf_pbmc_bm,Greenleaf_brain,Rawlins_fetal_lung,Tsankov,Yang_kidney",
-#                       "--cancer_types=kidney_clear_cell",
-#                       "--cell_number_filter=100",
-#                       "--top_features_to_plot=1,2,5,10,15,20",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--robustness_analysis",
-#                       "--seed_range=1-10",
-#                       "--feature_importance_method=permutation_importance",
-#                       "--top_features_to_plot_feat_imp=1,2,5,10",
-#                       "--folds_for_test_set=1-10"))
+args = parse_args(parser, args =
+                    c("--datasets=Tsankov",
+                      "--cancer_types=combined_mesomics_no_biphasic",
+                      "--cell_number_filter=100",
+                      "--top_features_to_plot=1,2,5,10,15",
+                      "--ML_model=XGB",
+                      "--annotation=finalized_annotation",
+                      "--robustness_analysis",
+                      "--seed_range=1-5",
+                      "--feature_importance_method=permutation_importance",
+                      "--top_features_to_plot_feat_imp=1,2,5,10",
+                      "--folds_for_test_set=1-5"))
 
 args = parse_args(parser)
 
