@@ -1,7 +1,6 @@
 import pyreadr
 from natsort import natsorted
 from itertools import chain
-from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
 import pickle
@@ -502,6 +501,11 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
                    n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                    feature_importance_method, sqlite, debug_bfs, fold_for_test_set):
     X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 10, fold_for_test_set)
+    if seed == 1:
+        X_train.to_csv(f"{os.path.dirname(backwards_elim_dir)}/X_train.csv")
+        X_test.to_csv(f"{os.path.dirname(backwards_elim_dir)}/X_test.csv")
+        y_train.to_csv(f"{os.path.dirname(backwards_elim_dir)}/y_train.csv")
+        y_test.to_csv(f"{os.path.dirname(backwards_elim_dir)}/y_test.csv")
 
     # Define as None in case scATAC_df.shape[1] <= 20
     n = None
