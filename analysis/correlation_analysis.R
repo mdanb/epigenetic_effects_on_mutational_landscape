@@ -213,6 +213,58 @@ plot_count_distribution(meso_individuals, "meso_counts.pdf")
 #         row_names_gp = grid::gpar(fontsize = 8),
 #         top_annotation = ha)
 
+#### Lung Mutations only ####
+# scatac_df_lung = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Tsankov_refined/Tsankov_combined_count_overlaps.rds"))
+# scatac_df_lung = scatac_df_lung[rownames(scatac_df_lung) %in% chr_keep, ]
+lung = read.csv("../data/processed_data/mutations_with_subtypes/all_lung.csv")
+lung["subtype_grouped_meso"] = lung["subtype"]
+lung[lung["subtype"] == "Not.Otherwise.Specified" | lung["subtype"] == 
+       "Epithelioid" | lung["subtype"] == "Sarcomatoid" | 
+       lung["subtype"] == "Biphasic", 
+     "subtype_grouped_meso"] = "meso"
+subtype = lung[["subtype_grouped_meso"]]
+rownames(lung) = lung[["X"]]
+lung = lung[, chr_keep]
+lung = t(lung)
+corrs_pearson = cor(lung)
+
+subtype_colors <- c(
+  "Adeno" = "red",
+  "Squamous" = "green",
+  "SCLC" = "blue",
+  "meso" = "orange"
+)
+
+column_ha <- HeatmapAnnotation(subtype = subtype, 
+                               col = list(subtype = 
+                                           subtype_colors))
+row_ha <- rowAnnotation(counts = log10(colSums(lung)))
+Heatmap(corrs_pearson,
+        top_annotation = ha,
+        right_annotation = row_ha,
+        show_column_names = FALSE,
+        show_row_names = FALSE,
+        col = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
+)
+
+# Heatmap(corrs_pearson, 
+#         top_annotation = ha,
+#         show_column_names=F, 
+#         show_row_names=F,
+#         colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))) + 
+#   + 
+#   Heatmap(lung,
+#           right_annotation = ha_counts,
+#           col = colorRamp2(c(min(lung), max(lung)), c("white", "black")))
+
+
+
+        # column_names_gp = grid::gpar(fontsize = 2),
+        # row_names_gp = grid::gpar(fontsize = 8),
+        # top_annotation = ha,
+        # cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
+
+
 #### Lung-AdenoCA ####
 lung_cells_to_keep = c("proximal lung Basal", 
                        "proximal lung Ciliated",
@@ -225,7 +277,7 @@ lung_cells_to_keep = c("proximal lung Basal",
                        "distal lung Ciliated",
                        "distal lung Secretory")
 
-scatac_df_lung = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Tsankov_separate_fibroblasts/Tsankov_count_filter_1_combined_count_overlaps.rds"))
+scatac_df_lung = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Tsankov_refined/Tsankov_combined_count_overlaps.rds"))
 scatac_df_lung = scatac_df_lung[rownames(scatac_df_lung) %in% chr_keep, ]
 lung_adenoca = read.csv("../data/mutation_data/Lung-AdenoCA.txt",
                         sep="\t")
