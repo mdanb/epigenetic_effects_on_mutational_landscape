@@ -14,7 +14,10 @@ epithelioid_mesomics = read.csv("../mutation_data/Mesothelioma_MME_MutCountperBi
 all_mesomics = cbind(biphasic_mesomics, 
                      sarcomatoid_mesomics[, 4:ncol(sarcomatoid_mesomics)], 
                      epithelioid_mesomics[, 4:ncol(epithelioid_mesomics)])
-                     
+                    
+tsankov_samples = read.csv("../mutation_data/mesothelioma_p786_p848.csv")
+colnames(tsankov_samples) = c("chr", "s786", "s848")
+
 aggregate_mutations <- function(mut_df, name) {
   agg = rowSums(mut_df[, 4:ncol(mut_df)])
   agg = data.frame(cancer_type = agg)
@@ -62,7 +65,8 @@ agg_sarcomatoid = aggregate_mutations(sarcomatoid_mesomics,
                                       "sarcomatoid_mesomics")
 agg_biphasic = aggregate_mutations(biphasic_mesomics, "biphasic_mesomics")
 
-waddell = read.csv("../mutation_data/mesothelioma_WGS_Waddell.csv")
+waddell = read.csv("../mutation_data/mesothelioma_WGS_Waddell.csv", 
+                   row.names = 1)
 
 ranked_mesomics = read.table(
                   "../mutation_data/MESOMICS_Sarcomatoid_ModuleScore.txt",
@@ -149,8 +153,26 @@ ranked_mesomics_agg = cbind(blum_top_10_perc, blum_bottom_10_perc,
 
 unranked_agg = cbind(agg_epithelioid, agg_sarcomatoid, agg_biphasic)
 meso_df = cbind(ranked_mesomics_agg, unranked_agg)
-meso_df["combined_meso"] = agg_epithelioid + agg_sarcomatoid + agg_biphasic
-write.csv(meso_df, "../processed_data/mesothelioma.csv")
+meso_df["combined_mesomics"] = agg_epithelioid + agg_sarcomatoid + agg_biphasic
+meso_df["combined_mesomics_no_biphasic"] = agg_epithelioid + agg_sarcomatoid
+colnames(waddell) = c("epithelioid_waddell","sarcomatoid_waddell")
+waddell = waddell %>% rownames_to_column("chr")
+meso_df = meso_df %>% rownames_to_column("chr")
+meso_df = left_join(meso_df, waddell)
+meso_df["waddell_combined"] = meso_df["epithelioid_waddell"] + 
+  meso_df["sarcomatoid_waddell"]
+meso_df = left_join(meso_df, tsankov_samples)
+meso_df["s786_s848_combined"] = meso_df["s786"] + meso_df["s848"]
+meso_df["all_meso_datasets_combined"] = meso_df["s786_s848_combined"] + 
+  meso_df["waddell_combined"] + meso_df["combined_mesomics"]
+meso_df["all_meso_datasets_combined_no_biphasic"] = meso_df["s786_s848_combined"] + 
+  meso_df["waddell_combined"] + meso_df["combined_mesomics_no_biphasic"]
+meso_df["all_sarcomatoid_combined"] = meso_df["sarcomatoid_waddell"] + 
+  meso_df["sarcomatoid_mesomics"] + meso_df["s786"]
+meso_df["all_epithelioid_combined"] = meso_df["epithelioid_waddell"] + 
+  meso_df["s848"] + meso_df["epithelioid_mesomics"]
+
+write.csv(meso_df, "../processed_data/mesothelioma.csv", row.names = F)
 # nmf_top_10_perc_ids = get_top_bottom_n_perc(ranked_mesomics, 0.1, 
 #                                          "top", "Sarcomatoid.nmf.old.rank")
 # nmf_bottom_10_perc_ids = get_top_bottom_n_perc(ranked_mesomics, 0.1, 

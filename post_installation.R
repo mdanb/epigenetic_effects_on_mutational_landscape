@@ -35,3 +35,15 @@ if (!requireNamespace("harmony", quietly = TRUE)) {
 	devtools::install_github("immunogenomics/harmony@63ebd73")
 }
 
+if (!requireNamespace("ComplexHeatmap", quietly = TRUE)) {
+        BiocManager::install("ComplexHeatmap", version="3.14")
+}
+
+if (!requireNamespace("edgeR", quietly = TRUE)) {
+        BiocManager::install("edgeR", version="3.14")
+}
+
+if (!requireNamespace("preprocessCore", quietly = TRUE)) {
+        BiocManager::install("preprocessCore", version="3.14")
+}
+

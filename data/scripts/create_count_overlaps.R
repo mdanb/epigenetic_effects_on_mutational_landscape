@@ -204,13 +204,13 @@ if (dataset == "Bingren") {
   #   read.csv("../metadata/tsankov_lung_proximal_barcode_annotation.csv")
   # metadata_tsankov_distal = 
   #   read.csv("../metadata/tsankov_lung_distal_barcode_annotation.csv")
+  files_Tsankov_distal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
+                                    pattern="RPL.*bgz$")
+  files_Tsankov_proximal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
+                                      pattern="IC.*bgz$")
   if (annotation == "Tsankov_refined") {
     metadata = read.csv("../metadata/tsankov_refined_annotation.csv")
     colnames(metadata) = c("sample", "cell_type")
-    files_Tsankov_distal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
-                                      pattern="RPL.*bgz$")
-    files_Tsankov_proximal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
-                                        pattern="IC.*bgz$")
     files = c(files_Tsankov_distal, files_Tsankov_proximal)
     mclapply(files, 
              create_count_overlaps_files,
@@ -227,10 +227,6 @@ if (dataset == "Bingren") {
     metadata[match(metadata_basal[["X"]], metadata[["X"]]), "new_annotation"] = 
       metadata_basal[["new_annotation"]]
     colnames(metadata) = c("sample", "cell_type")
-    files_Tsankov_distal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
-                                      pattern="RPL.*bgz$")
-    files_Tsankov_proximal = list.files("../bed_files/Tsankov_scATAC/migrated_to_hg19/", 
-                                        pattern="IC.*bgz$")
     files = c(files_Tsankov_distal, files_Tsankov_proximal)
     mclapply(files, 
              create_count_overlaps_files,
@@ -241,6 +237,15 @@ if (dataset == "Bingren") {
              annotation=annotation,
              which_interval_ranges=which_interval_ranges,
              mc.cores=cores)
+    
+  }
+  else if (annotation == "default_annotation") {
+    metadata_tsankov_proximal =
+      read.csv("../metadata/tsankov_lung_proximal_barcode_annotation.csv")
+    metadata_tsankov_distal =
+      read.csv("../metadata/tsankov_lung_distal_barcode_annotation.csv")
+    metadata = rbind(metadata_tsankov_proximal,
+                     metadata_tsankov_distal)
     
   }
   # if (annotation == "Tsankov_separate_fibroblasts") {
@@ -326,7 +331,7 @@ if (dataset == "Bingren") {
                               colnames(metadata_greenleaf_brain))] = "cell_type"
         dir.create("../processed_data/count_overlap_data/Greenleaf_brain_lowest_level_annotation")
       } 
-      else {
+      else if (annotation == "default_annotation") {
           metadata_greenleaf_brain =
             read.csv("../metadata/GSE162170_atac_cell_metadata_with_cell_names.txt")
       }
