@@ -281,9 +281,7 @@ get_sample_name_wang_lung <- function(file) {
   return(sample_name)
 }
 
-get_tissue_name_greenleaf_colon <- function(file) {
-  metadata = read_excel("../metadata/41588_2022_1088_MOESM3_ESM.xlsx", 
-                        sheet=2, skip=1)
+get_tissue_name_greenleaf_colon <- function(file, metadata) {
   sample = get_sample_name_greenleaf_colon(gsub("Greenleaf_colon_count_overlaps_", "", 
                                       basename(file)))
   sample = unlist(strsplit(sample, "-"))
@@ -310,7 +308,9 @@ get_tissue_name <- function(file, dataset, annotation) {
     tissue_name = get_tissue_name_greenleaf_pbmc_bm(file)
   }
   else if (dataset == "Greenleaf_colon") {
-    tissue_name = get_tissue_name_greenleaf_colon(file)
+    metadata = read_excel("../metadata/41588_2022_1088_MOESM3_ESM.xlsx", 
+                          sheet=2, skip=1)
+    tissue_name = get_tissue_name_greenleaf_colon(file, metadata)
   }
   else if (dataset == "Yang_kidney") {
     tissue_name = "kidney"
