@@ -79,7 +79,7 @@ create_count_overlaps_files <- function(file, metadata, interval_ranges, chain,
       
       if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || 
           dataset == "Greenleaf_pbmc_bm" || dataset == "Yang_kidney" ||
-          dataset == "Greenleaf_colon" || dataset == "Rawlins_fetal_lung") {
+          dataset == "Rawlins_fetal_lung") {
         sample$name = substr(sample$name, 1, 16)
       }
       
@@ -411,7 +411,8 @@ if (dataset == "Bingren") {
 } else if (dataset == "Greenleaf_colon") {
   if (annotation == "default_annotation") {
     # TODO: MUST FIX NAMING OF SAMPLES
-    metadata = read.csv("../metadata/greenleaf_colon_metadata.csv")
+    metadata = read.csv("../metadata/greenleaf_colon_metadata.csv", 
+                        row.names = 1)
   }
   files_colon_greenleaf = list.files("../bed_files/greenleaf_colon_scATAC/migrated_to_hg19",
                                      pattern = ".*fragments\\.tsv\\.bgz$")

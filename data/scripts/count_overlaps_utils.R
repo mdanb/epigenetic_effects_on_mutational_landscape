@@ -168,10 +168,13 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
       substr(filtered_metadata[["Cell.Barcode"]], 1, 16)
   }
   else if (dataset == "Greenleaf_colon") {
-    sample_barcodes_in_metadata = 
-      substr(filtered_metadata[["Cell"]], 14, 
-             nchar(filtered_metadata[["Cell"]]) - 2)
+    sample_barcodes_in_metadata = get_sample_barcodes_in_metadata_helper(filtered_metadata, 
+                                                                         "Cell",
+                                                                         "#")
   }
+    # sample_barcodes_in_metadata = 
+    #   substr(filtered_metadata[["Cell"]], 14, 
+    #          nchar(filtered_metadata[["Cell"]]) - 2)
   else if (dataset == "Rawlins_fetal_lung") {
     sample_barcodes_in_metadata =  get_sample_barcodes_in_metadata_helper(filtered_metadata, 
                                                                           "X",
