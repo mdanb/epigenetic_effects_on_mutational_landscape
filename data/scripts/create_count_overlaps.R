@@ -18,11 +18,11 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Rawlins_fetal_lung",
-#                    "--cores=8",
-#                    "--annotation=default_annotation",
-#                    "--which_interval_ranges=10kb"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                 c("--dataset=Greenleaf_colon",
+                   "--cores=4",
+                   "--annotation=default_annotation",
+                   "--which_interval_ranges=polak"))
 
 cores = args$cores
 dataset = args$dataset
