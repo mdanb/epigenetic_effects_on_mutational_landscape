@@ -1,6 +1,5 @@
 library(tidyverse)
 library(optparse)
-library(readxl)
 
 source("count_overlaps_utils.R")
 
