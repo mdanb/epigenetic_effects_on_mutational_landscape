@@ -1,7 +1,8 @@
 library(exomeCopy)
 library(data.table)
 library(stringr)
-library(rtracklayer)                                                            
+library(rtracklayer)   
+library(readxl)
 
 add_cell_barcodes_to_metadata <- function(i, metadatas, barcodes) {
   metadatas[[i]]["cell_barcode"] = barcodes[i]

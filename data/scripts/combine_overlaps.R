@@ -1,5 +1,7 @@
 library(tidyverse)
 library(optparse)
+library(readxl)
+
 source("count_overlaps_utils.R")
 
 load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
