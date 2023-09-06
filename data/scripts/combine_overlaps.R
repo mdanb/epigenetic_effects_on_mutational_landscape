@@ -12,7 +12,7 @@ option_list <- list(
 
 args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args =
-#                     c("--datasets=Wang_lung",
+#                     c("--datasets=Greenleaf_colon",
 #                       "--annotation=default_annotation",
 #                       "--which_interval_ranges=polak"))
 
