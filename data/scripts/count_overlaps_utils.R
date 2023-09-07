@@ -287,9 +287,14 @@ get_sample_name_wang_lung <- function(file) {
 get_tissue_name_greenleaf_colon <- function(file, metadata) {
   sample = get_sample_name_greenleaf_colon(gsub("Greenleaf_colon_count_overlaps_", "", 
                                       basename(file)))
-  sample = unlist(strsplit(sample, "-"))
-  sample = sample[1:length(sample) - 1]
-  sample = paste(sample, collapse="-")
+  if (sample == "A002-C-202-D-OCT") {
+    sample = "A002-C-202"
+  }
+  else {
+    sample = unlist(strsplit(sample, "-"))
+    sample = sample[1:length(sample) - 1]
+    sample = paste(sample, collapse="-")
+  }
   type = metadata[metadata["Sample"] == sample, "GrossPathology"] %>% pull()
   return(paste(type, "colon"))
 }
