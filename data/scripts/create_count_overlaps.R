@@ -21,7 +21,7 @@ option_list <- list(
 args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args =
 #                  c("--dataset=Greenleaf_colon",
-#                    "--cores=1",
+#                    "--cores=4",
 #                    "--annotation=default_annotation",
 #                    "--which_interval_ranges=polak",
 #                    "--overlaps_per_cell"))
@@ -58,7 +58,7 @@ compute_count_overlaps <- function(sample, interval_ranges, overlaps_per_cell) {
               lapply(makeGRangesFromDataFrame, keep.extra.columns=TRUE)
   }
   grl = GRangesList(grl_in)
-  count_overlaps = lapply(grl, function(x) countOverlaps (interval_ranges, x))
+  count_overlaps = lapply(grl, function(x) countOverlaps(interval_ranges, x))
   
   if (overlaps_per_cell) {
     cellid = unlist(lapply(grl, function(x) unique(x$name)))
