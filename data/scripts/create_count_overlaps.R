@@ -19,12 +19,12 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-args = parse_args(OptionParser(option_list=option_list), args =
-                 c("--dataset=Greenleaf_colon",
-                   "--cores=1",
-                   "--annotation=default_annotation",
-                   "--which_interval_ranges=polak",
-                   "--overlaps_per_cell"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                  c("--dataset=Greenleaf_colon",
+#                    "--cores=1",
+#                    "--annotation=default_annotation",
+#                    "--which_interval_ranges=polak",
+#                    "--overlaps_per_cell"))
 
 cores = args$cores
 dataset = args$dataset
