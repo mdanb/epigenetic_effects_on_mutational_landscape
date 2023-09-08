@@ -45,20 +45,28 @@ get_and_save_num_cells_per_sample <- function(sample, sample_file_name,
   return(counts_per_cell_type)
 }
 
-compute_count_overlaps <- function(sample, interval_ranges, 
-                                   overlaps_per_cell) {
+compute_count_overlaps <- function(sample, interval_ranges, overlaps_per_cell) {
   if (overlaps_per_cell) {
     print("overlaps per cell...")
+    grl_in = sample %>%                                             
+              group_split(name) %>%                             
+              lapply(makeGRangesFromDataFrame, keep.extra.columns=TRUE)                             
   }
   else {
     grl_in = sample %>%                                             
-      group_split(cell_type) %>%                             
-      lapply(makeGRangesFromDataFrame, keep.extra.columns=TRUE)
+              group_split(cell_type) %>%                             
+              lapply(makeGRangesFromDataFrame, keep.extra.columns=TRUE)
   }
   grl = GRangesList(grl_in)
   count_overlaps = lapply(grl, function(x) countOverlaps (interval_ranges, x))
-  cell_types = unlist(lapply(grl, function(x) unique(x$cell_type)))
-  names(count_overlaps) = cell_types
+  
+  if (overlaps_per_cell) {
+    cellid = unlist(lapply(grl, function(x) unique(x$name)))
+    names(count_overlaps) = cellid
+  } else {
+    cell_types = unlist(lapply(grl, function(x) unique(x$cell_type)))
+    names(count_overlaps) = cell_types
+  }
   return(count_overlaps)
 }
 
@@ -175,6 +183,7 @@ cell_counts_dir = paste("../processed_data/cell_counts_per_sample",
 dir.create(cell_counts_dir)
 ch = import.chain("../hg38ToHg19.over.chain")
 
+# Note: later functions not parallelized since this is already parallelized
 if (dataset == "Bingren") {
   if (annotation == "default_annotation") {
     metadata_bingren = read.table("../metadata/GSE184462_metadata.tsv", 
