@@ -14,21 +14,24 @@ option_list <- list(
   make_option("--dataset_subsets", type="character", default=NULL),
   make_option("--cores", type="integer"),
   make_option("--annotation", type="character"),
-  make_option("--which_interval_ranges", type="character")
+  make_option("--which_interval_ranges", type="character"),
+  make_option("--overlaps_per_cell", action="store_true", default=FALSE)
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Greenleaf_colon",
-#                    "--cores=4",
-#                    "--annotation=default_annotation",
-#                    "--which_interval_ranges=polak"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                 c("--dataset=Greenleaf_colon",
+                   "--cores=1",
+                   "--annotation=default_annotation",
+                   "--which_interval_ranges=polak",
+                   "--overlaps_per_cell"))
 
 cores = args$cores
 dataset = args$dataset
 dataset_subsets = args$dataset_subsets
 annotation = args$annotation
 which_interval_ranges = args$which_interval_ranges
+overlaps_per_cell = args$overlaps_per_cell
 
 get_and_save_num_cells_per_sample <- function(sample, sample_file_name,
                                               annotation) {
@@ -42,10 +45,16 @@ get_and_save_num_cells_per_sample <- function(sample, sample_file_name,
   return(counts_per_cell_type)
 }
 
-compute_count_overlaps <- function(sample, interval_ranges) {
-  grl_in = sample %>%                                             
-    group_split(cell_type) %>%                             
-    lapply(makeGRangesFromDataFrame, keep.extra.columns=TRUE)
+compute_count_overlaps <- function(sample, interval_ranges, 
+                                   overlaps_per_cell) {
+  if (overlaps_per_cell) {
+    
+  }
+  else {
+    grl_in = sample %>%                                             
+      group_split(cell_type) %>%                             
+      lapply(makeGRangesFromDataFrame, keep.extra.columns=TRUE)
+  }
   grl = GRangesList(grl_in)
   count_overlaps = lapply(grl, function(x) countOverlaps (interval_ranges, x))
   cell_types = unlist(lapply(grl, function(x) unique(x$cell_type)))
@@ -54,11 +63,16 @@ compute_count_overlaps <- function(sample, interval_ranges) {
 }
 
 create_count_overlaps_files <- function(file, metadata, interval_ranges, chain, 
-                                        dataset, annotation, which_interval_ranges) {
+                                        dataset, annotation, 
+                                        which_interval_ranges,
+                                        overlaps_per_cell) {
   filename = get_sample_filename(file, dataset)
   if (which_interval_ranges != "polak") {
     filename = paste("interval_ranges", which_interval_ranges, filename,
                      sep = "_")
+  }
+  if (overlaps_per_cell) {
+    filename = paste("per_cell", filename, sep = "_")
   }
   
   dirpath = paste("../processed_data/count_overlap_data", annotation, sep="/")
@@ -172,7 +186,8 @@ if (dataset == "Bingren") {
   #                                 sep=",",
   #                                 header=T)
   # }
-  colnames(metadata_bingren)[grepl("cell.type", colnames(metadata_bingren))] = "cell_type"
+  colnames(metadata_bingren)[grepl("cell.type", 
+                                   colnames(metadata_bingren))] = "cell_type"
   files_bingren = list.files("../bed_files/bingren_scATAC/migrated_to_hg19",
                               pattern=".*fragments\\.bed\\.bgz$")
   
@@ -220,6 +235,7 @@ if (dataset == "Bingren") {
              dataset=dataset,
              annotation=annotation,
              which_interval_ranges=which_interval_ranges,
+             overlaps_per_cell=overlaps_per_cell,
              mc.cores=cores)
   } else if (annotation == "Tsankov_basal_refined") {
     metadata = read.csv("../metadata/tsankov_refined_annotation.csv")
@@ -410,9 +426,9 @@ if (dataset == "Bingren") {
            mc.cores=cores)
 } else if (dataset == "Greenleaf_colon") {
   if (annotation == "default_annotation") {
-    # TODO: MUST FIX NAMING OF SAMPLES
     metadata = read.csv("../metadata/greenleaf_colon_metadata.csv", 
                         row.names = 1)
+    metadata = metadata[metadata[["general_cell_type"]] == "epithelial", ]
   }
   files_colon_greenleaf = list.files("../bed_files/greenleaf_colon_scATAC/migrated_to_hg19",
                                      pattern = ".*fragments\\.tsv\\.bgz$")
