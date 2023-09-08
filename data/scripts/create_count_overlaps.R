@@ -48,7 +48,7 @@ get_and_save_num_cells_per_sample <- function(sample, sample_file_name,
 compute_count_overlaps <- function(sample, interval_ranges, 
                                    overlaps_per_cell) {
   if (overlaps_per_cell) {
-    
+    print("overlaps per cell...")
   }
   else {
     grl_in = sample %>%                                             
@@ -121,7 +121,8 @@ create_count_overlaps_files <- function(file, metadata, interval_ranges, chain,
         sample$seqnames = paste0("chr", sample$seqnames)
       }
       
-      count_overlaps <- compute_count_overlaps(sample, interval_ranges)
+      count_overlaps <- compute_count_overlaps(sample, interval_ranges, 
+                                               overlaps_per_cell)
       saveRDS(count_overlaps, filepath)
     }
 }
