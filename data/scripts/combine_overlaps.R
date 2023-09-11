@@ -200,7 +200,7 @@ for (dataset in datasets) {
     }
     
     if (overlaps_per_cell) {
-      pattern = paste(overlaps_per_cell, pattern, sep="_")
+      pattern = paste("per_cell", pattern, sep="_")
     }
     
     pattern = paste0("^", pattern)
