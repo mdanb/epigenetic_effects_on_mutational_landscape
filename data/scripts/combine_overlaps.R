@@ -97,17 +97,19 @@ save_combined_overlaps <- function(filepaths,
     if (tissue_name == " colon") {
       print(f)
     }
-    count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
-                                   row.names = paste(tissue_name,
-                                                     cell_types))
     if (!overlaps_per_cell) {
       cell_types = names(count_overlaps)
+      count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
+                                     row.names = paste(tissue_name,
+                                                       cell_types))
       cell_counts = get_cell_counts_df(f, annotation, dataset)  
       dfs = add_to_combined_dataframes(count_overlaps, combined_count_overlaps,
                                        tissue_name,
                                        combined_count_overlaps_metadata,
                                        f, cell_types, cell_counts)    
     } else {
+      count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
+                                     row.names = tissue_name)
       dfs = add_to_combined_dataframes(count_overlaps, combined_count_overlaps,
                                        tissue_name,
                                        combined_count_overlaps_metadata,
