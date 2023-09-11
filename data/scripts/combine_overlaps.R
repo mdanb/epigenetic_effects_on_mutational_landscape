@@ -25,49 +25,10 @@ datasets = unlist(strsplit(args$datasets, split = ","))
 which_interval_ranges = args$which_interval_ranges
 overlaps_per_cell = args$overlaps_per_cell
 
-get_cell_counts_df <- function(count_overlaps_filename, annotation, dataset,
-                               overlaps_per_cell) {
-  # cell_counts_filename = unlist(strsplit(unlist(
-  #                                        strsplit(count_overlaps_filename,
-  #                                        split="/"))[5], 
-  #                                        "_"))
-  # if (grepl("Rawlins_fetal_lung", count_overlaps_filename)) {
-  #   pattern = unlist(strsplit(cell_counts_filename, split="\\."))[6]
-  #   if (pattern == "WSSS") {
-  #     pattern = paste(unlist(strsplit(cell_counts_filename, split="\\."))[6:8], 
-  #                     collapse="_")
-  #   }
-  #   files = list.files(paste("../processed_data/cell_counts_per_sample",
-  #                            annotation, 
-  #                            sep="/"))
-  #   f = files[grep(pattern, files)]
-  #   cell_counts_path = paste("..", "processed_data", 
-  #                            "cell_counts_per_sample", annotation,
-  #                            f, sep = "/")
-  #   df = readRDS(cell_counts_path)
-  #   return(df)
-  # }
-  # start_index = grep("overlaps", cell_counts_filename) + 1
-  # cell_counts_filename = 
-  #   cell_counts_filename[start_index:length(cell_counts_filename)]
-  # cell_counts_filename = paste(cell_counts_filename, collapse="_")
-  # if (grepl("IC", cell_counts_filename) || grepl("RPL", 
-  #                                                      cell_counts_filename)) {
-  #   cell_counts_filename = paste(unlist(strsplit(cell_counts_filename, "[.]"))[1], 
-  #                                "fragments.rds", sep = "_")
-  #   # cell_counts_filename = paste("fragments", cell_counts_filename, sep="_")
-  # }
-  # if (dataset == "Wang_lung") {
-  #   cell_counts_filename = str_remove(cell_counts_filename, ".fragments.rds")
-  #   cell_counts_filename = paste0(cell_counts_filename, ".rds")
-  # }
+get_cell_counts_df <- function(count_overlaps_filename, annotation, dataset) {
   cell_counts_filename = unlist(strsplit(count_overlaps_filename, split="/"))[5]
-  if (overlaps_per_cell) {
-    cell_counts_filename = paste("per_cell", cell_counts_filename, sep="_")
-  }                                 
   cell_counts_filename = paste("cell_counts", cell_counts_filename, sep="_")
 
-  # cell_counts_filename = paste("cell_counts", cell_counts_filename, sep="_")
   cell_counts_path = paste("..", "processed_data", 
                            "cell_counts_per_sample", annotation,
                            cell_counts_filename, sep = "/")
@@ -76,9 +37,9 @@ get_cell_counts_df <- function(count_overlaps_filename, annotation, dataset,
 }
 
 add_to_combined_dataframes <- function(count_overlaps, combined_count_overlaps,
-                                       tissue_name, cell_types, cell_counts,
+                                       tissue_name,
                                        combined_count_overlaps_metadata, 
-                                       f) {
+                                       f, cell_types=NULL, cell_counts=NULL) {
 
   if (nrow(count_overlaps) == 0) {
     print(paste(f, "has no count overlaps"), sep=" ")
@@ -92,27 +53,31 @@ add_to_combined_dataframes <- function(count_overlaps, combined_count_overlaps,
                   rownames(combined_count_overlaps))
       combined_count_overlaps[idx, ] = combined_count_overlaps[idx, ] +
                                        count_overlaps[i, ]
-      idx_tissue = which(combined_count_overlaps_metadata[, "tissue_name"] ==
-                         tissue_name)
-      idx_cell_type = which(cell_types[i] == 
-                            combined_count_overlaps_metadata[, "cell_type"])
-      num_cells = cell_counts[cell_counts["cell_type"] == cell_types[i], 
-                              "n_cells"] %>% pull(n_cells)
-      n_cells_idx = intersect(idx_tissue, idx_cell_type)
-      combined_count_overlaps_metadata[n_cells_idx, "num_cells"] = 
-        combined_count_overlaps_metadata[n_cells_idx, "num_cells"] + num_cells
+      if (!is.null(cell_types)) {
+        idx_tissue = which(combined_count_overlaps_metadata[, "tissue_name"] ==
+                           tissue_name)
+        idx_cell_type = which(cell_types[i] == 
+                              combined_count_overlaps_metadata[, "cell_type"])
+        num_cells = cell_counts[cell_counts["cell_type"] == cell_types[i], 
+                                "n_cells"] %>% pull(n_cells)
+        n_cells_idx = intersect(idx_tissue, idx_cell_type)
+        combined_count_overlaps_metadata[n_cells_idx, "num_cells"] = 
+          combined_count_overlaps_metadata[n_cells_idx, "num_cells"] + num_cells
+      }
     }
     else {
       combined_count_overlaps = rbind(combined_count_overlaps,
                                       count_overlaps[i, ])
-      combined_count_overlaps_metadata[dim(combined_count_overlaps_metadata)[1] + 1, 
-                                       "tissue_name"] = tissue_name
-      combined_count_overlaps_metadata[dim(combined_count_overlaps_metadata)[1], 
-                                       "cell_type"] = cell_types[i]
-      n_cells = cell_counts[cell_counts["cell_type"] == cell_types[i], 
-                            "n_cells"]
-      combined_count_overlaps_metadata[dim(combined_count_overlaps_metadata)[1], 
-                                       "num_cells"] = n_cells
+      if (!is.null(cell_types)) {
+        combined_count_overlaps_metadata[dim(combined_count_overlaps_metadata)[1] + 1, 
+                                         "tissue_name"] = tissue_name
+        combined_count_overlaps_metadata[dim(combined_count_overlaps_metadata)[1], 
+                                         "cell_type"] = cell_types[i]
+        n_cells = cell_counts[cell_counts["cell_type"] == cell_types[i], 
+                              "n_cells"]
+        combined_count_overlaps_metadata[dim(combined_count_overlaps_metadata)[1], 
+                                         "num_cells"] = n_cells
+      }
     }
   }
   return(list(combined_count_overlaps, combined_count_overlaps_metadata))
@@ -121,7 +86,8 @@ add_to_combined_dataframes <- function(count_overlaps, combined_count_overlaps,
 save_combined_overlaps <- function(filepaths,
                                    combined_filepath, 
                                    dataset, annotation,
-                                   which_interval_ranges) {
+                                   which_interval_ranges, 
+                                   overlaps_per_cell) {
   combined_count_overlaps = data.frame()
   combined_count_overlaps_metadata = data.frame()
   for (f in filepaths) {
@@ -131,15 +97,23 @@ save_combined_overlaps <- function(filepaths,
     if (tissue_name == " colon") {
       print(f)
     }
-    cell_types = names(count_overlaps)
     count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
                                    row.names = paste(tissue_name,
                                                      cell_types))
-    cell_counts = get_cell_counts_df(f, annotation, dataset)  
-    dfs = add_to_combined_dataframes(count_overlaps, combined_count_overlaps,
-                                     tissue_name, cell_types, cell_counts,
-                                     combined_count_overlaps_metadata,
-                                     f)    
+    if (!overlaps_per_cell) {
+      cell_types = names(count_overlaps)
+      cell_counts = get_cell_counts_df(f, annotation, dataset)  
+      dfs = add_to_combined_dataframes(count_overlaps, combined_count_overlaps,
+                                       tissue_name,
+                                       combined_count_overlaps_metadata,
+                                       f, cell_types, cell_counts)    
+    } else {
+      dfs = add_to_combined_dataframes(count_overlaps, combined_count_overlaps,
+                                       tissue_name,
+                                       combined_count_overlaps_metadata,
+                                       f)  
+    }
+    
     combined_count_overlaps = dfs[[1]]
     combined_count_overlaps_metadata = dfs[[2]]
   }
@@ -148,17 +122,15 @@ save_combined_overlaps <- function(filepaths,
                                                         "distal lung Fibroblasts"), ]
   }
   saveRDS(combined_count_overlaps, combined_filepath)
-  temp = unlist(strsplit(combined_filepath, "/"))[6]
-  metadata_filename = paste(unlist(strsplit(temp, "[.]"))[1], "metadata.rds", 
-                            sep="_")
-  # if (which_interval_ranges != "polak") {
-  #   metadata_filename = paste("interval_ranges", metadata_filename, sep="_")
-  # }
-  
-  metadata_filepath = paste("..", "processed_data", "count_overlap_data", 
-                            "combined_count_overlaps", annotation, 
-                            metadata_filename, sep="/")
-  saveRDS(combined_count_overlaps_metadata, metadata_filepath)
+  if (!overlaps_per_cell) {
+    temp = unlist(strsplit(combined_filepath, "/"))[6]
+    metadata_filename = paste(unlist(strsplit(temp, "[.]"))[1], "metadata.rds", 
+                              sep="_")
+    metadata_filepath = paste("..", "processed_data", "count_overlap_data", 
+                              "combined_count_overlaps", annotation, 
+                              metadata_filename, sep="/")
+    saveRDS(combined_count_overlaps_metadata, metadata_filepath)
+  }
 }
 
 combined_data_path = 
@@ -215,6 +187,6 @@ for (dataset in datasets) {
                            pattern = pattern, 
                            full.names = TRUE)
     save_combined_overlaps(filepaths, combined_filepath, dataset, annotation,
-                           which_interval_ranges)
+                           which_interval_ranges, overlaps_per_cell)
   }
 }
