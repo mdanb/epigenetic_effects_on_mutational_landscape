@@ -20,9 +20,9 @@ option_list <- list(
 
 args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Greenleaf_colon",
+#                  c("--dataset=Tsankov",
 #                    "--cores=4",
-#                    "--annotation=default_annotation",
+#                    "--annotation=Tsankov_refined",
 #                    "--which_interval_ranges=polak",
 #                    "--overlaps_per_cell"))
 
@@ -33,7 +33,7 @@ annotation = args$annotation
 which_interval_ranges = args$which_interval_ranges
 overlaps_per_cell = args$overlaps_per_cell
 
-get_and_save_num_cells_per_sample <- function(sample, sample_file_name,
+save_num_cells_per_sample <- function(sample, sample_file_name,
                                               annotation) {
   sample_file_name = paste0("cell_counts_", sample_file_name, ".rds")
   # sample_file_name = paste0("cell_counts_", file_path_sans_ext(sample_file_name, 
@@ -42,7 +42,7 @@ get_and_save_num_cells_per_sample <- function(sample, sample_file_name,
   path = "../processed_data/cell_counts_per_sample"
   file_path = paste(path, annotation, sample_file_name, sep="/")
   saveRDS(counts_per_cell_type, file_path)
-  return(counts_per_cell_type)
+  # return(counts_per_cell_type)
 }
 
 compute_count_overlaps <- function(sample, interval_ranges, overlaps_per_cell) {
@@ -118,10 +118,9 @@ create_count_overlaps_files <- function(file, metadata, interval_ranges, chain,
       
       sample <- get_sample_cell_types(sample[[1]], sample_barcodes_in_metadata,
                                       filtered_metadata)
-      counts_per_cell_type <- get_and_save_num_cells_per_sample(sample, 
-                                                             gsub(".rds", "",
-                                                                  filename),
-                                                             annotation)
+      if (!overlaps_per_cell) {
+        save_num_cells_per_sample(sample, gsub(".rds", "", filename), annotation)
+      }
       # sample <- filter_sample_by_cell_number(sample,
       #                                        counts_per_cell_type, 
       #                                        cell_number_filter)
@@ -363,7 +362,8 @@ if (dataset == "Bingren") {
       }
     }
   
-  colnames(metadata_greenleaf_brain)[grepl("Sample.ID", colnames(metadata_greenleaf_brain))] = "sample"
+  colnames(metadata_greenleaf_brain)[grepl("Sample.ID", 
+                                           colnames(metadata_greenleaf_brain))] = "sample"
   files_greenleaf_brain = list.files("../bed_files/greenleaf_brain_scATAC/migrated_to_hg19", 
                                      pattern=".*fragments\\.tsv\\.bgz$")
   # mclapply(files_greenleaf_brain, create_count_overlaps_files,
