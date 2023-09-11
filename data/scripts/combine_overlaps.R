@@ -16,7 +16,8 @@ args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args =
 #                     c("--datasets=Greenleaf_colon",
 #                       "--annotation=default_annotation",
-#                       "--which_interval_ranges=polak"))
+#                       "--which_interval_ranges=polak",
+#                       "--overlaps_per_cell"))
 
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
@@ -24,7 +25,8 @@ datasets = unlist(strsplit(args$datasets, split = ","))
 which_interval_ranges = args$which_interval_ranges
 overlaps_per_cell = args$overlaps_per_cell
 
-get_cell_counts_df <- function(count_overlaps_filename, annotation, dataset) {
+get_cell_counts_df <- function(count_overlaps_filename, annotation, dataset,
+                               overlaps_per_cell) {
   # cell_counts_filename = unlist(strsplit(unlist(
   #                                        strsplit(count_overlaps_filename,
   #                                        split="/"))[5], 
@@ -60,9 +62,11 @@ get_cell_counts_df <- function(count_overlaps_filename, annotation, dataset) {
   #   cell_counts_filename = paste0(cell_counts_filename, ".rds")
   # }
   cell_counts_filename = unlist(strsplit(count_overlaps_filename, split="/"))[5]
-                                         
+  if (overlaps_per_cell) {
+    cell_counts_filename = paste("per_cell", cell_counts_filename, sep="_")
+  }                                 
   cell_counts_filename = paste("cell_counts", cell_counts_filename, sep="_")
-  
+
   # cell_counts_filename = paste("cell_counts", cell_counts_filename, sep="_")
   cell_counts_path = paste("..", "processed_data", 
                            "cell_counts_per_sample", annotation,
