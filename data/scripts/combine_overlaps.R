@@ -8,7 +8,8 @@ load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 option_list <- list(
   make_option("--datasets", type = "character"),
   make_option("--annotation", type="character"),
-  make_option("--which_interval_ranges", type="character")
+  make_option("--which_interval_ranges", type="character"),
+  make_option("--overlaps_per_cell", action="store_true", default=FALSE)
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -122,6 +123,9 @@ save_combined_overlaps <- function(filepaths,
     print(paste("Processing count overlaps for file: ", f, sep=""))
     count_overlaps = readRDS(f)
     tissue_name <- get_tissue_name(f, dataset, annotation)
+    if (tissue_name == " colon") {
+      print(f)
+    }
     cell_types = names(count_overlaps)
     count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
                                    row.names = paste(tissue_name,
@@ -181,6 +185,9 @@ for (dataset in datasets) {
     combined_filename = paste("interval_ranges", which_interval_ranges, 
                               combined_filename, sep="_")
   }
+  if (overlaps_per_cell) {
+    combined_filename = paste("per_cell", combined_filename, sep = "_")
+  }
   combined_filepath = paste(combined_filepath, combined_filename, sep="/")
   if (!file.exists(combined_filepath)) { # || 
       #!file.exists(unsquashed_overlaps_filepath)) {
@@ -190,6 +197,13 @@ for (dataset in datasets) {
       pattern = paste("interval_ranges", which_interval_ranges, 
                       pattern, sep="_")
     }
+    
+    if (overlaps_per_cell) {
+      pattern = paste(overlaps_per_cell, pattern, sep="_")
+    }
+    
+    pattern = paste0("^", pattern)
+    
     co_fp = paste("../processed_data/count_overlap_data", annotation,
                   sep = "/")
     filepaths = list.files(co_fp, 
