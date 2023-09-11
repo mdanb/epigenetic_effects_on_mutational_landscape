@@ -22,6 +22,7 @@ annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
 datasets = unlist(strsplit(args$datasets, split = ","))
 which_interval_ranges = args$which_interval_ranges
+overlaps_per_cell = args$overlaps_per_cell
 
 get_cell_counts_df <- function(count_overlaps_filename, annotation, dataset) {
   # cell_counts_filename = unlist(strsplit(unlist(
