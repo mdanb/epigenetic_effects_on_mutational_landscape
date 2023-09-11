@@ -414,6 +414,7 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df = l[[1]]
     df_metadata = l[[2]]
     
-    save_collapsed_df(df, df_metadata, dataset, annotation)
+    save_collapsed_df(df, df_metadata, dataset, annotation, 
+                      which_interval_ranges)
   }
 }
