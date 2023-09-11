@@ -45,12 +45,33 @@ save_collapsed_df <- function(df, df_metadata, dataset, annotation,
   saveRDS(df_metadata, paste(save_dir, save_file_metadata, sep="/"))
 }
 
-collapse_using_mapping <- function(mapping, df, df_metadata) {
+collapse_using_mapping <- function(mapping, df, df_metadata, 
+                                   exact_match_first_mapping_arg=F) {
   for (pattern_replacement in mapping) {
-    idxs = grep(pattern_replacement[1], rownames(df))
-    idxs_metadata = grep(pattern_replacement[1], paste(df_metadata[["tissue_name"]], 
-                                                       df_metadata[["cell_type"]]))
-    collapsed_co = rep(0, length(colnames(df)))
+    if (exact_match_first_mapping_arg) {
+      idxs = match(pattern_replacement[1], rownames(df))
+      idxs_metadata = match(pattern_replacement[1], paste(df_metadata[["tissue_name"]], 
+                                                         df_metadata[["cell_type"]]))
+    } else {
+      idxs = grep(pattern_replacement[1], rownames(df))
+      idxs_metadata = grep(pattern_replacement[1], paste(df_metadata[["tissue_name"]], 
+                                                         df_metadata[["cell_type"]]))
+    }
+    if (pattern_replacement[2] %in% rownames(df)) {
+      collapsed_co = df[pattern_replacement[2], ]
+      collapsed_counts_idx = match(pattern_replacement[2], 
+                                   paste(df_metadata[["tissue_name"]], 
+                                   df_metadata[["cell_type"]]))
+      # collapsed_counts = as.numeric(df_metadata[collapsed_counts_idx, 
+      #                                           "num_cells"])
+      
+      idxs_metadata = c(idxs_metadata, collapsed_counts_idx)
+    }
+    else {
+      collapsed_co = rep(0, length(colnames(df)))
+      # collapsed_counts = 0
+    }
+    
     collapsed_counts = sum(as.numeric(df_metadata[idxs_metadata, "num_cells"]))
     
     for (idx in idxs) {
@@ -349,6 +370,50 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df_metadata = default_combined_metadata
     df = df[-grep("basal", rownames(df)), ]
     df_metadata = df_metadata[-grep("basal", df_metadata[["cell_type"]]), ]
+    save_collapsed_df(df, df_metadata, dataset, annotation)
+  }
+} else if (dataset == "Greenleaf_colon") {
+    default_annotation_fn = "Greenleaf_colon_combined_count_overlaps.rds"
+    default_annotation_fp = paste(root, "default_annotation", 
+                                  default_annotation_fn, sep="/")
+    default_combined_count_ovs = readRDS(default_annotation_fp)
+    default_annotation_metadata_fn = "Greenleaf_colon_combined_count_overlaps_metadata.rds"
+    default_annotation_metadata_fp = paste(root, "default_annotation", 
+                                           default_annotation_metadata_fn,
+                                           sep="/")
+    
+    default_combined_metadata = readRDS(default_annotation_metadata_fp)
+    default_combined_metadata["tissue_name"] = tolower(gsub(" ", "_", 
+                                      default_combined_metadata[["tissue_name"]]))
+  if (annotation == "remove_cancer_merge_normal_unaffected") {
+    df = default_combined_count_ovs
+    df_metadata = default_combined_metadata
+    df = df[-grep("Adenocarcinoma", rownames(df)), ]
+    df_metadata = df_metadata[-grep("adenocarcinoma", 
+                                    df_metadata[["tissue_name"]]), ]
+    mapping = list() 
+    index = 1
+    
+    rownames(df) = gsub("Unaffected colon", "unaffected_colon", rownames(df))
+    rownames(df) = gsub("Normal colon", "normal_colon", rownames(df))
+    rownames(df) = gsub("Polyp colon", "polyp_colon", rownames(df))
+    
+    for (celltype in rownames(df)) {
+      if (grepl("unaffected", celltype)) {
+        modified_celltype = gsub("unaffected", "normal", celltype)
+        # celltype = gsub("\\+", "\\\\+", celltype)
+        # modified_celltype = gsub("\\+", "\\\\+", modified_celltype)
+        mapping[[index]] = c(celltype, modified_celltype)
+        index = index + 1
+      }
+    }
+    
+    l = collapse_using_mapping(mapping, df=df,
+                               df_metadata=df_metadata,
+                               exact_match_first_mapping_arg = T)
+    df = l[[1]]
+    df_metadata = l[[2]]
+    
     save_collapsed_df(df, df_metadata, dataset, annotation)
   }
 }
