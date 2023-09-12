@@ -476,9 +476,10 @@ class ModelOptimizer:
                                     study_name=study_name,
                                     load_if_exists=True,
                                     sampler=optuna.samplers.TPESampler(seed=seed))
-        n_existing_trials = len(study.trials)
-        print(f"Number of existing optuna trials: {n_existing_trials}")
-        n_optuna_trials_remaining = n_optuna_trials - n_existing_trials
+        n_existing_complete_trials = len([trial for trial in study.trials if trial.state ==
+                                            optuna.trial.TrialState.COMPLETE])
+        print(f"Number of existing complete optuna trials: {n_existing_complete_trials}")
+        n_optuna_trials_remaining = n_optuna_trials - n_existing_complete_trials
         n_optuna_trials_remaining = max(0, n_optuna_trials_remaining)
         if n_optuna_trials_remaining > 0:
             print(f"Running an extra {n_optuna_trials_remaining} trials")
