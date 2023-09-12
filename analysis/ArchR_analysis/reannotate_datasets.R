@@ -4,6 +4,8 @@ library(BSgenome.Hsapiens.UCSC.hg19)
 library(stringr)
 library(dplyr)
 library(ComplexHeatmap)
+library(parallel)
+
 source("../../utils.R")
 option_list <- list( 
   make_option("--cores", type="integer"),
@@ -15,8 +17,9 @@ option_list <- list(
   make_option("--cluster", action="store_true", default=F),
   make_option("--cluster_res", type="double"),
   make_option("--plot_custom_column", action="store_true", default=F),
-  make_option("--embedding_column_name", type="character", default="cell_type"),
+  make_option("--color_embedding_by", type="character", default="cell_type"),
   make_option("--plus_to_add_to_metadata", type="character", default=NULL),
+  make_option("--plus_filters", type="character", default=NULL),
   make_option("--tissue", type="character", default="all"),
   make_option("--nfrags_filter", type="integer", default=1),
   make_option("--tss_filter", type="integer", default=0),
@@ -174,7 +177,7 @@ args = parse_args(OptionParser(option_list=option_list), args=
 #                       "--filter_per_cell_type",
 #                       "--plot_custom_column",
 #                       "--plus_to_add_to_metadata=GrossPathology,CellType",
-#                       "--embedding_column_name=GrossPathology",
+#                       "--color_embedding_by=GrossPathology",
 #                       "--marker_genes=MSLN,AQP5,TACSTD2,FSCN1,TFF2,ANXA1,ANXA10,REG4,MUC17,S100P,GSDMB,GSDMD,IL18,RELB,MDK,AHR,PDX1"
 # ))
 
@@ -193,7 +196,8 @@ args = parse_args(OptionParser(option_list=option_list), args=
                       "--filter_per_cell_type",
                       "--plot_custom_column",
                       "--plus_to_add_to_metadata=GrossPathology,CellType",
-                      "--embedding_column_name=GrossPathology",
+                      "--plus_filters=Normal|Polyp|Unaffected",
+                      "--color_embedding_by=GrossPathology",
                       "--marker_genes=CLDN2,CD44,AXIN2,RNF43,TGFBI,EPHB2,TEAD2,CDX2,LGR5,OLFM4,ASCL2"
                     ))
 
@@ -212,7 +216,7 @@ args = parse_args(OptionParser(option_list=option_list), args=
 #                       "--filter_per_cell_type",
 #                       "--plot_custom_column",
 #                       "--plus_to_add_to_metadata=GrossPathology,CellType",
-#                       "--embedding_column_name=GrossPathology",
+#                       "--color_embedding_by=GrossPathology",
 #                       "--marker_genes=MDK,ELF3,MSLN,RAB15,CXCL16,ADAM9,HES4,HES1,AQP5,ABHD4,AHNAK,AK1,AKR1B10,ANXA1,ANXA3,BMP8B,BOK,CD55,CLIC3,CRIP2,EPS8L1,DAPK1,DCXR,ECM1,FOSL1,GJB3,GSN,HSPB1,HYAL1,IL1RN,ITGB4,KIFC3,LMNA,PHLDA2,PHLDA3,PDLIM7,P2RY2,PDZK1IP1,PLAUR,PRSS22,CAVIN3,PLCD3,PSCA,RHOD,S100A11,S100A14,S100A16,S100A4,SERPINB5,SLC45A3,TACSTD2,TIMP2,TTC9,VAMP5,VNN1,VSIG1,WWC2"
 #                     ))
 # general_cell_type
@@ -231,7 +235,7 @@ args = parse_args(OptionParser(option_list=option_list), args=
 #                       "--cluster_res=0.6",
 #                       "--filter_per_cell_type",
 #                       "--plot_custom_column",
-#                       "--embedding_column_name=cell_type"
+#                       "--color_embedding_by=cell_type"
 #                     ))
 
 # plus means other stuff as well
@@ -311,10 +315,14 @@ add_cell_types_plus_to_cell_col_data <- function(cell_col_data, metadata,
   return(cell_col_data)
 }
 
-filter_proj_and_add_metadata <- function(proj, nfrags_filter, tss_filter, tss_percentile,
-                                         nfrags_percentile, filter_per_cell_type,
-                                         dataset, tissue, cell_types, min_cells_per_cell_type, 
-                                         metadata, plus_to_add_to_metadata=NULL) {
+filter_proj_and_add_metadata <- function(proj, nfrags_filter, tss_filter, 
+                                         tss_percentile, nfrags_percentile, 
+                                         filter_per_cell_type,
+                                         dataset, tissue, cell_types, 
+                                         min_cells_per_cell_type, 
+                                         metadata, 
+                                         plus_to_add_to_metadata=NULL,
+                                         plus_filters = NULL) {
   cell_col_data = getCellColData(proj)
   
   if (tissue == "all") {
@@ -365,6 +373,19 @@ filter_proj_and_add_metadata <- function(proj, nfrags_filter, tss_filter, tss_pe
   print("Done!")
   #####################
   
+  # Filter by plus filters
+  print("Filtering by additional custom filters...")
+  idx = 1
+  for (filter in plus_filters) {
+    if (!(filter == "NULL")) {
+      filter = grepl(filter, cell_col_data[[plus_to_add_to_metadata[idx]]])
+      proj = proj[filter]
+      cell_col_data = getCellColData(proj)
+    }
+    idx = idx + 1
+  }
+  
+  #####################
   # Filter by cell number, and TSS/nFrags 
   print("Filtering by TSS/nFrags...")
   counts_per_cell_type = table(cell_col_data[["cell_type"]])
@@ -472,12 +493,19 @@ plot_doublet_scores = args$plot_doublet_scores
 save_clusters = args$save_clusters
 de_novo_marker_discovery = args$de_novo_marker_discovery
 reannotate = args$reannotate
-embedding_column_name = args$embedding_column_name
+color_embedding_by = args$color_embedding_by
 plus_to_add_to_metadata = args$plus_to_add_to_metadata
+plus_filters = args$plus_filters
+
 if (!is.null(args$plus_to_add_to_metadata)) {
   plus_to_add_to_metadata = unlist(strsplit(args$plus_to_add_to_metadata, 
                                             split=","))
 }
+
+if (!is.null(args$plus_filters)) {
+  plus_filters = unlist(strsplit(args$plus_filters, split=","))
+}
+
 print("Done collecting cmd line args")
 
 addArchRThreads(threads = cores)
@@ -514,7 +542,18 @@ if (filter_per_cell_type) {
   setting = paste0(setting, "_", "filter_per_cell_type")
 }
 
+idx = 1
+for (filter in plus_filters) {
+  if (!(filter == "NULL")) {
+    setting = paste0(setting, "_", "filter_by_", plus_to_add_to_metadata[idx],
+                     "_", filter)
+  }
+  idx = idx + 1
+}
+
 proj_dir = paste("ArchR_projects", setting, sep="/")
+setting = gsub("\\|", "_or_", setting)
+proj_dir = gsub("\\|", "_or_", proj_dir)
 
 if (dir.exists(proj_dir)) {
   print("Loading existing project")
@@ -554,7 +593,8 @@ if (dir.exists(proj_dir)) {
                       tissue = tissue, cell_types = cell_types,
                       min_cells_per_cell_type = min_cells_per_cell_type, 
                       metadata = metadata, 
-                      plus_to_add_to_metadata = plus_to_add_to_metadata)
+                      plus_to_add_to_metadata = plus_to_add_to_metadata,
+                      plus_filters = plus_filters)
   
   print("Saving new project")
   proj <- saveArchRProject(ArchRProj = proj, 
@@ -701,7 +741,7 @@ if (plot_custom_column) {
     p <- plotEmbedding(
       ArchRProj = proj, 
       colorBy = "cellColData", 
-      name = embedding_column_name, 
+      name = color_embedding_by, 
       embedding = "UMAP",
       quantCut = c(0.01, 0.95))
   }
@@ -720,7 +760,7 @@ if (plot_custom_column) {
   #   scale_color_manual(guide = guide_legend(override.aes = 
   #                                             list(shape = 15)))
   # }
-  fn = paste(embedding_column_name, "UMAP", setting, sep="_")
+  fn = paste(color_embedding_by, "UMAP", setting, sep="_")
   # if (filter_doublets) {
   #   fn = paste(fn, "filter_doublets", sep="_")
   # }

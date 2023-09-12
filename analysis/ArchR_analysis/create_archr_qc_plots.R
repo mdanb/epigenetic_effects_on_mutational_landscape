@@ -1,6 +1,7 @@
 library(ArchR)
 library(optparse)
 library(tibble)
+library(parallel) # Needed for ArchR
 
 option_list <- list(
   make_option("--cores", type="integer")
