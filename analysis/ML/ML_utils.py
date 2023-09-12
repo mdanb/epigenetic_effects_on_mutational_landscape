@@ -26,8 +26,10 @@ def load_data(meso, SCLC, lung_subtyped, woo_pcawg,
 
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
+    chr_keep = pd.read_csv("../../data/processed_data/chr_keep.csv", index_col=0)
+    mutations_df = mutations_df.loc[chr_keep["chr"]]
     if not pd.isna(mutations_df).any().any():
-        # for compatibility
+        # for compatibility when chr ranges only include chr_keep but not others
         mutations_df = add_na_ranges(mutations_df)
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
     cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
