@@ -13,11 +13,11 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                     c("--datasets=Greenleaf_colon",
-#                       "--annotation=default_annotation",
-#                       "--which_interval_ranges=polak",
-#                       "--overlaps_per_cell"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--datasets=Tsankov",
+                      "--annotation=Tsankov_refined",
+                      "--which_interval_ranges=polak",
+                      "--overlaps_per_cell"))
 
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
@@ -108,8 +108,9 @@ save_combined_overlaps <- function(filepaths,
                                        combined_count_overlaps_metadata,
                                        f, cell_types, cell_counts)    
     } else {
+      cell_ids = names(count_overlaps)
       count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
-                                     row.names = tissue_name)
+                                     row.names = paste(tissue_name, cell_ids))
       dfs = add_to_combined_dataframes(count_overlaps, combined_count_overlaps,
                                        tissue_name,
                                        combined_count_overlaps_metadata,
