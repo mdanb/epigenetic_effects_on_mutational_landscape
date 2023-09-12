@@ -32,15 +32,6 @@ get_filtered_cells <- function(cell_num_filter, annotation, dataset,
   return(metadata)
 }
 
-
-
-scatac_df_br = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Bingren_remove_same_celltype_indexing/Bingren_combined_count_overlaps.rds"))
-scatac_df_sh = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Shendure_remove_unknown_unsure/Shendure_combined_count_overlaps.rds"))
-colnames(scatac_df_sh) = paste(colnames(scatac_df_sh), "SH")
-colnames(scatac_df_br) = paste(colnames(scatac_df_br), "BR")
-scatac_df = cbind(scatac_df_sh, scatac_df_br)
-scatac_df = scatac_df[rownames(scatac_df) %in% chr_keep, ]
-
 create_cell_fun = function(corrs = NULL, fs) {
   function(j, i, x, y, w, h, fill) {
     grid::grid.text(sprintf("%.2f", corrs[i, j]), x, y, 
@@ -76,6 +67,63 @@ plot_scatac_vs_mutation <- function(df, x_name, y_name) {
   print(p)
 }
 
+#### Lung Mutations only ####
+lung = read.csv("../data/processed_data/mutations_with_subtypes/all_lung.csv")
+lung["subtype_grouped_meso"] = lung["subtype"]
+lung[lung["subtype"] == "Not.Otherwise.Specified" | lung["subtype"] == 
+       "Epithelioid" | lung["subtype"] == "Sarcomatoid" | 
+       lung["subtype"] == "Biphasic", 
+     "subtype_grouped_meso"] = "meso"
+# lung = lung[1:10, ]
+subtype = lung[["subtype_grouped_meso"]]
+rownames(lung) = lung[["X"]]
+lung = lung[, chr_keep]
+
+subtype_colors <- c(
+  "Adeno" = "red",
+  "Squamous" = "green",
+  "SCLC" = "blue",
+  "meso" = "orange"
+)
+
+lung = t(lung)
+column_ha <- HeatmapAnnotation(subtype = subtype, 
+                               counts = log10(colSums(lung)),
+                               col = list(subtype = 
+                                            subtype_colors))
+hm = Heatmap(lung,
+        top_annotation = column_ha,
+        clustering_distance_columns = "pearson",
+        clustering_method_columns = "ward.D",
+        cluster_rows = F,
+        show_column_names = F,
+        show_row_names = F, 
+        show_row_dend = F)
+draw(hm)
+
+cor_matrix <- cor(lung, method = "pearson")
+cor_distance <- as.dist(1 - cor_matrix)
+hc <- hclust(cor_distance, method = "ward.D")
+Heatmap(cor_matrix, 
+        top_annotation = column_ha,
+        name = "correlation",
+        cluster_columns = hc,
+        cluster_rows = hc,
+        show_column_names = F,
+        show_row_names = F,
+        show_row_dend = F,
+        col = colorRamp2(c(-1, 0, 1), c("blue", "white", "red")))
+
+#################
+#################
+
+scatac_df_br = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Bingren_remove_same_celltype_indexing/Bingren_combined_count_overlaps.rds"))
+scatac_df_sh = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Shendure_remove_unknown_unsure/Shendure_combined_count_overlaps.rds"))
+colnames(scatac_df_sh) = paste(colnames(scatac_df_sh), "SH")
+colnames(scatac_df_br) = paste(colnames(scatac_df_br), "BR")
+scatac_df = cbind(scatac_df_sh, scatac_df_br)
+scatac_df = scatac_df[rownames(scatac_df) %in% chr_keep, ]
+
 #### Meso ####
 scatac_df_lung = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Tsankov_refined/Tsankov_combined_count_overlaps.rds"))
 scatac_df_lung = scatac_df_lung[rownames(scatac_df_lung) %in% chr_keep, ]
@@ -107,7 +155,7 @@ for (ranking in rankings) {
   }
 }
 
-scatac_df_lung = scatac_df_lung[, !(colnames(scatac_df_lung) == "lung Myeloid")]
+# scatac_df_lung = scatac_df_lung[, !(colnames(scatac_df_lung) == "lung Myeloid")]
 corrs_pearson = cor(scatac_df_lung, mutations_df_meso)
 
 Heatmap(scale(corrs_pearson), 
@@ -213,56 +261,22 @@ plot_count_distribution(meso_individuals, "meso_counts.pdf")
 #         row_names_gp = grid::gpar(fontsize = 8),
 #         top_annotation = ha)
 
-#### Lung Mutations only ####
-# scatac_df_lung = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Tsankov_refined/Tsankov_combined_count_overlaps.rds"))
-# scatac_df_lung = scatac_df_lung[rownames(scatac_df_lung) %in% chr_keep, ]
-lung = read.csv("../data/processed_data/mutations_with_subtypes/all_lung.csv")
-lung["subtype_grouped_meso"] = lung["subtype"]
-lung[lung["subtype"] == "Not.Otherwise.Specified" | lung["subtype"] == 
-       "Epithelioid" | lung["subtype"] == "Sarcomatoid" | 
-       lung["subtype"] == "Biphasic", 
-     "subtype_grouped_meso"] = "meso"
-subtype = lung[["subtype_grouped_meso"]]
-rownames(lung) = lung[["X"]]
-lung = lung[, chr_keep]
-lung = t(lung)
-corrs_pearson = cor(lung)
+# ordered_cor_matrix <- cor_matrix[rev(hc$order), rev(hc$order)]
+# column_ha <- HeatmapAnnotation(subtype = subtype[rev(hc$order)],
+#                                counts = log10(colSums(lung))[rev(hc$order)],
+#                                col = list(subtype = subtype_colors))
+# 
+# # pdf("lung_heatmap.pdf", width = 8, height = 8)
+# Heatmap(ordered_cor_matrix, 
+#         top_annotation = column_ha,
+#         name = "correlation",
+#         cluster_columns = F,
+#         cluster_rows = F,
+#         show_column_names = F,
+#         show_row_names = F,
+#         col = colorRamp2(c(-1, 0, 1), c("blue", "white", "red")))
 
-subtype_colors <- c(
-  "Adeno" = "red",
-  "Squamous" = "green",
-  "SCLC" = "blue",
-  "meso" = "orange"
-)
-
-column_ha <- HeatmapAnnotation(subtype = subtype, 
-                               col = list(subtype = 
-                                           subtype_colors))
-row_ha <- rowAnnotation(counts = log10(colSums(lung)))
-Heatmap(corrs_pearson,
-        top_annotation = ha,
-        right_annotation = row_ha,
-        show_column_names = FALSE,
-        show_row_names = FALSE,
-        col = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
-)
-
-# Heatmap(corrs_pearson, 
-#         top_annotation = ha,
-#         show_column_names=F, 
-#         show_row_names=F,
-#         colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))) + 
-#   + 
-#   Heatmap(lung,
-#           right_annotation = ha_counts,
-#           col = colorRamp2(c(min(lung), max(lung)), c("white", "black")))
-
-
-
-        # column_names_gp = grid::gpar(fontsize = 2),
-        # row_names_gp = grid::gpar(fontsize = 8),
-        # top_annotation = ha,
-        # cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3.7))
+# dev.off()
 
 
 #### Lung-AdenoCA ####
