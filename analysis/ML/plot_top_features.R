@@ -7,6 +7,7 @@ library(optparse)
 library(stringr)
 library(tibble)
 source("../../utils.R")
+source("ML_utils.R")
 
 parser <- OptionParser()
 parser <- add_option(parser, c("--datasets"), type="character")
@@ -35,144 +36,20 @@ parser <- add_option(parser, c("--skip_seeds_robustness"), default="")
 parser <- add_option(parser, c("--folds_for_test_set"), type="character")
 
 # args = parse_args(parser, args =
-#                     c("--datasets=Tsankov",
-#                       "--cancer_types=combined_mesomics_no_biphasic",
+#                     c("--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
+#                       "--cancer_types=ColoRect-AdenoCA",
 #                       "--cell_number_filter=100",
-#                       "--top_features_to_plot=1,2,5,10,15",
+#                       "--top_features_to_plot=1,2,5,10",
 #                       "--ML_model=XGB",
 #                       "--annotation=finalized_annotation",
 #                       "--robustness_analysis",
-#                       "--seed_range=1-5",
+#                       "--seed_range=1-10",
 #                       "--feature_importance_method=permutation_importance",
 #                       "--top_features_to_plot_feat_imp=1,2,5,10",
-#                       "--folds_for_test_set=1-5"))
+#                       "--folds_for_test_set=1-10"))
 
 args = parse_args(parser)
 
-construct_backwards_elim_dir <- function(cancer_type, 
-                                         scATAC_source, 
-                                         cell_number_filter,
-                                         tss_fragment_filter, 
-                                         annotation,
-                                         tissues_to_consider, 
-                                         ML_model,
-                                         seed,
-                                         fold_for_test_set="-1",
-                                         test=F) {
-  scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
-                        cell_number_filter, sep="_")
-  
-  if (tss_fragment_filter != -1) {
-    scATAC_source = paste(scATAC_source, "tss_fragment_filter", 
-                          tss_fragment_filter, sep="_")
-  }
-
-  scATAC_source = paste(scATAC_source, "annotation", annotation, "seed", seed, 
-                        sep="_")
-  
-  if (fold_for_test_set != "-1") {
-    scATAC_source = paste(scATAC_source, 
-                          "fold_for_test_set", fold_for_test_set, sep="_")
-  }
-  
-  dir = paste("models", ML_model, cancer_type, scATAC_source,
-              "backwards_elimination_results", sep="/")
-  
-  if (tissues_to_consider != "all") {
-    dir = paste(dir, tissues_to_consider, sep="_")
-  }
-  
-  if (!test) {
-    dir = paste("../../figures", dir, sep="/")
-  }
-  
-  return(dir)
-}
-
-construct_sources_string <- function(datasets) {
-  scATAC_sources = ""
-  
-  for (i in 1:length(datasets)) {
-    dataset = datasets[i]
-    if (scATAC_sources == "") {
-      scATAC_sources = dataset
-    }
-    else {
-      scATAC_sources = paste(scATAC_sources, dataset, sep="_")
-    }
-  }
-  return(scATAC_sources)
-}
-
-get_relevant_backwards_elim_dirs <- function(cancer_types, 
-                                             combined_datasets,
-                                             tissues_to_consider,
-                                             datasets,
-                                             cell_number_filter,
-                                             tss_fragment_filter,
-                                             annotation,
-                                             ML_model,
-                                             fold_for_test_set = "-1",
-                                             seed = "-1",
-                                             accumulated_seeds=F) {
-    if (accumulated_seeds) {
-      seed = "all_seeds"
-    }
-  
-    scATAC_sources = construct_sources_string(datasets)
-
-    backward_elim_dirs = list()
-    for (cancer_type in cancer_types) {
-      for (tss_filter in tss_fragment_filter) {
-        backward_elim_dirs = append(backward_elim_dirs,
-                                    construct_backwards_elim_dir(cancer_type, 
-                                                                 scATAC_sources,
-                                                                 cell_number_filter,
-                                                                 tss_filter,
-                                                                 annotation,
-                                                                 tissues_to_consider,
-                                                                 ML_model,
-                                                                 seed,
-                                                                 fold_for_test_set))
-      }
-    }
-    return(unlist(backward_elim_dirs))
-}
-
-construct_pie_charts <- function(args) {
-  dirs = get_relevant_backwards_elim_dirs(args)
-  for (dir in dirs) {
-    file = paste(dir, "df_for_feature_importance_plots.csv", sep="/")
-    df = read.csv(file)
-    df$num_features_f = factor(df$num_features, levels=unique(df$num_features))
-    colors = get_n_colors(20, 1)
-    from = as.character(unique(df$num_features))
-    to = paste(paste(levels(df$num_features_f), "features"),
-               paste("(R^2=", as.character(round(unique(df$score*100), 1)), 
-                     ")", sep=""), sep=" ")
-    
-    names(to) <- from
-    title = unlist(strsplit(dir, split ="/"))
-    title = title[length(title)]
-    print("title: ")
-    print(title)
-    plot = ggplot(df, aes(x="", y=importance, fill=features)) +
-                  facet_wrap(~num_features_f, nrow=1, 
-                             labeller = as_labeller(to)) +
-                  geom_bar(stat="identity", width=1, color="white") +
-                  coord_polar("y", start=0) +
-                  xlab("") +
-                  ylab("") +
-                  theme(axis.text = element_blank(),
-                        axis.ticks = element_blank(),
-                        panel.grid  = element_blank()) +
-                  scale_fill_manual(values=colors) +
-                  ggtitle() +
-                  theme(plot.title = element_text(hjust = 0.5))
-    ggsave(paste(dir, "pie_chart.png", sep="/"), width = 20,
-           height = 6, plot)
-  }
-}
 
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
@@ -218,7 +95,7 @@ construct_bar_plots <- function(cancer_type,
                                 feature_importance_method, 
                                 fold_for_test_set) {
   dirs = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
-                                          combined_datasets=combined_datasets,
+                                          # combined_datasets=combined_datasets,
                                           tissues_to_consider=tissues_to_consider,
                                           datasets=datasets,
                                           cell_number_filter=cell_number_filter,
@@ -508,7 +385,7 @@ if (!robustness_analysis) {
     scATAC_source = paste(scATAC_source, "annotation", annotation, sep="_")
 
     savepath = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
-                                                combined_datasets=combined_datasets,
+                                                # combined_datasets=combined_datasets,
                                                 tissues_to_consider=tissues_to_consider,
                                                 datasets=datasets,
                                                 cell_number_filter=cell_number_filter,
