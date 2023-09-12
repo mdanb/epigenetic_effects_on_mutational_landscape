@@ -34,19 +34,20 @@ parser <- add_option(parser, c("--robustness_accumulated_feature_importance_barp
 parser <- add_option(parser, c("--feature_importance_method"), type="character")
 parser <- add_option(parser, c("--skip_seeds_robustness"), default="")
 parser <- add_option(parser, c("--folds_for_test_set"), type="character")
+parser <- add_option(parser, c("--feat_imp_min_n_robustness"), type="integer")
 
 # args = parse_args(parser, args =
-#                     c("--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-#                       "--cancer_types=ColoRect-AdenoCA",
-#                       "--cell_number_filter=100",
-#                       "--top_features_to_plot=1,2,5,10",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--robustness_analysis",
-#                       "--seed_range=1-10",
-#                       "--feature_importance_method=permutation_importance",
-#                       "--top_features_to_plot_feat_imp=1,2,5,10",
-#                       "--folds_for_test_set=1-10"))
+                    # c("--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
+                    #   "--cancer_types=ColoRect-AdenoCA",
+                    #   "--cell_number_filter=100",
+                    #   "--top_features_to_plot=1,2,5,10",
+                    #   "--ML_model=XGB",
+                    #   "--annotation=finalized_annotation",
+                    #   "--robustness_analysis",
+                    #   "--seed_range=1-10",
+                    #   "--feature_importance_method=permutation_importance",
+                    #   "--top_features_to_plot_feat_imp=1,2,5,10",
+                    #   "--folds_for_test_set=1-10"))
 
 args = parse_args(parser)
 
@@ -344,6 +345,7 @@ if (!is.null(skip_seeds_robustness)) {
 folds_for_test_set = args$folds_for_test_set
 folds_for_test_set = unlist(strsplit(args$folds_for_test_set, split = "-"))
 folds_for_test_set = seq(folds_for_test_set[1], folds_for_test_set[2])
+feat_imp_min_n_robustness = args$feat_imp_min_n_robustness
 
 if (!robustness_analysis) {
   tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
@@ -443,13 +445,14 @@ if (!robustness_analysis) {
                        n_name="n_feature", facet_var="num_features",
                        ylabel="Permutation Importance")
     
-    df_feat_imp_at_least_50_n = df_feat_imp %>% 
-      filter(n_feature >= 50)
+    df_feat_imp_at_least_n = df_feat_imp %>% 
+      filter(n_feature >= feat_imp_min_n_robustness)
     
-    construct_boxplots(df=df_feat_imp_at_least_50_n, x="features", 
+    construct_boxplots(df=df_feat_imp_at_least_n, x="features", 
                        y="permutation_importance", 
                        color="features", title=cancer_type, savepath=savepath,
-                       savefile="feature_importance_50_n_min.png", 
+                       savefile=paste("feature_importance", feat_imp_min_n_robustness,
+                                      "n_min.png"), 
                        n_name="n_feature", facet_var="num_features",
                        ylabel="Permutation Importance")
     
