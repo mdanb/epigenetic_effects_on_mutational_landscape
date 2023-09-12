@@ -452,7 +452,7 @@ if (!robustness_analysis) {
                        y="permutation_importance", 
                        color="features", title=cancer_type, savepath=savepath,
                        savefile=paste("feature_importance", feat_imp_min_n_robustness,
-                                      "n_min.png"), 
+                                      "n_min.png", sep="_"), 
                        n_name="n_feature", facet_var="num_features",
                        ylabel="Permutation Importance")
     
