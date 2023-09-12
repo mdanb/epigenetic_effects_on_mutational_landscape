@@ -35,17 +35,14 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
   return(unlist(backward_elim_dirs))
 }
 
-
-construct_backwards_elim_dir <- function(cancer_type, 
-                                         scATAC_source, 
-                                         cell_number_filter,
-                                         tss_fragment_filter, 
-                                         annotation,
-                                         tissues_to_consider, 
-                                         ML_model,
-                                         seed,
-                                         fold_for_test_set="-1",
-                                         test=F) {
+construct_dir <- function(scATAC_source,
+                            cell_number_filter,
+                            tss_fragment_filter,
+                            annotation,
+                            seed,
+                            fold_for_test_set,
+                            ML_model,
+                            cancer_type) {
   scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
                         cell_number_filter, sep="_")
   
@@ -61,9 +58,28 @@ construct_backwards_elim_dir <- function(cancer_type,
     scATAC_source = paste(scATAC_source, 
                           "fold_for_test_set", fold_for_test_set, sep="_")
   }
-  
-  dir = paste("models", ML_model, cancer_type, scATAC_source,
-              "backwards_elimination_results", sep="/")
+  return(paste("models", ML_model, cancer_type, scATAC_source, sep="/"))
+}
+
+construct_backwards_elim_dir <- function(cancer_type, 
+                                         scATAC_source, 
+                                         cell_number_filter,
+                                         tss_fragment_filter, 
+                                         annotation,
+                                         tissues_to_consider, 
+                                         ML_model,
+                                         seed,
+                                         fold_for_test_set="-1",
+                                         test=F) {
+  dir = construct_dir(scATAC_source,
+                cell_number_filter,
+                tss_fragment_filter,
+                annotation,
+                seed,
+                fold_for_test_set,
+                ML_model,
+                cancer_type)
+  dir = paste(dir, "backwards_elimination_results", sep="/")
   
   if (tissues_to_consider != "all") {
     dir = paste(dir, tissues_to_consider, sep="_")
