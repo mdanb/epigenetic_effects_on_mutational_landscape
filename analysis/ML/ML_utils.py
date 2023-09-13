@@ -614,9 +614,9 @@ def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg,
                            annotation_dir, top_features_to_plot, feature_importance_method, fold_for_test_set):
     print(f"Plotting top features for seed range {seed_range}...")
     command = ["Rscript", "plot_top_features.R",
-                         f"--cancer_types={cancer_types_arg}",
+                         f"--cancer_types={','.join(cancer_types_arg)}",
                          f"--ML_model={ML_model}",
-                         f"--datasets={datasets_arg}",
+                         f"--datasets={','.join(datasets_arg)}",
                          f"--seed_range={'-'.join(list(map(str, top_features_to_plot)))}",
                          f"--cell_number_filter={scATAC_cell_number_filter}",
                          f"--annotation={annotation_dir}",
