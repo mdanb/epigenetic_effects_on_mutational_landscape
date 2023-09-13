@@ -366,7 +366,6 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         model_savefile = f"model_iteration_{idx}"
         per_fold_model_savefile = f"per_fold_model_iteration_{idx}"
 
-        # if not os.path.exists(filepath):
         study_name = f"{cancer_type_or_donor_id}_iter_{idx}_{scATAC_dir}"
         if feature_importance_method != "default_importance":
             study_name = study_name + f"_feature_importance_{feature_importance_method}"
@@ -414,17 +413,9 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         removed_feature = X_train.columns[~(X_train.columns.isin(top_n_feats))].item()
         print(f"Removing: {removed_feature}")
         X_train = X_train.loc[:, top_n_feats]
-        # if not os.path.exists(filepath):
         # Don't save 0 features
         if idx != num_iterations:
             print_and_save_features(top_n_feats, filepath=top_features_filepath, top=True)
-        # else:
-        #     # top_n_feats here would just be the most important feature
-        #     df_curr = pd.DataFrame((top_n_feats[0], np.nan, 1,
-        #                             best_cv_score, np.nan)).T
-        #     df_curr.columns = df_save.columns
-        #     df_save = pd.concat((df_save, df_curr))
-        #     df_save.to_csv(fp_for_fi, index=False)
 
 
 #### Model train/val/test helpers ####
@@ -568,29 +559,6 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
 
 def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_dir, n, ML_model, cancer_type,
                                                 feature_importance_method, fold_for_test_set):
-    # scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
-    #                                                 histologically_subtyped_mutations,
-    #                                                 de_novo_seurat_clustering,
-    #                                                 CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
-    #                                                 datasets, scATAC_cell_number_filter,
-    #                                                 annotation_dir, cancer_type, tss_filter)
-    # scATAC_sources = construct_scATAC_sources(datasets)
-    # scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed)
-
-    # if scATAC_df.shape[1] > 20:
-    #    model_iteration = 20 - n + 1
-    # else:
-    #    model_iteration = scATAC_df.shape[1] - n + 1
-    #
-    # filename = f"model_iteration_{model_iteration}"
-    #
-    # if feature_importance_method != "default_importance":
-    #     filename = filename + f"_feature_importance_{feature_importance_method}"
-    # filename = filename + ".pkl"
-    #
-    # backwards_elim_model_file = f"models/{ML_model}/" \
-    #                             f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
-    # model = pickle.load(open(backwards_elim_model_file, "rb"))
     model = load_n_features_backwards_elim_models(n, scATAC_df.shape[1], cancer_type, ML_model, scATAC_dir,
                                                   feature_importance_method)
     # print(scATAC_df.shape[1])
@@ -706,24 +674,3 @@ def compute_error(X_val, y_val, **kwargs):
     abs_err = np.absolute(y_val - preds)
     percent_error = abs_err / (y_val + 1) * 100
     return {"abs_err": abs_err, "percent_err": percent_error, "preds": preds}
-
-
-# def post_training_setup():
-#     scATAC_sources = construct_scATAC_sources()
-#     scATAC_dir = construct_scATAC_dir()
-#     filename = f"model_iteration_{i}.pkl"
-#     backwards_elim_model_file = f"models/{ML_model}/" \
-#                                 f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
-#     model = pickle.load(open(backwards_elim_model_file, "rb"))
-#     scATAC_df = construct_scATAC_df()
-#     scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
-#     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
-#     mutations_df = load_mutations()
-#
-#     if not pd.isna(mutations_df).any().any():
-#         # for compatibility
-#         mutations_df = add_na_ranges(mutations_df)
-#     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
-#     cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type)
-#
-#     _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 0.10, seed)

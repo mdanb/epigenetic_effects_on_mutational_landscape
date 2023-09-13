@@ -107,12 +107,13 @@ args = parse_args(OptionParser(option_list=option_list), args=
                       "--dataset=Tsankov",
                       "--metadata_for_celltype_fn=tsankov_refined_annotation.csv",
                       "--sep_for_metadata=,",
-                      "--cell_type_col_in_metadata=new_annotation",
+                      "--cell_type_col_in_metadata=celltypes",
                       "--tissue=all",
                       "--nfrags_filter=1",
                       "--tss_filter=0",
                       "--cell_types=Basal",
                       "--min_cells_per_cell_type=1",
+                      "--filter_doublets",
                       "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,MUC5B,SCGB1A1,SCGB3A1,SCGB3A2")
 )
 

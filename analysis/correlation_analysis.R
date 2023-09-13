@@ -91,15 +91,15 @@ column_ha <- HeatmapAnnotation(subtype = subtype,
                                counts = log10(colSums(lung)),
                                col = list(subtype = 
                                             subtype_colors))
-hm = Heatmap(lung,
-        top_annotation = column_ha,
-        clustering_distance_columns = "pearson",
-        clustering_method_columns = "ward.D",
-        cluster_rows = F,
-        show_column_names = F,
-        show_row_names = F, 
-        show_row_dend = F)
-draw(hm)
+# Heatmap(lung,
+#         top_annotation = column_ha,
+#         clustering_distance_columns = "pearson",
+#         clustering_method_columns = "ward.D",
+#         cluster_rows = F,
+#         show_column_names = F,
+#         show_row_names = F, 
+#         show_row_dend = F,
+#         column_dend_reorder=F)
 
 cor_matrix <- cor(lung, method = "pearson")
 cor_distance <- as.dist(1 - cor_matrix)
@@ -113,6 +113,7 @@ Heatmap(cor_matrix,
         show_row_names = F,
         show_row_dend = F,
         col = colorRamp2(c(-1, 0, 1), c("blue", "white", "red")))
+
 
 #################
 #################
