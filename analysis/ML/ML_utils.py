@@ -594,22 +594,37 @@ def apply_func_to_kfolds(X, y, func, **kwargs):
     return func_out
 
 #### Call other scripts ####
-def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
+# def call_plot_top_features(seed, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
+#                            annotation_dir, top_features_to_plot, feature_importance_method, fold_for_test_set):
+#     print(f"Plotting top features for seed {seed}...")
+#     command = ["Rscript", "plot_top_features.R",
+#                          f"--cancer_types={cancer_types_arg}",
+#                          f"--ML_model={ML_model}",
+#                          f"--datasets={datasets_arg}",
+#                          f"--seed={seed}",
+#                          f"--cell_number_filter={scATAC_cell_number_filter}",
+#                          f"--annotation={annotation_dir}",
+#                          f"--top_features_to_plot={','.join(list(map(str, top_features_to_plot)))}",
+#                          f"--feature_importance_method={feature_importance_method}",
+#                          f"--fold_for_test_set={fold_for_test_set}"]
+#     subprocess.call(command)
+#     print(f"Done plotting top features for seed {seed}!")
+
+def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
                            annotation_dir, top_features_to_plot, feature_importance_method, fold_for_test_set):
-    print(f"Plotting top features for seed {seed}...")
+    print(f"Plotting top features for seed range {seed_range}...")
     command = ["Rscript", "plot_top_features.R",
                          f"--cancer_types={cancer_types_arg}",
                          f"--ML_model={ML_model}",
                          f"--datasets={datasets_arg}",
-                         f"--seed={seed}",
+                         f"--seed_range={'-'.join(list(map(str, top_features_to_plot)))}",
                          f"--cell_number_filter={scATAC_cell_number_filter}",
                          f"--annotation={annotation_dir}",
                          f"--top_features_to_plot={','.join(list(map(str, top_features_to_plot)))}",
                          f"--feature_importance_method={feature_importance_method}",
                          f"--fold_for_test_set={fold_for_test_set}"]
     subprocess.call(command)
-    print(f"Done plotting top features for seed {seed}!")
-
+    print(f"Done plotting top features for seed range {seed_range}!")
 
 #### Other ####
 def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed,
