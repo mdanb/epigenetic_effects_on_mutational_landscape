@@ -622,7 +622,7 @@ def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg,
                          f"--annotation={annotation_dir}",
                          f"--top_features_to_plot={','.join(list(map(str, top_features_to_plot)))}",
                          f"--feature_importance_method={feature_importance_method}",
-                         f"--fold_for_test_set={fold_for_test_set}"]
+                         f"--folds_for_test_set={'-'.join(list(map(str, [fold_for_test_set, fold_for_test_set])))}"]
     subprocess.call(command)
     print(f"Done plotting top features for seed range {seed_range}!")
 
