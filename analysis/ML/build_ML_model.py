@@ -140,7 +140,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
         if make_plots:
             call_plot_top_features(seed_range, cancer_types, ML_model, datasets, scATAC_cell_number_filter,
                                    annotation_dir, top_features_to_plot, feature_importance_method,
-                                   fold_for_test_set)
+                                   fold_for_test_set + 1)
     return
 
 
