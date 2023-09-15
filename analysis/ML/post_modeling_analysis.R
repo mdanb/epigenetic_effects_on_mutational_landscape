@@ -21,7 +21,7 @@ args = parse_args(parser)
 
 
 args = parse_args(parser, args =
-                    c("--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
+                    c("--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
                       "--cancer_types=SCLC",
                       "--cell_number_filter=100",
                       "--ML_model=XGB",
