@@ -47,7 +47,7 @@ folds_for_test_set = seq(folds_for_test_set[1], folds_for_test_set[2])
 plot_dist <- function(X, bin_names) {
   df <- data.frame(index = 1:nrow(X), 
                           value = X)
-  use_names = seq(1, length(df_scatac$index), by=10)
+  use_names = seq(1, length(df$index), by=10)
   use_names = append(use_names, nrow(X))
   p = ggplot(df) +
     geom_bar(aes(x=index, y=value),
