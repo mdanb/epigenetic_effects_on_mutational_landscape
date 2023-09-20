@@ -20,11 +20,10 @@ option_list <- list(
 
 args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Tsankov",
-#                    "--cores=4",
-#                    "--annotation=Tsankov_refined",
-#                    "--which_interval_ranges=polak",
-#                    "--overlaps_per_cell"))
+#                  c("--dataset=Yang_kidney",
+#                    "--cores=2",
+#                    "--annotation=default_annotation",
+#                    "--which_interval_ranges=yang"))
 
 cores = args$cores
 dataset = args$dataset
@@ -70,7 +69,7 @@ compute_count_overlaps <- function(sample, interval_ranges, overlaps_per_cell) {
   return(count_overlaps)
 }
 
-create_count_overlaps_files <- function(file, metadata, interval_ranges, chain, 
+create_count_overlaps_files <- function(file, metadata, interval_ranges, 
                                         dataset, annotation, 
                                         which_interval_ranges,
                                         overlaps_per_cell) {
@@ -180,7 +179,6 @@ dir.create("../processed_data/count_overlap_data", recursive=TRUE)
 cell_counts_dir = paste("../processed_data/cell_counts_per_sample", 
                         annotation, sep = "/")
 dir.create(cell_counts_dir)
-ch = import.chain("../hg38ToHg19.over.chain")
 
 # Note: later functions not parallelized since this is already parallelized
 if (dataset == "Bingren") {
@@ -203,7 +201,6 @@ if (dataset == "Bingren") {
   mclapply(files_bingren, create_count_overlaps_files,
            metadata=metadata_bingren,
            interval_ranges=interval.ranges,
-           chain=ch,
            dataset=dataset,
            annotation=annotation,
            which_interval_ranges=which_interval_ranges,
@@ -218,7 +215,6 @@ if (dataset == "Bingren") {
   mclapply(files_Shendure, create_count_overlaps_files,
          metadata=metadata_Shendure,
          interval_ranges=interval.ranges,
-         chain=ch,
          dataset=dataset,
          annotation=annotation,
          which_interval_ranges=which_interval_ranges,
@@ -240,7 +236,6 @@ if (dataset == "Bingren") {
              create_count_overlaps_files,
              metadata=metadata,
              interval_ranges=interval.ranges,
-             chain=ch,
              dataset=dataset,
              annotation=annotation,
              which_interval_ranges=which_interval_ranges,
@@ -257,7 +252,6 @@ if (dataset == "Bingren") {
              create_count_overlaps_files,
              metadata=metadata,
              interval_ranges=interval.ranges,
-             chain=ch,
              dataset=dataset,
              annotation=annotation,
              which_interval_ranges=which_interval_ranges,
@@ -376,7 +370,6 @@ if (dataset == "Bingren") {
   mclapply(files_greenleaf_brain, create_count_overlaps_files,
            metadata=metadata_greenleaf_brain,
            interval_ranges=interval.ranges,
-           chain=ch,
            dataset=dataset,
            annotation=annotation,
            which_interval_ranges=which_interval_ranges,
@@ -403,7 +396,6 @@ if (dataset == "Bingren") {
              create_count_overlaps_files,
              metadata=metadata_greenleaf_pbmc_bm,
              interval_ranges=interval.ranges,
-             chain=ch,
              dataset=dataset,
              annotation=annotation,
              which_interval_ranges=which_interval_ranges,
@@ -414,8 +406,7 @@ if (dataset == "Bingren") {
   if (which_interval_ranges == "polak") {
     files_Yang = list.files("../bed_files/yang_kidney_scATAC/",
                             pattern = ".*fragments\\.tsv\\.gz")
-  }
-  else {
+  } else {
     files_Yang = list.files("../bed_files/yang_kidney_scATAC/migrated_to_hg38",
                             pattern = ".*fragments\\.tsv\\.bgz$")
   }
@@ -429,7 +420,6 @@ if (dataset == "Bingren") {
   mclapply(files_Yang, create_count_overlaps_files,
            metadata=metadata_Yang,
            interval_ranges=interval.ranges,
-           chain=ch,
            dataset=dataset,
            annotation=annotation,
            which_interval_ranges=which_interval_ranges,
@@ -452,7 +442,6 @@ if (dataset == "Bingren") {
   mclapply(files_colon_greenleaf, create_count_overlaps_files,
            metadata=metadata,
            interval_ranges=interval.ranges,
-           chain=ch,
            dataset=dataset,
            annotation=annotation,
            which_interval_ranges=which_interval_ranges,
@@ -467,7 +456,6 @@ if (dataset == "Bingren") {
   mclapply(files_rawlins_fetal_lung, create_count_overlaps_files,
            metadata=metadata,
            interval_ranges=interval.ranges,
-           chain=ch,
            dataset=dataset,
            annotation=annotation,
            which_interval_ranges=which_interval_ranges,
@@ -493,7 +481,6 @@ if (dataset == "Bingren") {
   mclapply(files_wang_lung, create_count_overlaps_files,
            metadata=metadata,
            interval_ranges=interval.ranges,
-           chain=ch,
            dataset=dataset,
            annotation=annotation,
            which_interval_ranges=which_interval_ranges,

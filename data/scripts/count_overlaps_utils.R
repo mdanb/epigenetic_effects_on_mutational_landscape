@@ -66,7 +66,7 @@ import_sample <- function(file, dataset, which_interval_ranges) {
                    "yang_kidney_scATAC", 
                    file, sep="/")
       } else if (which_interval_ranges == "yang") {
-        fp = paste("..",
+        fp = paste("..", "bed_files",
                    "yang_kidney_scATAC", "migrated_to_hg38", 
                    file, sep="/")
       }
