@@ -274,8 +274,10 @@ get_sample_name_yang <- function(file) {
 }
 
 get_sample_name_greenleaf_colon <- function(file) {
-  sample_name = str_remove(file, "_fragments.tsv.bgz")
-  sample_name = unlist(strsplit(sample_name, split="_"))[2]
+  sample_name = str_remove(file, "Greenleaf_colon_count_overlaps_")
+  sample_name = str_remove(sample_name, "per_cell_")
+  sample_name = str_remove(sample_name, "_fragments.tsv.bgz")
+  sample_name = str_remove(sample_name, "_fragments.rds")
   return(sample_name)
 }
 
@@ -285,10 +287,9 @@ get_sample_name_wang_lung <- function(file) {
 }
 
 get_tissue_name_greenleaf_colon <- function(file, metadata) {
-  name = gsub("Greenleaf_colon_count_overlaps_", "", basename(file))
-  name = gsub("per_cell_", "", name)
+  sample = get_sample_name_greenleaf_colon(basename(file))
+  sample = unlist(strsplit(sample, split="_"))[2]
   
-  sample = get_sample_name_greenleaf_colon(name)
   if (sample == "A002-C-202-D-OCT") {
     sample = "A002-C-202"
   } else {
