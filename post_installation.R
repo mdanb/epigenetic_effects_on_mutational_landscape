@@ -20,7 +20,7 @@ if (!requireNamespace("ArchR", quietly = TRUE)) {
 }
 
 if (!requireNamespace("seurat5", quietly = TRUE)) {
-	remotes::install_github("satijalab/seurat", "seurat5", quiet = TRUE, dependencies=T)
+	install.packages('Seurat', version="4.3.0")
 }
 
 if (!requireNamespace("DoubletFinder", quietly = TRUE)) {
