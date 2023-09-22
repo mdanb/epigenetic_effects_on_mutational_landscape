@@ -31,3 +31,5 @@ dependencies:
     - pyreadr==0.4.9
     - natsort==8.4.0
     - psycopg2==2.9.7
+  # bash
+  - entrez-direct=16.2
