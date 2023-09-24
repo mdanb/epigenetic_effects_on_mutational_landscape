@@ -204,6 +204,7 @@ if (dataset == "Bingren") {
            dataset=dataset,
            annotation=annotation,
            which_interval_ranges=which_interval_ranges,
+           overlaps_per_cell=overlaps_per_cell,
            mc.cores=cores)
 } else if (dataset == "Shendure") {
   metadata_Shendure = read.table("../metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
