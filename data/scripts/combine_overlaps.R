@@ -13,10 +13,10 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-args = parse_args(OptionParser(option_list=option_list), args =
-                    c("--datasets=Bingren",
-                      "--annotation=default_annotation",
-                      "--which_interval_ranges=10kb"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--datasets=Bingren",
+#                       "--annotation=default_annotation",
+#                       "--which_interval_ranges=10kb"))
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
 datasets = unlist(strsplit(args$datasets, split = ","))
