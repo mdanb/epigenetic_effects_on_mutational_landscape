@@ -102,7 +102,7 @@ save_combined_overlaps <- function(filepaths,
       count_overlaps["cell_type"] = cell_types
       chr = colnames(count_overlaps)
       chr = chr[1:length(chr)-1]
-      count_overlaps = pivot_longer(count_overlaps, cols=a[1:length(a)-1])
+      count_overlaps = pivot_longer(count_overlaps, cols=chr[1:length(chr)-1])
       combined_count_overlaps = rbind(combined_count_overlaps, count_overlaps)
       cell_counts = get_cell_counts_df(f, annotation, dataset)
       combined_count_overlaps_metadata = rbind(combined_count_overlaps_metadata,
