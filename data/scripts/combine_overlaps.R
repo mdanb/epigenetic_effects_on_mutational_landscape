@@ -13,12 +13,10 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                     c("--datasets=Tsankov",
-#                       "--annotation=Tsankov_refined",
-#                       "--which_interval_ranges=polak",
-#                       "--overlaps_per_cell"))
-
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--datasets=Bingren",
+                      "--annotation=default_annotation",
+                      "--which_interval_ranges=10kb"))
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
 datasets = unlist(strsplit(args$datasets, split = ","))
@@ -64,8 +62,7 @@ add_to_combined_dataframes <- function(count_overlaps, combined_count_overlaps,
         combined_count_overlaps_metadata[n_cells_idx, "num_cells"] = 
           combined_count_overlaps_metadata[n_cells_idx, "num_cells"] + num_cells
       }
-    }
-    else {
+    } else {
       combined_count_overlaps = rbind(combined_count_overlaps,
                                       count_overlaps[i, ])
       if (!is.null(cell_types)) {
@@ -88,8 +85,9 @@ save_combined_overlaps <- function(filepaths,
                                    dataset, annotation,
                                    which_interval_ranges, 
                                    overlaps_per_cell) {
-  combined_count_overlaps = data.frame()
-  combined_count_overlaps_metadata = data.frame()
+  combined_count_overlaps = tibble()
+  combined_count_overlaps_metadata = tibble()
+  prev_tissue = ""
   for (f in filepaths) {
     print(paste("Processing count overlaps for file: ", f, sep=""))
     count_overlaps = readRDS(f)
@@ -99,27 +97,55 @@ save_combined_overlaps <- function(filepaths,
     }
     if (!overlaps_per_cell) {
       cell_types = names(count_overlaps)
-      count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
-                                     row.names = paste(tissue_name,
-                                                       cell_types))
-      cell_counts = get_cell_counts_df(f, annotation, dataset)  
-      dfs = add_to_combined_dataframes(count_overlaps, combined_count_overlaps,
-                                       tissue_name,
-                                       combined_count_overlaps_metadata,
-                                       f, cell_types, cell_counts)    
+      cell_types = paste(tissue_name, cell_types)
+      count_overlaps = as_tibble(do.call(rbind, count_overlaps))
+      count_overlaps["cell_type"] = cell_types
+      chr = colnames(count_overlaps)
+      chr = chr[1:length(chr)-1]
+      count_overlaps = pivot_longer(count_overlaps, cols=a[1:length(a)-1])
+      combined_count_overlaps = rbind(combined_count_overlaps, count_overlaps)
+      cell_counts = get_cell_counts_df(f, annotation, dataset)
+      combined_count_overlaps_metadata = rbind(combined_count_overlaps_metadata,
+                                               cell_counts)
+      # count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
+      #                                row.names = paste(tissue_name,
+      #                                                  cell_types))
+      # cell_counts = get_cell_counts_df(f, annotation, dataset)  
+      # dfs = add_to_combined_dataframes(count_overlaps, combined_count_overlaps,
+      #                                  tissue_name,
+      #                                  combined_count_overlaps_metadata,
+      #                                  f, cell_types, cell_counts)
+      # combined_count_overlaps = dfs[[1]]
+      # combined_count_overlaps_metadata = dfs[[2]]
+      if (prev_tissue == tissue_name) {
+        print("Collapsing rows")
+        combined_count_overlaps = combined_count_overlaps %>% 
+                                      group_by(cell_type, name) %>%
+                                      summarise_all(sum)
+        combined_count_overlaps_metadata = combined_count_overlaps_metadata %>% 
+                                              group_by(cell_type) %>%
+                                              summarise_all(sum)
+      }
+      prev_tissue = tissue_name
     } else {
       cell_ids = names(count_overlaps)
+      sample_name = get_sample_name(basename(f), dataset)
       count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
-                                     row.names = paste(tissue_name, cell_ids))
-      dfs = add_to_combined_dataframes(count_overlaps, combined_count_overlaps,
-                                       tissue_name,
-                                       combined_count_overlaps_metadata,
-                                       f)  
+                                     row.names = paste(sample_name, cell_ids, 
+                                                       sep="#"))
+      combined_count_overlaps = rbind(combined_count_overlaps, 
+                                      count_overlaps)
+      # dfs = add_to_combined_dataframes(count_overlaps, combined_count_overlaps,
+      #                                  tissue_name,
+      #                                  combined_count_overlaps_metadata,
+      #                                  f)  
     }
-    
-    combined_count_overlaps = dfs[[1]]
-    combined_count_overlaps_metadata = dfs[[2]]
   }
+  combined_count_overlaps=data.frame(pivot_wider(combined_count_overlaps))
+  rownames(combined_count_overlaps) = combined_count_overlaps[["cell_type"]]
+  combined_count_overlaps = combined_count_overlaps[, 
+                                    combined_count_overlaps[!grepl("cell_type", 
+                                          colnames(combined_count_overlaps))]]
   if (annotation == "Tsankov_separate_fibroblasts") {
     combined_count_overlaps = combined_count_overlaps[!(rownames(combined_count_overlaps) == 
                                                         "distal lung Fibroblasts"), ]
