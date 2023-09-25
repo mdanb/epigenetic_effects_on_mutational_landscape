@@ -164,17 +164,24 @@ if (which_interval_ranges == "polak") {
   load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 } else if (which_interval_ranges == "yang") {
   load("../peak_set_yang.Rdata")
-} else if (which_interval_ranges == "10kb") {
-  if (file.exists("../10kb_interval_ranges.Rdata")) {
-    load("../10kb_interval_ranges.Rdata")
+} else if (which_interval_ranges == "10kb" || which_interval_ranges == "100kb") {
+  fp = paste("..", paste(which_interval_ranges, 
+                         "interval_ranges.Rdata", 
+                         sep="_"), sep="/")
+  if (file.exists(fp)) {
+    load(fp)
   } else {
-    interval.ranges = read.table("../chr_Sorted_interval_ranges_10kb.tsv")[, 1:3]
+    interval_ranges_fp = paste("..", paste("chr_Sorted_interval_ranges",
+                                           paste0(which_interval_ranges, 
+                                           ".tsv"), 
+                                           sep="_"), sep="/")
+    interval.ranges = read.table(interval_ranges_fp)[, 1:3]
     colnames(interval.ranges) = c("seqnames", "start","end")
     interval.ranges = GRanges(interval.ranges)
     l = table(seqnames(interval.ranges))
     names(interval.ranges) = unlist(mapply(function(x,y) 
       paste(x, y, sep="."), names(l), lapply(l, seq)))
-    save(interval.ranges, file="../10kb_interval_ranges.Rdata")
+    save(interval.ranges, file=fp)
   }
 }
 
