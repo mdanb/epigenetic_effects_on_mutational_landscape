@@ -62,14 +62,14 @@ def run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
 def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
-                                  combined_CPTAC_ICGC, meso, RNA_subtyped, per_donor, donor_range, ML_model,
+                                  combined_CPTAC_ICGC, meso, RNA_subtyped, hundred_kb, per_donor, donor_range, ML_model,
                                   seed_range, n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
                                   make_plots, feature_importance_method, sqlite, test_set_perf_num_features,
                                   debug_bfs, fold_for_test_set):
     ### args used at the end for plot_top_features.R ###
-    cancer_types_arg = ",".join(cancer_types)
-    datasets_arg = ",".join(datasets)
+    # cancer_types_arg = ",".join(cancer_types)
+    # datasets_arg = ",".join(datasets)
     scATAC_sources = construct_scATAC_sources(datasets)
 
     for seed in seed_range:
@@ -101,7 +101,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                                   de_novo_seurat_clustering,
                                                                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
                                                                   datasets, scATAC_cell_number_filter,
-                                                                  annotation_dir, cancer_type)
+                                                                  annotation_dir, cancer_type, hundred_kb)
 
                     run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
                                                          cancer_type, scATAC_dir,
@@ -194,11 +194,11 @@ feature_importance_method = config.feature_importance_method
 sqlite = config.sqlite
 test_set_perf_num_features = config.test_set_perf_num_features
 debug_bfs = config.debug_bfs
-
+hundred_kb = config.hundred_kb
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tissues_to_consider, tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                               meso, RNA_subtyped, per_donor, donor_range, ML_model, seed_range,
+                               meso, RNA_subtyped, hundred_kb, per_donor, donor_range, ML_model, seed_range,
                                n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method,
                                sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set)

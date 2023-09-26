@@ -14,23 +14,29 @@ from sklearn.inspection import permutation_importance
 from pathlib import Path
 import re
 
+
 ### Load Data helpers ###
 def load_data(meso, SCLC, lung_subtyped, woo_pcawg,
               histologically_subtyped_mutations, de_novo_seurat_clustering,
               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
               datasets, scATAC_cell_number_filter, annotation_dir,
-              cancer_type_or_donor_id, tss_filter=None):
+              cancer_type_or_donor_id, hundred_kb, tss_filter=None):
     mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering,
-                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type_or_donor_id)
+                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type_or_donor_id,
+                                  hundred_kb)
 
-    scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir)
+    scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
-    chr_keep = pd.read_csv("../../data/processed_data/chr_keep.csv", index_col=0)
+    if hundred_kb:
+        chr_keep = pd.read_csv("../../data/processed_data/chr_keep_100kb.csv", index_col=0)
+    else:
+        chr_keep = pd.read_csv("../../data/processed_data/chr_keep.csv", index_col=0)
+
     mutations_df = mutations_df.loc[chr_keep["chr"]]
     if not pd.isna(mutations_df).any().any():
         # for compatibility when chr ranges only include chr_keep but not others
-        mutations_df = add_na_ranges(mutations_df)
+        mutations_df = add_na_ranges(mutations_df, hundred_kb)
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
     cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
     return scATAC_df, cancer_specific_mutations
@@ -38,7 +44,7 @@ def load_data(meso, SCLC, lung_subtyped, woo_pcawg,
 
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                    histologically_subtyped_mutations, de_novo_seurat_clustering,
-                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type):
+                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type, hundred_kb):
     if meso:
         mutations_df = load_meso()
     elif SCLC:
@@ -59,6 +65,8 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
         mutations_df = load_RNA_subtyped_mutations()
     elif per_donor:
         mutations_df = load_per_donor_mutations()
+    elif hundred_kb:
+        mutations_df = load_100kb()
     else:
         mutations_df = load_agg_mutations()
     return mutations_df
@@ -136,6 +144,10 @@ def load_histologically_subtyped_mutations():
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
+def load_100kb():
+    df = pd.read_csv("../../data/processed_data/mut_count_data_100kb.csv",
+                       index_col=0)
+    return df.loc[natsorted(df.index)]
 
 def load_de_novo_seurat_clustered_cancers(cancer_type):
     print("Loading De Novo Seurat clustered cancers")
@@ -174,9 +186,12 @@ def filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_fil
     return scATAC_df
 
 #### Dataframe curation helpers ####
-def add_na_ranges(mutations_df):
-    full_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
-    mutations_df = pd.merge(full_ranges, mutations_df, left_on = "x", right_index=True,
+def add_na_ranges(mutations_df, hundred_kb):
+    if hundred_kb:
+        full_ranges = pd.read_csv("../../data/processed_data/chr_ranges_100kb.csv")
+    else:
+        full_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
+    mutations_df = pd.merge(full_ranges, mutations_df, left_on="x", right_index=True,
                             how="outer").set_index("x")
     return mutations_df.loc[natsorted(mutations_df.index)]
 
@@ -203,7 +218,7 @@ def add_dataset_origin_to_cell_types(df, dataset):
     return df
 
 
-def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir):
+def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb):
     datasets_combined_count_overlaps = []
     for dataset in datasets:
         if tss_filter:
@@ -628,12 +643,17 @@ def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg,
     print(f"Done plotting top features for seed range {seed_range}!")
 
 #### Other ####
-def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed,
-                         fold_for_test_set):
+def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, seed=None,
+                         fold_for_test_set=None, all_seeds=False):
     scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
     if tss_filter:
         scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
-    scATAC_dir = scATAC_dir + f"_annotation_{annotation_dir}_seed_{seed}_fold_for_test_set_{fold_for_test_set + 1}"
+
+    scATAC_dir = scATAC_dir + f"_annotation_{annotation_dir}"
+    if all_seeds:
+        scATAC_dir = scATAC_dir + f"_all_seeds"
+    else:
+        scATAC_dir = scATAC_dir + f"_seed_{seed}_fold_for_test_set_{fold_for_test_set + 1}"
     return scATAC_dir
 
 
@@ -660,7 +680,6 @@ def get_storage_name(sqlite=False):
 
 def load_n_features_backwards_elim_models(n, total_num_features, cancer_type, ML_model, scATAC_dir,
                                          feature_importance_method, full_data_trained=True):
-    print(n)
     if total_num_features > 20:
         model_iteration = 20 - n + 1
     else:
@@ -687,6 +706,6 @@ def compute_error(X_val, y_val, **kwargs):
     if kwargs["i"] is not None:
         print(f"Calculating error for fold {kwargs['i'] + 1}...")
     preds = estimator.predict(X_val)
-    abs_err = np.absolute(y_val - preds)
-    percent_error = abs_err / (y_val + 1) * 100
-    return {"abs_err": abs_err, "percent_err": percent_error, "preds": preds}
+    err = y_val - preds
+    percent_error = err / (y_val + 1) * 100
+    return {"abs_err": err, "percent_err": percent_error, "preds": preds}

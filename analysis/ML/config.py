@@ -32,7 +32,6 @@ def create_parser():
     parser.add_argument("--feature_importance_method", type=str, default="permutation_importance")
     parser.add_argument("--sqlite", action="store_true", default=False)
     parser.add_argument('--test_set_perf_num_features', nargs="+", type=int)
-    parser.add_argument('--error_analysis_num_features', type=int)
     parser.add_argument('--debug_bfs', action="store_true", default=False)
 
     group = parser.add_mutually_exclusive_group()
@@ -44,6 +43,7 @@ def create_parser():
     group.add_argument("--per_donor", action="store_true", default=False)
     group.add_argument("--CPTAC", action="store_true", default=False)
     group.add_argument("--meso", action="store_true", default=False)
+    group.add_argument("--hundred_kb", action="store_true", default=False)
     group.add_argument("--combined_CPTAC_ICGC", action="store_true", default=False)
     group.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
                         default=None)
