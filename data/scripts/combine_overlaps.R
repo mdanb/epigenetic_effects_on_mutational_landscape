@@ -13,10 +13,10 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                     c("--datasets=Bingren",
-#                       "--annotation=default_annotation",
-#                       "--which_interval_ranges=10kb"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--datasets=Bingren",
+                      "--annotation=default_annotation",
+                      "--which_interval_ranges=100kb"))
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
 datasets = unlist(strsplit(args$datasets, split = ","))
@@ -102,7 +102,7 @@ save_combined_overlaps <- function(filepaths,
       count_overlaps["cell_type"] = cell_types
       chr = colnames(count_overlaps)
       chr = chr[1:length(chr)-1]
-      count_overlaps = pivot_longer(count_overlaps, cols=chr[1:length(chr)-1])
+      count_overlaps = pivot_longer(count_overlaps, cols=chr)
       combined_count_overlaps = rbind(combined_count_overlaps, count_overlaps)
       cell_counts = get_cell_counts_df(f, annotation, dataset)
       combined_count_overlaps_metadata = rbind(combined_count_overlaps_metadata,
@@ -144,7 +144,7 @@ save_combined_overlaps <- function(filepaths,
   combined_count_overlaps=data.frame(pivot_wider(combined_count_overlaps))
   rownames(combined_count_overlaps) = combined_count_overlaps[["cell_type"]]
   combined_count_overlaps = combined_count_overlaps[, 
-                                    combined_count_overlaps[!grepl("cell_type", 
+                                    colnames(combined_count_overlaps)[!grepl("cell_type", 
                                           colnames(combined_count_overlaps))]]
   if (annotation == "Tsankov_separate_fibroblasts") {
     combined_count_overlaps = combined_count_overlaps[!(rownames(combined_count_overlaps) == 
