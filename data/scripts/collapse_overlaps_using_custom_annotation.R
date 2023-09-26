@@ -251,7 +251,7 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df_metadata["cell_type"] = cell_type
     df_metadata["tissue"] = tissue
     save_collapsed_df(default_combined_count_ovs, df_metadata, dataset, 
-                      annotation)
+                      annotation, which_interval_ranges)
   }
 } else if (dataset == "Shendure") {
   if (annotation == "Shendure_remove_unknown_unsure") {
