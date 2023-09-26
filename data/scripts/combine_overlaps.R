@@ -105,6 +105,7 @@ save_combined_overlaps <- function(filepaths,
       count_overlaps = pivot_longer(count_overlaps, cols=chr)
       combined_count_overlaps = rbind(combined_count_overlaps, count_overlaps)
       cell_counts = get_cell_counts_df(f, annotation, dataset)
+      cell_counts["tissue_name"] = tissue_name
       combined_count_overlaps_metadata = rbind(combined_count_overlaps_metadata,
                                                cell_counts)
       # count_overlaps = as.data.frame(do.call(rbind, count_overlaps),
@@ -123,7 +124,7 @@ save_combined_overlaps <- function(filepaths,
                                       group_by(cell_type, name) %>%
                                       summarise_all(sum)
         combined_count_overlaps_metadata = combined_count_overlaps_metadata %>% 
-                                              group_by(cell_type) %>%
+                                              group_by(tissue_name, cell_type) %>%
                                               summarise_all(sum)
       }
       prev_tissue = tissue_name
