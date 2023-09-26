@@ -74,7 +74,7 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
 
 def load_scATAC(scATAC_path, hundred_kb):
     if hundred_kb:
-        scATAC_path = f"100kb_{scATAC_path}"
+        scATAC_path = f"{os.path.dirname(scATAC_path)}/100kb_{os.path.basename(scATAC_path)}"
     scATAC_df = pyreadr.read_r(scATAC_path)
     scATAC_df = scATAC_df[None]
     scATAC_df = scATAC_df.T
@@ -83,7 +83,7 @@ def load_scATAC(scATAC_path, hundred_kb):
 
 def load_scATAC_metadata(metadata_path, hundred_kb):
     if hundred_kb:
-        metadata_path = f"100kb_{metadata_path}"
+        metadata_path = f"{os.path.dirname(metadata_path)}/100kb_{os.path.basename(metadata_path)}"
     metadata = pyreadr.read_r(metadata_path)
     metadata = metadata[None]
     return metadata
