@@ -11,7 +11,8 @@ def run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
                                          feature_importance_method,
                                          sqlite,
                                          debug_bfs,
-                                         fold_for_test_set):
+                                         fold_for_test_set,
+                                         hundred_kb):
     os.makedirs(f"{backwards_elim_dir}", exist_ok=True)
 
     if tissues_to_consider == "all":
@@ -32,7 +33,8 @@ def run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
                        feature_importance_method,
                        sqlite,
                        debug_bfs,
-                       fold_for_test_set)
+                       fold_for_test_set,
+                       hundred_kb)
 
     # Tissue Specific
     else:
@@ -109,7 +111,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          ML_model, seed, n_optuna_trials_prebackward_selection,
                                                          n_optuna_trials_backward_selection, backwards_elim_dir,
                                                          feature_importance_method, sqlite, debug_bfs,
-                                                         fold_for_test_set)
+                                                         fold_for_test_set, hundred_kb)
                 print(f"Done modeling {cancer_type}!")
                 if save_test_set_perf:
                     print("Saving test set performances for backward elimination...")

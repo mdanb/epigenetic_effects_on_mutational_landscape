@@ -332,7 +332,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 ML_model, scATAC_dir, cancer_type_or_donor_id, seed,
                                 n_optuna_trials_backward_selection, feature_importance_method, sqlite,
                                 best_model_fulldatatrained, best_model_perfoldtrained,
-                                starting_n):
+                                starting_n, hundred_kb):
     figure_path = os.path.join("../../figures/models",
                                ML_model,
                                cancer_type_or_donor_id,
@@ -387,6 +387,10 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
         per_fold_model_savefile = f"per_fold_model_iteration_{idx}"
 
         study_name = f"{cancer_type_or_donor_id}_iter_{idx}_{scATAC_dir}"
+
+        if hundred_kb:
+            study_name = f"{study_name}_interval_ranges_100kb"
+
         if feature_importance_method != "default_importance":
             study_name = study_name + f"_feature_importance_{feature_importance_method}"
             top_features_filepath = top_features_filepath + f"_by_{feature_importance_method}"
@@ -513,7 +517,8 @@ def get_and_save_test_set_perf(X_test, y_test, model, filepath):
 def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filepath,
                    ML_model, seed, scATAC_dir, cancer_type_or_donor_id,
                    n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
-                   feature_importance_method, sqlite, debug_bfs, fold_for_test_set):
+                   feature_importance_method, sqlite, debug_bfs, fold_for_test_set,
+                   hundred_kb):
     X_train, X_test, y_train, y_test = get_train_test_split(scATAC_df, mutations, 10, fold_for_test_set)
     if seed == 1:
         X_train.to_csv(f"{os.path.dirname(backwards_elim_dir)}/X_train.csv")
@@ -529,6 +534,8 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
     if scATAC_df.shape[1] > 20:
         print("Getting a starter model!")
         study_name = f"{cancer_type_or_donor_id}_{scATAC_dir}"
+        if hundred_kb:
+            study_name = f"{study_name}_interval_ranges_100kb"
         model_optimizer = ModelOptimizer(backwards_elim_dir + "/" + "model_optimizer_starter.pkl")
         study = model_optimizer.optimize_optuna_study(study_name=study_name, ML_model=ML_model, X_train=X_train,
                                                       y_train=y_train, seed=seed,
@@ -572,7 +579,8 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
                                     sqlite,
                                     best_model_fulldatatrained=best_model_fulldatatrained,
                                     best_model_perfoldtrained=best_model_perfoldtrained,
-                                    starting_n=n)
+                                    starting_n=n,
+                                    hundred_kb=hundred_kb)
     else:
         print("Backward feature selection is already done!")
 
