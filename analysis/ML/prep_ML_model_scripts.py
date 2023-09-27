@@ -30,8 +30,10 @@ parser.add_argument("--cleanup", action="store_true", default=False)
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
 group.add_argument("--SCLC", action="store_true", default=False)
+group.add_argument("--SCLC", action="store_true", default=False)
 group.add_argument("--de_novo_seurat_clustering", action="store_true", default=False)
 group.add_argument("--histologically_subtyped_mutations", action="store_true", default=False)
+group.add_argument("--hundred_kb", action="store_true", default=False)
 
 group_run_loc = parser.add_mutually_exclusive_group()
 group_run_loc.add_argument("--submit_jobs", action="store_true", default=False)
@@ -55,6 +57,7 @@ meso = config.meso
 SCLC = config.SCLC
 de_novo_seurat_clustering = config.de_novo_seurat_clustering
 histologically_subtyped_mutations = config.histologically_subtyped_mutations
+hundred_kb = config.hundred_kb
 cores = config.cores
 time = config.time
 top_features_to_plot = config.top_features_to_plot
@@ -103,6 +106,8 @@ for fold in fold_for_test_set_range:
         elif histologically_subtyped_mutations:
             # script_filename = script_filename + "_" + "histologically_subtyped_mutations"
             command_args = command_args + " " + "--histologically_subtyped_mutations"
+        elif hundred_kb:
+            command_args = command_args + " " + "--hundred_kb"
 
         script_filename = f"{script_filename}.sh"
 
