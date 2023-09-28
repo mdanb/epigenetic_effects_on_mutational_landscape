@@ -92,7 +92,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
 
                 else:
                     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
-                                                      tss_fragment_filter, annotation_dir, seed, fold_for_test_set)
+                                                      tss_fragment_filter, hundred_kb,
+                                                      annotation_dir, seed, fold_for_test_set)
                     backwards_elim_dir=f"models/{ML_model}/" \
                     f"{cancer_type}/{scATAC_dir}/backwards_elimination_results"
 
