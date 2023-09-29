@@ -136,8 +136,8 @@ if count_bin_sums:
             scATAC_sources = construct_scATAC_sources(datasets)
             scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
                                                hundred_kb=hundred_kb, seed=1, fold_for_test_set=i)
-            top_feature = open(f"models/{ML_model}/{cancer_type}/{scATAC_dir}/backwards_elimination_results/"
-                               f"top_features_iteration_19_by_permutation_importance.txt", "r").readline().strip()[3:]
+            top_feature = open(osp.join(ML_model, cancer_type,scATAC_dir, 'backwards_elimination_results',
+                               'top_features_iteration_19_by_permutation_importance.txt'), "r").readline().strip()[3:]
 
             X_test = pd.read_csv(f"models/{ML_model}/{cancer_type}/{scATAC_dir}/X_test.csv", index_col=0)
             top_feature_x_test = X_test.loc[:, top_feature]
