@@ -65,7 +65,6 @@ if bins_error_analysis:
                                                   hundred_kb=hundred_kb,
                                                   seed=seed, fold_for_test_set=fold_for_test_set,
                                                   all_seeds=False)
-
                 model = load_n_features_backwards_elim_models(error_analysis_num_features, scATAC_df.shape[1],
                                                               cancer_type, ML_model, scATAC_dir, feature_importance_method,
                                                               full_data_trained=True)
