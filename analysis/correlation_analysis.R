@@ -2,9 +2,10 @@ library(ComplexHeatmap)
 library(RColorBrewer)
 library(tidyverse)
 library(circlize)
-library(edgeR)
+library(edgeR) # for kidney analysis
 library(preprocessCore)
 library(Seurat)
+library(gtools)
 
 chr_keep = read.csv("../data/processed_data/chr_keep.csv")[["chr"]]
 chr_ranges = unlist(read.csv("../data/processed_data/chr_ranges.csv"))
@@ -67,7 +68,7 @@ plot_scatac_vs_mutation <- function(df, x_name, y_name) {
   print(p)
 }
 
-#### Lung Mutations only ####
+#### Lung, Mutations only ####
 lung = read.csv("../data/processed_data/mutations_with_subtypes/all_lung.csv")
 lung["subtype_grouped_meso"] = lung["subtype"]
 lung[lung["subtype"] == "Not.Otherwise.Specified" | lung["subtype"] == 
@@ -78,7 +79,16 @@ lung[lung["subtype"] == "Not.Otherwise.Specified" | lung["subtype"] ==
 subtype = lung[["subtype_grouped_meso"]]
 rownames(lung) = lung[["X"]]
 lung = lung[, chr_keep]
+lung["donor_id"] = rownames(lung)
 
+sclc_subtypes = read.csv("../data/processed_data/mutations_with_subtypes/SCLC.csv")
+sclc_subtypes = sclc_subtypes[c("donor_id", "Subtype")]
+sclc_subtypes[sclc_subtypes["Subtype"] == "", "Subtype"] = "SCLC_nos"
+colnames(sclc_subtypes) = c("donor_id", "SCLC_subtype")
+rownames_lung = rownames(lung)
+sclc_subtypes = (lung %>% left_join(sclc_subtypes))["SCLC_subtype"]
+sclc_subtypes[is.na(sclc_subtypes), "SCLC_subtype"] = "not_SCLC"
+lung = lung[, colnames(lung) != "donor_id"]
 subtype_colors <- c(
   "Adeno" = "red",
   "Squamous" = "green",
@@ -86,21 +96,23 @@ subtype_colors <- c(
   "meso" = "orange"
 )
 
+sclc_subtype_colors <- c(
+  "not_SCLC" = "red",
+  "SCLC-N" = "green",
+  "SCLC-A" = "blue",
+  "SCLC_nos" = "orange",
+  "SCLC-P" = "purple",
+  "SCLC-Y" = "black"
+)
+
 lung = t(lung)
 column_ha <- HeatmapAnnotation(subtype = subtype, 
+                               SCLC_subtype=sclc_subtypes[["SCLC_subtype"]],
                                counts = log10(colSums(lung)),
                                col = list(subtype = 
-                                            subtype_colors))
-# Heatmap(lung,
-#         top_annotation = column_ha,
-#         clustering_distance_columns = "pearson",
-#         clustering_method_columns = "ward.D",
-#         cluster_rows = F,
-#         show_column_names = F,
-#         show_row_names = F, 
-#         show_row_dend = F,
-#         column_dend_reorder=F)
-
+                                            subtype_colors,
+                                          SCLC_subtype = 
+                                            sclc_subtype_colors))
 cor_matrix <- cor(lung, method = "pearson")
 cor_distance <- as.dist(1 - cor_matrix)
 hc <- hclust(cor_distance, method = "ward.D")
@@ -114,6 +126,161 @@ Heatmap(cor_matrix,
         show_row_dend = F,
         col = colorRamp2(c(-1, 0, 1), c("blue", "white", "red")))
 
+# Heatmap(lung,
+#         top_annotation = column_ha,
+#         clustering_distance_columns = "pearson",
+#         clustering_method_columns = "ward.D",
+#         cluster_rows = F,
+#         show_column_names = F,
+#         show_row_names = F, 
+#         show_row_dend = F,
+#         column_dend_reorder=F)
+
+#### Colon, Mutations only ####
+colon = read.csv("../data/processed_data/mutations_with_subtypes/all_colorectal.csv")
+# lung = lung[1:10, ]
+subtype = colon[["subtype"]]
+cbio_subtype = colon[["cbio_subtype"]]
+cbio_subtype[cbio_subtype == ""] = "NA"
+cancer_type_detailed = colon[["cancer_type_detailed"]]
+rownames(colon) = colon[["donor_id"]]
+colon = colon[, chr_keep]
+
+agg_colon=colSums(colon)
+agg_colon=data.frame(agg_colon[mixedsort(names(agg_colon))])
+
+scatac_df_GL_colon = readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/default_annotation/per_cell_Greenleaf_colon_combined_count_overlaps.rds")
+scatac_df_GL_colon = scatac_df_GL_colon[, chr_keep]
+scatac_df_GL_colon = scatac_df_GL_colon[, mixedsort(chr_keep)]
+
+cors = cor(t(scatac_df_GL_colon), agg_colon)
+colnames(cors) = c("correlation")
+write.csv(cors, "../data/processed_data/colon_per_cell_correlations.csv")
+
+load("../data/processed_data/colorectal_nfrags_filter_10000_500k_metacells.Rdata")
+load("../data/processed_data/colorectal_nfrags_filter_10000_100k_metacells.Rdata")
+load("../data/processed_data/colorectal_nfrags_filter_5000_variable_k_metacells.Rdata")
+load("../data/processed_data/colorectal_nfrags_filter_10000_variable_k_n_10_knnIteration_100_metacells.Rdata")
+load("../data/processed_data/colorectal_cell_type_independent_nfrags_filter_10000_k_100_knnIteration_10000_metacells.Rdata")
+
+metacells_per_cell_type = KNN
+cell_types = names(metacells_per_cell_type)
+
+helper <- function(metacells) {
+  corrs = mclapply(metacells, function(x) {
+    cor(
+    colSums(scatac_df_GL_colon[x, ]),
+    agg_colon)}, mc.cores=8
+  )
+  return(corrs)
+}
+
+compute_cell_metacorrelation <- function(unique_cells, metacells, 
+                                         correlations_per_metacell) {
+  idxs = mclapply(unique_cells, function(x) {
+        which(unlist(lapply(metacells, function(l) {x %in% l})))
+  }, mc.cores=8)
+  return(unlist(lapply(idxs, function(idx_list) 
+    mean(correlations_per_metacell[idx_list]))))
+}
+
+metacell_correlations = lapply(lapply(metacells_per_cell_type, helper), unlist)
+saveRDS(metacell_correlations,
+    "../data/processed_data/colorectal_nfrags_10000_variable_k_n_100_metacell_correlations_per_cell_type.rds")
+metacell_correlations = readRDS("../data/processed_data/colorectal_nfrags_10000_500k_metacell_correlations_per_cell_type.rds")
+unique_cells_per_cell_type = lapply(lapply(metacells_per_cell_type, unlist),
+                                    unique)
+cell_metacorrelations = mapply(compute_cell_metacorrelation, 
+                                 unique_cells_per_cell_type,
+                                 metacells_per_cell_type,
+                                 metacell_correlations)
+
+cells_to_metacorrelation = data.frame(cell_barcode=unname(unlist(unique_cells_per_cell_type)),
+                                      cell_metacorrelation=unname(unlist(cell_metacorrelations)))
+write.csv(cells_to_metacorrelation, "../data/processed_data/colorectal_nfrags_10000_variable_k_cell_metacorrelations.csv")
+cells_to_metacorrelation = read.csv("../data/processed_data/colorectal_nfrags_10000_variable_k_cell_metacorrelations.csv",
+                                    row.names = 1)
+
+embedding = read.csv("../data/processed_data/colorectal_nfrags_filter_10000_embedding.csv")
+embedding = as_tibble(embedding)
+colnames(embedding) = c("id", "umap1", "umap2")
+colnames(cells_to_metacorrelation)[1] = "id"
+df = inner_join(embedding, cells_to_metacorrelation)
+
+df = df %>% filter(!is.na(cell_metacorrelation))
+p=ggplot(df) +
+  geom_point(aes(umap1, umap2, color=cell_metacorrelation)) +
+  scale_color_gradient(
+    low = "blue", 
+    high = "red",
+    limits = c(min(df$cell_metacorrelation, na.rm = TRUE), 
+               max(df$cell_metacorrelation, na.rm = TRUE)))
+# ggsave(filename="umap_10000_frags_variable_k_n_10_knnIteration_100.png", width = 20, height = 20)
+ggsave(filename="umap_cell_type_independent_10000_frags_k_100_knnIteration_10000.png", width = 20, height = 20)
+
+cbio_subtype_colors <- c(
+  "NA" = "red",
+  "GS" = "green",
+  "CIN" = "blue",
+  "POLE" = "orange",
+  "MSI" = "purple"
+)
+
+subtype_colors <- c(
+  "colorectal_adeno_mucinous" = "red",
+  "colorectal_adeno_nos" = "green",
+  "colorectal_nos" = "blue"
+)
+
+cancer_type_detailed_colors = c(
+  "Colon Adenocarcinoma" = "red",
+  "Mucinous Adenocarcinoma of the Colon and Rectum" = "blue",
+  "Rectal Adenocarcinoma" = "green"
+)
+
+colon = t(colon)
+
+
+column_ha <- HeatmapAnnotation(subtype = subtype, 
+                               cbio_subtype = cbio_subtype,
+                               cancer_type_detailed = cancer_type_detailed,
+                               counts = log10(colSums(colon)),
+                               col = list(subtype = 
+                                            subtype_colors,
+                                          cbio_subtype = 
+                                            cbio_subtype_colors,
+                                          cancer_type_detailed = 
+                                            cancer_type_detailed_colors))
+
+# ,
+# annotation_legend_param = list(
+#   subtype = list(labels = names(subtype_colors), 
+#                  title = "Subtype"),
+#   cbio_subtype = list(labels = names(cbio_subtype_colors), 
+#                       title = "cBio Subtype"),
+#   cancer_type_detailed = list(labels = names(cancer_type_detailed_colors), 
+#                               title = "Cancer Type Detailed")
+# ))
+
+
+cor_matrix <- cor(colon, method = "pearson")
+cor_distance <- as.dist(1 - cor_matrix)
+hc <- hclust(cor_distance, method = "ward.D")
+
+# lgd2 = Legend(col_fun = col_fun, title = "legend2", at = c(0, 0.25, 0.5, 0.75, 1))
+# lgd3 = Legend(labels = month.name[1:3], legend_gp = gpar(fill = 7:9), title = "legend3")
+
+Heatmap(cor_matrix, 
+        top_annotation = column_ha,
+        name = "correlation",
+        cluster_columns = hc,
+        cluster_rows = hc,
+        show_column_names = F,
+        show_row_names = F,
+        show_row_dend = F,
+        col = colorRamp2(c(-1, 0, 1), c("blue", "white", "red")))
+
+        
 
 #################
 #################
@@ -420,6 +587,60 @@ pancreas_adenoca = read.csv("../data/mutation_data/Panc-AdenoCA.txt",
                             sep="\t")
 pancreas_adenoca = pancreas_adenoca[chr_ranges %in% chr_keep, ]
 pancreas_adenoca = pancreas_adenoca[, 4:ncol(pancreas_adenoca)]
+
+pancreas_endocrine = read.csv("../data/mutation_data/Panc-Endocrine.txt",
+                            sep="\t")
+pancreas_endocrine = pancreas_endocrine[chr_ranges %in% chr_keep, ]
+pancreas_endocrine = pancreas_endocrine[, 4:ncol(pancreas_endocrine)]
+
+PACA_AU_donor_to_subtype = read.csv("../data/mutation_data/icgc/PACA_AU_donor_to_subtype.csv")
+PACA_CA_donor_to_subtype = read.csv("../data/mutation_data/icgc/PACA_CA_donor_to_subtype.csv")
+adeno_donor_subtypes = rbind(PACA_AU_donor_to_subtype, PACA_CA_donor_to_subtype)
+df = data.frame(adeno_donor_subtypes, row.names = adeno_donor_subtypes[["donor_id"]])
+adeno_donor_to_subtype = df[colnames(pancreas_adenoca), "X"]
+adeno_donor_to_subtype[adeno_donor_to_subtype == ""] = "NA"
+adeno_donor_to_subtype = c(adeno_donor_to_subtype, rep("not_adeno",
+                                                       ncol(pancreas_endocrine)))
+subtype = c(rep("Adeno", ncol(pancreas_adenoca)),
+            rep("Endocrine", ncol(pancreas_endocrine)))
+
+subtype_colors <- c(
+  "Endocrine" = "red",
+  "Adeno" = "blue"
+)
+
+adeno_subtype_colors <- c(
+  "Pancreatic ductal carcinoma" = "red",
+  "Invasive carcinoma arising in IPMN" = "green",
+  "Carcinoma, adenosquamous" = "blue",
+  "Adenocarcinoma, mucinous" = "black",
+  "Acinar cell carcinoma" = "purple",
+  "Adenocarcinoma" = "pink",
+  "NA" = "orange",
+  "not_adeno" = "cyan"
+)
+pancreas = cbind(pancreas_adenoca, pancreas_endocrine)
+column_ha <- HeatmapAnnotation(subtype = subtype, 
+                               adeno_subtype = adeno_donor_to_subtype,
+                               counts = log10(colSums(pancreas)),
+                               col = list(subtype = 
+                                            subtype_colors,
+                                          adeno_subtype = adeno_subtype_colors))
+cor_matrix <- cor(pancreas, method = "pearson")
+cor_distance <- as.dist(1 - cor_matrix)
+hc <- hclust(cor_distance, method = "ward.D")
+Heatmap(cor_matrix, 
+        top_annotation = column_ha,
+        name = "correlation",
+        cluster_columns = hc,
+        cluster_rows = hc,
+        show_column_names = F,
+        show_row_names = F,
+        show_row_dend = F,
+        col = colorRamp2(c(-1, 0, 1), c("blue", "white", "red")))
+
+
+
 per_patient_density = log(colSums(pancreas_adenoca))
 # lowest = per_patient_density == min(per_patient_density)
 # pancreas_adenoca = pancreas_adenoca[, !lowest]
@@ -665,26 +886,70 @@ scatac_df_gl = t(readRDS("../data/processed_data/count_overlap_data/combined_cou
 colnames(scatac_df_gl) = paste(colnames(scatac_df_gl), "GL_Br")
 scatac_df_gl = scatac_df_gl[rownames(scatac_df_gl) %in% chr_keep, ]
 
-gbm = read.csv("../data/mutation_data/CNS-GBM.txt",
-                            sep="\t")
+gbm = read.csv("../data/mutation_data/CNS-GBM.txt", sep="\t")
 gbm = gbm[, 4:ncol(gbm)]
 gbm = gbm[chr_ranges %in% chr_keep, ]
 
-astrocytoma = read.csv("../data/mutation_data/CNS-PiloAstro.txt",
-               sep="\t")
+astrocytoma = read.csv("../data/mutation_data/CNS-PiloAstro.txt", sep="\t")
 astrocytoma = astrocytoma[, 4:ncol(astrocytoma)]
 astrocytoma = astrocytoma[chr_ranges %in% chr_keep, ]
 
-oligo = read.csv("../data/mutation_data/CNS-Oligo.txt",
-                       sep="\t")
+oligo = read.csv("../data/mutation_data/CNS-Oligo.txt", sep="\t")
 oligo = oligo[, 4:ncol(oligo)]
 oligo = oligo[chr_ranges %in% chr_keep, ]
 
-brain_mutations = cbind(gbm, astrocytoma, oligo)
+medullo = read.csv("../data/mutation_data/CNS-Medullo.txt", sep="\t")
+medullo = medullo[, 4:ncol(medullo)]
+medullo = medullo[chr_ranges %in% chr_keep, ]
 
-donor_to_subtype = c(rep("GBM", ncol(gbm)),
+brain_mutations = cbind(gbm, astrocytoma, oligo, medullo)
+
+subtype = c(rep("GBM", ncol(gbm)),
                      rep("Astrocytoma", ncol(astrocytoma)),
-                     rep("Oligo", ncol(oligo)))
+                     rep("Oligo", ncol(oligo)),
+                     rep("Medullo", ncol(medullo)))
+
+subtype_colors <- c(
+  "GBM" = "red",
+  "Astrocytoma" = "green",
+  "Oligo" = "blue",
+  "Medullo" = "purple"
+)
+
+column_ha <- HeatmapAnnotation(subtype = subtype, 
+                               counts = log10(colSums(brain_mutations)),
+                               col = list(subtype = 
+                                            subtype_colors))
+cor_matrix <- cor(brain_mutations, method = "pearson")
+cor_distance <- as.dist(1 - cor_matrix)
+hc <- hclust(cor_distance, method = "ward.D")
+Heatmap(cor_matrix, 
+        top_annotation = column_ha,
+        name = "correlation",
+        cluster_columns = hc,
+        cluster_rows = hc,
+        show_column_names = F,
+        show_row_names = F,
+        show_row_dend = F,
+        col = colorRamp2(c(-1, 0, 1), c("blue", "white", "red")))
+
+
+column_ha <- HeatmapAnnotation(counts = log10(colSums(medullo)))
+cor_matrix <- cor(medullo, method = "pearson")
+cor_distance <- as.dist(1 - cor_matrix)
+hc <- hclust(cor_distance, method = "ward.D")
+Heatmap(cor_matrix, 
+        top_annotation = column_ha,
+        name = "correlation",
+        cluster_columns = hc,
+        cluster_rows = hc,
+        show_column_names = F,
+        show_row_names = F,
+        show_row_dend = F,
+        col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "white", "red")))
+
+
+
 dataset = "Greenleaf_brain"
 annotation = "Greenleaf_brain_same+as+paper+but+Early+RG+Late+RG-RG_Unk-rm"
 brain_metadata_gl = get_filtered_cells(cell_num_filter = 1, 
@@ -771,11 +1036,46 @@ Heatmap(scale(corrs_pearson),
 #                                row.names = 1)
 # cancer_samples_atac = cancer_samples_atac[chr_keep, ]
 
+kidney = read.csv("../data/processed_data/mutations_with_subtypes/kidney_all.csv")
+
+subtype = kidney[["subtype"]]
+
+subtype_colors <- c(
+  "Adenocarcinoma, clear cell type" = "red",
+  "Adenocarcinoma, papillary type" = "green",
+  "Adenocarcinoma, chromophobe type" = "blue"
+)
+
+kidney = kidney[, 3:ncol(kidney)]
+kidney = t(kidney)
+column_ha <- HeatmapAnnotation(subtype = subtype, 
+                               counts = log10(colSums(kidney)),
+                               col = list(subtype = 
+                                            subtype_colors))
+cor_matrix <- cor(kidney, method = "pearson")
+cor_distance <- as.dist(1 - cor_matrix)
+hc <- hclust(cor_distance, method = "average")
+Heatmap(cor_matrix, 
+        top_annotation = column_ha,
+        name = "correlation",
+        cluster_columns = hc,
+        cluster_rows = hc,
+        show_column_names = F,
+        show_row_names = F,
+        show_row_dend = F,
+        col = colorRamp2(c(-1, 0, 1), c("blue", "white", "red")))
+
 if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
   cancer_samples_atac = readRDS("../data/normalized_atac_pan_peak_set.rds")
   features=rownames(cancer_samples_atac)
   cancer_samples_atac = cancer_samples_atac[, grepl("KIRP", colnames(cancer_samples_atac))]
-  seurat_data = CreateSeuratObject(counts = cancer_samples_atac)
+  sample_names = unique(substr(colnames(cancer_samples_atac), 1, 41))
+  cancer_samples_atac <- sapply(sample_names, function(i) {
+    rowMeans(cancer_samples_atac[,
+            grepl(i, colnames(cancer_samples_atac))])
+  })
+  cancer_samples_atac = as.data.frame(cancer_samples_atac)
+  seurat_data = CreateSeuratObject(cancer_samples_atac)
   seurat_data = FindVariableFeatures(seurat_data, nfeatures = 50000,
                                      selection.method="vst")
   var_features <- VariableFeatures(seurat_data)
@@ -787,7 +1087,7 @@ if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
 }
 
 if (!file.exists("../data/processed_data/cancer_atac_50k_var_features.rds")) {
-  scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Yang_kidney_remove_cell_number_distinctions/interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"))
+  scatac_df_yang = t(readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/default_annotation/interval_ranges_yang_Yang_kidney_combined_count_overlaps.rds"))
   cell_types = colnames(scatac_df_yang)
   scatac_df_yang = cpm(scatac_df_yang, log=T, prior.count=5)
   scatac_df_yang = normalize.quantiles(scatac_df_yang)
@@ -817,4 +1117,38 @@ Heatmap(corrs_pearson,
         cell_fun = create_cell_fun(corrs = corrs_pearson, fs=3))
 dev.off()
 
+
+#### Skin ####
+skin = read.csv("../data/processed_data/mutations_with_subtypes/all_melanoma.csv",
+                row.names = 1)
+
+subtype = skin[["subtype"]]
+subtype[subtype == ""] = "NA"
+subtype_colors <- c(
+  "NA" = "red",
+  "Superficial Spreading" = "green",
+  "Acral Lentiginuous" = "blue",
+  "Desmoplastic" = "purple",
+  "Nodular" = "black",
+  "Mucosal Lentiginous" = "orange"
+)
+
+skin = skin[, grepl("chr[0-9]", colnames(skin))]
+skin = t(skin)
+column_ha <- HeatmapAnnotation(subtype = subtype, 
+                               counts = log10(colSums(skin)),
+                               col = list(subtype = 
+                                            subtype_colors))
+cor_matrix <- cor(skin, method = "pearson")
+cor_distance <- as.dist(1 - cor_matrix)
+hc <- hclust(cor_distance, method = "ward.D")
+Heatmap(cor_matrix, 
+        top_annotation = column_ha,
+        name = "correlation",
+        cluster_columns = hc,
+        cluster_rows = hc,
+        show_column_names = F,
+        show_row_names = F,
+        show_row_dend = F,
+        col = colorRamp2(c(-1, 0, 1), c("blue", "white", "red")))
 
