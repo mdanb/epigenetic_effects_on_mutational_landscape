@@ -13,10 +13,10 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-args = parse_args(OptionParser(option_list=option_list), args =
-                    c("--datasets=Bingren",
-                      "--annotation=default_annotation",
-                      "--which_interval_ranges=100kb"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--datasets=Bingren",
+#                       "--annotation=default_annotation",
+#                       "--which_interval_ranges=100kb"))
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
 datasets = unlist(strsplit(args$datasets, split = ","))
@@ -159,6 +159,8 @@ save_combined_overlaps <- function(filepaths,
     metadata_filepath = paste("..", "processed_data", "count_overlap_data", 
                               "combined_count_overlaps", annotation, 
                               metadata_filename, sep="/")
+    colnames(combined_count_overlaps_metadata) = c("cell_type", "num_cells",
+                                                   "tissue")
     saveRDS(combined_count_overlaps_metadata, metadata_filepath)
   }
 }
