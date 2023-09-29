@@ -73,6 +73,9 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
     # cancer_types_arg = ",".join(cancer_types)
     # datasets_arg = ",".join(datasets)
     scATAC_sources = construct_scATAC_sources(datasets)
+    scATAC_df = construct_scATAC_df(tss_fragment_filter, datasets, scATAC_cell_number_filter, annotation_dir,
+                                    hundred_kb)
+    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
 
     for seed in seed_range:
         print(f"Running model for seed {seed}")
@@ -100,12 +103,20 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
 
                     # Note that the loading process arranges the bins so that it's in the correct order of the genome
                     # ensuring that splits truly split based on contiguous genomic regions
-                    scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
-                                                                  histologically_subtyped_mutations,
-                                                                  de_novo_seurat_clustering,
-                                                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
-                                                                  datasets, scATAC_cell_number_filter,
-                                                                  annotation_dir, cancer_type, hundred_kb)
+                    mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
+                                                  histologically_subtyped_mutations, de_novo_seurat_clustering,
+                                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type,
+                                                  hundred_kb)
+
+                    scATAC_df, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scATAC_df, mutations_df,
+                                                                                                cancer_type,
+                                                                                                hundred_kb)
+                    # scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
+                    #                                                   histologically_subtyped_mutations,
+                    #                                                   de_novo_seurat_clustering,
+                    #                                                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+                    #                                                   datasets, scATAC_cell_number_filter,
+                    #                                                   annotation_dir, cancer_type, hundred_kb)
 
                     run_unclustered_data_analysis_helper(scATAC_df, cancer_specific_mutations,
                                                          cancer_type, scATAC_dir,

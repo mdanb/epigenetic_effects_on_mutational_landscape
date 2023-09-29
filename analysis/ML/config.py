@@ -18,7 +18,7 @@ def create_parser():
     parser.add_argument('--annotation_dir', type=str,
                         help='name of annotation directory', default="default_annotation")
     parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
-                        help='tss fragment filters to consider', default="")
+                        help='tss fragment filters to consider', default=None)
     parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
     parser.add_argument("--ML_model", type=str, default="XGB")
     parser.add_argument('--test_backward_selection_iters', type=int, nargs="+", default=None)

@@ -16,18 +16,14 @@ import re
 
 
 ### Load Data helpers ###
-def load_data(meso, SCLC, lung_subtyped, woo_pcawg,
-              histologically_subtyped_mutations, de_novo_seurat_clustering,
-              CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
-              datasets, scATAC_cell_number_filter, annotation_dir,
-              cancer_type_or_donor_id, hundred_kb, tss_filter=None):
-    mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
-                                  histologically_subtyped_mutations, de_novo_seurat_clustering,
-                                  CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type_or_donor_id,
-                                  hundred_kb)
-
-    scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb)
-    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
+def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or_donor_id, hundred_kb):
+    # mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
+    #                               histologically_subtyped_mutations, de_novo_seurat_clustering,
+    #                               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type_or_donor_id,
+    #                               hundred_kb)
+    #
+    # scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb)
+    # scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
     if hundred_kb:
         chr_keep = pd.read_csv("../../data/processed_data/chr_keep_100kb.csv", index_col=0)
     else:
@@ -70,24 +66,6 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
     else:
         mutations_df = load_agg_mutations()
     return mutations_df
-
-
-def load_scATAC(scATAC_path, hundred_kb):
-    if hundred_kb:
-        scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_100kb_{os.path.basename(scATAC_path)}"
-    scATAC_df = pyreadr.read_r(scATAC_path)
-    scATAC_df = scATAC_df[None]
-    scATAC_df = scATAC_df.T
-    return scATAC_df
-
-
-def load_scATAC_metadata(metadata_path, hundred_kb):
-    if hundred_kb:
-        metadata_path = f"{os.path.dirname(metadata_path)}/interval_ranges_100kb_{os.path.basename(metadata_path)}"
-    metadata = pyreadr.read_r(metadata_path)
-    metadata = metadata[None]
-    return metadata
-
 
 def load_per_donor_mutations(cancer_type):
     df = pd.read_csv(f"../../data/processed_data/per_patient_mutations/{cancer_type}_per_donor.csv",
@@ -223,6 +201,21 @@ def add_dataset_origin_to_cell_types(df, dataset):
 
 
 def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb):
+    def load_scATAC(scATAC_path, hundred_kb):
+        if hundred_kb:
+            scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_100kb_{os.path.basename(scATAC_path)}"
+        scATAC_df = pyreadr.read_r(scATAC_path)
+        scATAC_df = scATAC_df[None]
+        scATAC_df = scATAC_df.T
+        return scATAC_df
+
+    def load_scATAC_metadata(metadata_path, hundred_kb):
+        if hundred_kb:
+            metadata_path = f"{os.path.dirname(metadata_path)}/interval_ranges_100kb_{os.path.basename(metadata_path)}"
+        metadata = pyreadr.read_r(metadata_path)
+        metadata = metadata[None]
+        return metadata
+
     datasets_combined_count_overlaps = []
     for dataset in datasets:
         if tss_filter:
