@@ -45,13 +45,25 @@ count_bin_sums = config.count_bin_sums
 
 if bins_error_analysis:
 #     for seed in seed_range:
+    scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir,
+                                    hundred_kb)
+    scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
+
     for cancer_type in cancer_types:
-        scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
-                                                          histologically_subtyped_mutations,
-                                                          de_novo_seurat_clustering,
-                                                          CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
-                                                          datasets, scATAC_cell_number_filter,
-                                                          annotation_dir, cancer_type, hundred_kb)
+        mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
+                                      histologically_subtyped_mutations, de_novo_seurat_clustering,
+                                      CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type,
+                                      hundred_kb)
+        scATAC_df, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scATAC_df, mutations_df,
+                                                                                    cancer_type,
+                                                                                    hundred_kb)
+
+        # scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
+        #                                                   histologically_subtyped_mutations,
+        #                                                   de_novo_seurat_clustering,
+        #                                                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor,
+        #                                                   datasets, scATAC_cell_number_filter,
+        #                                                   annotation_dir, cancer_type, hundred_kb)
         scATAC_sources = construct_scATAC_sources(datasets)
         multiseed_errors = []
         multiseed_percent_errors = []
