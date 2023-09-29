@@ -31,6 +31,6 @@ dependencies:
     - pyreadr==0.4.9
     - natsort==8.4.0
     - psycopg2==2.9.7
-    - statsmodel==0.13.5
+    - statsmodels==0.13.5
   # bash
   - entrez-direct=16.2
