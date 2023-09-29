@@ -138,7 +138,6 @@ if count_bin_sums:
                                                hundred_kb=hundred_kb, seed=1, fold_for_test_set=i)
             top_feature = open(osp.join(ML_model, cancer_type,scATAC_dir, 'backwards_elimination_results',
                                'top_features_iteration_19_by_permutation_importance.txt'), "r").readline().strip()[3:]
-
             X_test = pd.read_csv(f"models/{ML_model}/{cancer_type}/{scATAC_dir}/X_test.csv", index_col=0)
             top_feature_x_test = X_test.loc[:, top_feature]
             top_feat_total_x_test_scatac_counts = sum(top_feature_x_test)
