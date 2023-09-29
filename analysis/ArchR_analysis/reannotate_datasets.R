@@ -5,8 +5,9 @@ library(stringr)
 library(dplyr)
 library(ComplexHeatmap)
 library(parallel)
-
+source ('/ahg/regevdata/projects/ICA_Lung/Bruno/scripts/cooltools/hubs_tools/knnGen.R')
 source("../../utils.R")
+
 option_list <- list( 
   make_option("--cores", type="integer"),
   make_option("--dataset", type="character", default="all"),
@@ -33,7 +34,10 @@ option_list <- list(
   make_option("--filter_doublets", action="store_true", default=FALSE),
   make_option("--save_clusters", action="store_true", default=FALSE),
   make_option("--reannotate", action="store_true", default=FALSE),
-  make_option("--de_novo_marker_discovery", action="store_true", default=FALSE)
+  make_option("--de_novo_marker_discovery", action="store_true", default=FALSE),
+  make_option("--plot_correlation_with_cancer", action="store_true", default=FALSE),
+  make_option("--cancer_for_correlation_plot", type="character"),
+  make_option("--harmonize", action="store_true", default=FALSE)
 )
 
 # args = parse_args(OptionParser(option_list=option_list), args=
@@ -159,7 +163,6 @@ args = parse_args(OptionParser(option_list=option_list), args=
                       "--min_cells_per_cell_type=1",
                       "--de_novo_marker_discovery",
                       "--cluster_res=0.6",
-                      "--filter_per_cell_type",
                       "--filter_doublets")
 )
 
@@ -189,7 +192,7 @@ args = parse_args(OptionParser(option_list=option_list), args=
                       "--sep_for_metadata=,",
                       "--cell_type_col_in_metadata=general_cell_type",
                       "--tissue=all",
-                      "--nfrags_filter=1",
+                      "--nfrags_filter=10000",
                       "--tss_filter=0",
                       "--cell_types=epithelial",
                       "--min_cells_per_cell_type=1",
@@ -199,7 +202,9 @@ args = parse_args(OptionParser(option_list=option_list), args=
                       "--plus_to_add_to_metadata=GrossPathology,CellType",
                       "--plus_filters=Normal|Polyp|Unaffected",
                       "--color_embedding_by=GrossPathology",
-                      "--marker_genes=CLDN2,CD44,AXIN2,RNF43,TGFBI,EPHB2,TEAD2,CDX2,LGR5,OLFM4,ASCL2"
+                      "--marker_genes=CLDN2,CD44,AXIN2,RNF43,TGFBI,EPHB2,TEAD2,CDX2,LGR5,OLFM4,ASCL2",
+                      "--cancer_for_correlation_plot=colorectal",
+                      "--harmonize"
                     ))
 
 # args = parse_args(OptionParser(option_list=option_list), args=
@@ -284,8 +289,8 @@ add_cell_types_plus_to_cell_col_data <- function(cell_col_data, metadata,
     rownames_archr = unlist(rownames_archr)
   } else if (dataset == "Rawlins_fetal_lung") {
       WSSS_F_idx = grep("WSSS_F", rownames(cell_col_data))
-      WSSS_F_names = lapply(strsplit(rownames(cell_col_data)[WSSS_F_idx], split="_"),
-                                      "[", 4:6)
+      WSSS_F_names = lapply(strsplit(rownames(cell_col_data)[WSSS_F_idx], 
+                                     split="_"), "[", 4:6)
       WSSS_F_names = unlist(lapply(WSSS_F_names, paste, collapse="_"))
       other = strsplit(rownames(cell_col_data)[-WSSS_F_idx], split="_")
       length_other = lapply(other, length)
@@ -417,7 +422,7 @@ filter_proj_and_add_metadata <- function(proj, nfrags_filter, tss_filter,
                      TSSEnrichment < quantile(TSSEnrichment, tss_percentile))
   } else {
     temp2 = cell_col_data %>% 
-              mutate(throw_away = nFrags < tss_filter)
+              mutate(throw_away = TSSEnrichment < tss_filter)
   }
   
   temp_tss_filter = temp2[c("throw_away", "cell_type")]
@@ -436,7 +441,7 @@ filter_proj_and_add_metadata <- function(proj, nfrags_filter, tss_filter,
   return(proj)
 }
 
-reduce_dims <- function(proj, force=F) {
+reduce_dims <- function(proj, harmonize, force=F) {
   print("Running iterative LSI")
   proj <- addIterativeLSI(
     ArchRProj = proj,
@@ -463,6 +468,20 @@ reduce_dims <- function(proj, force=F) {
                   metric = "cosine",
                   force=force)
   
+  if (harmonize) {
+    proj <- addHarmony(
+      ArchRProj = proj,
+      reducedDims = "IterativeLSI",
+      name = "Harmony",
+      groupBy = "Sample"
+    )
+    
+    proj <- addUMAP(ArchRProj = proj, 
+                    reducedDims = "Harmony", 
+                    name = "UMAPHarmony", nNeighbors = 30, minDist = 0.5, 
+                    metric = "cosine",
+                    force=force)
+  }
   proj <- saveArchRProject(ArchRProj = proj,
                            outputDirectory = proj_dir,
                            load = TRUE)
@@ -471,6 +490,7 @@ reduce_dims <- function(proj, force=F) {
 
 print("Collecting cmd line args")
 args = parse_args(OptionParser(option_list=option_list))
+plot_correlation_with_cancer = args$plot_correlation_with_cancer
 cores = args$cores
 dataset = args$dataset
 cluster = args$cluster
@@ -497,6 +517,8 @@ reannotate = args$reannotate
 color_embedding_by = args$color_embedding_by
 plus_to_add_to_metadata = args$plus_to_add_to_metadata
 plus_filters = args$plus_filters
+cancer_for_correlation_plot = args$cancer_for_correlation_plot
+harmonize = args$harmonize
 
 if (!is.null(args$plus_to_add_to_metadata)) {
   plus_to_add_to_metadata = unlist(strsplit(args$plus_to_add_to_metadata, 
@@ -542,6 +564,7 @@ if (!is.null(nfrags_percentile)) {
 if (filter_per_cell_type) {
   setting = paste0(setting, "_", "filter_per_cell_type")
 }
+
 
 idx = 1
 for (filter in plus_filters) {
@@ -602,8 +625,158 @@ if (dir.exists(proj_dir)) {
                            outputDirectory = proj_dir,
                            load = TRUE)
   print("Done saving new project")
-  proj = reduce_dims(proj, force=T)
+  proj = reduce_dims(proj, harmonize, force=T)
 }
+
+if (get_metacells) {
+  ccd = getCellColData(proj)
+  
+  ccd["dummy"] = 1
+  metaGroupName='dummy'
+  # metaGroupName='CellType'
+  metaGroup = as.character(ccd[, metaGroupName])
+  barcodes = as.character(proj$cellNames)
+  metaGroup_df = data.frame(barcode = barcodes, metaGroup = metaGroup)
+  k = 100
+  # 
+  # n = 10
+  KNN = lapply(unique(as.character(ccd[, metaGroupName])), function(x) {
+    currentBarcodes = metaGroup_df$barcode[metaGroup_df$metaGroup == x]
+    # currentBarcodeslength = length(currentBarcodes)
+    # print(paste("Cell type:", x))
+    # print(paste("Number of cells:", currentBarcodeslength))
+    # currentKnnIteration = floor(currentBarcodeslength / k)
+    # currentKnnIteration = 10
+    # if (currentKnnIteration == 1) {
+    #   currentKnnIteration = 2
+    # }
+    # k = floor(currentBarcodeslength / n)
+  
+    return(as.list(knnGen2(
+      ArchRProj = proj,
+      reducedDims = 'IterativeLSI',
+      overlapCutoff = 0.8,
+      cellsToUse = currentBarcodes,
+      knnIteration = 10000,
+      # knnIteration = currentKnnIteration
+      k = k,
+      min_knn = 2,
+      seed=10
+    )))
+  })
+
+  names(KNN) = unique(as.character(ccd[, metaGroupName]))
+                      
+  # fn = paste(cancer_for_correlation_plot,
+  #            "nfrags_filter", nfrags_filter,
+  #            "variable_k_n", n, "knnIteration", n*10,
+  #            "metacells.Rdata",
+  #            sep="_")
+  
+  fn = paste(cancer_for_correlation_plot,
+             "cell_type_independent_nfrags_filter", nfrags_filter,
+             "k", k, "knnIteration", "100000",
+             "metacells.Rdata",
+             sep="_")
+  fp = paste("../../data/processed_data", fn, sep="/")
+  save(KNN, file=fp)
+  
+  fn = paste(cancer_for_correlation_plot, "nfrags_filter", nfrags_filter, 
+             "embedding.csv", sep="_")
+  fp = paste("../../data/processed_data", fn, sep="/")
+  embedding = getEmbedding(proj, "UMAPHarmony")
+  write.csv(embedding, fp)
+}
+
+if (plot_correlation_with_cancer) {
+  id = rownames(ccd)
+  ccd = as_tibble(ccd)
+  ccd["id"] = id
+  cancer_correlations_fn = paste(cancer_for_correlation_plot,
+                                 "per_cell_correlations.csv",
+                                 sep="_")
+  cancer_metacorrelations_fn = paste(setting,
+                                     cancer_for_correlation_plot,
+                                     "cell_metacorrelations.csv",
+                                      sep="_")
+  correlations = read.csv(paste("../../data/processed_data", 
+                                cancer_correlations_fn, sep="/"))
+  metacorrelations = read.csv(paste("../../data/processed_data", 
+                                    cancer_metacorrelations_fn, sep="/"),
+                              row.names = 1)
+  colnames(correlations)[1] = "id"
+  colnames(metacorrelations)[1] = "id"
+  ccd = left_join(ccd, correlations)
+  ccd = left_join(ccd, metacorrelations)
+  ccd = DataFrame(ccd)
+  rownames(ccd) = ccd[, "id"]
+  ccd = ccd[, colnames(ccd) != "id"]
+  proj@cellColData = ccd
+  proj <- saveArchRProject(ArchRProj = proj, 
+                           outputDirectory = proj_dir,
+                           load = TRUE)
+  p <- plotEmbedding(
+    ArchRProj = proj, 
+    colorBy = "cellColData",
+    name = "correlation",
+    embedding = "UMAP",
+    quantCut = c(0.01, 0.95))
+  
+  fn = paste("correlation_with", cancer_for_correlation_plot,
+             setting, sep="_")
+  fn = paste0(fn, ".pdf")
+  print(paste("saving", fn))
+  plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
+  
+  # ecdf_func = ecdf(ccd[["cell_metacorrelation"]])
+  # min_quant = ecdf_func(max(non_zero))
+  
+  ccd[["cell_metacorrelation"]][is.na(ccd[["cell_metacorrelation"]])] = 0
+  non_zero = ccd[["cell_metacorrelation"]][ccd[["cell_metacorrelation"]] < 0]
+  min_val = min(non_zero)
+  max_val = max(non_zero)
+  
+  normalize <- function(x, min_val, max_val) {
+    1 - (x - min_val) / (max_val - min_val)
+  }
+  
+  normalized_values <- normalize(non_zero, min_val, max_val)
+  gradient_func <- colorRamp(c("blue", "red"))
+  gradient_matrix <- gradient_func(normalized_values)
+  gradient_colors <- apply(gradient_matrix, 1, function(row) 
+    rgb(row[1], row[2], row[3], max = 255))
+  
+  ccd[["custom_color"]][ccd[["cell_metacorrelation"]] < 0] = gradient_colors
+  ccd[["custom_color"]][ccd[["custom_color"]] == 0] = "grey"
+  proj@cellColData = ccd
+  
+  p <- plotEmbedding(
+    ArchRProj = proj, 
+    colorBy = "cellColData",
+    name = "custom_color",
+    embedding = "UMAP") + 
+    scale_color_manual(values = unique(ccd[["custom_color"]]))
+
+  fn = paste("metacorrelation_with", cancer_for_correlation_plot,
+             setting, sep="_")
+  fn = paste0(fn, ".pdf")
+  print(paste("saving", fn))
+  plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
+  
+  p <- plotEmbedding(
+    ArchRProj = proj, 
+    colorBy = "cellColData",
+    name = "nFrags",
+    embedding = "UMAP",
+    quantCut = c(0.01, 0.95))
+  
+  fn = paste("nfrags", cancer_for_correlation_plot,
+             setting, sep="_")
+  fn = paste0(fn, ".pdf")
+  print(paste("saving", fn))
+  plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
+}
+
 
 if (plot_doublet_scores) {
   proj <- addDoubletScores(
@@ -730,12 +903,18 @@ if (reannotate) {
 }
 
 if (plot_custom_column) {
+  embedding = "UMAP"
+  
+  if (harmonize) {
+    embedding = paste0(embedding, "Harmony")
+  }
+  
   if (reannotate) {
     p <- plotEmbedding(
       ArchRProj = proj, 
       colorBy = "cellColData", 
       name = "new_annotation", 
-      embedding = "UMAP",
+      embedding = embedding,
       quantCut = c(0.01, 0.95),
       labelMeans = F)
   } else {
@@ -743,10 +922,11 @@ if (plot_custom_column) {
       ArchRProj = proj, 
       colorBy = "cellColData", 
       name = color_embedding_by, 
-      embedding = "UMAP",
-      quantCut = c(0.01, 0.95))
+      embedding = embedding,
+      quantCut = c(0, 1))
+    #quantCut = c(0.01, 0.95))
   }
-  if (dataset == "Tsankov") {
+  if (dataset == "Tsankov" && reannotate) {
     cols <- c("#000075", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
               "#FF0000", "#42d4f4", "#f032e6", "#bfef45", "#fabed4",
               "#469990", "#dcbeff", "#9A6324", "#7F00FF", "#800000",
