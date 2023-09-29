@@ -62,7 +62,7 @@ if bins_error_analysis:
             preds = []
             for fold_for_test_set in range(0, 10):
                 scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                                  seed, fold_for_test_set)
+                                                  hundred_kb, seed, fold_for_test_set)
 
                 model = load_n_features_backwards_elim_models(error_analysis_num_features, scATAC_df.shape[1],
                                                               cancer_type, ML_model, scATAC_dir, feature_importance_method,
@@ -93,7 +93,7 @@ if bins_error_analysis:
                            "normalized_percent_error": normalized_percent_errors, "q-value":q_values,
                            "rejected":rejected})
         fp = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                  all_seeds=True)
+                                  hundred_kb=hundred_kb, all_seeds=True)
         # Good style / Cool pattern
         current_fp = osp.dirname(osp.realpath(__file__))
         fp = osp.join(current_fp, "..", "..", "figures", "models", ML_model,
@@ -132,10 +132,10 @@ if bins_error_analysis:
 # Use only seed=1 since splits are the same for all seeds
 if count_bin_sums:
     for cancer_type in cancer_types:
-        for i in range(1, 10):
+        for i in range(1, 11):
             scATAC_sources = construct_scATAC_sources(datasets)
             scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                              seed=1, fold_for_test_set=i)
+                                               hundred_kb=hundred_kb, seed=1, fold_for_test_set=i)
             top_feature = open(f"models/{ML_model}/{cancer_type}/{scATAC_dir}/backwards_elimination_results/"
                                f"top_features_iteration_19_by_permutation_importance.txt", "r").readline().strip()[3:]
 

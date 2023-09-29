@@ -6,6 +6,8 @@ library(dplyr)
 library(optparse)
 library(stringr)
 library(tibble)
+library(gridExtra)
+
 source("../../utils.R")
 source("ML_utils.R")
 
@@ -35,19 +37,24 @@ parser <- add_option(parser, c("--feature_importance_method"), type="character")
 parser <- add_option(parser, c("--skip_seeds_robustness"), default="")
 parser <- add_option(parser, c("--folds_for_test_set"), type="character")
 parser <- add_option(parser, c("--feat_imp_min_n_robustness"), type="integer")
+parser <- add_option(parser, c("--plot_fold_on_test_set_plot"), action="store_true", 
+                     default=F)
+parser <- add_option(parser, c("--hundred_kb"), action="store_true", default=F)
 
-# args = parse_args(parser, args =
-                    # c("--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-                    #   "--cancer_types=ColoRect-AdenoCA",
-                    #   "--cell_number_filter=100",
-                    #   "--top_features_to_plot=1,2,5,10",
-                    #   "--ML_model=XGB",
-                    #   "--annotation=finalized_annotation",
-                    #   "--robustness_analysis",
-                    #   "--seed_range=1-10",
-                    #   "--feature_importance_method=permutation_importance",
-                    #   "--top_features_to_plot_feat_imp=1,2,5,10",
-                    #   "--folds_for_test_set=1-10"))
+args = parse_args(parser, args =
+                      c("--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
+                        "--cancer_types=SCLC",
+                        "--cell_number_filter=100",
+                        "--top_features_to_plot=1,2,5,10",
+                        "--ML_model=XGB",
+                        "--annotation=finalized_annotation",
+                        "--robustness_analysis",
+                        "--seed_range=1-10",
+                        "--feature_importance_method=permutation_importance",
+                        "--top_features_to_plot_feat_imp=1,2,5,10",
+                        "--folds_for_test_set=1-10",
+                        "--plot_fold_on_test_set_plot",
+                        "--feat_imp_min_n_robustness=50"))
 
 args = parse_args(parser)
 
@@ -94,7 +101,8 @@ construct_bar_plots <- function(cancer_type,
                                 seed,
                                 accumulated_seeds,
                                 feature_importance_method, 
-                                fold_for_test_set) {
+                                fold_for_test_set,
+                                hundred_kb) {
   dirs = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
                                           # combined_datasets=combined_datasets,
                                           tissues_to_consider=tissues_to_consider,
@@ -103,6 +111,7 @@ construct_bar_plots <- function(cancer_type,
                                           tss_fragment_filter=tss_fragment_filter,
                                           annotation=annotation,
                                           ML_model=ML_model,
+                                          hundred_kb=hundred_kb,
                                           fold_for_test_set=fold_for_test_set,
                                           seed=seed,
                                           accumulated_seeds=accumulated_seeds)
@@ -123,7 +132,7 @@ construct_bar_plots <- function(cancer_type,
 }
 
 construct_boxplots <- function(df, x, y, color, title, savepath, savefile,
-                               n_name, facet_var, ylabel, sort_by) {
+                               n_name, facet_var, ylabel, sort_by, plot_fold=F) {
   from = as.character(unique(df[[facet_var]]))
   to = paste("top", from, "features")
   
@@ -137,12 +146,18 @@ construct_boxplots <- function(df, x, y, color, title, savepath, savefile,
     return(factor(ordered_factor, levels = levels_reversed))  
   }
   
+  if (plot_fold) {
+    outlier_shape = NA
+  } else {
+    outlier_shape = 19
+  }
   plot = ggplot(df) +
           geom_boxplot(aes(x = reorder_within(x=!!sym(x), 
                                               by=!!sym(y), 
                                               within=!!sym(facet_var), 
-                                              median), y = !!sym(y), color=!!sym(x)),
-                       lwd=1.2) +
+                                              median), y = !!sym(y), 
+                           color=!!sym(x)), fill=NA,
+                       lwd=1.2, outlier.shape = outlier_shape) +
           geom_text(aes(x = reorder_within(x=!!sym(x), 
                                            by=!!sym(y), 
                                            within=!!sym(facet_var), 
@@ -158,6 +173,25 @@ construct_boxplots <- function(df, x, y, color, title, savepath, savefile,
                                           round(max(df[[y]]), 2), by = 0.05)) + 
           theme(plot.title = element_text(hjust = 0.5),
                 axis.text.x = element_blank())
+  
+  
+  if (plot_fold) {
+    plot = plot + 
+      geom_point(aes(x = reorder_within(x=!!sym(x), 
+                                      by=!!sym(y), 
+                                      within=!!sym(facet_var), 
+                                      median), 
+                   y = !!sym(y), 
+                   fill=fold,
+                   alpha=scale(scatac_counts),
+                   size=scale(mut_counts)), pch=21, stroke=NA) +
+      scale_fill_manual(values = c("#800000", "#808000",
+                                   "#469990", "#000000",
+                                   "#e6194B", "#ffe119",
+                                   "#3cb44b", "#4363d8",
+                                   "#f032e6", "#a9a9a9",
+                                   "#ffd8b1", "#aaffc3"))
+  }
   print(plot)
   ggsave(paste(savepath, savefile, sep="/"), 
          width = 20, height = 15, plot)
@@ -238,7 +272,8 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
   df = tibble(top_feature = character(0),
               top_n = integer(0),
               test_set_perf = double(0),
-              seed = integer(0))
+              seed = integer(0),
+              fold = integer(0))
   
   top_features_to_plot = sort(top_features_to_plot, decreasing = T)
   for (seed in seed_range) {
@@ -305,14 +340,99 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
           df = df %>% add_row(top_feature = top_feature,
                               top_n = top_features_to_plot[idx],
                               test_set_perf = perf,
-                              seed = seed)
+                              seed = seed, 
+                              fold = fold)
           idx = idx + 1
         }
       }
     }
   }
+  df["fold"] = as.factor(df[["fold"]])
   return(df)
 }
+
+plot_dist <- function(X, bin_names) {
+  df <- data.frame(index = 1:nrow(X), 
+                   value = X)
+  use_names = seq(1, length(df$index), by=10)
+  use_names = append(use_names, nrow(X))
+  p = ggplot(df) +
+    geom_bar(aes(x=index, y=value),
+             stat="identity") +
+    xlab("Bin") +
+    ylab("Counts") +
+    geom_text(x=nrow(df) / 2, y=max(df[["value"]]), 
+              aes(label=paste0("n=", sum(df[["value"]]))),
+              size=10) +
+    scale_x_continuous(name="Row Names", breaks=df$index[use_names], 
+                       labels=bin_names[use_names]) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  return(p)
+}
+
+
+get_and_plot_scatac_and_mutation_counts_per_fold <- function(cancer_type,
+                                                    folds_for_test_set,
+                                                    datasets,
+                                                    cell_number_filter,
+                                                    tss_fragment_filter,
+                                                    annotation, 
+                                                    ML_model,
+                                                    tissues_to_consider) {
+  scatac_counts_plots <- list()
+  scatac_counts <- c()
+  mut_counts_plots <- list()
+  mut_counts <- c()
+  for (fold in folds_for_test_set) {
+    # for (tss_filter in tss_fragment_filter) {
+    scATAC_sources = construct_sources_string(datasets)
+    dir = construct_dir(scATAC_sources,
+                        cell_number_filter,
+                        tss_fragment_filter,
+                        annotation,
+                        1,
+                        fold,
+                        ML_model,
+                        cancer_type)
+    X_test = read.csv(paste(dir, "X_test.csv", sep="/"), row.names = 1,
+                      check.names = FALSE)
+    y_test = read.csv(paste(dir, "y_test.csv", sep="/"), row.names = 1)
+    backwards_elim_dir = construct_backwards_elim_dir(cancer_type, 
+                                                      scATAC_sources, 
+                                                      cell_number_filter,
+                                                      tss_fragment_filter, 
+                                                      annotation,
+                                                      tissues_to_consider, 
+                                                      ML_model,
+                                                      1,
+                                                      fold_for_test_set=fold,
+                                                      test=T)
+    fp = paste(backwards_elim_dir, 
+               "top_features_iteration_19_by_permutation_importance.txt", sep="/")
+    con = file(fp, "r")
+    top_feature=readLines(con, n = 1)
+    top_feature=substr(top_feature, 4, nchar(top_feature))
+    X_test_top_feature=data.frame(X_test[, top_feature])
+    colnames(X_test_top_feature) = "value"
+    p1 = plot_dist(X_test_top_feature, rownames(X_test))
+    scatac_counts_plots[[fold]] = p1
+    colnames(y_test) = "value"
+    p2 = plot_dist(y_test, rownames(X_test))
+    mut_counts_plots[[fold]] = p2
+    
+    scatac_counts = append(scatac_counts, sum(X_test_top_feature))
+    mut_counts = append(mut_counts, sum(y_test))
+  }
+  
+  pdf("../../figures/per_fold_scatac_counts.pdf", width = 50, height = 20)
+  do.call(grid.arrange, c(scatac_counts_plots, nrow=2)) 
+  dev.off()
+  pdf("../../figures/per_fold_mut_counts.pdf", width = 50, height = 20)
+  do.call(grid.arrange, c(mut_counts_plots, nrow=2))
+  dev.off()
+  return(list(scatac_counts, mut_counts))
+}
+
 
 cancer_types = args$cancer_types
 cancer_types = unlist(strsplit(cancer_types, split = ","))
@@ -346,6 +466,9 @@ folds_for_test_set = args$folds_for_test_set
 folds_for_test_set = unlist(strsplit(args$folds_for_test_set, split = "-"))
 folds_for_test_set = seq(folds_for_test_set[1], folds_for_test_set[2])
 feat_imp_min_n_robustness = args$feat_imp_min_n_robustness
+plot_fold_on_test_set_plot = args$plot_fold_on_test_set_plot
+hundred_kb = args$hundred_kb
+
 
 if (!robustness_analysis) {
   tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
@@ -364,7 +487,8 @@ if (!robustness_analysis) {
                             seed,
                             accumulated_seeds=F,
                             feature_importance_method=feature_importance_method,
-                            fold_for_test_set=fold)
+                            fold_for_test_set=fold,
+                            hundred_kb=hundred_kb)
       }
     }
   }
@@ -394,6 +518,7 @@ if (!robustness_analysis) {
                                                 tss_fragment_filter=tss_fragment_filter,
                                                 annotation=annotation,
                                                 ML_model=ML_model,
+                                                hundred_kb=hundred_kb,
                                                 accumulated_seeds=T)
     
     dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type, 
@@ -429,8 +554,19 @@ if (!robustness_analysis) {
                                      tissues_to_consider=tissues_to_consider, 
                                      ML_model=ML_model,
                                      folds_for_test_set=folds_for_test_set,
-                                     feature_importance_method=feature_importance_method)
+                                     feature_importance_method=feature_importance_method
+                                     )
     
+    l = get_and_plot_scatac_and_mutation_counts_per_fold(cancer_type,
+                                                         folds_for_test_set,
+                                                         datasets,
+                                                         cell_number_filter,
+                                                         tss_fragment_filter,
+                                                         annotation, 
+                                                         ML_model,
+                                                         tissues_to_consider)
+    scatac_counts = l[[1]]
+    mut_counts = l[[2]]
     # y_position is for plotting number of times feature appears at the top of
     # the boxplot. 
     df_feat_imp = df_feature_importances_all_seeds %>% 
@@ -475,12 +611,17 @@ if (!robustness_analysis) {
     df_test = df %>% 
       group_by(top_n, top_feature) %>%
       mutate(n_top_feature = n(), y_position = max(test_set_perf))
+
+    df_test["scatac_counts"] = scatac_counts[df[["fold"]]]
+    df_test["mut_counts"] = mut_counts[df[["fold"]]]
+    
     construct_boxplots(df=df_test, x="top_feature", y="test_set_perf", 
                        color="top_feature", title=cancer_type, savepath=savepath,
                        savefile="test_set_boxplots.png",
                        n_name="n_top_feature", facet_var="top_n",
                        ylabel="Test set R^2",
-                       sort_by="n")
+                       sort_by="n",
+                       plot_fold=plot_fold_on_test_set_plot)
     
     df_val = df_feature_importances_all_seeds %>% 
             group_by(num_features, seed, fold_for_test_set) %>%
