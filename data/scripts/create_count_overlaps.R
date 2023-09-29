@@ -161,26 +161,29 @@ get_sample_cell_types <- function(fragments,
 }
 
 if (which_interval_ranges == "polak") {
-  load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+    load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 } else if (which_interval_ranges == "yang") {
   load("../peak_set_yang.Rdata")
-} else if (which_interval_ranges == "10kb" || which_interval_ranges == "100kb") {
+} else if (which_interval_ranges == "100kb") {
   fp = paste("..", paste(which_interval_ranges, 
                          "interval_ranges.Rdata", 
                          sep="_"), sep="/")
   if (file.exists(fp)) {
     load(fp)
   } else {
-    interval_ranges_fp = paste("..", paste("chr_Sorted_interval_ranges",
-                                           paste0(which_interval_ranges, 
-                                           ".tsv"), 
-                                           sep="_"), sep="/")
-    interval.ranges = read.table(interval_ranges_fp)[, 1:3]
+    interval_ranges_fp = paste("../mutation_data/PanMutationCountper100KB_CancerType.txt")
+    # interval_ranges_fp = paste("..", paste("chr_Sorted_interval_ranges",
+    #                                        paste0(which_interval_ranges, 
+    #                                        ".tsv"), 
+    #                                        sep="_"), sep="/")
+    interval.ranges = read.table(interval_ranges_fp, header=T)[, 1:4]
+    names = interval.ranges[, 4]
     colnames(interval.ranges) = c("seqnames", "start","end")
-    interval.ranges = GRanges(interval.ranges)
-    l = table(seqnames(interval.ranges))
-    names(interval.ranges) = unlist(mapply(function(x,y) 
-      paste(x, y, sep="."), names(l), lapply(l, seq)))
+    interval.ranges = GRanges(interval.ranges[,1:3])
+    names(interval.ranges) = names
+    # l = table(seqnames(interval.ranges))
+    # names(interval.ranges) = unlist(mapply(function(x,y) 
+    #   paste(x, y, sep="."), names(l), lapply(l, seq)))
     save(interval.ranges, file=fp)
   }
 }
