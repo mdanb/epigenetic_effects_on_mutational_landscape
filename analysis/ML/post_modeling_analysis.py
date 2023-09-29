@@ -62,7 +62,9 @@ if bins_error_analysis:
             preds = []
             for fold_for_test_set in range(0, 10):
                 scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                                  hundred_kb, seed, fold_for_test_set)
+                                                  hundred_kb=hundred_kb,
+                                                  seed=seed, fold_for_test_set=fold_for_test_set,
+                                                  all_seeds=False)
 
                 model = load_n_features_backwards_elim_models(error_analysis_num_features, scATAC_df.shape[1],
                                                               cancer_type, ML_model, scATAC_dir, feature_importance_method,
