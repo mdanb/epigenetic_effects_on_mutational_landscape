@@ -43,6 +43,21 @@ fold_for_test_set = config.fold_for_test_set
 bins_error_analysis = config.bins_error_analysis
 count_bin_sums = config.count_bin_sums
 
+
+def conduct_test(errors, underestimated=None, two_sided=None):
+    assert not ((underestimated is not None and two_sided is not None) or
+                (underestimated is None and two_sided is None))
+    normalized_errors = zscore(errors)
+    if two_sided:
+        p_values = 2 * (1 - norm.cdf(abs(normalized_errors)))
+    else:
+        if underestimated:
+            p_values = 1 - norm.cdf(normalized_errors)
+        else:
+            p_values = norm.cdf(normalized_errors)
+    rejected, q_values, _, _ = multipletests(p_values, alpha=0.05, method='fdr_bh')
+    return rejected, q_values, normalized_errors, p_values
+
 if bins_error_analysis:
 #     for seed in seed_range:
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir,
@@ -98,20 +113,34 @@ if bins_error_analysis:
         multiseed_errors = pd.concat(multiseed_errors, axis=1).mean(axis=1)
         multiseed_percent_errors = pd.concat(multiseed_percent_errors, axis=1).mean(axis=1)
         # multiseed_percent_errors.plot.hist()
-        normalized_percent_errors = zscore(multiseed_percent_errors)
-        p_values = 2 * (1 - norm.cdf(abs(normalized_percent_errors)))
-        rejected, q_values, _, _ = multipletests(p_values, alpha=0.05, method='fdr_bh')
-        df = pd.DataFrame({"p-value": p_values,
-                           "absolute_error": multiseed_errors, "percent_error":multiseed_percent_errors,
-                           "normalized_percent_error": normalized_percent_errors, "q-value":q_values,
-                           "rejected":rejected})
+        percent_errors_rejected, percent_errors_q_values, \
+        normalized_percent_errors, percent_errors_p_values = conduct_test(multiseed_percent_errors, two_sided=True)
+        absolute_errors_rejected, absolute_errors_q_values, \
+        normalized_absolute_errors, absolute_errors_p_values = conduct_test(multiseed_errors, underestimated=True)
+
+        # normalized_percent_errors = zscore(multiseed_percent_errors)
+        # p_values = 2 * (1 - norm.cdf(abs(normalized_percent_errors)))
+        # rejected, q_values, _, _ = multipletests(p_values, alpha=0.05, method='fdr_bh')
+
+        df = pd.DataFrame({"percent_error": multiseed_percent_errors,
+                           "percent_errors_p-value": percent_errors_p_values,
+                           "normalized_percent_error": normalized_percent_errors,
+                           "percent_error_q-value": percent_errors_q_values,
+                           "percent_error_rejected":percent_errors_rejected,
+                           "absolute_error": multiseed_errors,
+                           "absolute_errors_p-value": absolute_errors_p_values,
+                           "normalized_absolute_error": normalized_absolute_errors,
+                           "absolute_error_q-value": absolute_errors_q_values,
+                           "absolute_error_rejected": absolute_errors_rejected,
+                           })
+
         fp = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
                                   hundred_kb=hundred_kb, all_seeds=True)
         # Good style / Cool pattern
         current_fp = osp.dirname(osp.realpath(__file__))
         fp = osp.join(current_fp, "..", "..", "figures", "models", ML_model,
                       cancer_type, fp, "errors_df.csv")
-        df = df.sort_values(by="q-value")
+        df = df.sort_values(by="absolute_error_q-value")
         # if hundred_kb:
         #     ranges = pyreadr.read_r(osp.join(current_fp, "..", "..", "data", "100kb_interval_ranges.Rdata"))
         # else:
