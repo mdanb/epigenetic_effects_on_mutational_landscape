@@ -115,8 +115,11 @@ if bins_error_analysis:
         # multiseed_percent_errors.plot.hist()
         percent_errors_rejected, percent_errors_q_values, \
         normalized_percent_errors, percent_errors_p_values = conduct_test(multiseed_percent_errors, two_sided=True)
-        absolute_errors_rejected, absolute_errors_q_values, \
-        normalized_absolute_errors, absolute_errors_p_values = conduct_test(multiseed_errors, underestimated=True)
+        absolute_errors_rejected_under, absolute_errors_q_values_under, \
+        normalized_absolute_errors, absolute_errors_p_values_under = conduct_test(multiseed_errors,
+                                                                                        underestimated=True)
+        absolute_errors_rejected_over, absolute_errors_q_values_over, \
+        _, absolute_errors_p_values_over = conduct_test(multiseed_errors, underestimated=True)
 
         # normalized_percent_errors = zscore(multiseed_percent_errors)
         # p_values = 2 * (1 - norm.cdf(abs(normalized_percent_errors)))
@@ -126,12 +129,15 @@ if bins_error_analysis:
                            "percent_errors_p-value": percent_errors_p_values,
                            "normalized_percent_error": normalized_percent_errors,
                            "percent_error_q-value": percent_errors_q_values,
-                           "percent_error_rejected":percent_errors_rejected,
+                           "percent_error_rejected": percent_errors_rejected,
                            "absolute_error": multiseed_errors,
-                           "absolute_errors_p-value": absolute_errors_p_values,
                            "normalized_absolute_error": normalized_absolute_errors,
-                           "absolute_error_q-value": absolute_errors_q_values,
-                           "absolute_error_rejected": absolute_errors_rejected,
+                           "absolute_errors_p-value_under": absolute_errors_p_values_under,
+                           "absolute_error_q-value_under": absolute_errors_q_values_under,
+                           "absolute_error_rejected_under": absolute_errors_rejected_under,
+                           "absolute_error_rejected_over": absolute_errors_rejected_over,
+                           "absolute_errors_p-value_over": absolute_errors_p_values_over,
+                           "absolute_error_q-value_over": absolute_errors_q_values_over,
                            })
 
         fp = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
@@ -140,7 +146,7 @@ if bins_error_analysis:
         current_fp = osp.dirname(osp.realpath(__file__))
         fp = osp.join(current_fp, "..", "..", "figures", "models", ML_model,
                       cancer_type, fp, "errors_df.csv")
-        df = df.sort_values(by="absolute_error_q-value")
+        # df = df.sort_values(by="absolute_error_q-value")
         # if hundred_kb:
         #     ranges = pyreadr.read_r(osp.join(current_fp, "..", "..", "data", "100kb_interval_ranges.Rdata"))
         # else:
