@@ -16,6 +16,7 @@ for (cohort in cancer_cohorts) {
                                 cohort,
                                 sep="/"), 
                           full.names=T)) {
+    print(print("adding", file))
     fname = basename(file)
     patient_id = unlist(lapply(strsplit(fname, split="_"), "[", 3))
     patient_id = unlist(lapply(strsplit(patient_id, split="\\."), "[", 1))
