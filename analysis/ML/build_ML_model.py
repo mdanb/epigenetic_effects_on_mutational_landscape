@@ -167,8 +167,9 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
             else:
                 for idx, donor in enumerate(mutations_df.columns):
                     if idx in range(*donor_range):
+                        donor_specific_mutations = mutations_df[donor]
                         run_unclustered_data_analysis_helper(scATAC_df,
-                                                             cancer_specific_mutations,
+                                                             donor_specific_mutations,
                                                              f"{cancer_type}_{donor}",
                                                              scATAC_sources,
                                                              ML_model,
