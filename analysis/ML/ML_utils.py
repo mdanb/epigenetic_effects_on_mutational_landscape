@@ -60,7 +60,7 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
     elif RNA_subtyped:
         mutations_df = load_RNA_subtyped_mutations()
     elif per_donor:
-        mutations_df = load_per_donor_mutations()
+        mutations_df = load_per_donor_mutations(cancer_type)
     elif hundred_kb:
         mutations_df = load_100kb()
     else:

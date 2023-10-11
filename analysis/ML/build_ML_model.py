@@ -218,6 +218,8 @@ meso = config.meso
 RNA_subtyped = config.RNA_subtyped
 per_donor = config.per_donor
 donor_range = config.donor_range
+if per_donor:
+    assert not (donor_range is None)
 test_backward_selection_iters = config.test_backward_selection_iters
 seed_range = config.seed_range
 start, end = map(int, seed_range.split('-'))

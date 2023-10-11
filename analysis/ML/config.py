@@ -33,6 +33,8 @@ def create_parser():
     parser.add_argument("--sqlite", action="store_true", default=False)
     parser.add_argument('--test_set_perf_num_features', nargs="+", type=int)
     parser.add_argument('--debug_bfs', action="store_true", default=False)
+    parser.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
+                        default=None)
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--SCLC", action="store_true", default=False)
@@ -45,7 +47,5 @@ def create_parser():
     group.add_argument("--meso", action="store_true", default=False)
     group.add_argument("--hundred_kb", action="store_true", default=False)
     group.add_argument("--combined_CPTAC_ICGC", action="store_true", default=False)
-    group.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
-                        default=None)
     group.add_argument("--RNA_subtyped", action="store_true", default=False)
     return parser
