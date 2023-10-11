@@ -6,7 +6,7 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-cancer_cohorts = unlist(strsplit(args$cancer_cohorts, split = ","))
+cancer_cohorts = unlist(strsplit(args$cohorts, split = ","))
 cancer_type = args$cancer_type
 chr_keep = read.csv("../processed_data/chr_keep.csv", row.names = 1)
 mutations = data.frame(row.names=chr_keep[["chr"]]) 
