@@ -708,14 +708,14 @@ def load_n_features_backwards_elim_models(n, total_num_features, cancer_type, ML
     model = pickle.load(open(backwards_elim_model_file, "rb"))
     return model
 
-def compute_error(X_val, y_val, **kwargs):
-    estimator = kwargs["estimator"]
-    if kwargs["train_new_model"]:
-        estimator = XGBRegressor(**estimator.get_params())
-        estimator.fit(X=kwargs["X_train"], y=kwargs["y_train"])
-    if kwargs["i"] is not None:
-        print(f"Calculating error for fold {kwargs['i'] + 1}...")
-    preds = estimator.predict(X_val)
-    err = y_val - preds
-    percent_error = err / (y_val + 1) * 100
-    return {"abs_err": err, "percent_err": percent_error, "preds": preds}
+# def compute_error(X_val, y_val, **kwargs):
+#     estimator = kwargs["estimator"]
+#     if kwargs["train_new_model"]:
+#         estimator = XGBRegressor(**estimator.get_params())
+#         estimator.fit(X=kwargs["X_train"], y=kwargs["y_train"])
+#     if kwargs["i"] is not None:
+#         print(f"Calculating error for fold {kwargs['i'] + 1}...")
+#     preds = estimator.predict(X_val)
+#     err = y_val - preds
+#     percent_error = err / (y_val + 1) * 100
+#     return {"abs_err": err, "percent_err": percent_error, "preds": preds}
