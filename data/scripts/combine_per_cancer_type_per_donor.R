@@ -26,5 +26,5 @@ for (cohort in cancer_cohorts) {
 }
 fname = paste(cancer_type, "per_donor.csv", sep="_")
 write.csv(mutations, 
-          paste("../data/processed_data/per_patient_mutations", fname, sep="/"))
+          paste("../processed_data/per_patient_mutations", fname, sep="/"))
 
