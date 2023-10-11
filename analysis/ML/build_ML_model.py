@@ -119,7 +119,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
             scATAC_df, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scATAC_df,
                                                                                         mutations_df,
                                                                                         cancer_type,
-                                                                                        hundred_kb)
+                                                                                        hundred_kb,
+                                                                                        per_donor)
             if not per_donor:
                 if tss_fragment_filter:
                     for tss_filter in tss_fragment_filter:
@@ -166,14 +167,9 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
             else:
                 for idx, donor in enumerate(mutations_df.columns):
                     if idx in range(*donor_range):
-                        scATAC_df, donor_specific_mutations = prep_and_align_mutations_with_scatac(scATAC_df,
-                                                                                                   mutations_df,
-                                                                                                   donor,
-                                                                                                   hundred_kb)
-
                         run_unclustered_data_analysis_helper(scATAC_df,
-                                                             donor_specific_mutations,
-                                                             donor,
+                                                             cancer_specific_mutations,
+                                                             f"{cancer_type}_{donor}",
                                                              scATAC_sources,
                                                              ML_model,
                                                              seed,

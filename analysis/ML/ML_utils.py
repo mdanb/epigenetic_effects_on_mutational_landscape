@@ -16,7 +16,7 @@ import re
 
 
 ### Load Data helpers ###
-def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or_donor_id, hundred_kb):
+def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or_donor_id, hundred_kb, per_donor):
     # mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
     #                               histologically_subtyped_mutations, de_novo_seurat_clustering,
     #                               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type_or_donor_id,
@@ -34,8 +34,11 @@ def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or
         # for compatibility when chr ranges only include chr_keep but not others
         mutations_df = add_na_ranges(mutations_df, hundred_kb)
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
-    cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
-    return scATAC_df, cancer_specific_mutations
+    if per_donor:
+        return scATAC_df, mutations_df
+    else:
+        cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
+        return scATAC_df, cancer_specific_mutations
 
 
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
