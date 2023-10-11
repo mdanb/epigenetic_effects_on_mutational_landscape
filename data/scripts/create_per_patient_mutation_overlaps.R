@@ -78,6 +78,7 @@ count_overlaps_and_save_helper <- function(cancer_cohort) {
   lapply(cohort_df, count_overlaps_and_save, interval.ranges, cancer_cohort)
   # lapply(files, count_overlaps_and_save, filespath)
 }
+
 # Lung_AdenoCA = list.files("processed_data/per_patient_mutations/Lung-AdenoCA", 
 #                           full.names = TRUE)
 # Skin_Melanoma = list.files("processed_data/per_patient_mutations/Skin-Melanoma", 
