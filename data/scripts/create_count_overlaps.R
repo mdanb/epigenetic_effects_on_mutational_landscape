@@ -387,6 +387,7 @@ if (dataset == "Bingren") {
            dataset=dataset,
            annotation=annotation,
            which_interval_ranges=which_interval_ranges,
+           overlaps_per_cell=overlaps_per_cell,
            mc.cores=cores)
 } else if (dataset == "Greenleaf_pbmc_bm") {
     if (!(file.exists("../metadata/greenleaf_pbmc_bm.txt"))) {
