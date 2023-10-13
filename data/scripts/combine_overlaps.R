@@ -17,6 +17,11 @@ args = parse_args(OptionParser(option_list=option_list))
 #                     c("--datasets=Bingren",
 #                       "--annotation=default_annotation",
 #                       "--which_interval_ranges=100kb"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--datasets=Yang_kidney",
+                      "--annotation=default_annotation",
+                      "--which_interval_ranges=polak",
+                      "--overlaps_per_cell"))
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
 datasets = unlist(strsplit(args$datasets, split = ","))
@@ -142,17 +147,18 @@ save_combined_overlaps <- function(filepaths,
       #                                  f)  
     }
   }
-  combined_count_overlaps=data.frame(pivot_wider(combined_count_overlaps))
-  rownames(combined_count_overlaps) = combined_count_overlaps[["cell_type"]]
-  combined_count_overlaps = combined_count_overlaps[, 
-                                    colnames(combined_count_overlaps)[!grepl("cell_type", 
-                                          colnames(combined_count_overlaps))]]
-  if (annotation == "Tsankov_separate_fibroblasts") {
-    combined_count_overlaps = combined_count_overlaps[!(rownames(combined_count_overlaps) == 
-                                                        "distal lung Fibroblasts"), ]
-  }
-  saveRDS(combined_count_overlaps, combined_filepath)
+
   if (!overlaps_per_cell) {
+    combined_count_overlaps=data.frame(pivot_wider(combined_count_overlaps))
+    rownames(combined_count_overlaps) = combined_count_overlaps[["cell_type"]]
+    combined_count_overlaps = combined_count_overlaps[, 
+    colnames(combined_count_overlaps)[!grepl("cell_type", 
+                                             colnames(combined_count_overlaps))]]
+    if (annotation == "Tsankov_separate_fibroblasts") {
+      combined_count_overlaps = combined_count_overlaps[!(rownames(combined_count_overlaps) == 
+                                                            "distal lung Fibroblasts"), ]
+    }
+    
     temp = unlist(strsplit(combined_filepath, "/"))[6]
     metadata_filename = paste(unlist(strsplit(temp, "[.]"))[1], "metadata.rds", 
                               sep="_")
@@ -163,6 +169,7 @@ save_combined_overlaps <- function(filepaths,
                                                    "tissue")
     saveRDS(combined_count_overlaps_metadata, metadata_filepath)
   }
+  saveRDS(combined_count_overlaps, combined_filepath)
 }
 
 combined_data_path = 
