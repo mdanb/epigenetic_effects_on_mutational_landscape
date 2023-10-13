@@ -17,11 +17,11 @@ args = parse_args(OptionParser(option_list=option_list))
 #                     c("--datasets=Bingren",
 #                       "--annotation=default_annotation",
 #                       "--which_interval_ranges=100kb"))
-args = parse_args(OptionParser(option_list=option_list), args =
-                    c("--datasets=Yang_kidney",
-                      "--annotation=default_annotation",
-                      "--which_interval_ranges=polak",
-                      "--overlaps_per_cell"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--datasets=Yang_kidney",
+#                       "--annotation=default_annotation",
+#                       "--which_interval_ranges=polak",
+#                       "--overlaps_per_cell"))
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
 datasets = unlist(strsplit(args$datasets, split = ","))
