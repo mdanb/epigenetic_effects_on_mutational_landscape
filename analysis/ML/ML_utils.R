@@ -11,7 +11,8 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
                                              hundred_kb,
                                              fold_for_test_set = "-1",
                                              seed = "-1",
-                                             accumulated_seeds=F) {
+                                             accumulated_seeds=F,
+                                             per_donor=F) {
   if (accumulated_seeds) {
     seed = "all_seeds"
   }
@@ -31,7 +32,8 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
                                                                ML_model,
                                                                seed,
                                                                hundred_kb,
-                                                               fold_for_test_set))
+                                                               fold_for_test_set,
+                                                               per_donor))
     }
   }
   return(unlist(backward_elim_dirs))
@@ -65,7 +67,6 @@ construct_dir <- function(scATAC_source,
   if (hundred_kb) {
     scATAC_source = paste("interval_ranges_100kb", scATAC_source, sep="_")
   }
-  
   return(paste("models", ML_model, cancer_type, scATAC_source, sep="/"))
 }
 
@@ -79,16 +80,26 @@ construct_backwards_elim_dir <- function(cancer_type,
                                          seed,
                                          hundred_kb,
                                          fold_for_test_set="-1",
-                                         test=F) {
+                                         test=F,
+                                         per_donor) {
   dir = construct_dir(scATAC_source,
-                cell_number_filter,
-                tss_fragment_filter,
-                annotation,
-                seed,
-                fold_for_test_set,
-                ML_model,
-                cancer_type,
-                hundred_kb)
+                      cell_number_filter,
+                      tss_fragment_filter,
+                      annotation,
+                      seed,
+                      fold_for_test_set,
+                      ML_model,
+                      cancer_type,
+                      hundred_kb)
+  
+  if (per_donor) {
+    part_one = unlist(strsplit(dir, split="/"))[1:2]
+    pattern = paste0(cancer_type, "_")
+    part_two = unlist(strsplit(dir, split="/"))[4]
+    dir = list.files(paste(part_one[1:2], collapse="/"), pattern=pattern)
+    dir = paste(paste(part_one, collapse="/"), dir, part_two, sep="/")
+  }
+  
   dir = paste(dir, "backwards_elimination_results", sep="/")
   
   if (tissues_to_consider != "all") {
