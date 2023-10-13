@@ -270,6 +270,9 @@ get_sample_name_greenleaf_pbmc_bm <- function(file) {
 get_sample_name_yang <- function(file) {
   sample_name = str_remove(file, ".fragments.tsv.gz")
   sample_name = str_remove(sample_name, ".fragments.tsv.bgz")
+  sample_name = str_remove(sample_name, "Yang_kidney_count_overlaps_")
+  sample_name = str_remove(sample_name, "per_cell_")
+  sample_name = str_remove(sample_name, "_fragments.rds")
   return(sample_name)
 }
 
