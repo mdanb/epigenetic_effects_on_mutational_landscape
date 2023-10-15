@@ -81,11 +81,12 @@ if bins_error_analysis:
         #                                                   annotation_dir, cancer_type, hundred_kb)
         scATAC_sources = construct_scATAC_sources(datasets)
         multiseed_errors = []
-        multiseed_percent_errors = []
+        # multiseed_percent_errors = []
         multiseed_preds = []
+        actual = []
         for seed in range(1, 11):
             abs_errors = []
-            percent_errors = []
+            # percent_errors = []
             preds = []
             for fold_for_test_set in range(0, 10):
                 scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
@@ -97,47 +98,61 @@ if bins_error_analysis:
                                                               full_data_trained=True)
                 top_features = model.feature_names_in_
                 _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 10, fold_for_test_set)
-                errors = compute_error(X_test.loc[:, top_features], y_test, estimator=model, train_new_model=False,
-                                       i=fold_for_test_set)
+                pred = model.predict(X_test.loc[:, top_features])
+                error = y_test - pred
+                # errors = compute_error(X_test.loc[:, top_features], y_test, estimator=model, train_new_model=False,
+                #                        i=fold_for_test_set)
                 # errors = apply_func_to_kfolds(scATAC_df.loc[:, top_features], cancer_specific_mutations, compute_error,
                 #                               estimator=model,
                 #                               train_new_model=False)
                 # for fold_results in errors:
-                abs_errors.append(errors["abs_err"])
-                percent_errors.append(errors["percent_err"])
-                preds.append(errors["preds"])
+                if seed == 1:
+                    actual.append(y_test)
+                abs_errors.append(error)
+                # percent_errors.append(errors["percent_err"])
+                preds.append(pred)
             multiseed_errors.append(pd.concat(abs_errors))
-            multiseed_percent_errors.append(pd.concat(percent_errors))
+            # multiseed_percent_errors.append(pd.concat(percent_errors))
             multiseed_preds.append(np.concatenate(preds))
 
-        multiseed_errors = pd.concat(multiseed_errors, axis=1).mean(axis=1)
-        multiseed_percent_errors = pd.concat(multiseed_percent_errors, axis=1).mean(axis=1)
+        multiseed_errors = pd.concat(multiseed_errors, axis=1)
+        avg_multiseed_errors = multiseed_errors.mean(axis=1)
+        median_multiseed_errors = multiseed_errors.median(axis=1)
+        # multiseed_percent_errors = pd.concat(multiseed_percent_errors, axis=1).mean(axis=1)
+        avg_multiseed_preds = np.mean(multiseed_preds, axis=0)
+        median_multiseed_preds = np.median(multiseed_preds, axis=0)
+        actual = np.concatenate(actual)
         # multiseed_percent_errors.plot.hist()
-        percent_errors_rejected, percent_errors_q_values, \
-        normalized_percent_errors, percent_errors_p_values = conduct_test(multiseed_percent_errors, two_sided=True)
-        absolute_errors_rejected_under, absolute_errors_q_values_under, \
-        normalized_absolute_errors, absolute_errors_p_values_under = conduct_test(multiseed_errors,
-                                                                                        underestimated=True)
-        absolute_errors_rejected_over, absolute_errors_q_values_over, \
-        _, absolute_errors_p_values_over = conduct_test(multiseed_errors, underestimated=True)
+        # percent_errors_rejected, percent_errors_q_values, \
+        # normalized_percent_errors, percent_errors_p_values = conduct_test(multiseed_percent_errors, two_sided=True)
+        # absolute_errors_rejected_under, absolute_errors_q_values_under, \
+        # normalized_absolute_errors, absolute_errors_p_values_under = conduct_test(multiseed_errors,
+        #                                                                                 underestimated=True)
+        # absolute_errors_rejected_over, absolute_errors_q_values_over, \
+        # _, absolute_errors_p_values_over = conduct_test(multiseed_errors, underestimated=True)
 
         # normalized_percent_errors = zscore(multiseed_percent_errors)
         # p_values = 2 * (1 - norm.cdf(abs(normalized_percent_errors)))
         # rejected, q_values, _, _ = multipletests(p_values, alpha=0.05, method='fdr_bh')
 
-        df = pd.DataFrame({"percent_error": multiseed_percent_errors,
-                           "percent_errors_p-value": percent_errors_p_values,
-                           "normalized_percent_error": normalized_percent_errors,
-                           "percent_error_q-value": percent_errors_q_values,
-                           "percent_error_rejected": percent_errors_rejected,
-                           "absolute_error": multiseed_errors,
-                           "normalized_absolute_error": normalized_absolute_errors,
-                           "absolute_errors_p-value_under": absolute_errors_p_values_under,
-                           "absolute_error_q-value_under": absolute_errors_q_values_under,
-                           "absolute_error_rejected_under": absolute_errors_rejected_under,
-                           "absolute_error_rejected_over": absolute_errors_rejected_over,
-                           "absolute_errors_p-value_over": absolute_errors_p_values_over,
-                           "absolute_error_q-value_over": absolute_errors_q_values_over,
+        df = pd.DataFrame({
+                           # "percent_errors_p-value": percent_errors_p_values,
+                           # "normalized_percent_error": normalized_percent_errors,
+                           # "percent_error_q-value": percent_errors_q_values,
+                           # "percent_error_rejected": percent_errors_rejected,
+                           "avg_absolute_error": avg_multiseed_errors,
+                           "median_absolute_error": median_multiseed_errors,
+                           "avg_prediction": avg_multiseed_preds,
+                           "median_prediction": median_multiseed_preds,
+                           "actual": actual
+                           # "avg_percent_error": multiseed_percent_errors,
+                           # "normalized_absolute_error": normalized_absolute_errors,
+                           # "absolute_errors_p-value_under": absolute_errors_p_values_under,
+                           # "absolute_error_q-value_under": absolute_errors_q_values_under,
+                           # "absolute_error_rejected_under": absolute_errors_rejected_under,
+                           # "absolute_error_rejected_over": absolute_errors_rejected_over,
+                           # "absolute_errors_p-value_over": absolute_errors_p_values_over,
+                           # "absolute_error_q-value_over": absolute_errors_q_values_over,
                            })
 
         fp = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
