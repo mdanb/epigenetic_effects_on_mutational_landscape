@@ -35,7 +35,7 @@ def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or
     mutations_df = mutations_df.loc[chr_keep["chr"]]
     if not pd.isna(mutations_df).any().any():
         # for compatibility when chr ranges only include chr_keep but not others
-        mutations_df = add_na_ranges(mutations_df, hundred_kb)
+        mutations_df = add_na_ranges(mutations_df, hundred_kb, expanded_hundred_kb)
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
     if per_donor:
         return scATAC_df, mutations_df
@@ -46,7 +46,8 @@ def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or
 
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                    histologically_subtyped_mutations, de_novo_seurat_clustering,
-                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type, hundred_kb):
+                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type, hundred_kb,
+                   expanded_hundred_kb):
     if meso:
         mutations_df = load_meso()
     elif SCLC:
@@ -67,7 +68,7 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
         mutations_df = load_RNA_subtyped_mutations()
     elif per_donor:
         mutations_df = load_per_donor_mutations(cancer_type)
-    elif hundred_kb:
+    elif hundred_kb or expanded_hundred_kb:
         mutations_df = load_100kb()
     else:
         mutations_df = load_agg_mutations()
@@ -174,8 +175,8 @@ def filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_fil
     return scATAC_df
 
 #### Dataframe curation helpers ####
-def add_na_ranges(mutations_df, hundred_kb):
-    if hundred_kb:
+def add_na_ranges(mutations_df, hundred_kb, expanded_hundred_kb):
+    if hundred_kb or expanded_hundred_kb:
         full_ranges = pd.read_csv("../../data/processed_data/chr_ranges_100kb.csv")
     else:
         full_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
@@ -216,8 +217,8 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
         scATAC_df = scATAC_df.T
         return scATAC_df
 
-    def load_scATAC_metadata(metadata_path, hundred_kb):
-        if hundred_kb:
+    def load_scATAC_metadata(metadata_path, hundred_kb, expanded_hundred_kb):
+        if hundred_kb or expanded_hundred_kb:
             metadata_path = f"{os.path.dirname(metadata_path)}/interval_ranges_100kb_{os.path.basename(metadata_path)}"
         metadata = pyreadr.read_r(metadata_path)
         metadata = metadata[None]
@@ -241,7 +242,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             f"/{annotation_dir}/{dataset}_combined_count_overlaps.rds", hundred_kb, expanded_hundred_kb)
             print("Loaded!")
             metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
-            f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb)
+            f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb, expanded_hundred_kb)
             scATAC_df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
             datasets_combined_count_overlaps.append(scATAC_df)
 

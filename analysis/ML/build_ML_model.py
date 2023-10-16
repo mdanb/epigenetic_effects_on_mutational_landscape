@@ -114,7 +114,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
             mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                           histologically_subtyped_mutations, de_novo_seurat_clustering,
                                           CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type,
-                                          hundred_kb)
+                                          hundred_kb, expanded_hundred_kb)
 
             scATAC_df, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scATAC_df,
                                                                                         mutations_df,
