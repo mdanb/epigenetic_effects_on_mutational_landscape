@@ -29,6 +29,7 @@ de_novo_seurat_clustering = config.de_novo_seurat_clustering
 meso = config.meso
 RNA_subtyped = config.RNA_subtyped
 hundred_kb = config.hundred_kb
+expanded_hundred_kb = config.expanded_hundred_kb
 per_donor = config.per_donor
 donor_range = config.donor_range
 # seed_range = config.seed_range
@@ -42,7 +43,6 @@ error_analysis_num_features = config.error_analysis_num_features
 fold_for_test_set = config.fold_for_test_set
 bins_error_analysis = config.bins_error_analysis
 count_bin_sums = config.count_bin_sums
-per_donor = config.per_donor
 
 def conduct_test(errors, underestimated=None, two_sided=None):
     assert not ((underestimated is not None and two_sided is not None) or
@@ -61,18 +61,20 @@ def conduct_test(errors, underestimated=None, two_sided=None):
 if bins_error_analysis:
 #     for seed in seed_range:
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir,
-                                    hundred_kb)
+                                    hundred_kb, expanded_hundred_kb)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
 
     for cancer_type in cancer_types:
         mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                       histologically_subtyped_mutations, de_novo_seurat_clustering,
                                       CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type,
-                                      hundred_kb)
-        scATAC_df, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scATAC_df, mutations_df,
+                                      hundred_kb, expanded_hundred_kb)
+        scATAC_df, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scATAC_df,
+                                                                                    mutations_df,
                                                                                     cancer_type,
                                                                                     hundred_kb,
-                                                                                    per_donor)
+                                                                                    per_donor,
+                                                                                    expanded_hundred_kb)
 
         # scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
         #                                                   histologically_subtyped_mutations,
@@ -91,7 +93,7 @@ if bins_error_analysis:
             preds = []
             for fold_for_test_set in range(0, 10):
                 scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                                  hundred_kb=hundred_kb,
+                                                  hundred_kb, expanded_hundred_kb,
                                                   seed=seed, fold_for_test_set=fold_for_test_set,
                                                   all_seeds=False)
                 model = load_n_features_backwards_elim_models(error_analysis_num_features, scATAC_df.shape[1],
@@ -157,7 +159,7 @@ if bins_error_analysis:
                            })
 
         fp = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                  hundred_kb=hundred_kb, all_seeds=True)
+                                  hundred_kb, expanded_hundred_kb, all_seeds=True)
         # Good style / Cool pattern
         current_fp = osp.dirname(osp.realpath(__file__))
         fp = osp.join(current_fp, "..", "..", "figures", "models", ML_model,
@@ -199,7 +201,7 @@ if count_bin_sums:
         for i in range(1, 11):
             scATAC_sources = construct_scATAC_sources(datasets)
             scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                               hundred_kb=hundred_kb, seed=1, fold_for_test_set=i)
+                                               hundred_kb, expanded_hundred_kb, seed=1, fold_for_test_set=i)
             top_feature = open(osp.join(ML_model, cancer_type,scATAC_dir, 'backwards_elimination_results',
                                'top_features_iteration_19_by_permutation_importance.txt'), "r").readline().strip()[3:]
             X_test = pd.read_csv(f"models/{ML_model}/{cancer_type}/{scATAC_dir}/X_test.csv", index_col=0)
