@@ -33,6 +33,7 @@ group.add_argument("--SCLC", action="store_true", default=False)
 group.add_argument("--de_novo_seurat_clustering", action="store_true", default=False)
 group.add_argument("--histologically_subtyped_mutations", action="store_true", default=False)
 group.add_argument("--hundred_kb", action="store_true", default=False)
+group.add_argument("--expanded_hundred_kb", action="store_true", default=False)
 
 group_run_loc = parser.add_mutually_exclusive_group()
 group_run_loc.add_argument("--submit_jobs", action="store_true", default=False)
@@ -67,6 +68,7 @@ test_set_perf_num_features = config.test_set_perf_num_features
 submit_jobs = config.submit_jobs
 cleanup = config.cleanup
 run_locally = config.run_locally
+expanded_hundred_kb = config.expanded_hundred_kb
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
@@ -83,15 +85,15 @@ for fold in fold_for_test_set_range:
                                         # "top_features_to_plot", "_".join(config.top_features_to_plot),
 
         command_args = " ".join(["--cancer_types", " ".join(config.cancer_types),
-                         "--datasets", " ".join(sorted(config.datasets)),
-                         "--scATAC_cell_number_filter", scATAC_cell_number_filter,
-                         "--annotation_dir", annotation_dir,
-                         "--seed_range", seed_range,
-                         "--top_features_to_plot", " ".join(config.top_features_to_plot),
-                         "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
-                         "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
-                         "--feature_importance_method", feature_importance_method,
-                         "--fold_for_test_set", str(fold)])
+                                 "--datasets", " ".join(sorted(config.datasets)),
+                                 "--scATAC_cell_number_filter", scATAC_cell_number_filter,
+                                 "--annotation_dir", annotation_dir,
+                                 "--seed_range", seed_range,
+                                 "--top_features_to_plot", " ".join(config.top_features_to_plot),
+                                 "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
+                                 "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
+                                 "--feature_importance_method", feature_importance_method,
+                                 "--fold_for_test_set", str(fold)])
 
         if meso:
             script_filename = script_filename + "_" + "meso"
@@ -107,6 +109,9 @@ for fold in fold_for_test_set_range:
             command_args = command_args + " " + "--histologically_subtyped_mutations"
         elif hundred_kb:
             command_args = command_args + " " + "--hundred_kb"
+        elif expanded_hundred_kb:
+            command_args = command_args + " " + "--expanded_hundred_kb"
+
 
         script_filename = f"{script_filename}.sh"
 
