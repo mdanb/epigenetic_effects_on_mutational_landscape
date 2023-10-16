@@ -16,7 +16,8 @@ import re
 
 
 ### Load Data helpers ###
-def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or_donor_id, hundred_kb, per_donor):
+def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or_donor_id, hundred_kb,
+                                         expanded_hundred_kb, per_donor):
     # mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
     #                               histologically_subtyped_mutations, de_novo_seurat_clustering,
     #                               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type_or_donor_id,
@@ -26,6 +27,8 @@ def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or
     # scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
     if hundred_kb:
         chr_keep = pd.read_csv("../../data/processed_data/chr_keep_100kb.csv", index_col=0)
+    elif expanded_hundred_kb:
+        chr_keep = pd.read_csv("../../data/processed_data/expanded_chr_keep_100kb.csv")
     else:
         chr_keep = pd.read_csv("../../data/processed_data/chr_keep.csv", index_col=0)
 

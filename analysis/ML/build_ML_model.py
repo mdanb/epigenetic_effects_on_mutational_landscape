@@ -120,6 +120,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                                                         mutations_df,
                                                                                         cancer_type,
                                                                                         hundred_kb,
+                                                                                        expanded_hundred_kb,
                                                                                         per_donor)
             if not per_donor:
                 if tss_fragment_filter:
@@ -139,6 +140,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                              debug_bfs,
                                                              fold_for_test_set,
                                                              hundred_kb,
+                                                             expanded_hundred_kb,
                                                              scATAC_cell_number_filter,
                                                              annotation_dir,
                                                              tss_filter,
@@ -159,6 +161,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          debug_bfs,
                                                          fold_for_test_set,
                                                          hundred_kb,
+                                                         expanded_hundred_kb,
                                                          scATAC_cell_number_filter,
                                                          annotation_dir,
                                                          tss_fragment_filter,
@@ -181,6 +184,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                              debug_bfs,
                                                              fold_for_test_set,
                                                              hundred_kb,
+                                                             expanded_hundred_kb,
                                                              scATAC_cell_number_filter,
                                                              annotation_dir,
                                                              tss_fragment_filter,
