@@ -93,15 +93,15 @@ def run_unclustered_data_analysis_helper(scATAC_df,
 def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
-                                  combined_CPTAC_ICGC, meso, RNA_subtyped, hundred_kb, per_donor, donor_range, ML_model,
-                                  seed_range, n_optuna_trials_prebackward_selection,
+                                  combined_CPTAC_ICGC, meso, RNA_subtyped, hundred_kb, expanded_hundred_kb,
+                                  per_donor, donor_range, ML_model, seed_range, n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
                                   make_plots, feature_importance_method, sqlite, test_set_perf_num_features,
                                   debug_bfs, fold_for_test_set):
     ### args used at the end for plot_top_features.R ###
     scATAC_sources = construct_scATAC_sources(datasets)
     scATAC_df = construct_scATAC_df(tss_fragment_filter, datasets, scATAC_cell_number_filter, annotation_dir,
-                                    hundred_kb)
+                                    hundred_kb, expanded_hundred_kb)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
 
     # Note that the loading process arranges the bins so that it's in the correct order of the genome

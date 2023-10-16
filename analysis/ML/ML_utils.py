@@ -203,9 +203,10 @@ def add_dataset_origin_to_cell_types(df, dataset):
     return df
 
 
-def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb):
-    def load_scATAC(scATAC_path, hundred_kb):
-        if hundred_kb:
+def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb,
+                        expanded_hundred_kb):
+    def load_scATAC(scATAC_path, hundred_kb, expanded_hundred_kb):
+        if hundred_kb or expanded_hundred_kb:
             scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_100kb_{os.path.basename(scATAC_path)}"
         scATAC_df = pyreadr.read_r(scATAC_path)
         scATAC_df = scATAC_df[None]
@@ -225,18 +226,18 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             print(f"Loading TSS filtered scATAC from {dataset}...")
             tss_filtered_root = "../../data/processed_data/count_overlap_data/tsse_filtered"
             chr_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
-            scATAC_df = load_scATAC(f"{tss_filtered_root}/{dataset}/combined/{annotation_dir}/" \
+            scATAC_df = load_scATAC(f"{tss_filtered_root}/{dataset}/combined/{annotation_dir}/" 
                                     f"combined_{tss_filter}_fragments.rds",
-                                    hundred_kb).T
+                                    hundred_kb, expanded_hundred_kb).T
             print("Loaded!")
             scATAC_df.index = chr_ranges["x"].values
             datasets_combined_count_overlaps.append(scATAC_df)
         else:
             print(f"Loading scATAC from {dataset}...")
-            scATAC_df = load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" \
-            f"/{annotation_dir}/{dataset}_combined_count_overlaps.rds", hundred_kb)
+            scATAC_df = load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
+            f"/{annotation_dir}/{dataset}_combined_count_overlaps.rds", hundred_kb, expanded_hundred_kb)
             print("Loaded!")
-            metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" \
+            metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
             f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb)
             scATAC_df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
             datasets_combined_count_overlaps.append(scATAC_df)
