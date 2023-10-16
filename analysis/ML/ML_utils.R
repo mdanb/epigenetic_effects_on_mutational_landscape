@@ -33,6 +33,7 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
                                                                seed,
                                                                hundred_kb,
                                                                fold_for_test_set,
+                                                               test=F,
                                                                per_donor))
     }
   }
@@ -81,7 +82,7 @@ construct_backwards_elim_dir <- function(cancer_type,
                                          hundred_kb,
                                          fold_for_test_set="-1",
                                          test=F,
-                                         per_donor) {
+                                         per_donor=F) {
   dir = construct_dir(scATAC_source,
                       cell_number_filter,
                       tss_fragment_filter,

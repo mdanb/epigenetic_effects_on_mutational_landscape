@@ -15,16 +15,16 @@ def run_unclustered_data_analysis_helper(scATAC_df,
                                          debug_bfs,
                                          fold_for_test_set,
                                          hundred_kb,
+                                         expanded_hundred_kb,
                                          scATAC_cell_number_filter,
                                          annotation_dir,
                                          tss_fragment_filter,
                                          save_test_set_perf,
                                          test_set_perf_num_features):
 
-    scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter,
-                                      tss_fragment_filter,
-                                      annotation_dir, hundred_kb,
-                                      seed, fold_for_test_set)
+    scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter, annotation_dir,
+                                      hundred_kb, expanded_hundred_kb, seed, fold_for_test_set)
+
     backwards_elim_dir=f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results"
 
     os.makedirs(f"{backwards_elim_dir}", exist_ok=True)
@@ -234,11 +234,13 @@ sqlite = config.sqlite
 test_set_perf_num_features = config.test_set_perf_num_features
 debug_bfs = config.debug_bfs
 hundred_kb = config.hundred_kb
+expanded_hundred_kb = config.expanded_hundred_kb
+
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                               meso, RNA_subtyped, hundred_kb, per_donor, donor_range, ML_model, seed_range,
-                               n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
+                               meso, RNA_subtyped, hundred_kb, expanded_hundred_kb, per_donor, donor_range, ML_model,
+                               seed_range, n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method,
                                sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set)
 

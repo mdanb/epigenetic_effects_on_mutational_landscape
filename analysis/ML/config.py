@@ -46,6 +46,7 @@ def create_parser():
     group.add_argument("--CPTAC", action="store_true", default=False)
     group.add_argument("--meso", action="store_true", default=False)
     group.add_argument("--hundred_kb", action="store_true", default=False)
+    group.add_argument("--expanded_hundred_kb", action="store_true", default=False)
     group.add_argument("--combined_CPTAC_ICGC", action="store_true", default=False)
     group.add_argument("--RNA_subtyped", action="store_true", default=False)
     return parser
