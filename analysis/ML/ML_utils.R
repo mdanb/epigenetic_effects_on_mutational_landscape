@@ -2,7 +2,7 @@
 
 get_relevant_backwards_elim_dirs <- function(cancer_types, 
                                              # combined_datasets,
-                                             tissues_to_consider,
+                                             # tissues_to_consider,
                                              datasets,
                                              cell_number_filter,
                                              tss_fragment_filter,
@@ -28,12 +28,12 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
                                                                cell_number_filter,
                                                                tss_filter,
                                                                annotation,
-                                                               tissues_to_consider,
+                                                               # tissues_to_consider,
                                                                ML_model,
                                                                seed,
                                                                hundred_kb,
                                                                fold_for_test_set,
-                                                               test=F,
+                                                               # test=F,
                                                                per_donor))
     }
   }
@@ -76,12 +76,12 @@ construct_backwards_elim_dir <- function(cancer_type,
                                          cell_number_filter,
                                          tss_fragment_filter, 
                                          annotation,
-                                         tissues_to_consider, 
+                                         # tissues_to_consider, 
                                          ML_model,
                                          seed,
                                          hundred_kb,
                                          fold_for_test_set="-1",
-                                         test=F,
+                                         # test=F,
                                          per_donor=F) {
   dir = construct_dir(scATAC_source,
                       cell_number_filter,
@@ -97,19 +97,23 @@ construct_backwards_elim_dir <- function(cancer_type,
     part_one = unlist(strsplit(dir, split="/"))[1:2]
     pattern = paste0(cancer_type, "_")
     part_two = unlist(strsplit(dir, split="/"))[4]
-    dir = list.files(paste(part_one[1:2], collapse="/"), pattern=pattern)
+    dir = paste(part_one[1:2], collapse="/")
+    if (basename(getwd()) == "analysis") {
+      dir = paste("ML", dir, sep="/")
+    }
+    dir = list.files(dir, pattern=pattern)
     dir = paste(paste(part_one, collapse="/"), dir, part_two, sep="/")
   }
   
   dir = paste(dir, "backwards_elimination_results", sep="/")
   
-  if (tissues_to_consider != "all") {
-    dir = paste(dir, tissues_to_consider, sep="_")
-  }
+  # if (tissues_to_consider != "all") {
+  #   dir = paste(dir, tissues_to_consider, sep="_")
+  # }
   
-  if (!test) {
-    dir = paste("../../figures", dir, sep="/")
-  }
+  # if (!test) {
+  #   dir = paste("../../figures", dir, sep="/")
+  # }
   
   return(dir)
 }
