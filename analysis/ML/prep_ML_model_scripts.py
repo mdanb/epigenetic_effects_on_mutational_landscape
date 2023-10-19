@@ -138,7 +138,7 @@ for fold in fold_for_test_set_range:
                                 "",
                                 "source /broad/software/scripts/useuse",
                                 "use Anaconda",
-                                "source activate /home/unix/bgiotti/conda/coo",
+                                "source activate /ahg/regevdata/projects/ICA_Lung/Wooseung/conda/coo",
                                 "",
                                 python_command])
         try:
