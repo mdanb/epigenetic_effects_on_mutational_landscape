@@ -21,9 +21,10 @@ option_list <- list(
 args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args =
 #                  c("--dataset=Yang_kidney",
-#                    "--cores=2",
+#                    "--cores=1",
 #                    "--annotation=default_annotation",
-#                    "--which_interval_ranges=yang"))
+#                    "--which_interval_ranges=polak",
+#                    "--overlaps_per_cell"))
 
 cores = args$cores
 dataset = args$dataset
@@ -123,10 +124,10 @@ create_count_overlaps_files <- function(file, metadata, interval_ranges,
       # sample <- filter_sample_by_cell_number(sample,
       #                                        counts_per_cell_type, 
       #                                        cell_number_filter)
-      if (dataset == "Yang_kidney") {
-        sample$seqnames = paste0("chr", sample$seqnames)
-      }
-      
+      # if (dataset == "Yang_kidney") {
+      #   sample$seqnames = paste0("chr", sample$seqnames)
+      # }
+      # 
       count_overlaps <- compute_count_overlaps(sample, interval_ranges, 
                                                overlaps_per_cell)
       saveRDS(count_overlaps, filepath)
