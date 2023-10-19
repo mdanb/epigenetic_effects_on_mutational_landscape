@@ -48,7 +48,8 @@ construct_dir <- function(scATAC_source,
                             fold_for_test_set,
                             ML_model,
                             cancer_type,
-                            hundred_kb) {
+                            hundred_kb,
+                            expanded_hundred_kb=F) {
   scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
                         cell_number_filter, sep="_")
   
@@ -67,7 +68,10 @@ construct_dir <- function(scATAC_source,
   
   if (hundred_kb) {
     scATAC_source = paste("interval_ranges_100kb", scATAC_source, sep="_")
+  } else if (expanded_hundred_kb) {
+    scATAC_source = paste("expanded_interval_ranges_100kb", scATAC_source, sep="_")
   }
+  
   return(paste("models", ML_model, cancer_type, scATAC_source, sep="/"))
 }
 
