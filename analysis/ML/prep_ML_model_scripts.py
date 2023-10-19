@@ -21,6 +21,7 @@ parser.add_argument('--n_optuna_trials_backward_selection', type=str)
 parser.add_argument("--save_test_set_perf", action="store_true", default=False)
 parser.add_argument('--test_set_perf_num_features', nargs="+", type=int)
 parser.add_argument('--cores', type=str, default="8")
+parser.add_argument('--mem_per_core', type=str, default="8")
 parser.add_argument('--time', type=str, default="24:00:00")
 parser.add_argument('--feature_importance_method', type=str)
 parser.add_argument("--make_plots", action="store_true", default=False)
@@ -59,6 +60,7 @@ de_novo_seurat_clustering = config.de_novo_seurat_clustering
 histologically_subtyped_mutations = config.histologically_subtyped_mutations
 hundred_kb = config.hundred_kb
 cores = config.cores
+mem_per_core = config.mem_per_core
 time = config.time
 top_features_to_plot = config.top_features_to_plot
 feature_importance_method = config.feature_importance_method
@@ -130,7 +132,7 @@ for fold in fold_for_test_set_range:
                                 f"#$ -l h_rt={time}",
                                 "#$ -l os=RedHat7",
                                 f"#$ -pe smp {cores}",
-                                "#$ -l h_vmem=8G",
+                                f"#$ -l h_vmem={mem_per_core}G",
                                 f"#$ -N {config.cancer_types[0]}_seed_range_{seed_range}_fold_for_test_{fold}",
                                 "#$ -o /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
                                 "#$ -e /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
