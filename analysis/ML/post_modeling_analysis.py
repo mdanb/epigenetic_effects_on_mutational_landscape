@@ -73,8 +73,8 @@ if bins_error_analysis:
                                                                                     mutations_df,
                                                                                     cancer_type,
                                                                                     hundred_kb,
-                                                                                    per_donor,
-                                                                                    expanded_hundred_kb)
+                                                                                    expanded_hundred_kb,
+                                                                                    per_donor)
 
         # scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
         #                                                   histologically_subtyped_mutations,
