@@ -11,9 +11,9 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Yang_kidney",
-#                    "--cores=1"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                 c("--dataset=Bingren_adult_brain",
+                   "--cores=1"))
 
 
 dataset = args$dataset
@@ -65,10 +65,17 @@ get_files_not_done <- function(files, dir_path) {
                                       paste(lapply(strsplit(files, split = "/"),
                                       "[", 4), "tbi", sep=".")),
                                  sep="/")
-  migrated_filepaths = paste(dir_path, 
-                             gsub(".gz", "",
-                             lapply(strsplit(files, split = "/"), "[", 4)),
-                             sep = "/")
+  if (grepl("bedpe", files[1])) {
+    migrated_filepaths = paste(dir_path, 
+                               gsub(".bgz", "",
+                                    lapply(strsplit(files, split = "/"), "[", 4)),
+                               sep = "/")
+  } else {
+    migrated_filepaths = paste(dir_path, 
+                               gsub(".gz", "",
+                               lapply(strsplit(files, split = "/"), "[", 4)),
+                               sep = "/")
+  }
   files_not_done = c()
   migrated_filepaths_not_done = c()
   for (i in 1:length(migrated_filepaths)) {
