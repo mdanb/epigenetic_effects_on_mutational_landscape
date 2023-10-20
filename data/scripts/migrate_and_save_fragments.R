@@ -11,6 +11,10 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
+args = parse_args(OptionParser(option_list=option_list), args =
+                 c("--dataset=Yang_kidney",
+                   "--cores=1"))
+
 
 dataset = args$dataset
 cores = args$cores
@@ -25,18 +29,32 @@ helper <- function(files, migrated_filepaths, ch, cores) {
   # files = lapply(strsplit(files, split = "/"), "[", 9)
   print("IMPORTING")
   print(files)
-  fragments = mclapply(files, import, format="bed", mc.cores=cores)
-  
-  print("MIGRATING")
-  print(files)
-  migrated_fragments = mclapply(fragments, migrate_file, ch, 
-                                mc.cores=cores)
+  if (grepl("bedpe", files[1])) {
+    fragments = mclapply(files, import, format="bedpe", mc.cores=cores)
+    print("MIGRATING")
+    print(files)
+    migrated_fragments = mclapply(fragments, migrate_file, ch, format="bedpe",
+                                  mc.cores=cores)
+  } else {
+    fragments = mclapply(files, import, format="bed", mc.cores=cores)
+    print("MIGRATING")
+    print(files)
+    migrated_fragments = mclapply(fragments, migrate_file, ch, format="bed",
+                                  mc.cores=cores)
+  }
+
   print("EXPORTING")
   print(files)
-  mclapply(seq_along(migrated_fragments), function(i) {export(migrated_fragments[[i]],
-                                                           migrated_filepaths[i],
-                                                           format="bed",
-                                                           index=T)})
+  if (grepl("bedpe", files[1])) {
+    mclapply(seq_along(migrated_fragments), function(i) {export(migrated_fragments[[i]],
+                                                                migrated_filepaths[i],
+                                                                format="bedpe")})
+  } else {
+    mclapply(seq_along(migrated_fragments), function(i) {export(migrated_fragments[[i]],
+                                                                migrated_filepaths[i],
+                                                                format="bed",
+                                                                index=T)})
+  }
 }
 
 get_files_not_done <- function(files, dir_path) {
@@ -105,6 +123,12 @@ if (dataset == "Bingren") {
   dir.create(dir_path)
   files = list.files("../bed_files/rawlins_fetal_lung_scATAC",
                      pattern="tsv.gz",
+                     full.names=TRUE)
+} else if (dataset == "Bingren_adult_brain") {
+  dir_path = "../bed_files/bingren_adult_brain/migrated_to_hg19"
+  dir.create(dir_path)
+  files = list.files("../bed_files/bingren_adult_brain",
+                     pattern="bedpe.gz",
                      full.names=TRUE)
 }
 
