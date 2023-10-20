@@ -284,6 +284,8 @@ get_sample_name_greenleaf_colon <- function(file) {
   sample_name = str_remove(sample_name, "per_cell_")
   sample_name = str_remove(sample_name, "_fragments.tsv.bgz")
   sample_name = str_remove(sample_name, "_fragments.rds")
+  # added line below, may cause issues
+  sample_name = unlist(strsplit(sample_name, split="_"))[2]
   return(sample_name)
 }
 
@@ -294,7 +296,7 @@ get_sample_name_wang_lung <- function(file) {
 
 get_tissue_name_greenleaf_colon <- function(file, metadata) {
   sample = get_sample_name_greenleaf_colon(basename(file))
-  sample = unlist(strsplit(sample, split="_"))[2]
+  # sample = unlist(strsplit(sample, split="_"))[2]
   
   if (sample == "A002-C-202-D-OCT") {
     sample = "A002-C-202"
