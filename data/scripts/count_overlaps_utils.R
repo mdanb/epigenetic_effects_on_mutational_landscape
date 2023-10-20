@@ -407,8 +407,30 @@ get_tissue_name_tsankov <- function(filename, annotation) {
 #   return(tissue_name)
 # }
 
-migrate_file <- function(sample, chain) {
-  seqlevelsStyle(sample) = "UCSC"  # necessary
-  sample = unlist(liftOver(sample, ch))
+migrate_file <- function(sample, chain, format="bed") {
+  if (format == "bed") {
+    seqlevelsStyle(sample) = "UCSC"  # necessary
+    sample = unlist(liftOver(sample, ch))
+  } else if (format == "bedpe") {
+    gr1 <- sample@first
+    gr2 <- sample@second
+    
+    seqlevelsStyle(gr1) <- "UCSC"
+    seqlevelsStyle(gr2) <- "UCSC"
+    
+    gr1_lifted <- unlist(liftOver(gr1, ch))
+    gr2_lifted <- unlist(liftOver(gr2, ch))
+    
+    successful_lift1_indices <- which(!is.na(seqnames(gr1_lifted)))
+    successful_lift2_indices <- which(!is.na(seqnames(gr2_lifted)))
+    
+    common_successful_lift_indices <- intersect(successful_lift1_indices, 
+                                                successful_lift2_indices)
+    
+    gr1_lifted_filtered <- gr1_lifted[common_successful_lift_indices]
+    gr2_lifted_filtered <- gr2_lifted[common_successful_lift_indices]
+    
+    sample <- Pairs(gr1_lifted_filtered, gr2_lifted_filtered)
+  }
   return(sample)
 }
