@@ -11,9 +11,9 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Bingren_adult_brain",
-#                    "--cores=1"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                 c("--dataset=Bingren_adult_brain",
+                   "--cores=1"))
 
 
 dataset = args$dataset
@@ -61,29 +61,32 @@ get_files_not_done <- function(files, dir_path) {
   # migrated_filepaths_bgz = paste(dir_path, gsub(".gz", ".bgz",
   #                                               lapply(strsplit(files, split = "/"), "[", 4)),
   #                                sep = "/")
-  migrated_filepaths_tbi = paste(dir_path, gsub(".gz", ".bgz", 
-                                      paste(lapply(strsplit(files, split = "/"),
-                                      "[", 4), "tbi", sep=".")),
-                                 sep="/")
-  if (grepl("bedpe", files[1])) {
-    migrated_filepaths = paste(dir_path, 
-                               gsub(".gz", ".bgz",
-                                    lapply(strsplit(files, split = "/"), "[", 4)),
-                               sep = "/")
+  
+  # migrated_filepaths_tbi = paste(dir_path, gsub(".gz", ".bgz", 
+  #                                     paste(lapply(strsplit(files, split = "/"),
+  #                                     "[", 4), "tbi", sep=".")),
+  #                                sep="/")
+  # if (grepl("bedpe", files[1])) {
+  #   migrated_filepaths = paste(dir_path, 
+  #                              gsub(".gz", ".bgz",
+  #                                   lapply(strsplit(files, split = "/"), "[", 4)),
+  #                              sep = "/")
     
-  } else {
-    migrated_filepaths = paste(dir_path, 
-                               gsub(".gz", "",
-                               lapply(strsplit(files, split = "/"), "[", 4)),
-                               sep = "/")
-  }
+  # } else {
+  migrated_filepaths = paste(dir_path, 
+                             gsub(".gz", "",
+                             lapply(strsplit(files, split = "/"), "[", 4)),
+                             sep = "/")
+  # }
   files_not_done = c()
   migrated_filepaths_not_done = c()
   for (i in 1:length(migrated_filepaths)) {
     bgz_file = paste(migrated_filepaths[i], ".bgz", sep="")
-    if (!file.exists(bgz_file) || !file.exists(migrated_filepaths_tbi[i])) {
+    # if (!file.exists(bgz_file) || !file.exists(migrated_filepaths_tbi[i])) {
+    if (!file.exists(bgz_file)) {
       migrated_filepaths_not_done = append(migrated_filepaths_not_done, 
-                                           migrated_filepaths[i])
+                                           bgz_file)
+                                           # migrated_filepaths[i])
       files_not_done = append(files_not_done, files[i])
     }
   }
