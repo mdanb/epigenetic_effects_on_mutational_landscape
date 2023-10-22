@@ -11,9 +11,9 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-args = parse_args(OptionParser(option_list=option_list), args =
-                 c("--dataset=Bingren_adult_brain",
-                   "--cores=1"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                  c("--dataset=Bingren_adult_brain",
+#                    "--cores=1"))
 
 
 dataset = args$dataset
