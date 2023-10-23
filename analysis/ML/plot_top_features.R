@@ -23,8 +23,8 @@ parser <- add_option(parser, c("--top_features_to_plot"),
                      type="character")
 parser <- add_option(parser, c("--top_features_to_plot_feat_imp"),
                      type="character", default=NULL)
-parser <- add_option(parser, c("--tissues_to_consider"), 
-                     type="character", default="all")
+# parser <- add_option(parser, c("--tissues_to_consider"), 
+#                      type="character", default="all")
 parser <- add_option(parser, c("--annotation"), 
                      type="character", default="default_annotation")
 parser <- add_option(parser, c("--seed_range"), default="42-42")
@@ -40,21 +40,61 @@ parser <- add_option(parser, c("--feat_imp_min_n_robustness"), type="integer")
 parser <- add_option(parser, c("--plot_fold_on_test_set_plot"), action="store_true", 
                      default=F)
 parser <- add_option(parser, c("--hundred_kb"), action="store_true", default=F)
+parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 
-args = parse_args(parser, args =
-                      c("--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-                        "--cancer_types=SCLC",
-                        "--cell_number_filter=100",
-                        "--top_features_to_plot=1,2,5,10",
-                        "--ML_model=XGB",
-                        "--annotation=finalized_annotation",
-                        "--robustness_analysis",
-                        "--seed_range=1-10",
-                        "--feature_importance_method=permutation_importance",
-                        "--top_features_to_plot_feat_imp=1,2,5,10",
-                        "--folds_for_test_set=1-10",
-                        "--plot_fold_on_test_set_plot",
-                        "--feat_imp_min_n_robustness=50"))
+# args = parse_args(parser, args =
+#                       c("--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
+#                         "--cancer_types=SCLC",
+#                         "--cell_number_filter=100",
+#                         "--top_features_to_plot=1,2,5,10",
+#                         "--ML_model=XGB",
+#                         "--annotation=finalized_annotation",
+#                         "--robustness_analysis",
+#                         "--seed_range=1-10",
+#                         "--feature_importance_method=permutation_importance",
+#                         "--top_features_to_plot_feat_imp=1,2,5,10",
+#                         "--folds_for_test_set=1-10",
+#                         "--plot_fold_on_test_set_plot",
+#                         "--feat_imp_min_n_robustness=50"))
+
+# args = parse_args(parser, args =
+#                     c("--datasets=Bingren,Shendure",
+#                       "--cancer_types=Panc-AdenoCA",
+#                       "--cell_number_filter=100",
+#                       "--top_features_to_plot=1",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--seed_range=1-1",
+#                       "--feature_importance_method=permutation_importance",
+#                       "--top_features_to_plot_feat_imp=1",
+#                       "--folds_for_test_set=1-1",
+#                       "--per_donor"))
+
+# args = parse_args(parser, args =
+#                     c("--datasets=Greenleaf_colon",
+#                       "--cancer_types=ColoRect-AdenoCA",
+#                       "--cell_number_filter=100",
+#                       "--top_features_to_plot=1",
+#                       "--ML_model=XGB",
+#                       "--annotation=remove_cancer_polyp_merge_normal_unaffected",
+#                       "--seed_range=1-1",
+#                       "--feature_importance_method=permutation_importance",
+#                       "--top_features_to_plot_feat_imp=1",
+#                       "--folds_for_test_set=1-1",
+#                       "--per_donor"))
+
+# args = parse_args(parser, args =
+#                     c("--datasets=Tsankov,Rawlins_fetal_lung",
+#                       "--cancer_types=SCLC",
+#                       "--cell_number_filter=1",
+#                       "--top_features_to_plot=1",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--seed_range=1-1",
+#                       "--feature_importance_method=permutation_importance",
+#                       "--top_features_to_plot_feat_imp=1",
+#                       "--folds_for_test_set=1-1",
+#                       "--per_donor"))
 
 args = parse_args(parser)
 
@@ -91,8 +131,6 @@ ggplot_barplot_helper <- function(df, title, savepath, y, ylab,
 }
 
 construct_bar_plots <- function(cancer_type, 
-                                combined_datasets,
-                                tissues_to_consider,
                                 datasets,
                                 cell_number_filter,
                                 tss_fragment_filter,
@@ -102,10 +140,10 @@ construct_bar_plots <- function(cancer_type,
                                 accumulated_seeds,
                                 feature_importance_method, 
                                 fold_for_test_set,
-                                hundred_kb) {
+                                hundred_kb, 
+                                per_donor,
+                                n_filter=NULL) {
   dirs = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
-                                          # combined_datasets=combined_datasets,
-                                          tissues_to_consider=tissues_to_consider,
                                           datasets=datasets,
                                           cell_number_filter=cell_number_filter,
                                           tss_fragment_filter=tss_fragment_filter,
@@ -114,7 +152,12 @@ construct_bar_plots <- function(cancer_type,
                                           hundred_kb=hundred_kb,
                                           fold_for_test_set=fold_for_test_set,
                                           seed=seed,
-                                          accumulated_seeds=accumulated_seeds)
+                                          accumulated_seeds=accumulated_seeds,
+                                          per_donor=per_donor)
+  
+  if (per_donor) {
+    counts=data.frame()
+  }
   for (dir in dirs) {
     file = paste(dir, "df_for_feature_importance_plots", sep="/")
     if (feature_importance_method != "default_importance") {
@@ -125,9 +168,64 @@ construct_bar_plots <- function(cancer_type,
     title = unlist(strsplit(dir, split ="/"))
     title = title[length(title) - 2]
     df = df[df$num_features %in% top_features_to_plot, ]
-    ggplot_barplot_helper(df, title, savepath=dir, 
+    if (per_donor) {
+      df["donor"] = unlist(strsplit(title, split = "_"))[2]
+      counts = rbind(counts, df)
+    } else {
+      ggplot_barplot_helper(df, title, savepath=dir, 
                           ylab=gsub("_", " ", feature_importance_method), 
                           y=feature_importance_method)
+    }
+  }
+  
+  if (per_donor) {
+    dir = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
+                                            datasets=datasets,
+                                            cell_number_filter=cell_number_filter,
+                                            tss_fragment_filter=tss_fragment_filter,
+                                            annotation=annotation,
+                                            ML_model=ML_model,
+                                            hundred_kb=hundred_kb,
+                                            fold_for_test_set=fold_for_test_set,
+                                            seed=seed,
+                                            accumulated_seeds=F,
+                                            per_donor=F)
+    fp = paste(dir, "per_donor_predictions.csv", sep="/")
+    write.csv(counts, fp)
+    bin_width = 0.05
+    break_points <- seq(min(counts$score), max(counts$score) + bin_width, bin_width)
+    labels <- sprintf("%.2f-%.2f", head(break_points, -1), tail(break_points, -1))
+    if (!is.null(n_filter)) {
+      dist = table(counts[["features"]])
+      keep = names(dist)[dist >= n_filter]
+      counts = counts %>% filter(features %in% keep)
+    }
+    df <- counts %>%
+            mutate(bin = cut(score, breaks = break_points,labels=labels,
+                             right = FALSE)) %>%
+            group_by(bin, features) %>%
+            summarise(count = n()) %>%
+            arrange(desc(count))
+    
+    total_counts <- df %>%
+                      group_by(features) %>%
+                      summarise(total = sum(count)) %>%
+                      arrange(desc(total))
+    df = df %>% 
+          left_join(total_counts) %>%
+          mutate(features = paste0(features, " (n=", total, ")")) 
+    ggplot(df, aes(x = bin, y = count, fill = features)) +
+      geom_bar(stat = "identity", position = "stack") +
+      geom_text(aes(label = count), position = position_stack(vjust = 0.5),
+                size = 3) +
+      labs(title = paste(cancer_type, "per donor"), x = "Validation R^2", 
+           y = "Count") +
+      scale_x_discrete(limits = levels(df$bin)) +
+      theme(axis.text.x = element_text(size=6))
+    
+    # ggplot(counts, aes(x = score, fill = features)) +
+    #   geom_histogram(position = "stack", bins = 10) +
+    #   labs(title = paste(cancer_type, "per donor"), x = "Validation R^2", y = "Count")
   }
 }
 
@@ -265,7 +363,7 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                         cell_number_filter,
                                         tss_fragment_filter, 
                                         annotation,
-                                        tissues_to_consider, 
+                                        # tissues_to_consider, 
                                         ML_model,
                                         folds_for_test_set,
                                         feature_importance_method) {
@@ -284,7 +382,7 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                                 cell_number_filter,
                                                 tss_fragment_filter, 
                                                 annotation,
-                                                tissues_to_consider, 
+                                                # tissues_to_consider, 
                                                 ML_model,
                                                 seed,
                                                 fold_for_test_set = fold,
@@ -377,8 +475,7 @@ get_and_plot_scatac_and_mutation_counts_per_fold <- function(cancer_type,
                                                     cell_number_filter,
                                                     tss_fragment_filter,
                                                     annotation, 
-                                                    ML_model,
-                                                    tissues_to_consider) {
+                                                    ML_model) {
   scatac_counts_plots <- list()
   scatac_counts <- c()
   mut_counts_plots <- list()
@@ -402,7 +499,7 @@ get_and_plot_scatac_and_mutation_counts_per_fold <- function(cancer_type,
                                                       cell_number_filter,
                                                       tss_fragment_filter, 
                                                       annotation,
-                                                      tissues_to_consider, 
+                                                      # tissues_to_consider, 
                                                       ML_model,
                                                       1,
                                                       fold_for_test_set=fold,
@@ -444,7 +541,7 @@ datasets = sort(datasets)
 cell_number_filter = args$cell_number_filter
 tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
 annotation = args$annotation
-tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
+# tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
 ML_model = args$ML_model
 seed_range = unlist(strsplit(args$seed_range, split = "-"))
 seed_range = seq(seed_range[1], seed_range[2])
@@ -468,17 +565,15 @@ folds_for_test_set = seq(folds_for_test_set[1], folds_for_test_set[2])
 feat_imp_min_n_robustness = args$feat_imp_min_n_robustness
 plot_fold_on_test_set_plot = args$plot_fold_on_test_set_plot
 hundred_kb = args$hundred_kb
-
+per_donor = args$per_donor
 
 if (!robustness_analysis) {
-  tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
+  # tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
 
   for (seed in seed_range) {
     for (fold in folds_for_test_set) {
       for (cancer_type in cancer_types) {
         construct_bar_plots(cancer_type, 
-                            combined_datasets,
-                            tissues_to_consider,
                             datasets,
                             cell_number_filter,
                             tss_fragment_filter,
@@ -488,7 +583,8 @@ if (!robustness_analysis) {
                             accumulated_seeds=F,
                             feature_importance_method=feature_importance_method,
                             fold_for_test_set=fold,
-                            hundred_kb=hundred_kb)
+                            hundred_kb=hundred_kb,
+                            per_donor=per_donor)
       }
     }
   }
@@ -512,7 +608,7 @@ if (!robustness_analysis) {
 
     savepath = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
                                                 # combined_datasets=combined_datasets,
-                                                tissues_to_consider=tissues_to_consider,
+                                                # tissues_to_consider=tissues_to_consider,
                                                 datasets=datasets,
                                                 cell_number_filter=cell_number_filter,
                                                 tss_fragment_filter=tss_fragment_filter,
@@ -551,7 +647,7 @@ if (!robustness_analysis) {
                                      cell_number_filter=cell_number_filter,
                                      tss_fragment_filter=tss_fragment_filter, 
                                      annotation=annotation,
-                                     tissues_to_consider=tissues_to_consider, 
+                                     # tissues_to_consider=tissues_to_consider, 
                                      ML_model=ML_model,
                                      folds_for_test_set=folds_for_test_set,
                                      feature_importance_method=feature_importance_method
@@ -563,8 +659,7 @@ if (!robustness_analysis) {
                                                          cell_number_filter,
                                                          tss_fragment_filter,
                                                          annotation, 
-                                                         ML_model,
-                                                         tissues_to_consider)
+                                                         ML_model)
     scatac_counts = l[[1]]
     mut_counts = l[[2]]
     # y_position is for plotting number of times feature appears at the top of
