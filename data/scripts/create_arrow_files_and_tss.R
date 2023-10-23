@@ -10,6 +10,7 @@ option_list <- list(
 args = parse_args(OptionParser(option_list=option_list))
 cores=args$cores
 dataset = args$dataset
+tissue = args$tissue
 addArchRThreads(threads = cores)
 addArchRGenome("hg19")
 source("count_overlaps_utils.R")
@@ -86,4 +87,6 @@ if (tissue != "all") {
   files = files[grepl(tissue, files)]
 }
 
+print("processing:")
+print(files)
 create_arrow_files(files, dataset)
