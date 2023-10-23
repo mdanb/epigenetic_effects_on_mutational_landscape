@@ -3,7 +3,8 @@ library(optparse)
 
 option_list <- list( 
   make_option("--dataset", type="character"),
-  make_option("--cores", type="integer")
+  make_option("--cores", type="integer"),
+  make_option("--tissue", type="character", default="all")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -79,6 +80,10 @@ files_dir = paste("..", files_dir, sep="/")
 files = list.files(files_dir, full.names=T, pattern = "bgz$")
 if (dataset == "Yang_kidney" || dataset == "Shendure") {
   files = list.files(files_dir, full.names=T, pattern = "gz$")
+}
+
+if (tissue != "all") {
+  files = files[grepl(tissue, files)]
 }
 
 create_arrow_files(files, dataset)
