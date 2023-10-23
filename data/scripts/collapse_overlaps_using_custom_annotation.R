@@ -38,10 +38,9 @@ save_collapsed_df <- function(df, df_metadata, dataset, annotation,
                              sep = "_")
   
   if (which_interval_ranges != "polak") {
-    save_file = paste(which_interval_ranges,
-                      dataset, "combined_count_overlaps.rds", sep = "_")
+    save_file = paste(which_interval_ranges, save_file, sep = "_")
     save_file_metadata = paste(which_interval_ranges,
-                               dataset, "combined_count_overlaps_metadata.rds", 
+                               save_file_metadata,
                                sep = "_")
   }
   
