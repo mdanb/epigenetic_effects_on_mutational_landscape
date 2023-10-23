@@ -16,7 +16,7 @@ source("count_overlaps_utils.R")
 #h5enableFileLocking()
 create_arrow_files <- function(fragment_paths, dataset) {
     sample_names = basename(fragment_paths)
-    sample_names = lapply(sample_names, get_sample_name, dataset)
+    sample_names = unlist(lapply(sample_names, get_sample_name, dataset))
     # sample_names = gsub("\\.bedpe\\.bgz", "", sample_names)
     # sample_names = gsub(".fragments.*", "", sample_names)
     createArrowFiles(inputFiles = fragment_paths,
