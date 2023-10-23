@@ -37,17 +37,15 @@ def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or
         # for compatibility when chr ranges only include chr_keep but not others
         mutations_df = add_na_ranges(mutations_df, hundred_kb, expanded_hundred_kb)
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
-    if per_donor:
-        return scATAC_df, mutations_df
-    else:
-        cancer_specific_mutations = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
-        return scATAC_df, cancer_specific_mutations
+    if not per_donor:
+        mutations_df = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
+    return scATAC_df, mutations_df
 
 
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                    histologically_subtyped_mutations, de_novo_seurat_clustering,
                    CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type, hundred_kb,
-                   expanded_hundred_kb):
+                   expanded_hundred_kb, aggregated_per_donor):
     if meso:
         mutations_df = load_meso()
     elif SCLC:
@@ -68,6 +66,8 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
         mutations_df = load_RNA_subtyped_mutations()
     elif per_donor:
         mutations_df = load_per_donor_mutations(cancer_type)
+    elif aggregated_per_donor:
+        mutations_df = load_aggregated_per_donor_mutations(cancer_type)
     elif hundred_kb or expanded_hundred_kb:
         mutations_df = load_100kb()
     else:
@@ -79,6 +79,13 @@ def load_per_donor_mutations(cancer_type):
                      index_col=0)
     return df.loc[natsorted(df.index)]
 
+def load_aggregated_per_donor_mutations(cancer_type):
+    cancer_type = cancer_type.split("_")
+    major_type = cancer_type[0]
+    subtype = cancer_type[1]
+    df = pd.read_csv(f"../../data/processed_data/{major_type}/{subtype}.csv",
+                     index_col=0)
+    return df.loc[natsorted(df.index)]
 
 def load_CPTAC():
     df = pd.read_csv(f"../../data/processed_data/CPTAC_mutations.csv",

@@ -94,7 +94,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
                                   combined_CPTAC_ICGC, meso, RNA_subtyped, hundred_kb, expanded_hundred_kb,
-                                  per_donor, donor_range, ML_model, seed_range, n_optuna_trials_prebackward_selection,
+                                  per_donor, donor_range, aggregated_per_donor, ML_model, seed_range,
+                                  n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
                                   make_plots, feature_importance_method, sqlite, test_set_perf_num_features,
                                   debug_bfs, fold_for_test_set):
@@ -114,7 +115,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
             mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                           histologically_subtyped_mutations, de_novo_seurat_clustering,
                                           CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type,
-                                          hundred_kb, expanded_hundred_kb)
+                                          hundred_kb, expanded_hundred_kb, aggregated_per_donor)
 
             scATAC_df, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scATAC_df,
                                                                                         mutations_df,
@@ -239,11 +240,13 @@ test_set_perf_num_features = config.test_set_perf_num_features
 debug_bfs = config.debug_bfs
 hundred_kb = config.hundred_kb
 expanded_hundred_kb = config.expanded_hundred_kb
+aggregated_per_donor = config.aggregated_per_donor
 
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                               meso, RNA_subtyped, hundred_kb, expanded_hundred_kb, per_donor, donor_range, ML_model,
+                               meso, RNA_subtyped, hundred_kb, expanded_hundred_kb, per_donor, donor_range,
+                               aggregated_per_donor, ML_model,
                                seed_range, n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method,
                                sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set)

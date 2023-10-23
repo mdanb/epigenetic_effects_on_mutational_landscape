@@ -35,9 +35,10 @@ def create_parser():
     parser.add_argument('--debug_bfs', action="store_true", default=False)
     parser.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
                         default=None)
-    parser.add_argument("--per_donor", action="store_true", default=False)
 
     group = parser.add_mutually_exclusive_group()
+    parser.add_argument("--per_donor", action="store_true", default=False)
+    parser.add_argument("--aggregated_per_donor", action="store_true", default=False)
     group.add_argument("--SCLC", action="store_true", default=False)
     group.add_argument("--lung_subtyped", action="store_true", default=False)
     group.add_argument("--woo_pcawg", action="store_true", default=False)
