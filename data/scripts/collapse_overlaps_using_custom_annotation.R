@@ -15,7 +15,7 @@ library(tibble)
 option_list <- list( 
   make_option("--dataset", type="character"),
   make_option("--annotation", type="character"),
-  make_option("--which_interval_ranges", type="character"),
+  make_option("--which_interval_ranges", type="character")
 )
 
 args = parse_args(OptionParser(option_list=option_list))
