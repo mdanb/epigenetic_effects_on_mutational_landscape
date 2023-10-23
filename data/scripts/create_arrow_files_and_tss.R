@@ -11,14 +11,14 @@ cores=args$cores
 dataset = args$dataset
 addArchRThreads(threads = cores)
 addArchRGenome("hg19")
-
+source("count_overlaps_utils.R")
 #h5disableFileLocking()
 #h5enableFileLocking()
-create_arrow_files <- function(fragment_paths) {
-    sample_names = strsplit(fragment_paths, split="/")
-    length = length(sample_names[[1]])
-    sample_names = lapply(sample_names, "[", length)
-    sample_names = sub(".fragments.*", "", sample_names)
+create_arrow_files <- function(fragment_paths, dataset) {
+    sample_names = basename(fragment_paths)
+    sample_names = lapply(sample_names, get_sample_name, dataset)
+    # sample_names = gsub("\\.bedpe\\.bgz", "", sample_names)
+    # sample_names = gsub(".fragments.*", "", sample_names)
     createArrowFiles(inputFiles = fragment_paths,
                      sampleNames = sample_names,
                      outputNames = sample_names,
@@ -68,6 +68,9 @@ if (dataset == "Bingren") {
   files_dir = paste(root, 
                     "bed_files/rawlins_fetal_lung_scATAC/migrated_to_hg19", 
                     sep="/")
+} else if (dataset == "Bingren_adult_brain") {
+  output_dir = paste(root, "arrow/Bingren_adult_brain", sep="/") 
+  files_dir = paste(root, "bed_files/bingren_adult_brain/migrated_to_hg19", sep="/")
 }
 
 dir.create(output_dir)
@@ -78,4 +81,4 @@ if (dataset == "Yang_kidney") {
   files = list.files(files_dir, full.names=T, pattern = "gz$")
 }
 
-create_arrow_files(files)
+create_arrow_files(files, dataset)
