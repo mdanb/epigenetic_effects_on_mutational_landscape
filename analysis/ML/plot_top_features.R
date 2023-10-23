@@ -164,6 +164,7 @@ construct_bar_plots <- function(cancer_type,
       file = paste(file, feature_importance_method, sep="_")
     }
     file = paste(file, "csv", sep=".") 
+    file = paste("../../figures", file, sep="/")
     df = as_tibble(read.csv(file))
     title = unlist(strsplit(dir, split ="/"))
     title = title[length(title) - 2]
