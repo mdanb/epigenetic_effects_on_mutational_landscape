@@ -15,7 +15,7 @@ library(tibble)
 option_list <- list( 
   make_option("--dataset", type="character"),
   make_option("--annotation", type="character"),
-  make_option("--which_interval_ranges", type="character")
+  make_option("--which_interval_ranges", type="character"),
 )
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -374,10 +374,19 @@ if (dataset == "Greenleaf_pbmc_bm") {
   }
 } else if (dataset == "Greenleaf_colon") {
     default_annotation_fn = "Greenleaf_colon_combined_count_overlaps.rds"
+    default_annotation_metadata_fn = "Greenleaf_colon_combined_count_overlaps_metadata.rds"
+    
+    if (which_interval_ranges != "polak") {
+      default_annotation_fn = paste("interval_ranges", which_interval_ranges,
+                                    default_annotation_fn, sep="_")
+      default_annotation_metadata_fn = paste("interval_ranges", 
+                                             which_interval_ranges,
+                                             default_annotation_metadata_fn, 
+                                             sep="_")
+    }
     default_annotation_fp = paste(root, "default_annotation", 
                                   default_annotation_fn, sep="/")
     default_combined_count_ovs = readRDS(default_annotation_fp)
-    default_annotation_metadata_fn = "Greenleaf_colon_combined_count_overlaps_metadata.rds"
     default_annotation_metadata_fp = paste(root, "default_annotation", 
                                            default_annotation_metadata_fn,
                                            sep="/")
@@ -449,6 +458,34 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df = l[[1]]
     df_metadata = l[[2]]
     
+    save_collapsed_df(df, df_metadata, dataset, annotation, 
+                      which_interval_ranges)
+  } else if (annotation == "Greenleaf_colon_polyp_only") {
+    df = default_combined_count_ovs
+    df_metadata = default_combined_metadata
+    df = df[-grep("Adenocarcinoma", rownames(df)), ]
+    df_metadata = df_metadata[-grep("adenocarcinoma", 
+                                    df_metadata[["tissue_name"]]), ]
+    df = df[-grep("Unaffected", rownames(df)), ]
+    df_metadata = df_metadata[-grep("unaffected", 
+                                    df_metadata[["tissue_name"]]), ]
+    df = df[-grep("Normal", rownames(df)), ]
+    df_metadata = df_metadata[-grep("normal", 
+                                    df_metadata[["tissue_name"]]), ]
+    save_collapsed_df(df, df_metadata, dataset, annotation, 
+                      which_interval_ranges)
+  } else if (annotation == "Greenleaf_colon_cancer_only") {
+    df = default_combined_count_ovs
+    df_metadata = default_combined_metadata
+    df = df[-grep("Polyp", rownames(df)), ]
+    df_metadata = df_metadata[-grep("polyp", 
+                                    df_metadata[["tissue_name"]]), ]
+    df = df[-grep("Unaffected", rownames(df)), ]
+    df_metadata = df_metadata[-grep("unaffected", 
+                                    df_metadata[["tissue_name"]]), ]
+    df = df[-grep("Normal", rownames(df)), ]
+    df_metadata = df_metadata[-grep("normal", 
+                                    df_metadata[["tissue_name"]]), ]
     save_collapsed_df(df, df_metadata, dataset, annotation, 
                       which_interval_ranges)
   }
