@@ -77,7 +77,7 @@ collapse_using_mapping <- function(mapping, df, df_metadata,
       # collapsed_counts = 0
     }
     
-    collapsed_counts = sum(as.numeric(df_metadata[idxs_metadata, "num_cells"]))
+    collapsed_counts = sum(as.numeric(df_metadata[idxs_metadata, "num_cells"] %>% pull))
     
     for (idx in idxs) {
       row_to_add = df[idx, ]
