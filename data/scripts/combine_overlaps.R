@@ -176,8 +176,9 @@ save_combined_overlaps <- function(filepaths,
     metadata_filepath = paste("..", "processed_data", "count_overlap_data", 
                               "combined_count_overlaps", annotation, 
                               metadata_filename, sep="/")
-    colnames(combined_count_overlaps_metadata) = c("cell_type", "num_cells",
-                                                   "tissue")
+    colnames(combined_count_overlaps_metadata) = c("tissue", "cell_type", 
+                                                   "num_cells")
+                                                   
     saveRDS(combined_count_overlaps_metadata, metadata_filepath)
   }
   saveRDS(combined_count_overlaps, combined_filepath)
