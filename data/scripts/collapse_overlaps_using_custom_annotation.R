@@ -398,7 +398,7 @@ if (dataset == "Greenleaf_pbmc_bm") {
     default_combined_metadata = readRDS(default_annotation_metadata_fp)
     default_combined_metadata["tissue_name"] = tolower(gsub(" ", "_", 
                                       default_combined_metadata[["tissue_name"]]))
-  if (annotation == "remove_cancer_merge_normal_unaffected") {
+  if (annotation == "Greenleaf_colon_remove_cancer_merge_normal_unaffected") {
     df = default_combined_count_ovs
     df_metadata = default_combined_metadata
     df = df[-grep("Adenocarcinoma", rownames(df)), ]
@@ -430,7 +430,7 @@ if (dataset == "Greenleaf_pbmc_bm") {
     save_collapsed_df(df, df_metadata, dataset, annotation, 
                       which_interval_ranges)
   }
-  else if (annotation == "remove_cancer_polyp_merge_normal_unaffected") {
+  else if (annotation == "Greenleaf_colon_remove_cancer_polyp_merge_normal_unaffected") {
     df = default_combined_count_ovs
     df_metadata = default_combined_metadata
     df = df[-grep("Adenocarcinoma", rownames(df)), ]
