@@ -173,7 +173,7 @@ construct_bar_plots <- function(cancer_type,
       df["donor"] = unlist(strsplit(title, split = "_"))[2]
       counts = rbind(counts, df)
     } else {
-      ggplot_barplot_helper(df, title, savepath=dir, 
+      ggplot_barplot_helper(df, title, savepath=paste("../../figures", dir, sep="/"), 
                           ylab=gsub("_", " ", feature_importance_method), 
                           y=feature_importance_method)
     }
