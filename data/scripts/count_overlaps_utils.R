@@ -282,6 +282,7 @@ get_sample_name_yang <- function(file) {
 get_sample_name_greenleaf_colon <- function(file) {
   sample_name = str_remove(file, "Greenleaf_colon_count_overlaps_")
   sample_name = str_remove(sample_name, "per_cell_")
+  sample_name = str_remove(sample_name, "interval_ranges_100kb_")
   sample_name = str_remove(sample_name, "_fragments.tsv.bgz")
   sample_name = str_remove(sample_name, "_fragments.rds")
   # added line below, may cause issues
