@@ -83,7 +83,7 @@ def load_aggregated_per_donor_mutations(cancer_type):
     cancer_type = cancer_type.split("_")
     major_type = cancer_type[0]
     subtype = cancer_type[1]
-    df = pd.read_csv(f"../../data/processed_data/{major_type}/{subtype}.csv",
+    df = pd.read_csv(f"../../data/processed_data/{major_type}/{major_type}_{subtype}.csv",
                      index_col=0)
     return df.loc[natsorted(df.index)]
 
