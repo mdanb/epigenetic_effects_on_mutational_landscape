@@ -18,10 +18,10 @@ option_list <- list(
   make_option("--which_interval_ranges", type="character")
 )
 
-args = parse_args(parser, args =
-                      c("--dataset=Greenleaf_colon",
-                        "--annotation=remove_cancer_polyp_merge_normal_unaffected",
-                        "--which_interval_ranges=100kb"))
+# args = parse_args(parser, args =
+#                       c("--dataset=Greenleaf_colon",
+#                         "--annotation=remove_cancer_polyp_merge_normal_unaffected",
+#                         "--which_interval_ranges=100kb"))
 
 args = parse_args(OptionParser(option_list=option_list))
 
