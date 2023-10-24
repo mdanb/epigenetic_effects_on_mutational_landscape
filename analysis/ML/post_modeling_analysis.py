@@ -43,6 +43,7 @@ error_analysis_num_features = config.error_analysis_num_features
 fold_for_test_set = config.fold_for_test_set
 bins_error_analysis = config.bins_error_analysis
 count_bin_sums = config.count_bin_sums
+aggregated_per_donor = config.aggregated_per_donor
 
 def conduct_test(errors, underestimated=None, two_sided=None):
     assert not ((underestimated is not None and two_sided is not None) or
@@ -68,7 +69,7 @@ if bins_error_analysis:
         mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                       histologically_subtyped_mutations, de_novo_seurat_clustering,
                                       CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type,
-                                      hundred_kb, expanded_hundred_kb)
+                                      hundred_kb, expanded_hundred_kb, aggregated_per_donor)
         scATAC_df, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scATAC_df,
                                                                                     mutations_df,
                                                                                     cancer_type,
