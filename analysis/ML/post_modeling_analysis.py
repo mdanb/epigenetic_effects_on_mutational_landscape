@@ -103,7 +103,7 @@ if bins_error_analysis:
                                                               full_data_trained=True)
                 top_features = model.feature_names_in_
                 _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 10, fold_for_test_set)
-                x = X_test.loc[:, top_features]
+                x = X_test.loc[:, top_features].iloc[0]
                 pred = model.predict(x)
                 error = y_test - pred
                 # errors = compute_error(X_test.loc[:, top_features], y_test, estimator=model, train_new_model=False,
