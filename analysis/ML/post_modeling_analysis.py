@@ -153,7 +153,7 @@ if bins_error_analysis:
                            "avg_prediction": avg_multiseed_preds,
                            "median_prediction": median_multiseed_preds,
                            "actual": actual,
-                           "x": atac
+                           "atac": atac
                            # "avg_percent_error": multiseed_percent_errors,
                            # "normalized_absolute_error": normalized_absolute_errors,
                            # "absolute_errors_p-value_under": absolute_errors_p_values_under,
