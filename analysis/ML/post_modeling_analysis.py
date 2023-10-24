@@ -114,7 +114,7 @@ if bins_error_analysis:
                 # for fold_results in errors:
                 if seed == 1:
                     actual.append(y_test)
-                    atac.append(x.iloc[0])
+                    atac.append(x.squeeze())
                 abs_errors.append(error)
                 # percent_errors.append(errors["percent_err"])
                 preds.append(pred)
