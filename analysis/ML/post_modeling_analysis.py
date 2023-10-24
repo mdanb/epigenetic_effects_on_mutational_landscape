@@ -87,6 +87,7 @@ if bins_error_analysis:
         # multiseed_percent_errors = []
         multiseed_preds = []
         actual = []
+        atac = []
         for seed in range(1, 11):
             abs_errors = []
             # percent_errors = []
@@ -101,7 +102,8 @@ if bins_error_analysis:
                                                               full_data_trained=True)
                 top_features = model.feature_names_in_
                 _, X_test, _, y_test = get_train_test_split(scATAC_df, cancer_specific_mutations, 10, fold_for_test_set)
-                pred = model.predict(X_test.loc[:, top_features])
+                x = X_test.loc[:, top_features]
+                pred = model.predict(x)
                 error = y_test - pred
                 # errors = compute_error(X_test.loc[:, top_features], y_test, estimator=model, train_new_model=False,
                 #                        i=fold_for_test_set)
@@ -111,6 +113,7 @@ if bins_error_analysis:
                 # for fold_results in errors:
                 if seed == 1:
                     actual.append(y_test)
+                    atac.append(x)
                 abs_errors.append(error)
                 # percent_errors.append(errors["percent_err"])
                 preds.append(pred)
@@ -125,6 +128,7 @@ if bins_error_analysis:
         avg_multiseed_preds = np.mean(multiseed_preds, axis=0)
         median_multiseed_preds = np.median(multiseed_preds, axis=0)
         actual = np.concatenate(actual)
+        atac = np.concatenate(atac)
         # multiseed_percent_errors.plot.hist()
         # percent_errors_rejected, percent_errors_q_values, \
         # normalized_percent_errors, percent_errors_p_values = conduct_test(multiseed_percent_errors, two_sided=True)
@@ -147,7 +151,8 @@ if bins_error_analysis:
                            "median_absolute_error": median_multiseed_errors,
                            "avg_prediction": avg_multiseed_preds,
                            "median_prediction": median_multiseed_preds,
-                           "actual": actual
+                           "actual": actual,
+                           "x": atac
                            # "avg_percent_error": multiseed_percent_errors,
                            # "normalized_absolute_error": normalized_absolute_errors,
                            # "absolute_errors_p-value_under": absolute_errors_p_values_under,
