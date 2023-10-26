@@ -250,15 +250,10 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             print(f"Loading scATAC from {dataset}...")
             scATAC_df = load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
             f"/{annotation_dir}/{dataset}_combined_count_overlaps.rds", hundred_kb, expanded_hundred_kb)
-            print(scATAC_df.shape)
             print("Loaded!")
             metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
             f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb, expanded_hundred_kb)
-            print(scATAC_df.shape)
-            print(metadata)
-            print(scATAC_df)
             scATAC_df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
-            print(scATAC_df.shape)
             datasets_combined_count_overlaps.append(scATAC_df)
 
     for idx, dataset in enumerate(datasets):
