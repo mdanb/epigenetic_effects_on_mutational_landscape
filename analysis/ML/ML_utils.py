@@ -219,7 +219,6 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
     def load_scATAC(scATAC_path, hundred_kb, expanded_hundred_kb):
         if hundred_kb or expanded_hundred_kb:
             scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_100kb_{os.path.basename(scATAC_path)}"
-            print(scATAC_path)
         scATAC_df = pyreadr.read_r(scATAC_path)
         scATAC_df = scATAC_df[None]
         scATAC_df = scATAC_df.T
@@ -248,6 +247,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             print(f"Loading scATAC from {dataset}...")
             scATAC_df = load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
             f"/{annotation_dir}/{dataset}_combined_count_overlaps.rds", hundred_kb, expanded_hundred_kb)
+            print(scATAC_df.shape)
             print("Loaded!")
             metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
             f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb, expanded_hundred_kb)
