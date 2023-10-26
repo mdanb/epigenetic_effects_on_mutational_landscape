@@ -234,7 +234,7 @@ if (dataset == "Greenleaf_pbmc_bm") {
       summarise_all(sum)
     cell_types = default_combined_count_ovs[["cell_types"]]
     default_combined_count_ovs = as.data.frame(default_combined_count_ovs)[, 
-                                                                           2:ncol(default_combined_count_ovs)]
+                                            2:ncol(default_combined_count_ovs)]
     rownames(default_combined_count_ovs) = cell_types
     default_combined_metadata = readRDS(default_annotation_metadata_fp)
     prev_tissue = default_combined_metadata[["tissue_name"]]
@@ -401,15 +401,15 @@ if (dataset == "Greenleaf_pbmc_bm") {
   if (annotation == "Greenleaf_colon_remove_cancer_merge_normal_unaffected") {
     df = default_combined_count_ovs
     df_metadata = default_combined_metadata
-    df = df[-grep("Adenocarcinoma", rownames(df)), ]
+    df = df[-grep("adenocarcinoma", rownames(df)), ]
     df_metadata = df_metadata[-grep("adenocarcinoma", 
                                     df_metadata[["tissue_name"]]), ]
     mapping = list() 
     index = 1
     
-    rownames(df) = gsub("Unaffected colon", "unaffected_colon", rownames(df))
-    rownames(df) = gsub("Normal colon", "normal_colon", rownames(df))
-    rownames(df) = gsub("Polyp colon", "polyp_colon", rownames(df))
+    # rownames(df) = gsub("Unaffected colon", "unaffected_colon", rownames(df))
+    # rownames(df) = gsub("Normal colon", "normal_colon", rownames(df))
+    # rownames(df) = gsub("Polyp colon", "polyp_colon", rownames(df))
     
     for (celltype in rownames(df)) {
       if (grepl("unaffected", celltype)) {
@@ -433,18 +433,18 @@ if (dataset == "Greenleaf_pbmc_bm") {
   else if (annotation == "Greenleaf_colon_remove_cancer_polyp_merge_normal_unaffected") {
     df = default_combined_count_ovs
     df_metadata = default_combined_metadata
-    df = df[-grep("Adenocarcinoma", rownames(df)), ]
+    df = df[-grep("adenocarcinoma", rownames(df)), ]
     df_metadata = df_metadata[-grep("adenocarcinoma", 
                                     df_metadata[["tissue_name"]]), ]
-    df = df[-grep("Polyp", rownames(df)), ]
+    df = df[-grep("polyp", rownames(df)), ]
     df_metadata = df_metadata[-grep("polyp", 
                                     df_metadata[["tissue_name"]]), ]
     
     mapping = list() 
     index = 1
     
-    rownames(df) = gsub("Unaffected colon", "unaffected_colon", rownames(df))
-    rownames(df) = gsub("Normal colon", "normal_colon", rownames(df))
+    # rownames(df) = gsub("Unaffected colon", "unaffected_colon", rownames(df))
+    # rownames(df) = gsub("Normal colon", "normal_colon", rownames(df))
 
     for (celltype in rownames(df)) {
       if (grepl("unaffected", celltype)) {
@@ -467,13 +467,13 @@ if (dataset == "Greenleaf_pbmc_bm") {
   } else if (annotation == "Greenleaf_colon_polyp_only") {
     df = default_combined_count_ovs
     df_metadata = default_combined_metadata
-    df = df[-grep("Adenocarcinoma", rownames(df)), ]
+    df = df[-grep("adenocarcinoma", rownames(df)), ]
     df_metadata = df_metadata[-grep("adenocarcinoma", 
                                     df_metadata[["tissue_name"]]), ]
-    df = df[-grep("Unaffected", rownames(df)), ]
+    df = df[-grep("unaffected", rownames(df)), ]
     df_metadata = df_metadata[-grep("unaffected", 
                                     df_metadata[["tissue_name"]]), ]
-    df = df[-grep("Normal", rownames(df)), ]
+    df = df[-grep("normal", rownames(df)), ]
     df_metadata = df_metadata[-grep("normal", 
                                     df_metadata[["tissue_name"]]), ]
     save_collapsed_df(df, df_metadata, dataset, annotation, 
@@ -481,13 +481,13 @@ if (dataset == "Greenleaf_pbmc_bm") {
   } else if (annotation == "Greenleaf_colon_cancer_only") {
     df = default_combined_count_ovs
     df_metadata = default_combined_metadata
-    df = df[-grep("Polyp", rownames(df)), ]
+    df = df[-grep("polyp", rownames(df)), ]
     df_metadata = df_metadata[-grep("polyp", 
                                     df_metadata[["tissue_name"]]), ]
-    df = df[-grep("Unaffected", rownames(df)), ]
+    df = df[-grep("unaffected", rownames(df)), ]
     df_metadata = df_metadata[-grep("unaffected", 
                                     df_metadata[["tissue_name"]]), ]
-    df = df[-grep("Normal", rownames(df)), ]
+    df = df[-grep("normal", rownames(df)), ]
     df_metadata = df_metadata[-grep("normal", 
                                     df_metadata[["tissue_name"]]), ]
     save_collapsed_df(df, df_metadata, dataset, annotation, 
