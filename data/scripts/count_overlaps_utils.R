@@ -307,7 +307,7 @@ get_tissue_name_greenleaf_colon <- function(file, metadata) {
     sample = paste(sample, collapse="-")
   }
   type = metadata[metadata["Sample"] == sample, "GrossPathology"] %>% pull()
-  return(paste(type, "colon"))
+  return(paste(type, "colon", sep="_"))
 }
  
 get_tissue_name <- function(file, dataset, annotation) {
