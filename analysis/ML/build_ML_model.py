@@ -103,9 +103,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
     scATAC_sources = construct_scATAC_sources(datasets)
     scATAC_df = construct_scATAC_df(tss_fragment_filter, datasets, scATAC_cell_number_filter, annotation_dir,
                                     hundred_kb, expanded_hundred_kb)
-    print(scATAC_df.shape)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
-    print(scATAC_df.shape)
     # Note that the loading process arranges the bins so that it's in the correct order of the genome
     # ensuring that splits truly split based on contiguous genomic regions
     for seed in seed_range:
