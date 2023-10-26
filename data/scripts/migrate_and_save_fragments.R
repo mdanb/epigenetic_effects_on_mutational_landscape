@@ -1,6 +1,7 @@
 library(parallel)
 library(rtracklayer)
 library(optparse)
+library(plyranges)
 source("count_overlaps_utils.R")
 
 option_list <- list(
@@ -10,10 +11,10 @@ option_list <- list(
   make_option("--chain", type="character", default="hg38ToHg19")
 )
 
-args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Bingren_adult_brain",
-#                    "--cores=1"))
+# args = parse_args(OptionParser(option_list=option_list))
+args = parse_args(OptionParser(option_list=option_list), args =
+                 c("--dataset=Bingren_adult_brain",
+                   "--cores=1"))
 
 
 dataset = args$dataset
@@ -31,30 +32,38 @@ helper <- function(files, migrated_filepaths, ch, cores) {
   print(files)
   if (grepl("bedpe", files[1])) {
     fragments = mclapply(files, import, format="bedpe", mc.cores=cores)
-    print("MIGRATING")
-    print(files)
-    migrated_fragments = mclapply(fragments, migrate_file, ch, format="bedpe",
-                                  mc.cores=cores)
+    fragments = mclapply(fragments, function(x) bind_ranges(x@first, x@second), 
+                         mc.cores=cores)
+    fragments = mclapply(fragments, as.data.frame, mc.cores=cores)
+    fragments = mclapply(fragments, function(x)
+                    x[grepl("chr", x[["seqnames"]]), ] %>% droplevels(), 
+                        mc.cores=cores)
+    fragments = mclapply(fragments, GRanges)
+    # migrated_fragments = mclapply(fragments, migrate_file, ch, format="bedpe",
+    #                               mc.cores=cores)
   } else {
     fragments = mclapply(files, import, format="bed", mc.cores=cores)
-    print("MIGRATING")
-    print(files)
-    migrated_fragments = mclapply(fragments, migrate_file, ch, format="bed",
-                                  mc.cores=cores)
   }
-
+  print("MIGRATING")
+  print(files)
+  migrated_fragments = mclapply(fragments, migrate_file, ch, format="bed",
+                                mc.cores=cores)
+  
   print("EXPORTING")
   print(files)
-  if (grepl("bedpe", files[1])) {
-    mclapply(seq_along(migrated_fragments), function(i) {export(migrated_fragments[[i]],
-                                                                migrated_filepaths[i],
-                                                                format="bedpe")})
-  } else {
-    mclapply(seq_along(migrated_fragments), function(i) {export(migrated_fragments[[i]],
-                                                                migrated_filepaths[i],
-                                                                format="bed",
-                                                                index=T)})
-  }
+  mclapply(seq_along(migrated_fragments), function(i) {export(migrated_fragments[[i]],
+                                                              migrated_filepaths[i],
+                                                              format="bed")})
+  
+  # if (grepl("bedpe", files[1])) {
+  #   mclapply(seq_along(migrated_fragments), function(i) {export(migrated_fragments[[i]],
+  #                                                               migrated_filepaths[i],
+  #                                                               format="bedpe")})
+  # } else {
+  #   mclapply(seq_along(migrated_fragments), function(i) {export(migrated_fragments[[i]],
+  #                                                               migrated_filepaths[i],
+  #                                                               format="bed")})
+  # }
 }
 
 get_files_not_done <- function(files, dir_path) {
@@ -151,6 +160,7 @@ files = files[grepl(tissue, files)]
 filepaths = get_files_not_done(files, dir_path)
 files = filepaths[[1]]
 migrated_filepaths = filepaths[[2]]
+migrated_filepaths = gsub("bedpe", "bed", migrated_filepaths)
 print("Will process:")
 print(files)
 split_files = split(files, ceiling(seq_along(files)/cores))
