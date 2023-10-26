@@ -258,6 +258,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             print(metadata)
             scATAC_df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
             print(scATAC_df.shape)
+            print(scATAC_df)
             datasets_combined_count_overlaps.append(scATAC_df)
 
     for idx, dataset in enumerate(datasets):
