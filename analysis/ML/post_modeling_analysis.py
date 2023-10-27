@@ -124,6 +124,7 @@ if bins_error_analysis:
 
         multiseed_errors = pd.concat(multiseed_errors, axis=1)
         avg_multiseed_errors = multiseed_errors.mean(axis=1)
+        avg_errors_se = multiseed_errors.sem(axis=1)
         median_multiseed_errors = multiseed_errors.median(axis=1)
         # multiseed_percent_errors = pd.concat(multiseed_percent_errors, axis=1).mean(axis=1)
         avg_multiseed_preds = np.mean(multiseed_preds, axis=0)
@@ -149,6 +150,7 @@ if bins_error_analysis:
                            # "percent_error_q-value": percent_errors_q_values,
                            # "percent_error_rejected": percent_errors_rejected,
                            "avg_absolute_error": avg_multiseed_errors,
+                           "avg_errors_se": avg_errors_se,
                            "median_absolute_error": median_multiseed_errors,
                            "avg_prediction": avg_multiseed_preds,
                            "median_prediction": median_multiseed_preds,
