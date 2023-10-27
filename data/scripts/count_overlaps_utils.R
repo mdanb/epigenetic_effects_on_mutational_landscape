@@ -236,6 +236,9 @@ get_sample_name_bingren <- function(file) {
     return("Human_brain_2")
   }
   sample_name = str_remove(file, "rep")
+  sample_name = str_remove(sample_name, "Bingren_count_overlaps_")
+  sample_name = str_remove(sample_name, "per_cell_")
+  sample_name = str_remove(sample_name, "_fragments.rds")
   sample_name = str_remove(sample_name, "_fragments.bed.bgz")
   sample_name = unlist(strsplit(sample_name, split="_"))
   sample_name = paste(sample_name[2:length(sample_name)], collapse="_")
