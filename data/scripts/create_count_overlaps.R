@@ -228,12 +228,13 @@ if (dataset == "Bingren") {
                               pattern = ".*fragments\\.txt\\.gz")
   
   mclapply(files_Shendure, create_count_overlaps_files,
-         metadata=metadata_Shendure,
-         interval_ranges=interval.ranges,
-         dataset=dataset,
-         annotation=annotation,
-         which_interval_ranges=which_interval_ranges,
-         mc.cores=cores)
+           metadata=metadata_Shendure,
+           interval_ranges=interval.ranges,
+           dataset=dataset,
+           annotation=annotation,
+           which_interval_ranges=which_interval_ranges,
+           overlaps_per_cell=overlaps_per_cell,
+           mc.cores=cores)
 } else if (dataset == "Tsankov") {
   # metadata_tsankov_proximal = 
   #   read.csv("../metadata/tsankov_lung_proximal_barcode_annotation.csv")
