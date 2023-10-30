@@ -20,10 +20,13 @@ def run_unclustered_data_analysis_helper(scATAC_df,
                                          annotation_dir,
                                          tss_fragment_filter,
                                          save_test_set_perf,
-                                         test_set_perf_num_features):
+                                         test_set_perf_num_features,
+                                         tissues_to_consider):
+
+    tissues_string = "_".join(tissues_to_consider)
 
     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter, annotation_dir,
-                                      hundred_kb, expanded_hundred_kb, seed, fold_for_test_set)
+                                      hundred_kb, expanded_hundred_kb, seed, fold_for_test_set, tissues_string)
 
     backwards_elim_dir=f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results"
 
@@ -98,11 +101,11 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
                                   make_plots, feature_importance_method, sqlite, test_set_perf_num_features,
-                                  debug_bfs, fold_for_test_set):
+                                  debug_bfs, fold_for_test_set, tissues_to_consider):
     ### args used at the end for plot_top_features.R ###
     scATAC_sources = construct_scATAC_sources(datasets)
     scATAC_df = construct_scATAC_df(tss_fragment_filter, datasets, scATAC_cell_number_filter, annotation_dir,
-                                    hundred_kb, expanded_hundred_kb)
+                                    hundred_kb, expanded_hundred_kb, tissues_to_consider)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
     # Note that the loading process arranges the bins so that it's in the correct order of the genome
     # ensuring that splits truly split based on contiguous genomic regions
@@ -248,7 +251,7 @@ run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter,
                                aggregated_per_donor, ML_model,
                                seed_range, n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method,
-                               sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set)
+                               sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set, tissues_to_consider)
 
 
 
