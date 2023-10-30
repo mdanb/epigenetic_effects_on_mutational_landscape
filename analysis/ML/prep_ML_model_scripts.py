@@ -100,7 +100,7 @@ for fold in fold_for_test_set_range:
                                  "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
                                  "--feature_importance_method", feature_importance_method,
                                  "--fold_for_test_set", str(fold),
-                                 "--tissues_to_consider", tissues_to_consider])
+                                 "--tissues_to_consider", " ".join(tissues_to_consider)])
 
         if meso:
             script_filename = script_filename + "_" + "meso"
