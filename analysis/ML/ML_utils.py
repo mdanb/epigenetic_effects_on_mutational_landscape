@@ -217,20 +217,36 @@ def add_dataset_origin_to_cell_types(df, dataset):
 
 
 def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb,
-                        expanded_hundred_kb):
-    def load_scATAC(scATAC_path, hundred_kb, expanded_hundred_kb):
+                        expanded_hundred_kb, tissues_to_consider):
+    def load_scATAC(scATAC_path, hundred_kb, expanded_hundred_kb, tissues_to_consider):
         if hundred_kb or expanded_hundred_kb:
             scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_100kb_{os.path.basename(scATAC_path)}"
         scATAC_df = pyreadr.read_r(scATAC_path)
         scATAC_df = scATAC_df[None]
         scATAC_df = scATAC_df.T
+
+        def check_tissue(tissue_cell_type):
+            return any(tissue in tissue_cell_type for tissue in tissues_to_consider)
+
+        if tissues_to_consider != "all":
+            idx = pd.Series(scATAC_df.columns.values).apply(check_tissue)
+            tissue_specific_cell_types = scATAC_df.columns.values[idx]
+            scATAC_df = scATAC_df.loc[:, tissue_specific_cell_types]
+
         return scATAC_df
 
-    def load_scATAC_metadata(metadata_path, hundred_kb, expanded_hundred_kb):
+    def load_scATAC_metadata(metadata_path, hundred_kb, expanded_hundred_kb, tissues_to_consider):
         if hundred_kb or expanded_hundred_kb:
             metadata_path = f"{os.path.dirname(metadata_path)}/interval_ranges_100kb_{os.path.basename(metadata_path)}"
         metadata = pyreadr.read_r(metadata_path)
         metadata = metadata[None]
+
+        if tissues_to_consider != "all":
+            try:
+                keep = metadata["tissue_name"] in tissues_to_consider
+            except KeyError:
+                keep = metadata["tissue"] in tissues_to_consider
+            metadata = metadata.loc[keep, :]
         return metadata
 
     datasets_combined_count_overlaps = []
@@ -248,10 +264,12 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
         else:
             print(f"Loading scATAC from {dataset}...")
             scATAC_df = load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
-            f"/{annotation_dir}/{dataset}_combined_count_overlaps.rds", hundred_kb, expanded_hundred_kb)
+            f"/{annotation_dir}/{dataset}_combined_count_overlaps.rds", hundred_kb, expanded_hundred_kb,
+                                    tissues_to_consider)
             print("Loaded!")
             metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
-            f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb, expanded_hundred_kb)
+            f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb, expanded_hundred_kb,
+                                            tissues_to_consider)
             scATAC_df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
             datasets_combined_count_overlaps.append(scATAC_df)
 
@@ -667,8 +685,9 @@ def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg,
 
 #### Other ####
 def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, hundred_kb,
-                         expanded_hundred_kb, seed=None, fold_for_test_set=None, all_seeds=False):
-    scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
+                         expanded_hundred_kb, tissues_to_consider, seed=None, fold_for_test_set=None, all_seeds=False):
+    scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}_tissues_to_consider_" \
+                 f"{tissues_to_consider}"
     if tss_filter:
         scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
 
