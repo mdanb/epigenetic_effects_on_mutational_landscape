@@ -11,6 +11,8 @@ parser.add_argument('--scATAC_cell_number_filter', type=str,
                     help='minimum number of cells per cell type in scATAC', default="100")
 parser.add_argument('--annotation_dir', type=str,
                     help='name of annotation directory', default="default_annotation")
+parser.add_argument('--tissues_to_consider', nargs="+", type=str,
+                    default=["all"])
 parser.add_argument('--seed_interval', type=str)
 parser.add_argument('--seed_interval_step', type=int)
 parser.add_argument('--top_features_to_plot', nargs="+", type=str,
@@ -71,6 +73,7 @@ submit_jobs = config.submit_jobs
 cleanup = config.cleanup
 run_locally = config.run_locally
 expanded_hundred_kb = config.expanded_hundred_kb
+tissues_to_consider = config.tissues_to_consider
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
@@ -82,7 +85,8 @@ for fold in fold_for_test_set_range:
                                     "datasets", "_".join(sorted(config.datasets)),
                                     "scATAC_cell_number_filter", scATAC_cell_number_filter,
                                     "annotation_dir", annotation_dir,
-                                    "seed_range", seed_range, "fold_for_test_set", str(fold)])
+                                    "seed_range", seed_range, "fold_for_test_set", str(fold),
+                                    "tissues_to_consider", "_".join(tissues_to_consider)])
                                     # "feature_importance_method", feature_importance_method])
                                         # "top_features_to_plot", "_".join(config.top_features_to_plot),
 
@@ -95,7 +99,8 @@ for fold in fold_for_test_set_range:
                                  "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
                                  "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
                                  "--feature_importance_method", feature_importance_method,
-                                 "--fold_for_test_set", str(fold)])
+                                 "--fold_for_test_set", str(fold),
+                                 "--tissues_to_consider", tissues_to_consider])
 
         if meso:
             script_filename = script_filename + "_" + "meso"
