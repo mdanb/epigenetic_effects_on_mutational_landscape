@@ -687,7 +687,7 @@ def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg,
 def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, hundred_kb,
                          expanded_hundred_kb, tissues_to_consider, seed=None, fold_for_test_set=None, all_seeds=False):
     scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}_tissues_to_consider_" \
-                 f"{'_'.join(tissues_to_consider)}"
+                 f"{tissues_to_consider}"
     if tss_filter:
         scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
 
