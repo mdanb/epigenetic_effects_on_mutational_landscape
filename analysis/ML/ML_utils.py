@@ -243,9 +243,9 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
 
         if tissues_to_consider != "all":
             try:
-                keep = metadata["tissue_name"] in tissues_to_consider
+                keep = metadata["tissue_name"].isin(tissues_to_consider)
             except KeyError:
-                keep = metadata["tissue"] in tissues_to_consider
+                keep = metadata["tissue"].isin(tissues_to_consider)
             metadata = metadata.loc[keep, :]
         return metadata
 
