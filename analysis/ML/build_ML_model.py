@@ -26,7 +26,7 @@ def run_unclustered_data_analysis_helper(scATAC_df,
     tissues_string = "_".join(tissues_to_consider)
 
     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter, annotation_dir,
-                                      hundred_kb, expanded_hundred_kb, seed, fold_for_test_set, tissues_string)
+                                      hundred_kb, expanded_hundred_kb, tissues_string, seed, fold_for_test_set)
 
     backwards_elim_dir=f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results"
 
