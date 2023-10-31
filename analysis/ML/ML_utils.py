@@ -667,19 +667,23 @@ def apply_func_to_kfolds(X, y, func, **kwargs):
 #     print(f"Done plotting top features for seed {seed}!")
 
 def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
-                           annotation_dir, top_features_to_plot, feature_importance_method, fold_for_test_set):
+                           annotation_dir, top_features_to_plot, feature_importance_method, fold_for_test_set,
+                           robustness_analysis=False):
     seed_range = f"{seed_range[0]}-{seed_range[-1]}"
     print(f"Plotting top features for seed range {seed_range}...")
     command = ["Rscript", "plot_top_features.R",
-                         f"--cancer_types={','.join(cancer_types_arg)}",
-                         f"--ML_model={ML_model}",
-                         f"--datasets={','.join(datasets_arg)}",
-                         f"--seed_range={seed_range}",
-                         f"--cell_number_filter={scATAC_cell_number_filter}",
-                         f"--annotation={annotation_dir}",
-                         f"--top_features_to_plot={','.join(list(map(str, top_features_to_plot)))}",
-                         f"--feature_importance_method={feature_importance_method}",
-                         f"--folds_for_test_set={'-'.join(list(map(str, [fold_for_test_set, fold_for_test_set])))}"]
+                 f"--cancer_types={','.join(cancer_types_arg)}",
+                 f"--ML_model={ML_model}",
+                 f"--datasets={','.join(datasets_arg)}",
+                 f"--seed_range={seed_range}",
+                 f"--cell_number_filter={scATAC_cell_number_filter}",
+                 f"--annotation={annotation_dir}",
+                 f"--top_features_to_plot={','.join(list(map(str, top_features_to_plot)))}",
+                 f"--feature_importance_method={feature_importance_method}",
+                 f"--folds_for_test_set={'-'.join(list(map(str, [fold_for_test_set, fold_for_test_set])))}"]
+    if robustness_analysis:
+        command.append("--robustness_analysis")
+
     subprocess.call(command)
     print(f"Done plotting top features for seed range {seed_range}!")
 
