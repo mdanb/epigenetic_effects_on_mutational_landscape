@@ -71,19 +71,19 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 #                       "--folds_for_test_set=1-1",
 #                       "--per_donor"))
 
-args = parse_args(parser, args =
-                    c("--datasets=Greenleaf_colon",
-                      "--cancer_types=ColoRect-AdenoCA",
-                      "--cell_number_filter=1",
-                      "--top_features_to_plot=1",
-                      "--ML_model=XGB",
-                      "--annotation=Greenleaf_colon_remove_cancer_polyp_merge_normal_unaffected",
-                      "--seed_range=1-10",
-                      "--feature_importance_method=permutation_importance",
-                      "--top_features_to_plot_feat_imp=1",
-                      "--folds_for_test_set=1-10",
-                      "--robustness_analysis",
-                      "--hundred_kb"))
+# args = parse_args(parser, args =
+#                     c("--datasets=Greenleaf_colon",
+#                       "--cancer_types=ColoRect-AdenoCA",
+#                       "--cell_number_filter=1",
+#                       "--top_features_to_plot=1",
+#                       "--ML_model=XGB",
+#                       "--annotation=Greenleaf_colon_remove_cancer_polyp_merge_normal_unaffected",
+#                       "--seed_range=1-10",
+#                       "--feature_importance_method=permutation_importance",
+#                       "--top_features_to_plot_feat_imp=1",
+#                       "--folds_for_test_set=1-10",
+#                       "--robustness_analysis",
+#                       "--hundred_kb"))
 
 # args = parse_args(parser, args =
 #                     c("--datasets=Tsankov,Rawlins_fetal_lung",
