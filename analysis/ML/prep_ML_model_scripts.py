@@ -120,7 +120,7 @@ for fold in fold_for_test_set_range:
             command_args = command_args + " " + "--hundred_kb"
         elif expanded_hundred_kb:
             command_args = command_args + " " + "--expanded_hundred_kb"
-    
+
 
         script_filename = f"{script_filename}.sh"
 
@@ -153,6 +153,7 @@ for fold in fold_for_test_set_range:
                                 "",
                                 python_command])
         try:
+            print("Creating scripts...")
             with open(script_filename, "w") as f:
                 f.write(job_script)
         except:
@@ -163,6 +164,7 @@ for fold in fold_for_test_set_range:
                 script_filename = "temp.sh"
 
             with open(script_filename, "w") as f:
+                 print("Creating scripts...")
                  f.write(job_script)
 
         if submit_jobs:
