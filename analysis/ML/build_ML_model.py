@@ -101,12 +101,14 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
                                   make_plots, feature_importance_method, sqlite, test_set_perf_num_features,
-                                  debug_bfs, fold_for_test_set, tissues_to_consider, robustness_analysis):
+                                  debug_bfs, fold_for_test_set, tissues_to_consider):
     ### args used at the end for plot_top_features.R ###
     scATAC_sources = construct_scATAC_sources(datasets)
     scATAC_df = construct_scATAC_df(tss_fragment_filter, datasets, scATAC_cell_number_filter, annotation_dir,
                                     hundred_kb, expanded_hundred_kb, tissues_to_consider)
+    print(scATAC_df)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
+    print(scATAC_df)
     # Note that the loading process arranges the bins so that it's in the correct order of the genome
     # ensuring that splits truly split based on contiguous genomic regions
     for seed in seed_range:
@@ -125,6 +127,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                                                         hundred_kb,
                                                                                         expanded_hundred_kb,
                                                                                         per_donor)
+            print(scATAC_df)
             if not per_donor:
                 if tss_fragment_filter:
                     for tss_filter in tss_fragment_filter:
@@ -198,8 +201,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
 
         if make_plots:
             call_plot_top_features(seed_range, cancer_types, ML_model, datasets, scATAC_cell_number_filter,
-                                   annotation_dir, top_features_to_plot, feature_importance_method,
-                                   fold_for_test_set + 1, tissues_to_consider, robustness_analysis)
+                                   annotation_dir, top_features_to_plot, feature_importance_method, tissues_to_consider,
+                                   fold_for_test_set + 1)
     return
 
 
@@ -239,7 +242,6 @@ n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 top_features_to_plot = config.top_features_to_plot
 save_test_set_perf = config.save_test_set_perf
 make_plots = config.make_plots
-robustness_analysis = config.robustness_analysis
 feature_importance_method = config.feature_importance_method
 sqlite = config.sqlite
 test_set_perf_num_features = config.test_set_perf_num_features
@@ -255,8 +257,8 @@ run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter,
                                aggregated_per_donor, ML_model,
                                seed_range, n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method,
-                               sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set, tissues_to_consider,
-                               robustness_analysis)
+                               sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set, tissues_to_consider
+                               )
 
 
 
