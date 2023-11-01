@@ -560,7 +560,7 @@ cell_number_filter = args$cell_number_filter
 tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
 annotation = args$annotation
 tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
-tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
+tissues_to_consider = paste(unlist(tissues_to_consider), collapse="_")
 ML_model = args$ML_model
 seed_range = unlist(strsplit(args$seed_range, split = "-"))
 seed_range = seq(seed_range[1], seed_range[2])
