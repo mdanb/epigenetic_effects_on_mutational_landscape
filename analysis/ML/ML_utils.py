@@ -174,14 +174,12 @@ def filter_clustered_data(scATAC_df, mutations_df):
 
 def filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata):
     metadata = metadata.loc[metadata["num_cells"].astype(int) >= scATAC_cell_number_filter, :]
-    print(metadata)
     try:
         keep = [tissue.lower().replace(" ", "_") + " " + cell_type for tissue, cell_type in zip(metadata["tissue_name"],
                                                                                                 metadata["cell_type"])]
     except KeyError:
         keep = [tissue.lower().replace(" ", "_") + " " + cell_type for tissue, cell_type in zip(metadata["tissue"],
                                                                                                 metadata["cell_type"])]
-    print(keep)
     scATAC_df = scATAC_df.loc[:, scATAC_df.columns.isin(keep)]
     return scATAC_df
 
@@ -226,7 +224,6 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
         scATAC_df = pyreadr.read_r(scATAC_path)
         scATAC_df = scATAC_df[None]
         scATAC_df = scATAC_df.T
-        print(scATAC_df.shape[1])
         def check_tissue(tissue_cell_type):
             return any(tissue in tissue_cell_type for tissue in tissues_to_consider)
 
