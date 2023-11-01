@@ -634,10 +634,11 @@ if (!robustness_analysis) {
                                                 ML_model=ML_model,
                                                 hundred_kb=hundred_kb,
                                                 accumulated_seeds=T)
+    print(savepath)
     savepath = paste("../../figures", savepath, sep="/")
     dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type, 
                            sep="/"), recursive = F)
-    
+    print(dirs) 
     combos = expand.grid(seed = seed_range, fold = folds_for_test_set)
     seed_fold_for_test_combinations = apply(combos, 1, function(row) {
       paste(scATAC_source, "seed", row["seed"], "fold_for_test_set", row["fold"], 
@@ -649,7 +650,7 @@ if (!robustness_analysis) {
                                               seed_fold_for_test_combinations,
                                               sep = "_")
     }
-  
+    print(seed_fold_for_test_combinations)
     all_seeds_dirs = dirs[basename(dirs) %in% seed_fold_for_test_combinations]
     
     df_feature_importances_all_seeds = 
