@@ -24,8 +24,8 @@ parser <- add_option(parser, c("--top_features_to_plot"),
                      type="character")
 parser <- add_option(parser, c("--top_features_to_plot_feat_imp"),
                      type="character", default=NULL)
-# parser <- add_option(parser, c("--tissues_to_consider"), 
-#                      type="character", default="all")
+parser <- add_option(parser, c("--tissues_to_consider"),
+                     type="character", default="all")
 parser <- add_option(parser, c("--annotation"), 
                      type="character", default="default_annotation")
 parser <- add_option(parser, c("--seed_range"), default="42-42")
