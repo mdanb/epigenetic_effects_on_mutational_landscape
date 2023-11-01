@@ -145,13 +145,24 @@ for fold in fold_for_test_set_range:
                                 f"#$ -N {config.cancer_types[0]}_seed_range_{seed_range}_fold_for_test_{fold}",
                                 "#$ -o /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
                                 "#$ -e /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
-                                f"#$ -binding linear:{cores}",
-                                "",
-                                "source /broad/software/scripts/useuse",
-                                "use Anaconda",
-                                "source activate /ahg/regevdata/projects/ICA_Lung/Wooseung/conda/coo",
-                                "",
+                                f"#$ -binding linear:{cores}"])
+                                # "",
+                                # "source /broad/software/scripts/useuse",
+                                # "use Anaconda",
+                                # "source activate /ahg/regevdata/projects/ICA_Lung/Wooseung/conda/coo",
+                                # "",
+                                # python_command])
+
+        if submit_jobs:
+            job_script = '\n'.join([job_script,
+                                   "",
+                                   "source /broad/software/scripts/useuse",
+                                   "use Anaconda",
+                                   "source activate /ahg/regevdata/projects/ICA_Lung/Wooseung/conda/coo",
+                                   ""])
+        job_script = '\n'.join([job_script,
                                 python_command])
+
         try:
             print("Creating scripts...")
             with open(script_filename, "w") as f:
