@@ -194,7 +194,7 @@ for fold in fold_for_test_set_range:
         if cleanup:
             subprocess.run(["rm", f"{script_filename}"])
 
-os.makedirs("robustness_scripts")
+os.makedirs("robustness_scripts", exist_ok=True)
 robustness_filename = f"robustness_{robustness_filename}.sh"
 robustness_fp = os.path.join("robustness_scripts", robustness_filename)
 
