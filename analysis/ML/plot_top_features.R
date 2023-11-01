@@ -386,7 +386,7 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                                 cell_number_filter,
                                                 tss_fragment_filter, 
                                                 annotation,
-                                                # tissues_to_consider, 
+                                                tissues_to_consider,
                                                 ML_model,
                                                 seed,
                                                 fold_for_test_set = fold,
@@ -505,7 +505,7 @@ get_and_plot_scatac_and_mutation_counts_per_fold <- function(cancer_type,
                                                       cell_number_filter,
                                                       tss_fragment_filter, 
                                                       annotation,
-                                                      # tissues_to_consider, 
+                                                      tissues_to_consider,
                                                       ML_model,
                                                       1,
                                                       fold_for_test_set=fold,
@@ -559,7 +559,8 @@ datasets = sort(datasets)
 cell_number_filter = args$cell_number_filter
 tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
 annotation = args$annotation
-# tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
+tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
+tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
 ML_model = args$ML_model
 seed_range = unlist(strsplit(args$seed_range, split = "-"))
 seed_range = seq(seed_range[1], seed_range[2])
@@ -586,8 +587,6 @@ hundred_kb = args$hundred_kb
 per_donor = args$per_donor
 
 if (!robustness_analysis) {
-  # tissues_to_consider = paste(unlist(tissues_to_consider, "_"))
-
   for (seed in seed_range) {
     for (fold in folds_for_test_set) {
       for (cancer_type in cancer_types) {
@@ -626,7 +625,7 @@ if (!robustness_analysis) {
 
     savepath = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
                                                 # combined_datasets=combined_datasets,
-                                                # tissues_to_consider=tissues_to_consider,
+                                                tissues_to_consider=tissues_to_consider,
                                                 datasets=datasets,
                                                 cell_number_filter=cell_number_filter,
                                                 tss_fragment_filter=tss_fragment_filter,
