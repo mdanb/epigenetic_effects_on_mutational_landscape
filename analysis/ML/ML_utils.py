@@ -244,7 +244,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
         metadata = pyreadr.read_r(metadata_path)
         metadata = metadata[None]
 
-        if tissues_to_consider != "all":
+        if tissues_to_consider[0] != "all":
             try:
                 keep = metadata["tissue_name"].isin(tissues_to_consider)
             except KeyError:
