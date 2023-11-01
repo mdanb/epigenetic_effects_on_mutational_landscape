@@ -1,6 +1,7 @@
 import argparse
 import subprocess
 import re
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--cancer_types', nargs="+", type=str,
@@ -17,6 +18,7 @@ parser.add_argument('--seed_interval', type=str)
 parser.add_argument('--seed_interval_step', type=int)
 parser.add_argument('--top_features_to_plot', nargs="+", type=str,
                     default=["18"])
+parser.add_argument('--top_features_to_plot_feat_imp', nargs="+", type=str)
 parser.add_argument('--fold_for_test_set_range', type=str)
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=str)
 parser.add_argument('--n_optuna_trials_backward_selection', type=str)
@@ -30,6 +32,7 @@ parser.add_argument("--make_plots", action="store_true", default=False)
 parser.add_argument("--robustness_analysis", action="store_true", default=False)
 parser.add_argument("--create_bash_scripts", action="store_true", default=False)
 parser.add_argument("--cleanup", action="store_true", default=False)
+parser.add_argument('--feat_imp_min_n_robustness', type=int)
 
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
@@ -76,6 +79,8 @@ cleanup = config.cleanup
 run_locally = config.run_locally
 expanded_hundred_kb = config.expanded_hundred_kb
 tissues_to_consider = config.tissues_to_consider
+top_features_to_plot_feat_imp = config.top_features_to_plot_feat_imp
+feat_imp_min_n_robustness = config.feat_imp_min_n_robustness
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
@@ -87,7 +92,6 @@ for fold in fold_for_test_set_range:
                                     "datasets", "_".join(sorted(config.datasets)),
                                     "scATAC_cell_number_filter", scATAC_cell_number_filter,
                                     "annotation_dir", annotation_dir,
-                                    "seed_range", seed_range, "fold_for_test_set", str(fold),
                                     "tissues_to_consider", "_".join(tissues_to_consider)])
                                     # "feature_importance_method", feature_importance_method])
                                         # "top_features_to_plot", "_".join(config.top_features_to_plot),
@@ -117,10 +121,14 @@ for fold in fold_for_test_set_range:
             # script_filename = script_filename + "_" + "histologically_subtyped_mutations"
             command_args = command_args + " " + "--histologically_subtyped_mutations"
         elif hundred_kb:
+            script_filename = script_filename + "_" + "hundred_kb"
             command_args = command_args + " " + "--hundred_kb"
         elif expanded_hundred_kb:
+            script_filename = script_filename + "_" + "expanded_hundred_kb"
             command_args = command_args + " " + "--expanded_hundred_kb"
 
+        robustness_filename = script_filename
+        script_filename = "_".join([script_filename, "seed_range", seed_range, "fold_for_test_set", str(fold)])
 
         script_filename = f"{script_filename}.sh"
 
@@ -185,5 +193,28 @@ for fold in fold_for_test_set_range:
 
         if cleanup:
             subprocess.run(["rm", f"{script_filename}"])
+
+os.makedirs("robustness_scripts")
+robustness_filename = f"robustness_{robustness_filename}.sh"
+robustness_fp = os.path.join("robustness_scripts", robustness_filename)
+
+command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
+                         "--datasets", ",".join(sorted(config.datasets)),
+                         "--cell_number_filter", scATAC_cell_number_filter,
+                         "--annotation", annotation_dir,
+                         "--seed_range 1-10",
+                         "--top_features_to_plot_feat_imp", ",".join(config.top_features_to_plot_feat_imp),
+                         "--feature_importance_method", feature_importance_method,
+                         "--folds_for_test_set 1-10",
+                         "--tissues_to_consider", ",".join(tissues_to_consider),
+                         "--robustness_analysis",
+                         "--feat_imp_min_n_robustness", feat_imp_min_n_robustness])
+
+python_command = "Rscript plot_top_features.R " + \
+                  command_args
+
+with open(robustness_fp, "w") as f:
+    f.write(command_args)
+
 
 
