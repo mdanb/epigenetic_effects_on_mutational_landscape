@@ -671,6 +671,7 @@ def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg,
                            tissues_to_consider, robustness_analysis=False):
     seed_range = f"{seed_range[0]}-{seed_range[-1]}"
     print(f"Plotting top features for seed range {seed_range}...")
+    print('-'.join(list(map(str, [fold_for_test_set, fold_for_test_set]))))
     command = ["Rscript", "plot_top_features.R",
                  f"--cancer_types={','.join(cancer_types_arg)}",
                  f"--ML_model={ML_model}",
