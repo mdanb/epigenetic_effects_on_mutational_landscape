@@ -510,7 +510,8 @@ get_and_plot_scatac_and_mutation_counts_per_fold <- function(cancer_type,
                         fold,
                         ML_model,
                         cancer_type,
-                        hundred_kb)
+                        hundred_kb,
+                        tissues_to_consider)
     X_test = read.csv(paste(dir, "X_test.csv", sep="/"), row.names = 1,
                       check.names = FALSE)
     y_test = read.csv(paste(dir, "y_test.csv", sep="/"), row.names = 1)
