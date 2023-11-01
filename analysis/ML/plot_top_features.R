@@ -98,19 +98,19 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 #                       "--folds_for_test_set=1-1",
 #                       "--per_donor"))
 
-args = parse_args(parser, args =
-                    c("--datasets=Bingren",
-                      "--cancer_types=Skin-Melanoma",
-                      "--cell_number_filter=50",
-                      "--top_features_to_plot_feat_imp=1,2,5,10",
-                      "--ML_model=XGB",
-                      "--annotation=finalized_annotation",
-                      "--seed_range=1-10",
-                      "--feature_importance_method=permutation_importance",
-                      "--folds_for_test_set=1-10",
-                      "--tissues_to_consider=skin,skin_sun_exposed",
-                      "--robustness_analysis",
-                      "--feat_imp_min_n_robustness=50"))
+# args = parse_args(parser, args =
+#                     c("--datasets=Bingren",
+#                       "--cancer_types=Skin-Melanoma",
+#                       "--cell_number_filter=50",
+#                       "--top_features_to_plot_feat_imp=1,2,5,10",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--seed_range=1-10",
+#                       "--feature_importance_method=permutation_importance",
+#                       "--folds_for_test_set=1-10",
+#                       "--tissues_to_consider=skin,skin_sun_exposed",
+#                       "--robustness_analysis",
+#                       "--feat_imp_min_n_robustness=50"))
 args = parse_args(parser)
 
 
@@ -666,8 +666,6 @@ if (!robustness_analysis) {
                                               seed_fold_for_test_combinations,
                                               sep = "_")
     }
-    print(seed_fold_for_test_combinations)
-    print(dirs)
     all_seeds_dirs = dirs[basename(dirs) %in% seed_fold_for_test_combinations]
     df_feature_importances_all_seeds = 
           construct_df_feature_importances_all_seeds(all_seeds_dirs,
