@@ -692,17 +692,7 @@ if (!robustness_analysis) {
                                      feature_importance_method=feature_importance_method,
                                      hundred_kb=hundred_kb)
     
-    l = get_and_plot_scatac_and_mutation_counts_per_fold(cancer_type,
-                                                         folds_for_test_set,
-                                                         datasets,
-                                                         cell_number_filter,
-                                                         tss_fragment_filter,
-                                                         annotation, 
-                                                         ML_model,
-                                                         hundred_kb,
-                                                         tissues_to_consider)
-    scatac_counts = l[[1]]
-    mut_counts = l[[2]]
+
     # y_position is for plotting number of times feature appears at the top of
     # the boxplot. 
     df_feat_imp = df_feature_importances_all_seeds %>% 
@@ -754,9 +744,21 @@ if (!robustness_analysis) {
     df_test = df %>% 
       group_by(top_n, top_feature) %>%
       mutate(n_top_feature = n(), y_position = max(test_set_perf))
-
-    df_test["scatac_counts"] = scatac_counts[df[["fold"]]]
-    df_test["mut_counts"] = mut_counts[df[["fold"]]]
+    if (plot_fold_on_test_set_plot) {
+      l = get_and_plot_scatac_and_mutation_counts_per_fold(cancer_type,
+                                                           folds_for_test_set,
+                                                           datasets,
+                                                           cell_number_filter,
+                                                           tss_fragment_filter,
+                                                           annotation, 
+                                                           ML_model,
+                                                           hundred_kb,
+                                                           tissues_to_consider)
+      scatac_counts = l[[1]]
+      mut_counts = l[[2]]
+      df_test["scatac_counts"] = scatac_counts[df[["fold"]]]
+      df_test["mut_counts"] = mut_counts[df[["fold"]]]
+    }
     
     savefile = paste0("test_set_boxplots_with_",
                       paste(top_features_to_plot_feat_imp, collapse="_"),
