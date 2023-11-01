@@ -93,17 +93,16 @@ construct_backwards_elim_dir <- function(cancer_type,
                                          fold_for_test_set="-1",
                                          # test=F,
                                          per_donor=F) {
-  dir = construct_dir(scATAC_source,
-                      cell_number_filter,
-                      tss_fragment_filter,
-                      annotation,
-                      seed,
-                      fold_for_test_set,
-                      ML_model,
-                      cancer_type,
-                      hundred_kb,
-                      tissues_to_consider)
-  
+  dir = construct_dir(scATAC_source=scATAC_source,
+                      cell_number_filter=cell_number_filter,
+                      tss_fragment_filter=tss_fragment_filter,
+                      annotation=annotation,
+                      seed=seed,
+                      fold_for_test_set=fold_for_test_set,
+                      ML_model=ML_model,
+                      cancer_type=cancer_type,
+                      hundred_kb=hundred_kb,
+                      tissues_to_consider=tissues_to_consider)
   if (per_donor) {
     part_one = unlist(strsplit(dir, split="/"))[1:2]
     pattern = paste0(cancer_type, "_")
