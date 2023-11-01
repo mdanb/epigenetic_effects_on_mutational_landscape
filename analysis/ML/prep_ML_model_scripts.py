@@ -29,7 +29,6 @@ parser.add_argument('--mem_per_core', type=str, default="8")
 parser.add_argument('--time', type=str, default="24:00:00")
 parser.add_argument('--feature_importance_method', type=str)
 parser.add_argument("--make_plots", action="store_true", default=False)
-parser.add_argument("--robustness_analysis", action="store_true", default=False)
 parser.add_argument("--create_bash_scripts", action="store_true", default=False)
 parser.add_argument("--cleanup", action="store_true", default=False)
 parser.add_argument('--feat_imp_min_n_robustness', type=int)
@@ -71,7 +70,6 @@ time = config.time
 top_features_to_plot = config.top_features_to_plot
 feature_importance_method = config.feature_importance_method
 make_plots = config.make_plots
-robustness_analysis = config.robustness_analysis
 save_test_set_perf = config.save_test_set_perf
 test_set_perf_num_features = config.test_set_perf_num_features
 submit_jobs = config.submit_jobs
@@ -134,8 +132,6 @@ for fold in fold_for_test_set_range:
 
         if make_plots:
             command_args = command_args + " " + "--make_plots"
-        if robustness_analysis:
-            command_args = command_args + " " + "--robustness_analysis"
         if save_test_set_perf:
             command_args = command_args + " " + "--save_test_set_perf"
             command_args = command_args + " " + "--test_set_perf_num_features" + " " + " ".join(map(str,
