@@ -561,7 +561,6 @@ tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
 annotation = args$annotation
 tissues_to_consider = strsplit(args$tissues_to_consider,  split=",")
 tissues_to_consider = paste(unlist(tissues_to_consider), collapse="_")
-print(tissues_to_consider)
 ML_model = args$ML_model
 seed_range = unlist(strsplit(args$seed_range, split = "-"))
 seed_range = seq(seed_range[1], seed_range[2])
@@ -582,7 +581,6 @@ if (!is.null(skip_seeds_robustness)) {
 folds_for_test_set = args$folds_for_test_set
 folds_for_test_set = unlist(strsplit(args$folds_for_test_set, split = "-"))
 folds_for_test_set = seq(folds_for_test_set[1], folds_for_test_set[2])
-print(folds_for_test_set)
 feat_imp_min_n_robustness = args$feat_imp_min_n_robustness
 plot_fold_on_test_set_plot = args$plot_fold_on_test_set_plot
 hundred_kb = args$hundred_kb
@@ -635,11 +633,10 @@ if (!robustness_analysis) {
                                                 ML_model=ML_model,
                                                 hundred_kb=hundred_kb,
                                                 accumulated_seeds=T)
-    print(savepath)
     savepath = paste("../../figures", savepath, sep="/")
+    print(savepath)
     dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type, 
                            sep="/"), recursive = F)
-    print(dirs) 
     combos = expand.grid(seed = seed_range, fold = folds_for_test_set)
     seed_fold_for_test_combinations = apply(combos, 1, function(row) {
       paste(scATAC_source, "seed", row["seed"], "fold_for_test_set", row["fold"], 
@@ -652,8 +649,8 @@ if (!robustness_analysis) {
                                               sep = "_")
     }
     print(seed_fold_for_test_combinations)
+    print(dirs)
     all_seeds_dirs = dirs[basename(dirs) %in% seed_fold_for_test_combinations]
-    
     df_feature_importances_all_seeds = 
           construct_df_feature_importances_all_seeds(all_seeds_dirs,
                                                      feature_importance_method,
