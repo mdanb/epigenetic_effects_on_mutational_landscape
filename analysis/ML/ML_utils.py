@@ -227,9 +227,8 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
 
         def check_tissue(tissue_cell_type):
             return any(tissue in tissue_cell_type for tissue in tissues_to_consider)
-        print(scATAC_df)
-        print(tissues_to_consider)
-        if tissues_to_consider != "all":
+
+        if tissues_to_consider[0] != "all":
             print("Loading subset of tissues...")
             idx = pd.Series(scATAC_df.columns.values).apply(check_tissue)
             tissue_specific_cell_types = scATAC_df.columns.values[idx]
