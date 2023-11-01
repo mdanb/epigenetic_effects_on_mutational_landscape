@@ -197,7 +197,6 @@ for fold in fold_for_test_set_range:
 os.makedirs("robustness_scripts", exist_ok=True)
 robustness_filename = f"robustness_{robustness_filename}.sh"
 robustness_fp = os.path.join("robustness_scripts", robustness_filename)
-
 command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
                          "--datasets", ",".join(sorted(config.datasets)),
                          "--cell_number_filter", scATAC_cell_number_filter,
@@ -208,7 +207,7 @@ command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
                          "--folds_for_test_set 1-10",
                          "--tissues_to_consider", ",".join(tissues_to_consider),
                          "--robustness_analysis",
-                         "--feat_imp_min_n_robustness", feat_imp_min_n_robustness])
+                         "--feat_imp_min_n_robustness", str(feat_imp_min_n_robustness)])
 
 python_command = "Rscript plot_top_features.R " + \
                   command_args
