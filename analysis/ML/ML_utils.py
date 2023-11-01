@@ -224,7 +224,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
         scATAC_df = pyreadr.read_r(scATAC_path)
         scATAC_df = scATAC_df[None]
         scATAC_df = scATAC_df.T
-
+        print(scATAC_df.shape[1])
         def check_tissue(tissue_cell_type):
             return any(tissue in tissue_cell_type for tissue in tissues_to_consider)
 
@@ -267,6 +267,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             scATAC_df = load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
             f"/{annotation_dir}/{dataset}_combined_count_overlaps.rds", hundred_kb, expanded_hundred_kb,
                                     tissues_to_consider)
+            print("Num features", scATAC_df.shape[1])
             print("Loaded!")
             metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
             f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb, expanded_hundred_kb,
