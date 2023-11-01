@@ -8,8 +8,7 @@ library(stringr)
 library(tibble)
 library(gridExtra)
 
-setwd(".")
-source("../../utils.R")
+source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
 source("ML_utils.R")
 
 parser <- OptionParser()
@@ -19,9 +18,9 @@ parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 # parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
 parser <- add_option(parser, c("--tss_fragment_filter"),
                      type="character", default="-1")
-parser <- add_option(parser, c("--ML_model"), type="character")
+parser <- add_option(parser, c("--ML_model"), type="character", default="XGB")
 parser <- add_option(parser, c("--top_features_to_plot"),
-                     type="character")
+                     type="character", default="1,2,5,10")
 parser <- add_option(parser, c("--top_features_to_plot_feat_imp"),
                      type="character", default=NULL)
 parser <- add_option(parser, c("--tissues_to_consider"),
@@ -36,7 +35,8 @@ parser <- add_option(parser, c("--robustness_accumulated_feature_importance_barp
                      default=F)
 parser <- add_option(parser, c("--feature_importance_method"), type="character")
 parser <- add_option(parser, c("--skip_seeds_robustness"), default="")
-parser <- add_option(parser, c("--folds_for_test_set"), type="character")
+parser <- add_option(parser, c("--folds_for_test_set"), type="character", 
+                     default="1-10")
 parser <- add_option(parser, c("--feat_imp_min_n_robustness"), type="integer")
 parser <- add_option(parser, c("--plot_fold_on_test_set_plot"), action="store_true", 
                      default=F)
@@ -691,10 +691,10 @@ if (!robustness_analysis) {
     # y_position is for plotting number of times feature appears at the top of
     # the boxplot. 
     df_feat_imp = df_feature_importances_all_seeds %>% 
-          group_by(num_features, seed, fold_for_test_set) %>%
-          group_by(num_features, features) %>%
-          mutate(n_feature = n(), y_position = max(permutation_importance)) %>%
-          filter(num_features %in% top_features_to_plot_feat_imp)
+                  group_by(num_features, seed, fold_for_test_set) %>%
+                  group_by(num_features, features) %>%
+                  mutate(n_feature = n(), y_position = max(permutation_importance)) %>%
+                  filter(num_features %in% top_features_to_plot_feat_imp)
       
     savefile = paste0("feature_importance_with_",
                       paste(top_features_to_plot_feat_imp, collapse="_"),
@@ -720,21 +720,21 @@ if (!robustness_analysis) {
                        n_name="n_feature", facet_var="num_features",
                        ylabel="Permutation Importance")
     
-    df_feat_imp = df_feature_importances_all_seeds %>% 
-      group_by(num_features, seed, fold_for_test_set) %>%
-      mutate(max_feature_importance=max(permutation_importance)) %>%
-      filter(permutation_importance == max_feature_importance) %>%
-      ungroup() %>%
-      group_by(num_features, features) %>%
-      mutate(n_feature = n(), y_position = max(permutation_importance)) %>%
-      filter(num_features %in% top_features_to_plot_feat_imp)
-    
-    construct_boxplots(df=df_feat_imp, x="features", 
-                       y="permutation_importance", 
-                       color="features", title=cancer_type, savepath=savepath,
-                       savefile="feature_importance_top_feat_only.png", 
-                       n_name="n_feature", facet_var="num_features",
-                       ylabel="Permutation Importance")
+    # df_feat_imp = df_feature_importances_all_seeds %>% 
+    #   group_by(num_features, seed, fold_for_test_set) %>%
+    #   mutate(max_feature_importance=max(permutation_importance)) %>%
+    #   filter(permutation_importance == max_feature_importance) %>%
+    #   ungroup() %>%
+    #   group_by(num_features, features) %>%
+    #   mutate(n_feature = n(), y_position = max(permutation_importance)) %>%
+    #   filter(num_features %in% top_features_to_plot_feat_imp)
+    # 
+    # construct_boxplots(df=df_feat_imp, x="features", 
+    #                    y="permutation_importance", 
+    #                    color="features", title=cancer_type, savepath=savepath,
+    #                    savefile="feature_importance_top_feat_only.png", 
+    #                    n_name="n_feature", facet_var="num_features",
+    #                    ylabel="Permutation Importance")
     
     df_test = df %>% 
       group_by(top_n, top_feature) %>%
