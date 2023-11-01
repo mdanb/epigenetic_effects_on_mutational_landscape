@@ -8,8 +8,7 @@ library(stringr)
 library(tibble)
 library(gridExtra)
 
-setwd(".")
-source("../../utils.R")
+source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
 source("ML_utils.R")
 
 parser <- OptionParser()
