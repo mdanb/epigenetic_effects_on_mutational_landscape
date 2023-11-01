@@ -2,7 +2,7 @@
 
 get_relevant_backwards_elim_dirs <- function(cancer_types, 
                                              # combined_datasets,
-                                             # tissues_to_consider,
+                                             tissues_to_consider,
                                              datasets,
                                              cell_number_filter,
                                              tss_fragment_filter,
@@ -28,7 +28,7 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
                                                                cell_number_filter,
                                                                tss_filter,
                                                                annotation,
-                                                               # tissues_to_consider,
+                                                               tissues_to_consider,
                                                                ML_model,
                                                                seed,
                                                                hundred_kb,
@@ -41,17 +41,23 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
 }
 
 construct_dir <- function(scATAC_source,
-                            cell_number_filter,
-                            tss_fragment_filter,
-                            annotation,
-                            seed,
-                            fold_for_test_set,
-                            ML_model,
-                            cancer_type,
-                            hundred_kb,
-                            expanded_hundred_kb=F) {
+                          cell_number_filter,
+                          tss_fragment_filter,
+                          annotation,
+                          seed,
+                          fold_for_test_set,
+                          ML_model,
+                          cancer_type,
+                          hundred_kb,
+                          tissues_to_consider,
+                          expanded_hundred_kb=F) {
   scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
                         cell_number_filter, sep="_")
+  
+  if (tissues_to_consider != "all") {
+    scATAC_source = paste(scATAC_source, "tissues_to_consider", 
+                          tissues_to_consider, sep="_")
+  }
   
   if (tss_fragment_filter != -1) {
     scATAC_source = paste(scATAC_source, "tss_fragment_filter", 
@@ -80,7 +86,7 @@ construct_backwards_elim_dir <- function(cancer_type,
                                          cell_number_filter,
                                          tss_fragment_filter, 
                                          annotation,
-                                         # tissues_to_consider, 
+                                         tissues_to_consider,
                                          ML_model,
                                          seed,
                                          hundred_kb,
@@ -95,7 +101,8 @@ construct_backwards_elim_dir <- function(cancer_type,
                       fold_for_test_set,
                       ML_model,
                       cancer_type,
-                      hundred_kb)
+                      hundred_kb,
+                      tissues_to_consider)
   
   if (per_donor) {
     part_one = unlist(strsplit(dir, split="/"))[1:2]
