@@ -98,19 +98,19 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 #                       "--folds_for_test_set=1-1",
 #                       "--per_donor"))
 
-args = parse_args(parser, args =
-                    c("--datasets=Bingren",
-                      "--cancer_types=Skin-Melanoma",
-                      "--cell_number_filter=50",
-                      "--top_features_to_plot_feat_imp=1,2,5,10",
-                      "--ML_model=XGB",
-                      "--annotation=finalized_annotation",
-                      "--seed_range=1-10",
-                      "--feature_importance_method=permutation_importance",
-                      "--folds_for_test_set=1-10",
-                      "--tissues_to_consider=skin,skin_sun_exposed",
-                      "--robustness_analysis",
-                      "--feat_imp_min_n_robustness=50"))
+# args = parse_args(parser, args =
+#                     c("--datasets=Bingren",
+#                       "--cancer_types=Skin-Melanoma",
+#                       "--cell_number_filter=50",
+#                       "--top_features_to_plot_feat_imp=1,2,5,10",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--seed_range=1-10",
+#                       "--feature_importance_method=permutation_importance",
+#                       "--folds_for_test_set=1-10",
+#                       "--tissues_to_consider=skin,skin_sun_exposed",
+#                       "--robustness_analysis",
+#                       "--feat_imp_min_n_robustness=50"))
 args = parse_args(parser)
 
 
@@ -493,7 +493,8 @@ get_and_plot_scatac_and_mutation_counts_per_fold <- function(cancer_type,
                                                     tss_fragment_filter,
                                                     annotation, 
                                                     ML_model,
-                                                    hundred_kb) {
+                                                    hundred_kb,
+                                                    tissues_to_consider) {
   scatac_counts_plots <- list()
   scatac_counts <- c()
   mut_counts_plots <- list()
@@ -700,7 +701,8 @@ if (!robustness_analysis) {
                                                          tss_fragment_filter,
                                                          annotation, 
                                                          ML_model,
-                                                         hundred_kb)
+                                                         hundred_kb,
+                                                         tissues_to_consider)
     scatac_counts = l[[1]]
     mut_counts = l[[2]]
     # y_position is for plotting number of times feature appears at the top of
