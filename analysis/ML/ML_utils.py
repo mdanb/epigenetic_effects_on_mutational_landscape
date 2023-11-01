@@ -668,7 +668,7 @@ def apply_func_to_kfolds(X, y, func, **kwargs):
 
 def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
                            annotation_dir, top_features_to_plot, feature_importance_method, fold_for_test_set,
-                           robustness_analysis=False):
+                           tissues_to_consider, robustness_analysis=False):
     seed_range = f"{seed_range[0]}-{seed_range[-1]}"
     print(f"Plotting top features for seed range {seed_range}...")
     command = ["Rscript", "plot_top_features.R",
@@ -680,6 +680,7 @@ def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg,
                  f"--annotation={annotation_dir}",
                  f"--top_features_to_plot={','.join(list(map(str, top_features_to_plot)))}",
                  f"--feature_importance_method={feature_importance_method}",
+                 f"--tissues_to_consider={tissues_to_consider}"
                  f"--folds_for_test_set={'-'.join(list(map(str, [fold_for_test_set, fold_for_test_set])))}"]
     if robustness_analysis:
         command.append("--robustness_analysis")
@@ -690,8 +691,10 @@ def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg,
 #### Other ####
 def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, hundred_kb,
                          expanded_hundred_kb, tissues_to_consider, seed=None, fold_for_test_set=None, all_seeds=False):
-    scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}_tissues_to_consider_" \
-                 f"{tissues_to_consider}"
+    scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
+
+    if tissues_to_consider != "all":
+        scATAC_dir = f"{scATAC_dir}_tissues_to_consider_{tissues_to_consider}"
     if tss_filter:
         scATAC_dir = scATAC_dir + "_tss_fragment_filter_" + tss_filter
 
