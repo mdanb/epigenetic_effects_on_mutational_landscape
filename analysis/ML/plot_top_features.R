@@ -8,7 +8,7 @@ library(stringr)
 library(tibble)
 library(gridExtra)
 
-
+setwd(".")
 source("../../utils.R")
 source("ML_utils.R")
 
@@ -581,6 +581,7 @@ if (!is.null(skip_seeds_robustness)) {
 folds_for_test_set = args$folds_for_test_set
 folds_for_test_set = unlist(strsplit(args$folds_for_test_set, split = "-"))
 folds_for_test_set = seq(folds_for_test_set[1], folds_for_test_set[2])
+print(folds_for_test_set)
 feat_imp_min_n_robustness = args$feat_imp_min_n_robustness
 plot_fold_on_test_set_plot = args$plot_fold_on_test_set_plot
 hundred_kb = args$hundred_kb
