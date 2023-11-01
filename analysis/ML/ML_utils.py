@@ -668,7 +668,7 @@ def apply_func_to_kfolds(X, y, func, **kwargs):
 
 def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg, scATAC_cell_number_filter,
                            annotation_dir, top_features_to_plot, feature_importance_method, fold_for_test_set,
-                           tissues_to_consider, robustness_analysis=False):
+                           tissues_to_consider):
     seed_range = f"{seed_range[0]}-{seed_range[-1]}"
     print(f"Plotting top features for seed range {seed_range}...")
     command = ["Rscript", "plot_top_features.R",
@@ -682,8 +682,6 @@ def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg,
                  f"--feature_importance_method={feature_importance_method}",
                  f"--tissues_to_consider={','.join(tissues_to_consider)}"
                  f"--folds_for_test_set={'-'.join(list(map(str, [fold_for_test_set, fold_for_test_set])))}"]
-    if robustness_analysis:
-        command.append("--robustness_analysis")
 
     subprocess.call(command)
     print(f"Done plotting top features for seed range {seed_range}!")
