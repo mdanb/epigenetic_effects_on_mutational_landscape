@@ -98,6 +98,19 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 #                       "--folds_for_test_set=1-1",
 #                       "--per_donor"))
 
+args = parse_args(parser, args =
+                    c("--datasets=Bingren",
+                      "--cancer_types=Skin-Melanoma",
+                      "--cell_number_filter=50",
+                      "--top_features_to_plot_feat_imp=1,2,5,10",
+                      "--ML_model=XGB",
+                      "--annotation=finalized_annotation",
+                      "--seed_range=1-10",
+                      "--feature_importance_method=permutation_importance",
+                      "--folds_for_test_set=1-10",
+                      "--tissues_to_consider=skin,skin_sun_exposed",
+                      "--robustness_analysis",
+                      "--feat_imp_min_n_robustness=50"))
 args = parse_args(parser)
 
 
@@ -620,7 +633,10 @@ if (!robustness_analysis) {
     #   scATAC_source = paste(scATAC_source, "tss_fragment_filter",
     #                         tss_filter, sep="_")
     # }
-    
+    if (tissues_to_consider != "all") {
+      scATAC_source = paste(scATAC_source, "tissues_to_consider", tissues_to_consider, 
+                            sep="_")
+    }
     scATAC_source = paste(scATAC_source, "annotation", annotation, sep="_")
 
     savepath = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
