@@ -652,7 +652,7 @@ if (!robustness_analysis) {
                                                 hundred_kb=hundred_kb,
                                                 accumulated_seeds=T)
     savepath = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", savepath, sep="/")
-    print(savepath)
+    dir.create(path=savepath, recursive = T)
     dirs = list.dirs(paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", "models", ML_model, cancer_type, 
                            sep="/"), recursive = F)
     combos = expand.grid(seed = seed_range, fold = folds_for_test_set)
