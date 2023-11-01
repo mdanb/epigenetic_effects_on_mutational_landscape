@@ -209,11 +209,11 @@ command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
                          "--robustness_analysis",
                          "--feat_imp_min_n_robustness", str(feat_imp_min_n_robustness)])
 
-python_command = "Rscript plot_top_features.R " + \
+Rscript_command = "Rscript plot_top_features.R " + \
                   command_args
 
 with open(robustness_fp, "w") as f:
-    f.write(command_args)
+    f.write(Rscript_command)
 
 
 
