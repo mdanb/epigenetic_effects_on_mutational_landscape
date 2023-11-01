@@ -98,19 +98,19 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 #                       "--folds_for_test_set=1-1",
 #                       "--per_donor"))
 
-# args = parse_args(parser, args =
-#                     c("--datasets=Bingren",
-#                       "--cancer_types=Skin-Melanoma",
-#                       "--cell_number_filter=50",
-#                       "--top_features_to_plot_feat_imp=1,2,5,10",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--seed_range=1-10",
-#                       "--feature_importance_method=permutation_importance",
-#                       "--folds_for_test_set=1-10",
-#                       "--tissues_to_consider=skin,skin_sun_exposed",
-#                       "--robustness_analysis",
-#                       "--feat_imp_min_n_robustness=50"))
+args = parse_args(parser, args =
+                    c("--datasets=Bingren",
+                      "--cancer_types=Skin-Melanoma",
+                      "--cell_number_filter=50",
+                      "--top_features_to_plot_feat_imp=1,2,5,10",
+                      "--ML_model=XGB",
+                      "--annotation=finalized_annotation",
+                      "--seed_range=1-10",
+                      "--feature_importance_method=permutation_importance",
+                      "--folds_for_test_set=1-10",
+                      "--tissues_to_consider=skin,skin_sun_exposed",
+                      "--robustness_analysis",
+                      "--feat_imp_min_n_robustness=50"))
 args = parse_args(parser)
 
 
@@ -179,7 +179,7 @@ construct_bar_plots <- function(cancer_type,
       file = paste(file, feature_importance_method, sep="_")
     }
     file = paste(file, "csv", sep=".") 
-    file = paste("../../figures", file, sep="/")
+    file = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", file, sep="/")
     df = as_tibble(read.csv(file))
     title = unlist(strsplit(dir, split ="/"))
     title = title[length(title) - 2]
@@ -188,7 +188,7 @@ construct_bar_plots <- function(cancer_type,
       df["donor"] = unlist(strsplit(title, split = "_"))[2]
       counts = rbind(counts, df)
     } else {
-      ggplot_barplot_helper(df, title, savepath=paste("../../figures", dir, sep="/"), 
+      ggplot_barplot_helper(df, title, savepath=paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", dir, sep="/"), 
                           ylab=gsub("_", " ", feature_importance_method), 
                           y=feature_importance_method)
     }
@@ -553,10 +553,10 @@ get_and_plot_scatac_and_mutation_counts_per_fold <- function(cancer_type,
     mut_counts = append(mut_counts, sum(y_test))
   }
   
-  pdf("../../figures/per_fold_scatac_counts.pdf", width = 50, height = 20)
+  pdf("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures/per_fold_scatac_counts.pdf", width = 50, height = 20)
   do.call(grid.arrange, c(scatac_counts_plots, nrow=2)) 
   dev.off()
-  pdf("../../figures/per_fold_mut_counts.pdf", width = 50, height = 20)
+  pdf("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures/per_fold_mut_counts.pdf", width = 50, height = 20)
   do.call(grid.arrange, c(mut_counts_plots, nrow=2))
   dev.off()
   return(list(scatac_counts, mut_counts))
@@ -650,9 +650,9 @@ if (!robustness_analysis) {
                                                 ML_model=ML_model,
                                                 hundred_kb=hundred_kb,
                                                 accumulated_seeds=T)
-    savepath = paste("../../figures", savepath, sep="/")
+    savepath = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", savepath, sep="/")
     print(savepath)
-    dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type, 
+    dirs = list.dirs(paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", "models", ML_model, cancer_type, 
                            sep="/"), recursive = F)
     combos = expand.grid(seed = seed_range, fold = folds_for_test_set)
     seed_fold_for_test_combinations = apply(combos, 1, function(row) {
