@@ -38,6 +38,7 @@ group.add_argument("--meso", action="store_true", default=False)
 group.add_argument("--SCLC", action="store_true", default=False)
 group.add_argument("--de_novo_seurat_clustering", action="store_true", default=False)
 group.add_argument("--histologically_subtyped_mutations", action="store_true", default=False)
+group.add_argument("--hierarchically_subtyped_mutations", action="store_true", default=False)
 group.add_argument("--hundred_kb", action="store_true", default=False)
 group.add_argument("--expanded_hundred_kb", action="store_true", default=False)
 
@@ -63,6 +64,7 @@ meso = config.meso
 SCLC = config.SCLC
 de_novo_seurat_clustering = config.de_novo_seurat_clustering
 histologically_subtyped_mutations = config.histologically_subtyped_mutations
+hierarchically_subtyped_mutations = config.hierarchically_subtyped_mutations
 hundred_kb = config.hundred_kb
 cores = config.cores
 mem_per_core = config.mem_per_core
@@ -118,6 +120,8 @@ for fold in fold_for_test_set_range:
         elif histologically_subtyped_mutations:
             # script_filename = script_filename + "_" + "histologically_subtyped_mutations"
             command_args = command_args + " " + "--histologically_subtyped_mutations"
+        elif hierarchically_subtyped_mutations:
+            command_args = command_args + " " + "--hierarchically_subtyped_mutations"
         elif hundred_kb:
             script_filename = script_filename + "_" + "hundred_kb"
             command_args = command_args + " " + "--hundred_kb"
