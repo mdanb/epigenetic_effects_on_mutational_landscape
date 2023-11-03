@@ -11,12 +11,11 @@ option_list <- list(
   make_option("--chain", type="character", default="hg38ToHg19")
 )
 
-# args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args =
 #                  c("--dataset=Bingren_adult_brain",
 #                    "--cores=1"))
 
-
+args = parse_args(OptionParser(option_list=option_list))
 dataset = args$dataset
 cores = args$cores
 tissue = args$tissue
