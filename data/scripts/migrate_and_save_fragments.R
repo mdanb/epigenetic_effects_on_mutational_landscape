@@ -12,9 +12,9 @@ option_list <- list(
 )
 
 # args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Bingren_adult_brain",
-#                    "--cores=1"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                 c("--dataset=Bingren_adult_brain",
+                   "--cores=1"))
 
 
 dataset = args$dataset
@@ -32,8 +32,12 @@ helper <- function(files, migrated_filepaths, ch, cores) {
   print(files)
   if (grepl("bedpe", files[1])) {
     fragments = mclapply(files, import, format="bedpe", mc.cores=cores)
-    fragments = mclapply(fragments, function(x) bind_ranges(x@first, x@second), 
-                         mc.cores=cores)
+    fragments = mclapply(fragments, function(x) {
+      metadata = rbind(x@elementMetadata, x@elementMetadata)
+      x = bind_ranges(x@first, x@second)
+      x@elementMetadata = metadata
+    }, mc.cores=cores)
+      
     fragments = mclapply(fragments, as.data.frame, mc.cores=cores)
     fragments = mclapply(fragments, function(x)
                     x[grepl("chr", x[["seqnames"]]), ] %>% droplevels(), 
@@ -85,6 +89,10 @@ get_files_not_done <- function(files, dir_path) {
   migrated_filepaths = paste(dir_path, 
                              gsub(".gz", "",
                              lapply(strsplit(files, split = "/"), "[", 4)),
+                             sep = "/")
+  migrated_filepaths = paste(dir_path, 
+                             gsub(".bedpe.gz", ".bed",
+                                  lapply(strsplit(files, split = "/"), "[", 4)),
                              sep = "/")
   # }
   files_not_done = c()
