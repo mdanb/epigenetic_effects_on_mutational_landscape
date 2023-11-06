@@ -10,7 +10,7 @@ option_list <- list(
   make_option("--tissue", type="character", default="all"),
   make_option("--chain", type="character", default="hg38ToHg19")
 )
-
+# 
 # args = parse_args(OptionParser(option_list=option_list), args =
 #                  c("--dataset=Bingren_adult_brain",
 #                    "--cores=1"))
@@ -30,11 +30,13 @@ helper <- function(files, migrated_filepaths, ch, cores) {
   print("IMPORTING")
   print(files)
   if (grepl("bedpe", files[1])) {
+    print("bedpe file")
     fragments = mclapply(files, import, format="bedpe", mc.cores=cores)
     fragments = mclapply(fragments, function(x) {
       metadata = rbind(x@elementMetadata, x@elementMetadata)
       x = bind_ranges(x@first, x@second)
       x@elementMetadata = metadata
+      return(x)
     }, mc.cores=cores)
       
     fragments = mclapply(fragments, as.data.frame, mc.cores=cores)
@@ -45,6 +47,7 @@ helper <- function(files, migrated_filepaths, ch, cores) {
     # migrated_fragments = mclapply(fragments, migrate_file, ch, format="bedpe",
     #                               mc.cores=cores)
   } else {
+    print("bed file")
     fragments = mclapply(files, import, format="bed", mc.cores=cores)
   }
   print("MIGRATING")
