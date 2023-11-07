@@ -41,6 +41,10 @@ import_sample <- function(file, dataset, which_interval_ranges) {
     sample = import(paste("..", "bed_files", "bingren_scATAC", 
                           "migrated_to_hg19", file, sep="/"), 
                     format="bed")
+  } else if (dataset == "Bingren_adult_brain") {
+    sample = import(paste("..", "bed_files", "bingren_adult_brain", 
+                          "migrated_to_hg19", file, sep="/"), 
+                    format="bed")
   } else if (dataset == "Shendure") {
     sample = import(paste("..", "bed_files", "JShendure_scATAC", 
                           file, sep="/"), format="bed")
@@ -93,8 +97,12 @@ get_sample_filename <- function(file, dataset) {
     filename = paste(paste("Bingren_count_overlaps", remove_extension(file),
                            sep="_"),
                      "rds", sep=".")
-  }
-  else if (dataset == "Shendure") {
+  } else if (dataset == "Bingren_adult_brain") {
+    filename = paste(paste("Bingren_adult_brain_count_overlaps", 
+                           remove_extension(file),
+                           sep="_"),
+                     "rds", sep=".")
+  } else if (dataset == "Shendure") {
     filename = paste(paste("Shendure_count_overlaps", remove_extension(file),
                            sep="_"),
                      "rds", sep=".")
@@ -150,6 +158,9 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
                                                                          "cellID",
                                                                          "\\+")
   }
+  else if (dataset == "Bingren_adult_brain") {
+    sample_barcodes_in_metadata = filtered_metadata[["barcode"]]
+  }
   else if (dataset == "Shendure" || dataset == "Wang_lung") {
     sample_barcodes_in_metadata = filtered_metadata[["cell"]]
   }
@@ -195,6 +206,8 @@ get_sample_barcodes_in_metadata_helper <- function(metadata, cellID_col_name,
 get_sample_name <- function(file, dataset) {
   if (dataset == "Bingren") {
     sample_name = get_sample_name_bingren(file)
+  } else if (dataset == "Bingren_adult_brain") {
+    sample_name = get_sample_name_bingren_adult_brain(file)
   } else if (dataset == "Shendure") {
     sample_name = get_sample_name_shendure(file)
   } else if (dataset == "Tsankov") {
@@ -245,11 +258,23 @@ get_sample_name_bingren <- function(file) {
   return(sample_name)
 }
 
+get_sample_name_bingren_adult_brain <- function(file) {
+  sample_name = str_remove(file, "Bingren_adult_brain_count_overlaps_")
+  sample_name = str_remove(sample_name, "per_cell_")
+  sample_name = str_remove(sample_name, "\\.rds")
+  sample_name = paste(unlist(strsplit(sample_name, split="_"))[2:3], 
+                      collapse="_")
+  return(sample_name)
+}
+
 get_sample_name_shendure <- function(file) {
   sample_name = unlist(strsplit(file, split="\\."))[1]
   if (grepl("cerebrum", file)) {
     sample_name = gsub("cerebrum", "brain", sample_name)
   }
+  sample_name = str_remove(sample_name, "Shendure_count_overlaps_")
+  sample_name = str_remove(sample_name, "per_cell_")
+  sample_name = str_remove(sample_name, "_fragments.rds")
   return(sample_name)
 }
 
