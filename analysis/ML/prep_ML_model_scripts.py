@@ -212,8 +212,14 @@ command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
 Rscript_command = "Rscript /broad/hptmp/bgiotti/BingRen_scATAC_atlas/plot_top_features.R " + \
                   command_args
 
-with open(robustness_fp, "w") as f:
-    f.write(Rscript_command)
+try:
+    with open(robustness_fp, "w") as f:
+        f.write(Rscript_command)
+except:
+    robustness_fp = os.path.join("robustness_scripts", ",".join(config.cancer_types))
+    with open(robustness_fp, "w") as f:
+        f.write(Rscript_command)
+
 
 
 
