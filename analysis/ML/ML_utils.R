@@ -103,6 +103,7 @@ construct_backwards_elim_dir <- function(cancer_type,
                       cancer_type=cancer_type,
                       hundred_kb=hundred_kb,
                       tissues_to_consider=tissues_to_consider)
+  
   if (per_donor) {
     part_one = unlist(strsplit(dir, split="/"))[1:2]
     pattern = paste0(cancer_type, "_")
