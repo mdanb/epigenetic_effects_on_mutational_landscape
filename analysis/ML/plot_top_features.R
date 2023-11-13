@@ -8,8 +8,11 @@ library(stringr)
 library(tibble)
 library(gridExtra)
 
-source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
-source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
+# source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
+# source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
+
+source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/utils.R")
+source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/ML_utils.R")
 
 parser <- OptionParser()
 parser <- add_option(parser, c("--datasets"), type="character")
@@ -99,18 +102,32 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 #                       "--per_donor"))
 
 # args = parse_args(parser, args =
-#                     c("--datasets=Bingren",
-#                       "--cancer_types=Skin-Melanoma",
-#                       "--cell_number_filter=50",
-#                       "--top_features_to_plot_feat_imp=1,2,5,10",
+#                     c("--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
+#                       "--cancer_types=ColoRect-AdenoCA_cluster_1",
+#                       "--cell_number_filter=100",
+#                       "--top_features_to_plot_feat_imp=10",
 #                       "--ML_model=XGB",
 #                       "--annotation=finalized_annotation",
 #                       "--seed_range=1-10",
 #                       "--feature_importance_method=permutation_importance",
 #                       "--folds_for_test_set=1-10",
-#                       "--tissues_to_consider=skin,skin_sun_exposed",
+#                       "--tissues_to_consider=all",
 #                       "--robustness_analysis",
 #                       "--feat_imp_min_n_robustness=50"))
+
+args = parse_args(parser, args =
+                    c("--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
+                      "--cancer_types=Skin-Melanoma",
+                      "--cell_number_filter=100",
+                      "--top_features_to_plot_feat_imp=10",
+                      "--ML_model=XGB",
+                      "--annotation=finalized_annotation",
+                      "--seed_range=1-10",
+                      "--feature_importance_method=permutation_importance",
+                      "--folds_for_test_set=1-10",
+                      "--tissues_to_consider=all",
+                      "--robustness_analysis",
+                      "--feat_imp_min_n_robustness=50"))
 args = parse_args(parser)
 
 
@@ -253,11 +270,25 @@ construct_boxplots <- function(df, x, y, color, title, savepath, savefile,
   names(to) <- from
   df[[facet_var]] <- factor(df[[facet_var]], levels = unique(df[[facet_var]]))
   
-  reorder_within <- function(x, by, within, fun = median, sep = "___") {
+  # reorder_within <- function(x, by, within, fun = median, sep = "___") {
+  #   new_x <- paste(x, within, sep = sep)
+  #   ordered_factor <- stats::reorder(new_x, by, FUN = fun)
+  #   levels_reversed <- rev(levels(ordered_factor))
+  #   return(factor(ordered_factor, levels = levels_reversed))  
+  # }
+  
+  reorder_within <- function(x, by1, by2, within, FUN, sep = "___") {
     new_x <- paste(x, within, sep = sep)
-    ordered_factor <- stats::reorder(new_x, by, FUN = fun)
-    levels_reversed <- rev(levels(ordered_factor))
-    return(factor(ordered_factor, levels = levels_reversed))  
+    ordered_factor <- factor(new_x, levels = unique(new_x)[order(by1, decreasing = TRUE)])
+    ties <- duplicated(by1) | duplicated(by1, fromLast = TRUE)
+    if (any(ties)) {
+      tied_values <- ordered_factor[ties]
+      tied_by2 <- by2[ties]
+      median_by2 <- tapply(tied_by2, tied_values, FUN)
+      tied_ordered <- factor(tied_values, levels = unique(tied_values)[order(median_by2, decreasing = TRUE)])
+      levels(ordered_factor)[levels(ordered_factor) %in% levels(tied_ordered)] <- levels(tied_ordered)
+    }
+    return(factor(ordered_factor, levels = levels(ordered_factor)))
   }
   
   if (plot_fold) {
@@ -265,29 +296,76 @@ construct_boxplots <- function(df, x, y, color, title, savepath, savefile,
   } else {
     outlier_shape = 19
   }
-  plot = ggplot(df) +
-          geom_boxplot(aes(x = reorder_within(x=!!sym(x), 
-                                              by=!!sym(y), 
-                                              within=!!sym(facet_var), 
-                                              median), y = !!sym(y), 
-                           color=!!sym(x)), fill=NA,
-                       lwd=1.2, outlier.shape = outlier_shape) +
-          geom_text(aes(x = reorder_within(x=!!sym(x), 
-                                           by=!!sym(y), 
-                                           within=!!sym(facet_var), 
-                                           median), y = y_position, label = paste0("n=",
-          !!sym(n_name))), vjust = -0.5) +
-          facet_wrap(as.formula(paste0("~", facet_var)), nrow=1, 
-                     scales = "free_x",
-                     labeller = as_labeller(to)) +
-          ylab(ylabel) +
-          xlab("") +
-          ggtitle(title) +
-          scale_y_continuous(breaks = seq(round(min(df[[y]]), 2),
-                                          round(max(df[[y]]), 2), by = 0.05)) + 
-          theme(plot.title = element_text(hjust = 0.5),
-                axis.text.x = element_blank())
+# plot <- ggplot(df) +
+#         geom_boxplot(aes(x = reorder_within(x=!!sym(x), 
+#                                             by=!!sym(y), 
+#                                             within=!!sym(facet_var), 
+#                                             median), y = !!sym(y)), 
+#                      lwd=1.2, outlier.shape = outlier_shape) +
+#         geom_text(aes(x = reorder_within(x=!!sym(x), 
+#                                          by=!!sym(y), 
+#                                          within=!!sym(facet_var), 
+#                                          median), y = y_position, label = paste0("n=", !!sym(n_name))), vjust = -0.5) +
+#         facet_wrap(as.formula(paste0("~", facet_var)), nrow=1, 
+#                    scales = "free_x",
+#                    labeller = as_labeller(to)) +
+#         ylab(ylabel) +
+#         xlab("") +
+#         ggtitle(title) +
+#         scale_y_continuous(breaks = seq(round(min(df[[y]]), 2),
+#                                         round(max(df[[y]]), 2), by = 0.05)) +
+#         scale_color_gradient(low = "black", high = "white") +
+#         scale_x_discrete(labels = label_wrap_gen(width = 10)) + # Adjust 'width' as needed
+#         theme_classic() +
+#         theme(
+#             strip.background = element_blank(),
+#             strip.text.x = element_blank(),
+#             plot.title = element_text(hjust = 0.5),
+#             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+#         )
+  custom_label_function <- function(labels) {
+    cleaned_labels <- str_replace(labels, "___10", "")
+    wrapped_labels <- label_wrap_gen(width = 8)(cleaned_labels)
+    return(wrapped_labels)
+  }
+  grayscale_palette <- gray(seq(0, 0.9, length.out = 5))
   
+  plot <- ggplot(df) +
+    geom_boxplot(aes(x = reorder_within(x=!!sym(x), 
+                                        by1=n_feature,
+                                        by2=!!sym(y),
+                                        # by=!!sym(y), 
+                                        within=!!sym(facet_var), 
+                                        median), y = !!sym(y), 
+                    ), 
+                 lwd=1.2, outlier.shape = outlier_shape) +
+    geom_text(aes(x = reorder_within(x=!!sym(x), 
+                                     by1=n_feature,
+                                     by2=!!sym(y), 
+                                     within=!!sym(facet_var), 
+                                     median), y = y_position, label = 
+                    paste0("n=", !!sym(n_name))), vjust = -0.5) +
+    facet_wrap(as.formula(paste0("~", facet_var)), nrow=1, 
+               scales = "free_x",
+               labeller = as_labeller(to)) +
+    ylab(ylabel) +
+    xlab("") +
+    ggtitle(title) +
+    scale_y_continuous(breaks = seq(round(min(df[[y]]), 2),
+                                    round(max(df[[y]]), 2), by = 0.05)) +
+    scale_color_manual(values = grayscale_palette) + # Apply grayscale palette
+    scale_x_discrete(labels = custom_label_function) + # Adjust 'width' as needed
+    theme_classic() +
+    theme(
+      strip.background = element_blank(),
+      strip.text.x = element_blank(),
+      plot.title = element_text(hjust = 0.5),
+      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+    )
+  
+            # theme(plot.title = element_text(hjust = 0.5),
+            #       axis.text.x = element_blank())
+    print(plot)
   
   if (plot_fold) {
     plot = plot + 
@@ -653,7 +731,9 @@ if (!robustness_analysis) {
                                                 accumulated_seeds=T)
     savepath = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", savepath, sep="/")
     dir.create(path=savepath, recursive = T)
-    dirs = list.dirs(paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", "models", ML_model, cancer_type, 
+    # dirs = list.dirs(paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", "models", ML_model, cancer_type, 
+    #                        sep="/"), recursive = F)
+    dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type,
                            sep="/"), recursive = F)
     combos = expand.grid(seed = seed_range, fold = folds_for_test_set)
     seed_fold_for_test_combinations = apply(combos, 1, function(row) {
@@ -699,8 +779,7 @@ if (!robustness_analysis) {
                   group_by(num_features, seed, fold_for_test_set) %>%
                   group_by(num_features, features) %>%
                   mutate(n_feature = n(), y_position = max(permutation_importance)) %>%
-                  filter(num_features %in% top_features_to_plot_feat_imp)
-      
+                  filter(num_features %in% top_features_to_plot_feat_imp) 
     savefile = paste0("feature_importance_with_",
                       paste(top_features_to_plot_feat_imp, collapse="_"),
                       "_features.png")
@@ -710,8 +789,13 @@ if (!robustness_analysis) {
                        n_name="n_feature", facet_var="num_features",
                        ylabel="Permutation Importance")
     
+    unique_combos = unique(df_feat_imp[, c("features", "n_feature")])
+    top_five_n_feature = sort(unique_combos[["n_feature"]], decreasing=T)
     df_feat_imp_at_least_n = df_feat_imp %>% 
-      filter(n_feature >= feat_imp_min_n_robustness)
+                              # filter(n_feature >= feat_imp_min_n_robustness)%>%
+                              filter(n_feature %in% top_five_n_feature[1:5])
+    
+
     
     savefile = paste0("feature_importance_with_",
                       paste(top_features_to_plot_feat_imp, collapse="_"),
