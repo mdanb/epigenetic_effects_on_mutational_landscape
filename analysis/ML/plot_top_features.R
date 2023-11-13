@@ -8,11 +8,11 @@ library(stringr)
 library(tibble)
 library(gridExtra)
 
-# source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
-# source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
+source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
+source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
 
-source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/utils.R")
-source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/ML_utils.R")
+# source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/utils.R")
+# source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/ML_utils.R")
 
 parser <- OptionParser()
 parser <- add_option(parser, c("--datasets"), type="character")
@@ -115,19 +115,20 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 #                       "--robustness_analysis",
 #                       "--feat_imp_min_n_robustness=50"))
 
-args = parse_args(parser, args =
-                    c("--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-                      "--cancer_types=Skin-Melanoma",
-                      "--cell_number_filter=100",
-                      "--top_features_to_plot_feat_imp=10",
-                      "--ML_model=XGB",
-                      "--annotation=finalized_annotation",
-                      "--seed_range=1-10",
-                      "--feature_importance_method=permutation_importance",
-                      "--folds_for_test_set=1-10",
-                      "--tissues_to_consider=all",
-                      "--robustness_analysis",
-                      "--feat_imp_min_n_robustness=50"))
+# args = parse_args(parser, args =
+#                     c("--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
+#                       "--cancer_types=Skin-Melanoma",
+#                       "--cell_number_filter=100",
+#                       "--top_features_to_plot_feat_imp=10",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--seed_range=1-10",
+#                       "--feature_importance_method=permutation_importance",
+#                       "--folds_for_test_set=1-10",
+#                       "--tissues_to_consider=all",
+#                       "--robustness_analysis",
+#                       "--feat_imp_min_n_robustness=50"))
+
 args = parse_args(parser)
 
 
