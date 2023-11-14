@@ -7,6 +7,10 @@ def range_type(range_str):
                                          'less than or equal to end value')
     return (start, end)
 
+
+def comma_separated_string(s):
+    return s.split(',')
+
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--cancer_types', nargs="+", type=str,
@@ -19,7 +23,6 @@ def create_parser():
                         help='name of annotation directory', default="default_annotation")
     parser.add_argument('--tss_fragment_filter', nargs="+", type=str,
                         help='tss fragment filters to consider', default=None)
-    parser.add_argument('--tissues_to_consider', nargs="+", type=str, default="all")
     parser.add_argument("--ML_model", type=str, default="XGB")
     parser.add_argument('--test_backward_selection_iters', type=int, nargs="+", default=None)
     parser.add_argument('--seed_range', type=str)
@@ -33,12 +36,13 @@ def create_parser():
     parser.add_argument("--sqlite", action="store_true", default=False)
     parser.add_argument('--test_set_perf_num_features', nargs="+", type=int)
     parser.add_argument('--debug_bfs', action="store_true", default=False)
+    parser.add_argument('--grid_cell_types', type=str, default=None)
     parser.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
                         default=None)
 
     group = parser.add_mutually_exclusive_group()
-    parser.add_argument("--per_donor", action="store_true", default=False)
-    parser.add_argument("--aggregated_per_donor", action="store_true", default=False)
+    group.add_argument("--per_donor", action="store_true", default=False)
+    group.add_argument("--aggregated_per_donor", action="store_true", default=False)
     group.add_argument("--SCLC", action="store_true", default=False)
     group.add_argument("--lung_subtyped", action="store_true", default=False)
     group.add_argument("--woo_pcawg", action="store_true", default=False)
@@ -51,4 +55,9 @@ def create_parser():
     group.add_argument("--expanded_hundred_kb", action="store_true", default=False)
     group.add_argument("--combined_CPTAC_ICGC", action="store_true", default=False)
     group.add_argument("--RNA_subtyped", action="store_true", default=False)
+
+    group2 = parser.add_mutually_exclusive_group()
+    group2.add_argument('--grid_analysis', action="store_true", default=False)
+    group2.add_argument('--tissues_to_consider', nargs="+", type=str, default=["all"])
+
     return parser
