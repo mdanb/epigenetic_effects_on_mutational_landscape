@@ -21,20 +21,31 @@ def run_unclustered_data_analysis_helper(scATAC_df,
                                          tss_fragment_filter,
                                          save_test_set_perf,
                                          test_set_perf_num_features,
-                                         tissues_to_consider):
+                                         tissues_to_consider,
+                                         grid_cell_type):
 
     tissues_string = "_".join(tissues_to_consider)
 
     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter, annotation_dir,
                                       hundred_kb, expanded_hundred_kb, tissues_string, seed, fold_for_test_set)
 
-    backwards_elim_dir=f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results"
+    if len(grid_cell_type) == 1:
+        backwards_elim_dir=f"models/{ML_model}/{cancer_type_or_donor_id}_{grid_cell_type[0].replace(' ', '-')}/" \
+                           f"{scATAC_dir}/backwards_elimination_results"
+    else:
+        backwards_elim_dir=f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results"
 
     os.makedirs(f"{backwards_elim_dir}", exist_ok=True)
 
     # if tissues_to_consider == "all":
-    test_set_perf_filepath = f"models/{ML_model}/" \
-                             f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance.txt"
+    if len(grid_cell_type) == 1:
+        test_set_perf_filepath = f"models/{ML_model}/" \
+                                 f"{cancer_type_or_donor_id}_{grid_cell_type[0].replace(' ', '-')}/{scATAC_dir}/" \
+                                 f"test_set_performance.txt"
+        cancer_type_or_donor_id = f"{cancer_type_or_donor_id}_{grid_cell_type[0].replace(' ', '-')}"
+    else:
+        test_set_perf_filepath = f"models/{ML_model}/" \
+                                 f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance.txt"
 
     # All Cells
     train_val_test(scATAC_df,
@@ -102,11 +113,15 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
                                   make_plots, feature_importance_method, sqlite, test_set_perf_num_features,
-                                  debug_bfs, fold_for_test_set, tissues_to_consider):
+                                  debug_bfs, fold_for_test_set, tissues_to_consider, grid_analysis, grid_cell_types):
     ### args used at the end for plot_top_features.R ###
     scATAC_sources = construct_scATAC_sources(datasets)
     scATAC_df = construct_scATAC_df(tss_fragment_filter, datasets, scATAC_cell_number_filter, annotation_dir,
-                                    hundred_kb, expanded_hundred_kb, tissues_to_consider)
+                                    hundred_kb, expanded_hundred_kb, tissues_to_consider,
+                                    grid_analysis, grid_cell_types)
+    if not grid_analysis:
+        grid_cell_types = [scATAC_df.columns]
+
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
     # Note that the loading process arranges the bins so that it's in the correct order of the genome
     # ensuring that splits truly split based on contiguous genomic regions
@@ -114,72 +129,52 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
         print(f"Running model for seed {seed}")
         print(f"Using scATAC sources: {scATAC_sources}")
         for cancer_type in cancer_types:
-            print(f"Working on {cancer_type}...")
-            mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
-                                          histologically_subtyped_mutations, de_novo_seurat_clustering,
-                                          CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type,
-                                          hundred_kb, expanded_hundred_kb, aggregated_per_donor,
-                                          hierarchically_subtyped_mutations)
+            for grid_cell_type in grid_cell_types:
+                if isinstance(grid_cell_type, str):
+                    grid_cell_type = [grid_cell_type]
+                scdf = scATAC_df.loc[:, grid_cell_type]
+                print(f"Working on {cancer_type}...")
+                mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
+                                              histologically_subtyped_mutations, de_novo_seurat_clustering,
+                                              CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type,
+                                              hundred_kb, expanded_hundred_kb, aggregated_per_donor,
+                                              hierarchically_subtyped_mutations)
 
-            scATAC_df, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scATAC_df,
+                scdf, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scdf,
                                                                                         mutations_df,
                                                                                         cancer_type,
                                                                                         hundred_kb,
                                                                                         expanded_hundred_kb,
                                                                                         per_donor)
-            if not per_donor:
-                if tss_fragment_filter:
-                    for tss_filter in tss_fragment_filter:
-                        # scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
-                        #                                   annotation_dir, seed)
-                        run_unclustered_data_analysis_helper(scATAC_df,
+                if not per_donor:
+                    if tss_fragment_filter:
+                        for tss_filter in tss_fragment_filter:
+                            # scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter,
+                            #                                   annotation_dir, seed)
+                            run_unclustered_data_analysis_helper(scdf,
+                                                                 cancer_specific_mutations,
+                                                                 cancer_type,
+                                                                 scATAC_sources,
+                                                                 ML_model,
+                                                                 seed,
+                                                                 n_optuna_trials_prebackward_selection,
+                                                                 n_optuna_trials_backward_selection,
+                                                                 feature_importance_method,
+                                                                 sqlite,
+                                                                 debug_bfs,
+                                                                 fold_for_test_set,
+                                                                 hundred_kb,
+                                                                 expanded_hundred_kb,
+                                                                 scATAC_cell_number_filter,
+                                                                 annotation_dir,
+                                                                 tss_filter,
+                                                                 save_test_set_perf,
+                                                                 test_set_perf_num_features)
+
+                    else:
+                        run_unclustered_data_analysis_helper(scdf,
                                                              cancer_specific_mutations,
                                                              cancer_type,
-                                                             scATAC_sources,
-                                                             ML_model,
-                                                             seed,
-                                                             n_optuna_trials_prebackward_selection,
-                                                             n_optuna_trials_backward_selection,
-                                                             feature_importance_method,
-                                                             sqlite,
-                                                             debug_bfs,
-                                                             fold_for_test_set,
-                                                             hundred_kb,
-                                                             expanded_hundred_kb,
-                                                             scATAC_cell_number_filter,
-                                                             annotation_dir,
-                                                             tss_filter,
-                                                             save_test_set_perf,
-                                                             test_set_perf_num_features)
-
-                else:
-                    run_unclustered_data_analysis_helper(scATAC_df,
-                                                         cancer_specific_mutations,
-                                                         cancer_type,
-                                                         scATAC_sources,
-                                                         ML_model,
-                                                         seed,
-                                                         n_optuna_trials_prebackward_selection,
-                                                         n_optuna_trials_backward_selection,
-                                                         feature_importance_method,
-                                                         sqlite,
-                                                         debug_bfs,
-                                                         fold_for_test_set,
-                                                         hundred_kb,
-                                                         expanded_hundred_kb,
-                                                         scATAC_cell_number_filter,
-                                                         annotation_dir,
-                                                         tss_fragment_filter,
-                                                         save_test_set_perf,
-                                                         test_set_perf_num_features,
-                                                         tissues_to_consider)
-            else:
-                for idx, donor in enumerate(mutations_df.columns):
-                    if idx in range(*donor_range):
-                        donor_specific_mutations = mutations_df[donor]
-                        run_unclustered_data_analysis_helper(scATAC_df,
-                                                             donor_specific_mutations,
-                                                             f"{cancer_type}_{donor}",
                                                              scATAC_sources,
                                                              ML_model,
                                                              seed,
@@ -196,7 +191,32 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                              tss_fragment_filter,
                                                              save_test_set_perf,
                                                              test_set_perf_num_features,
-                                                             tissues_to_consider)
+                                                             tissues_to_consider,
+                                                             grid_cell_type)
+                else:
+                    for idx, donor in enumerate(mutations_df.columns):
+                        if idx in range(*donor_range):
+                            donor_specific_mutations = mutations_df[donor]
+                            run_unclustered_data_analysis_helper(scdf,
+                                                                 donor_specific_mutations,
+                                                                 f"{cancer_type}_{donor}",
+                                                                 scATAC_sources,
+                                                                 ML_model,
+                                                                 seed,
+                                                                 n_optuna_trials_prebackward_selection,
+                                                                 n_optuna_trials_backward_selection,
+                                                                 feature_importance_method,
+                                                                 sqlite,
+                                                                 debug_bfs,
+                                                                 fold_for_test_set,
+                                                                 hundred_kb,
+                                                                 expanded_hundred_kb,
+                                                                 scATAC_cell_number_filter,
+                                                                 annotation_dir,
+                                                                 tss_fragment_filter,
+                                                                 save_test_set_perf,
+                                                                 test_set_perf_num_features,
+                                                                 tissues_to_consider)
 
         if make_plots:
             call_plot_top_features(seed_range, cancer_types, ML_model, datasets, scATAC_cell_number_filter,
@@ -249,7 +269,11 @@ hundred_kb = config.hundred_kb
 expanded_hundred_kb = config.expanded_hundred_kb
 aggregated_per_donor = config.aggregated_per_donor
 hierarchically_subtyped_mutations = config.hierarchically_subtyped_mutations
+grid_analysis = config.grid_analysis
+grid_cell_types = config.grid_cell_types.split(",")
 
+if grid_analysis:
+    assert not (grid_cell_types is None)
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
@@ -257,8 +281,8 @@ run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter,
                                hundred_kb, expanded_hundred_kb, per_donor, donor_range, aggregated_per_donor, ML_model,
                                seed_range, n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method,
-                               sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set, tissues_to_consider
-                               )
+                               sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set, tissues_to_consider,
+                               grid_analysis, grid_cell_types)
 
 
 

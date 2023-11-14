@@ -202,30 +202,30 @@ def add_na_ranges(mutations_df, hundred_kb, expanded_hundred_kb):
     return mutations_df.loc[natsorted(mutations_df.index)]
 
 
-def add_dataset_origin_to_cell_types(df, dataset):
+def add_dataset_origin_to_cell_types(list_to_add_to, dataset):
     if dataset == "Bingren":
-        df.columns = [c + " BR" for c in df.columns]
+        list_to_add_to = [c + " BR" for c in list_to_add_to]
     elif dataset == "Shendure":
-        df.columns = [c + " SH" for c in df.columns]
+        list_to_add_to = [c + " SH" for c in list_to_add_to]
     elif dataset == "Tsankov":
-        df.columns = [c + " TS" for c in df.columns]
+        list_to_add_to = [c + " TS" for c in list_to_add_to]
     elif dataset == "Greenleaf_brain":
-        df.columns = [c + " GL_Br" for c in df.columns]
+        list_to_add_to = [c + " GL_Br" for c in list_to_add_to]
     elif dataset == "Greenleaf_pbmc_bm":
-        df.columns = [c + " GL_BlBm" for c in df.columns]
+        list_to_add_to = [c + " GL_BlBm" for c in list_to_add_to]
     elif dataset == "Yang_kidney":
-        df.columns = [c + " Y_K" for c in df.columns]
+        list_to_add_to = [c + " Y_K" for c in list_to_add_to]
     elif dataset == "Rawlins_fetal_lung":
-        df.columns = [c + " R_Fl" for c in df.columns]
+        list_to_add_to = [c + " R_Fl" for c in list_to_add_to]
     elif dataset == "Greenleaf_colon":
-        df.columns = [c + " GL_Co" for c in df.columns]
+        list_to_add_to = [c + " GL_Co" for c in list_to_add_to]
     elif dataset == "Wang_lung":
-        df.columns = [c + " W_L" for c in df.columns]
-    return df
+        list_to_add_to = [c + " W_L" for c in list_to_add_to]
+    return list_to_add_to
 
 
 def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb,
-                        expanded_hundred_kb, tissues_to_consider):
+                        expanded_hundred_kb, tissues_to_consider, grid_analysis, grid_cell_types):
     def load_scATAC(scATAC_path, hundred_kb, expanded_hundred_kb, tissues_to_consider):
         if hundred_kb or expanded_hundred_kb:
             scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_100kb_{os.path.basename(scATAC_path)}"
@@ -250,13 +250,9 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
         metadata = metadata[None]
 
         if tissues_to_consider[0] != "all":
-            try:
-                keep = metadata["tissue_name"].isin(tissues_to_consider)
-            except KeyError:
-                keep = metadata["tissue"].isin(tissues_to_consider)
+            keep = metadata["tissue_name"].isin(tissues_to_consider)
             metadata = metadata.loc[keep, :]
         return metadata
-
     datasets_combined_count_overlaps = []
     for dataset in datasets:
         if tss_filter:
@@ -283,9 +279,15 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             datasets_combined_count_overlaps.append(scATAC_df)
 
     for idx, dataset in enumerate(datasets):
-        datasets_combined_count_overlaps[idx] = [add_dataset_origin_to_cell_types(datasets_combined_count_overlaps[idx],
-                                                 dataset)]
+        list_to_add_to = datasets_combined_count_overlaps[idx].columns.tolist()
+        list_to_add_to = add_dataset_origin_to_cell_types(list_to_add_to, dataset)
+        datasets_combined_count_overlaps[idx].columns = list_to_add_to
+        datasets_combined_count_overlaps[idx] = [datasets_combined_count_overlaps[idx]]
     scATAC_df = pd.concat(chain(*datasets_combined_count_overlaps), axis=1)
+
+    if grid_analysis:
+        scATAC_df = scATAC_df.loc[:, grid_cell_types]
+
     return scATAC_df
 
 
@@ -601,7 +603,10 @@ def train_val_test(scATAC_df, mutations, backwards_elim_dir, test_set_perf_filep
     else:
         print("Starter model not needed! Number of features is less than or equal to 20 already!")
         print(X_train.shape[1])
-        filepath = f"top_features_iteration_{X_train.shape[1] - 1}"
+        if X_train.shape[1] == 1:
+            filepath = f"top_features_iteration_1"
+        else:
+            filepath = f"top_features_iteration_{X_train.shape[1] - 1}"
 
     if feature_importance_method != "default_importance":
         filepath = filepath + f"_by_{feature_importance_method}"
