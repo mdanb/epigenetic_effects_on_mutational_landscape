@@ -22,14 +22,16 @@ def run_unclustered_data_analysis_helper(scATAC_df,
                                          save_test_set_perf,
                                          test_set_perf_num_features,
                                          tissues_to_consider,
+                                         grid_analysis,
                                          grid_cell_type):
 
     tissues_string = "_".join(tissues_to_consider)
 
     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter, annotation_dir,
-                                      hundred_kb, expanded_hundred_kb, tissues_string, seed, fold_for_test_set)
+                                      hundred_kb, expanded_hundred_kb, tissues_string, seed=seed,
+                                      fold_for_test_set=fold_for_test_set, grid_analysis=grid_analysis)
 
-    if len(grid_cell_type) == 1:
+    if grid_analysis:
         backwards_elim_dir=f"models/{ML_model}/{cancer_type_or_donor_id}_{grid_cell_type[0].replace(' ', '-')}/" \
                            f"{scATAC_dir}/backwards_elimination_results"
     else:
@@ -38,7 +40,7 @@ def run_unclustered_data_analysis_helper(scATAC_df,
     os.makedirs(f"{backwards_elim_dir}", exist_ok=True)
 
     # if tissues_to_consider == "all":
-    if len(grid_cell_type) == 1:
+    if grid_analysis:
         test_set_perf_filepath = f"models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}_{grid_cell_type[0].replace(' ', '-')}/{scATAC_dir}/" \
                                  f"test_set_performance.txt"
@@ -192,6 +194,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                              save_test_set_perf,
                                                              test_set_perf_num_features,
                                                              tissues_to_consider,
+                                                             grid_analysis,
                                                              grid_cell_type)
                 else:
                     for idx, donor in enumerate(mutations_df.columns):
@@ -274,6 +277,9 @@ grid_cell_types = config.grid_cell_types.split(",")
 
 if grid_analysis:
     assert not (grid_cell_types is None)
+else:
+    assert grid_cell_types is None
+
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,

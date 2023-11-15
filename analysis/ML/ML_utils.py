@@ -702,8 +702,11 @@ def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg,
 
 #### Other ####
 def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, hundred_kb,
-                         expanded_hundred_kb, tissues_to_consider, seed=None, fold_for_test_set=None, all_seeds=False):
-    scATAC_dir = f"scATAC_source_{scATAC_sources}_cell_number_filter_{scATAC_cell_number_filter}"
+                         expanded_hundred_kb, tissues_to_consider, grid_analysis=False,
+                         seed=None, fold_for_test_set=None, all_seeds=False):
+    scATAC_dir = f"cell_number_filter_{scATAC_cell_number_filter}"
+    if not grid_analysis:
+        scATAC_dir = f"scATAC_source_{scATAC_sources}_{scATAC_dir}"
 
     if tissues_to_consider != "all":
         scATAC_dir = f"{scATAC_dir}_tissues_to_consider_{tissues_to_consider}"
