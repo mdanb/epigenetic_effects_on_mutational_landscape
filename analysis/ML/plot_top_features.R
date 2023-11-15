@@ -45,18 +45,20 @@ parser <- add_option(parser, c("--plot_fold_on_test_set_plot"), action="store_tr
                      default=F)
 parser <- add_option(parser, c("--hundred_kb"), action="store_true", default=F)
 parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
+parser <- add_option(parser, c("--grid_analysis"), action="store_true", default=F)
+parser <- add_option(parser, c("--grid_cell_types"), type="character")
 
 # args = parse_args(parser, args =
 #                       c("--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-#                         "--cancer_types=SCLC",
+#                         "--cancer_types=Bone-Osteosarc",
 #                         "--cell_number_filter=100",
-#                         "--top_features_to_plot=1,2,5,10",
+#                         "--top_features_to_plot=10",
 #                         "--ML_model=XGB",
 #                         "--annotation=finalized_annotation",
 #                         "--robustness_analysis",
 #                         "--seed_range=1-10",
 #                         "--feature_importance_method=permutation_importance",
-#                         "--top_features_to_plot_feat_imp=1,2,5,10",
+#                         "--top_features_to_plot_feat_imp=10",
 #                         "--folds_for_test_set=1-10",
 #                         "--plot_fold_on_test_set_plot",
 #                         "--feat_imp_min_n_robustness=50"))
@@ -128,6 +130,24 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 #                       "--tissues_to_consider=all",
 #                       "--robustness_analysis",
 #                       "--feat_imp_min_n_robustness=50"))
+
+# ,CNS-GBM,ColoRect-AdenoCA,Eso-AdenoCA,Liver-HCC,Lung-AdenoCA,Lung-SCC,Lymph-BNHL,Lymph-CLL,Skin-Melanoma
+
+
+args = parse_args(parser, args =
+                    c("--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Tsankov,Shendure",
+                      "--cancer_types=Skin-Melanoma",
+                      "--cell_number_filter=100",
+                      "--ML_model=XGB",
+                      "--annotation=finalized_annotation",
+                      "--robustness_analysis",
+                      "--seed_range=1-10",
+                      "--feature_importance_method=permutation_importance",
+                      "--folds_for_test_set=1",
+                      "--grid_analysis",
+                      "--top_features_to_plot=1",
+                      "--grid_cell_types=skin Melanocyte BR,lung AT2 TS,liver Hepatoblasts SH,stomach Foveolar Cell BR,lung Basal TS,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,mammary_tissue Basal Epithelial (Mammary) BR,cerebrum Astrocytes-Oligodendrocytes SH"))
+
 
 args = parse_args(parser)
 
@@ -263,22 +283,25 @@ construct_bar_plots <- function(cancer_type,
   }
 }
 
-construct_boxplots <- function(df, x, y, color, title, savepath, savefile,
-                               n_name, facet_var, ylabel, sort_by, plot_fold=F) {
+construct_boxplots <- function(df, x, y, title, savepath, savefile,
+                               facet_var, xlabel, test_boxplots=F, 
+                               plot_fold=F, n_name=NULL,
+                               permutation_importance_boxplots=F,
+                               test_set_boxplots=F) {
   from = as.character(unique(df[[facet_var]]))
   to = paste("top", from, "features")
   
   names(to) <- from
   df[[facet_var]] <- factor(df[[facet_var]], levels = unique(df[[facet_var]]))
   
-  # reorder_within <- function(x, by, within, fun = median, sep = "___") {
-  #   new_x <- paste(x, within, sep = sep)
-  #   ordered_factor <- stats::reorder(new_x, by, FUN = fun)
-  #   levels_reversed <- rev(levels(ordered_factor))
-  #   return(factor(ordered_factor, levels = levels_reversed))  
-  # }
+  reorder_within_option_1 <- function(y, by, within, fun = median, sep = "___") {
+    new_y <- paste(y, within, sep = sep)
+    ordered_factor <- stats::reorder(new_y, by, FUN = fun)
+    # levels_reversed <- rev(levels(ordered_factor))
+    return(factor(ordered_factor, levels = levels(ordered_factor)))
+  }
   
-  reorder_within <- function(x, by1, by2, within, FUN, sep = "___") {
+  reorder_within_option_2 <- function(x, by1, by2, within, FUN, sep = "___") {
     new_x <- paste(x, within, sep = sep)
     ordered_factor <- factor(new_x, levels = unique(new_x)[order(by1, decreasing = TRUE)])
     ties <- duplicated(by1) | duplicated(by1, fromLast = TRUE)
@@ -291,6 +314,16 @@ construct_boxplots <- function(df, x, y, color, title, savepath, savefile,
     }
     return(factor(ordered_factor, levels = levels(ordered_factor)))
   }
+  
+  # reorder_within_option_3 <- function(y, by, within, sep = "___") {
+  #   new_y <- paste(y, within, sep = sep)
+  #   return(factor(new_y, levels = c("Skin, Melanocyte", 
+  #                                   "Liver HCC",
+  #                                   "Colon, Stem",
+  #                                   "Stomach, Foveolar",
+  #                                   "Frontal Cortex, Oligodendrocyte Precur")))
+  # }
+  
   
   if (plot_fold) {
     outlier_shape = NA
@@ -326,47 +359,130 @@ construct_boxplots <- function(df, x, y, color, title, savepath, savefile,
 #         )
   custom_label_function <- function(labels) {
     cleaned_labels <- str_replace(labels, "___10", "")
-    wrapped_labels <- label_wrap_gen(width = 8)(cleaned_labels)
+    cleaned_labels <- str_replace(cleaned_labels, "___1", "")
+    wrapped_labels <- label_wrap_gen(width = 1)(cleaned_labels)
     return(wrapped_labels)
   }
-  grayscale_palette <- gray(seq(0, 0.9, length.out = 5))
+  # grayscale_palette <- gray(seq(0, 0.9, length.out = 5))
   
-  plot <- ggplot(df) +
-    geom_boxplot(aes(x = reorder_within(x=!!sym(x), 
-                                        by1=n_feature,
-                                        by2=!!sym(y),
-                                        # by=!!sym(y), 
-                                        within=!!sym(facet_var), 
-                                        median), y = !!sym(y), 
-                    ), 
-                 lwd=1.2, outlier.shape = outlier_shape) +
-    geom_text(aes(x = reorder_within(x=!!sym(x), 
-                                     by1=n_feature,
-                                     by2=!!sym(y), 
-                                     within=!!sym(facet_var), 
-                                     median), y = y_position, label = 
-                    paste0("n=", !!sym(n_name))), vjust = -0.5) +
+  plot <- ggplot(df)
+  if (permutation_importance_boxplots) {
+    plot <- plot +
+      geom_boxplot(aes(x = reorder_within_option_2(x=!!sym(x), 
+                                                   by1=n_feature,
+                                                   by2=!!sym(y),
+                                                   within=!!sym(facet_var), 
+                                                   median), y = !!sym(y)), 
+                   lwd=1.2, outlier.shape = outlier_shape) +
+      geom_text(aes(x = reorder_within_option_2(x=!!sym(x), 
+                                                by1=n_feature,
+                                                by2=!!sym(y), 
+                                                within=!!sym(facet_var), 
+                                                median), y = y_position, 
+                    label = paste0("n=", !!sym(n_name))), 
+                vjust = -0.5)
+  } else if (test_set_boxplots) {
+      plot <- plot +
+        geom_boxplot(aes(x = !!sym(x), y = reorder_within_option_1(y=!!sym(y), 
+                                                                   by=!!sym(x),
+                                                                   within=!!sym(facet_var), 
+                                                                   median)), 
+                     lwd=1.2, outlier.shape = outlier_shape) #+
+  } else {
+      plot <- plot +
+                geom_boxplot(aes(x = !!sym(x), y = !!sym(y)),
+                                                                
+                 lwd=1.2, outlier.shape = outlier_shape) #+
+
+  }
+    # else {
+    #   plot <- plot +
+    #     geom_col(aes(x = !!sym(x), y = reorder_within_option_1(y=!!sym(y), 
+    #                                                                by=!!sym(x),
+    #                                                                within=!!sym(facet_var), 
+    #                                                                median)), 
+    #                  lwd=1.2) #+
+    # }
+    
+    # plot <- plot +
+    #   geom_boxplot(aes(x = !!sym(x), y = reorder_within_option_1(y=!!sym(y), 
+    #                                                              by=!!sym(x),
+    #                                                              within=!!sym(facet_var), 
+    #                                                              median)), 
+    #                lwd=1.2, outlier.shape = outlier_shape) #+
+    
+    
+  
+  # Continue adding other layers
+  plot <- plot +
     facet_wrap(as.formula(paste0("~", facet_var)), nrow=1, 
                scales = "free_x",
                labeller = as_labeller(to)) +
-    ylab(ylabel) +
-    xlab("") +
+    # xlab(xlabel) +
+    ylab("") +
+    xlab(xlabel) +
     ggtitle(title) +
-    scale_y_continuous(breaks = seq(round(min(df[[y]]), 2),
-                                    round(max(df[[y]]), 2), by = 0.05)) +
-    scale_color_manual(values = grayscale_palette) + # Apply grayscale palette
-    scale_x_discrete(labels = custom_label_function) + # Adjust 'width' as needed
+    scale_x_continuous(breaks = seq(round(min(df[[x]]), 2),
+                                    round(max(df[[x]]), 2), by = 0.05)) +
+    # scale_y_discrete(labels = custom_label_function) +
+    
+    # scale_color_manual(values = grayscale_palette) +
+    # scale_y_discrete(labels = custom_label_function) + 
+    scale_y_discrete(labels = rev(c("Foveolar",
+                                    "Melanocyte",
+                                    "Colon, Stem",
+                                    "Mammary Tissue, Basal",
+                                    "Lung, Basal",
+                                    "Lung, AT2",
+                                    "Hepatocyte",
+                                    "Oligodendrocyte Precursor",
+                                    "B"))) +
     theme_classic() +
     theme(
       strip.background = element_blank(),
       strip.text.x = element_blank(),
-      plot.title = element_text(hjust = 0.5),
-      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+      plot.title = element_text(hjust = 0.5, size = 30, face = "bold"),
+      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=18),
+      axis.text.y = element_text(size = 20),
+      axis.title.x=element_text(size=20)
     )
-  
-            # theme(plot.title = element_text(hjust = 0.5),
-            #       axis.text.x = element_blank())
-    print(plot)
+  # plot <- ggplot(df) +
+  #           geom_boxplot(aes(x = reorder_within_option_2(x=!!sym(x), 
+  #                                               by1=n_feature,
+  #                                               by2=!!sym(y),
+  #                                               # by=!!sym(y), 
+  #                                               within=!!sym(facet_var), 
+  #                                               median), y = !!sym(y)), 
+  #                        lwd=1.2, outlier.shape = outlier_shape) +
+  #           geom_text(aes(x = reorder_within_option_2(x=!!sym(x), 
+  #                                                    by1=n_feature,
+  #                                                    by2=!!sym(y), 
+  #                                                    within=!!sym(facet_var), 
+  #                                                    median), y = y_position, label = 
+  #                                                    paste0("n=", !!sym(n_name))), 
+  #                                                    vjust = -0.5) +
+  #           facet_wrap(as.formula(paste0("~", facet_var)), nrow=1, 
+  #                      scales = "free_x",
+  #                      labeller = as_labeller(to)) +
+  #           ylab(ylabel) +
+  #           xlab("") +
+  #           ggtitle(title) +
+  #           scale_y_continuous(breaks = seq(round(min(df[[y]]), 2),
+  #                                           round(max(df[[y]]), 2), by = 0.05)) +
+  #           # scale_color_manual(values = grayscale_palette) + # Apply grayscale palette
+  #           scale_x_discrete(labels = custom_label_function) + 
+  #           theme_classic() +
+  #           theme(
+  #             strip.background = element_blank(),
+  #             strip.text.x = element_blank(),
+  #             plot.title = element_text(hjust = 0.5),
+  #             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+  #           ) +
+  #           coord_flip()
+  # 
+  #           # theme(plot.title = element_text(hjust = 0.5),
+  #           #       axis.text.x = element_blank())
+  #   print(plot)
   
   if (plot_fold) {
     plot = plot + 
@@ -435,20 +551,20 @@ construct_df_feature_importances_all_seeds <- function(all_seeds_dirs,
   return(df_feature_importances_all_seeds)
 }
 
-plot_accumulated_feature_importance <- function(df_feature_importances_all_seeds,
-                                                savepath,
-                                                cancer_type) {
-  df_accumulated_imp = df_feature_importances_all_seeds %>% 
-    group_by(features, num_features) %>%
-    summarise(sum(importance))
-  colnames(df_accumulated_imp)[3] = "importance"
-  dir.create(savepath, recursive = T)
-  
-  ggplot_barplot_helper(df=df_accumulated_imp, 
-                        title=cancer_type, 
-                        savepath=savepath,
-                        accumulated_imp=T)
-}
+# plot_accumulated_feature_importance <- function(df_feature_importances_all_seeds,
+#                                                 savepath,
+#                                                 cancer_type) {
+#   df_accumulated_imp = df_feature_importances_all_seeds %>% 
+#     group_by(features, num_features) %>%
+#     summarise(sum(importance))
+#   colnames(df_accumulated_imp)[3] = "importance"
+#   dir.create(savepath, recursive = T)
+#   
+#   ggplot_barplot_helper(df=df_accumulated_imp, 
+#                         title=cancer_type, 
+#                         savepath=savepath,
+#                         accumulated_imp=T)
+# }
 
 construct_all_seeds_test_df <- function(top_features_to_plot,
                                         seed_range,
@@ -462,7 +578,9 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                         ML_model,
                                         folds_for_test_set,
                                         feature_importance_method,
-                                        hundred_kb) {
+                                        hundred_kb, 
+                                        grid_analysis=F,
+                                        grid_cell_type=NULL) {
   df = tibble(top_feature = character(0),
               top_n = integer(0),
               test_set_perf = double(0),
@@ -482,7 +600,9 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                                 ML_model,
                                                 seed,
                                                 fold_for_test_set = fold,
-                                                hundred_kb = hundred_kb)
+                                                hundred_kb = hundred_kb,
+                                                grid_analysis=grid_analysis,
+                                                grid_cell_type=grid_cell_type)
         
         if (feature_importance_method != "default_importance") {
           model_pattern = paste("^model_iteration_[0-9]+_feature_importance",
@@ -494,8 +614,13 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
         total_num_features = list.files(test_dir,
                                         pattern=model_pattern)
         total_num_features = length(total_num_features)
+
+        # #### TEMP ####
+        # total_num_features=1
+        # ###############
         # sort so that later the first test_file_idx can be checked for 
         # total_num_features == test_file_idx
+        
         test_file_idx = sort(total_num_features - top_features_to_plot + 1)
         test_perf_filenames = paste("model_iteration", test_file_idx,
                                     sep = "_")
@@ -531,6 +656,9 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
           suppressWarnings({
             perf = read.table(file, header=F)[1,1]
           })
+          if (grid_analysis) {
+            top_feature = grid_cell_type
+          }
           df = df %>% add_row(top_feature = top_feature,
                               top_n = top_features_to_plot[idx],
                               test_set_perf = perf,
@@ -671,7 +799,11 @@ skip_seeds_robustness = args$skip_seeds_robustness
 if (!is.null(skip_seeds_robustness)) {
   skip_seeds_robustness = unlist(strsplit(args$skip_seeds_robustness, split=","))
 }
-
+grid_analysis = args$grid_analysis
+if (grid_analysis) {
+  grid_cell_types = unlist(strsplit(args$grid_cell_types, split=","))
+  grid_cell_types = gsub(" ", "-", grid_cell_types)
+}
 folds_for_test_set = args$folds_for_test_set
 folds_for_test_set = unlist(strsplit(args$folds_for_test_set, split = "-"))
 folds_for_test_set = seq(folds_for_test_set[1], folds_for_test_set[2])
@@ -702,9 +834,14 @@ if (!robustness_analysis) {
 } else {
   for (cancer_type in cancer_types) {
     # for (tss_filter in tss_fragment_filter) {
-    scATAC_sources = construct_sources_string(datasets)
-    scATAC_source = paste("scATAC_source", scATAC_sources, "cell_number_filter", 
-                          cell_number_filter, sep="_")
+    scATAC_source = paste("cell_number_filter", cell_number_filter, sep="_")
+    
+    if (!grid_analysis) {
+      scATAC_sources = construct_sources_string(datasets)
+      scATAC_source = paste("scATAC_source", scATAC_sources, 
+                            scATAC_source, sep="_")
+    }
+    
     if (tss_fragment_filter != "-1") {
       scATAC_source = paste(scATAC_source, "tss_fragment_filter",
                             tss_fragment_filter, sep="_")
@@ -719,8 +856,27 @@ if (!robustness_analysis) {
                             sep="_")
     }
     scATAC_source = paste(scATAC_source, "annotation", annotation, sep="_")
-
-    savepath = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
+    
+    # if (grid_analysis) {
+    #   savepath = c()
+    #   for (grid_cell_type in grid_cell_types) {
+    #     savepath = append(savepath, get_relevant_backwards_elim_dirs(cancer_types=paste(cancer_type, 
+    #                                                                    grid_cell_type, 
+    #                                                                    sep="_"), 
+    #                                                 # combined_datasets=combined_datasets,
+    #                                                 tissues_to_consider=tissues_to_consider,
+    #                                                 datasets=datasets,
+    #                                                 cell_number_filter=cell_number_filter,
+    #                                                 tss_fragment_filter=tss_fragment_filter,
+    #                                                 annotation=annotation,
+    #                                                 ML_model=ML_model,
+    #                                                 hundred_kb=hundred_kb,
+    #                                                 seed=
+    #                                                 accumulated_seeds=F))
+    #   }
+    #}
+    if (!grid_analysis) {
+      savepath = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
                                                 # combined_datasets=combined_datasets,
                                                 tissues_to_consider=tissues_to_consider,
                                                 datasets=datasets,
@@ -730,12 +886,21 @@ if (!robustness_analysis) {
                                                 ML_model=ML_model,
                                                 hundred_kb=hundred_kb,
                                                 accumulated_seeds=T)
-    savepath = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", savepath, sep="/")
-    dir.create(path=savepath, recursive = T)
+      savepath = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", savepath, sep="/")
+      dir.create(path=savepath, recursive = T)
+      dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type,
+                             sep="/"), recursive = F)
+    } else {
+      dirs = c()
+      for (cell_type in grid_cell_types) {
+        dirs = append(dirs, list.dirs(paste("../../figures", "models", 
+                      ML_model, paste(cancer_type, cell_type, sep="_"), sep="/"),
+                      recursive = F))
+      }
+    } 
+    
     # dirs = list.dirs(paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", "models", ML_model, cancer_type, 
     #                        sep="/"), recursive = F)
-    dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type,
-                           sep="/"), recursive = F)
     combos = expand.grid(seed = seed_range, fold = folds_for_test_set)
     seed_fold_for_test_combinations = apply(combos, 1, function(row) {
       paste(scATAC_source, "seed", row["seed"], "fold_for_test_set", row["fold"], 
@@ -758,20 +923,40 @@ if (!robustness_analysis) {
                                           savepath,
                                           cancer_type)
     }
-    
-    df = construct_all_seeds_test_df(top_features_to_plot=top_features_to_plot,
-                                     seed_range=seed_range,
-                                     skip_seeds_robustness=skip_seeds_robustness,
-                                     cancer_type=cancer_type,
-                                     datasets=datasets,
-                                     cell_number_filter=cell_number_filter,
-                                     tss_fragment_filter=tss_fragment_filter, 
-                                     annotation=annotation,
-                                     tissues_to_consider=tissues_to_consider,
-                                     ML_model=ML_model,
-                                     folds_for_test_set=folds_for_test_set,
-                                     feature_importance_method=feature_importance_method,
-                                     hundred_kb=hundred_kb)
+    if (grid_analysis) {
+      df = data.frame()
+      for (grid_cell_type in grid_cell_types) {
+        df = rbind(df, construct_all_seeds_test_df(top_features_to_plot=top_features_to_plot,
+                                         seed_range=seed_range,
+                                         skip_seeds_robustness=skip_seeds_robustness,
+                                         cancer_type=paste(cancer_type, grid_cell_type, sep="_"),
+                                         datasets=datasets,
+                                         cell_number_filter=cell_number_filter,
+                                         tss_fragment_filter=tss_fragment_filter, 
+                                         annotation=annotation,
+                                         tissues_to_consider=tissues_to_consider,
+                                         ML_model=ML_model,
+                                         folds_for_test_set=folds_for_test_set,
+                                         feature_importance_method=feature_importance_method,
+                                         hundred_kb=hundred_kb,
+                                         grid_analysis=grid_analysis,
+                                         grid_cell_type=grid_cell_type))
+      }
+    } else {
+      df = construct_all_seeds_test_df(top_features_to_plot=top_features_to_plot,
+                                       seed_range=seed_range,
+                                       skip_seeds_robustness=skip_seeds_robustness,
+                                       cancer_type=cancer_type,
+                                       datasets=datasets,
+                                       cell_number_filter=cell_number_filter,
+                                       tss_fragment_filter=tss_fragment_filter, 
+                                       annotation=annotation,
+                                       tissues_to_consider=tissues_to_consider,
+                                       ML_model=ML_model,
+                                       folds_for_test_set=folds_for_test_set,
+                                       feature_importance_method=feature_importance_method,
+                                       hundred_kb=hundred_kb)
+    }
     
 
     # y_position is for plotting number of times feature appears at the top of
@@ -849,13 +1034,14 @@ if (!robustness_analysis) {
                       paste(top_features_to_plot_feat_imp, collapse="_"),
                       "_features.png")
     
-    construct_boxplots(df=df_test, x="top_feature", y="test_set_perf", 
-                       color="top_feature", title=cancer_type, savepath=savepath,
+    construct_boxplots(df=df_test, 
+                       x="test_set_perf", 
+                       y="top_feature", 
+                       title=cancer_type,
+                       savepath=savepath,
                        savefile=savefile,
-                       n_name="n_top_feature", facet_var="top_n",
-                       ylabel="Test set R^2",
-                       sort_by="n",
-                       plot_fold=plot_fold_on_test_set_plot)
+                       facet_var="top_n",
+                       xlabel="Test set R^2")
     
     df_val = df_feature_importances_all_seeds %>% 
             group_by(num_features, seed, fold_for_test_set) %>%

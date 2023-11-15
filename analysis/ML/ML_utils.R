@@ -50,35 +50,35 @@ construct_dir <- function(scATAC_source,
                           cancer_type,
                           hundred_kb,
                           tissues_to_consider,
-                          expanded_hundred_kb=F) {
-  scATAC_source = paste("scATAC_source", scATAC_source, "cell_number_filter", 
-                        cell_number_filter, sep="_")
-  
+                          expanded_hundred_kb=F,
+                          grid_analysis=F,
+                          grid_cell_type=NULL) {
+  dir = paste("cell_number_filter", cell_number_filter, sep="_")
+  if (!grid_analysis) {
+    dir = paste("scATAC_source", scATAC_source, dir, sep="_")
+  }
+
   if (tissues_to_consider != "all") {
-    scATAC_source = paste(scATAC_source, "tissues_to_consider", 
-                          tissues_to_consider, sep="_")
+    dir = paste(dir, "tissues_to_consider", tissues_to_consider, sep="_")
   }
   
   if (tss_fragment_filter != -1) {
-    scATAC_source = paste(scATAC_source, "tss_fragment_filter", 
-                          tss_fragment_filter, sep="_")
+    dir = paste(dir, "tss_fragment_filter", tss_fragment_filter, sep="_")
   }
   
-  scATAC_source = paste(scATAC_source, "annotation", annotation, "seed", seed, 
-                        sep="_")
+  dir = paste(dir, "annotation", annotation, "seed", seed, sep="_")
   
   if (fold_for_test_set != "-1") {
-    scATAC_source = paste(scATAC_source, 
-                          "fold_for_test_set", fold_for_test_set, sep="_")
+    dir = paste(dir, "fold_for_test_set", fold_for_test_set, sep="_")
   }
   
   if (hundred_kb) {
-    scATAC_source = paste("interval_ranges_100kb", scATAC_source, sep="_")
+    dir = paste("interval_ranges_100kb", dir, sep="_")
   } else if (expanded_hundred_kb) {
-    scATAC_source = paste("expanded_interval_ranges_100kb", scATAC_source, sep="_")
+    dir = paste("expanded_interval_ranges_100kb", dir, sep="_")
   }
   
-  return(paste("models", ML_model, cancer_type, scATAC_source, sep="/"))
+  return(paste("models", ML_model, cancer_type, dir, sep="/"))
 }
 
 construct_backwards_elim_dir <- function(cancer_type, 
@@ -92,7 +92,9 @@ construct_backwards_elim_dir <- function(cancer_type,
                                          hundred_kb,
                                          fold_for_test_set="-1",
                                          # test=F,
-                                         per_donor=F) {
+                                         per_donor=F,
+                                         grid_analysis=F,
+                                         grid_cell_type=NULL) {
   dir = construct_dir(scATAC_source=scATAC_source,
                       cell_number_filter=cell_number_filter,
                       tss_fragment_filter=tss_fragment_filter,
@@ -102,7 +104,9 @@ construct_backwards_elim_dir <- function(cancer_type,
                       ML_model=ML_model,
                       cancer_type=cancer_type,
                       hundred_kb=hundred_kb,
-                      tissues_to_consider=tissues_to_consider)
+                      tissues_to_consider=tissues_to_consider,
+                      grid_analysis=grid_analysis,
+                      grid_cell_type=grid_cell_type)
   
   if (per_donor) {
     part_one = unlist(strsplit(dir, split="/"))[1:2]
