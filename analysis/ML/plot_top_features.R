@@ -390,30 +390,12 @@ construct_boxplots <- function(df, x, y, title, savepath, savefile,
                      lwd=1.2, outlier.shape = outlier_shape) #+
   } else {
       plot <- plot +
-                geom_boxplot(aes(x = !!sym(x), y = !!sym(y)),
+                geom_boxplot(aes(x = !!sym(x), y = !!sym(y),),
                                                                 
                  lwd=1.2, outlier.shape = outlier_shape) #+
 
   }
-    # else {
-    #   plot <- plot +
-    #     geom_col(aes(x = !!sym(x), y = reorder_within_option_1(y=!!sym(y), 
-    #                                                                by=!!sym(x),
-    #                                                                within=!!sym(facet_var), 
-    #                                                                median)), 
-    #                  lwd=1.2) #+
-    # }
-    
-    # plot <- plot +
-    #   geom_boxplot(aes(x = !!sym(x), y = reorder_within_option_1(y=!!sym(y), 
-    #                                                              by=!!sym(x),
-    #                                                              within=!!sym(facet_var), 
-    #                                                              median)), 
-    #                lwd=1.2, outlier.shape = outlier_shape) #+
-    
-    
-  
-  # Continue adding other layers
+
   plot <- plot +
     facet_wrap(as.formula(paste0("~", facet_var)), nrow=1, 
                scales = "free_x",
@@ -434,18 +416,20 @@ construct_boxplots <- function(df, x, y, title, savepath, savefile,
                                     "Mammary Tissue, Basal",
                                     "Lung, Basal",
                                     "Lung, AT2",
-                                    "Hepatocyte",
-                                    "Oligodendrocyte Precursor",
+                                    "Hepatoblast",
+                                    "Astrocyte/Oligodendrocyte",
                                     "B"))) +
-    theme_classic() +
+    # theme_classic() +
     theme(
       strip.background = element_blank(),
       strip.text.x = element_blank(),
       plot.title = element_text(hjust = 0.5, size = 30, face = "bold"),
-      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=18),
-      axis.text.y = element_text(size = 20),
-      axis.title.x=element_text(size=20)
+      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=25),
+      # axis.text.y = element_text(size = 25),
+      axis.title.x=element_text(size=20),
+      axis.text.y=element_blank()
     )
+  
   # plot <- ggplot(df) +
   #           geom_boxplot(aes(x = reorder_within_option_2(x=!!sym(x), 
   #                                               by1=n_feature,
@@ -503,7 +487,7 @@ construct_boxplots <- function(df, x, y, title, savepath, savefile,
   }
   print(plot)
   ggsave(paste(savepath, savefile, sep="/"), 
-         width = 20, height = 15, plot)
+         width = 12, height = 7, plot)
 }
 
 construct_df_feature_importances_all_seeds <- function(all_seeds_dirs,
