@@ -264,6 +264,7 @@ get_sample_name_bingren_adult_brain <- function(file) {
   sample_name = str_remove(sample_name, "\\.rds")
   sample_name = paste(unlist(strsplit(sample_name, split="_"))[2:3], 
                       collapse="_")
+  sample_name = str_remove(sample_name, ".bed.bgz")
   return(sample_name)
 }
 

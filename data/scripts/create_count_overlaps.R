@@ -20,12 +20,10 @@ option_list <- list(
 
 args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Greenleaf_colon",
+#                  c("--dataset=Bingren_adult_brain",
 #                    "--cores=1",
 #                    "--annotation=default_annotation",
-#                    "--which_interval_ranges=100kb",
-#                    "--overlaps_per_cell"))
-
+#                    "--which_interval_ranges=polak"))
 cores = args$cores
 dataset = args$dataset
 dataset_subsets = args$dataset_subsets
@@ -103,8 +101,9 @@ create_count_overlaps_files <- function(file, metadata, interval_ranges,
           dataset == "Greenleaf_pbmc_bm" || dataset == "Yang_kidney" ||
           dataset == "Rawlins_fetal_lung") {
         sample$name = substr(sample$name, 1, 16)
+      } else if (dataset == "Bingren_adult_brain") {
+        sample$name = unlist(lapply(strsplit(sample$name, ":"), "[", 1))
       }
-      
       # if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || dataset == "Bingren") {
       #   sample = migrate_bed_file_to_hg37(sample, chain)
       # }
@@ -162,7 +161,7 @@ get_sample_cell_types <- function(fragments,
 }
 
 if (which_interval_ranges == "polak") {
-    load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
+  load('../mutation_data/hg19.1Mb.ranges.Polak.Nature2015.RData')
 } else if (which_interval_ranges == "yang") {
   load("../peak_set_yang.Rdata")
 } else if (which_interval_ranges == "100kb") {
@@ -220,6 +219,25 @@ if (dataset == "Bingren") {
            which_interval_ranges=which_interval_ranges,
            overlaps_per_cell=overlaps_per_cell,
            mc.cores=cores)
+} else if (dataset == "Bingren_adult_brain") {
+  if (annotation == "default_annotation") {
+    metadata_bingren_adult_brain = read.table("../metadata/bingren_adult_brain_metadata.txt",
+                                              sep="\t",
+                                              header=TRUE)
+    colnames(metadata_bingren_adult_brain)[grepl("celltype", 
+                                     colnames(metadata_bingren_adult_brain))] = "cell_type"
+    
+    files_bingren_adult_brain = list.files("../bed_files/bingren_adult_brain/migrated_to_hg19",
+                                pattern = "bed.bgz")
+    mclapply(files_bingren_adult_brain, create_count_overlaps_files,
+             metadata=metadata_bingren_adult_brain,
+             interval_ranges=interval.ranges,
+             dataset=dataset,
+             annotation=annotation,
+             which_interval_ranges=which_interval_ranges,
+             overlaps_per_cell=overlaps_per_cell,
+             mc.cores=cores)
+  }
 } else if (dataset == "Shendure") {
   metadata_Shendure = read.table("../metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
                                   sep="\t",
