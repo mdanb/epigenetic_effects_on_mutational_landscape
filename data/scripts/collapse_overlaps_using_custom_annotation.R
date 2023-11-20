@@ -20,9 +20,9 @@ option_list <- list(
 )
 
 # args = parse_args(parser, args =
-#                       c("--dataset=Greenleaf_colon",
-#                         "--annotation=remove_cancer_polyp_merge_normal_unaffected",
-#                         "--which_interval_ranges=100kb"))
+#                       c("--dataset=Bingren_adult_brain",
+#                         "--annotation=Bingren_adult_brain_remove_same_celltype_indexing",
+#                         "--which_interval_ranges=polak"))
 
 args = parse_args(OptionParser(option_list=option_list))
 
@@ -233,7 +233,8 @@ if (dataset == "Greenleaf_pbmc_bm") {
     if (dataset == "Bingren") {
       cell_types = gsub(" \\d+", "", rownames(default_combined_count_ovs))
     } else {
-      cell_types = sub("\\d_", "", stri_reverse(rownames(default_combined_count_ovs)))
+      cell_types = stri_reverse(sub("\\d_", "", 
+                          stri_reverse(rownames(default_combined_count_ovs))))
     }
     default_combined_count_ovs = as_tibble(default_combined_count_ovs) %>%
                                   add_column(cell_types, .before=1)
@@ -251,8 +252,14 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df_metadata["cell_type"] = paste(prev_tissue,
                                      prev_cell_type)
     df_metadata = df_metadata[, 2:3]
-    df_metadata["cell_type"] = gsub(" \\d+", "", 
-                                    df_metadata[["cell_type"]])
+    
+    if (dataset == "Bingren") {
+      df_metadata["cell_type"] = gsub(" \\d+", "", 
+                                      df_metadata[["cell_type"]])
+    } else {
+      df_metadata["cell_type"] = stri_reverse(sub("\\d_", "", 
+                                    stri_reverse(df_metadata[["cell_type"]])))
+    }
     df_metadata = df_metadata %>% 
       group_by(cell_type) %>%
       summarise_all(sum)
