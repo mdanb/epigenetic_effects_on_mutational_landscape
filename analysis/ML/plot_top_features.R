@@ -50,12 +50,11 @@ parser <- add_option(parser, c("--grid_analysis"), action="store_true", default=
 parser <- add_option(parser, c("--grid_cell_types"), type="character")
 
 # args = parse_args(parser, args =
-#                       c("--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Greenleaf_colon,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-#                         "--cancer_types=Lung-SCC",
+#                       c("--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
+#                         "--cancer_types=Panc-AdenoCA_cluster_1",
 #                         "--cell_number_filter=100",
-#                         "--top_features_to_plot=10",
 #                         "--ML_model=XGB",
-#                         "--annotation=finalized_annotation",
+#                         "--annotation=Greenleaf_colon_remove_cancer_polyp_merge_normal_unaffected",
 #                         "--robustness_analysis",
 #                         "--seed_range=1-10",
 #                         "--feature_importance_method=permutation_importance",
@@ -587,10 +586,11 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     
     ordered_levels <- df_filtered %>% pull(!!sym(y)) %>% unique()
     df_filtered <- df_filtered %>% 
-      mutate(y_reordered = factor(!!sym(y), levels = ordered_levels))
+                      mutate(y_reordered = factor(!!sym(y), 
+                                                  levels = ordered_levels))
     xlim_lower = min(df[[x]])
     xlim_upper = max(df[[x]])
-    color = rep("#000000", length(unique(df_filtered[["features"]])) - 1)
+    color = rep("#000000", length(unique(df_filtered[[y]])) - 1)
     color = append(color, "#EE4B2B")
     
     p <- ggplot(df_filtered) +
