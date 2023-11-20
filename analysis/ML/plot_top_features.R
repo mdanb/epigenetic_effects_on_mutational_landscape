@@ -11,7 +11,7 @@ library(patchwork)
 
 source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
 source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
-
+# 
 # source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/utils.R")
 # source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/ML_utils.R")
 
@@ -557,7 +557,6 @@ construct_bar_plots <- function(cancer_type,
 #           #       axis.text.x = element_blank())
 #   print(plot)
 
-
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
                                           n_name=NULL, width=12, height=8,
@@ -581,7 +580,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                     arrange(!!sym(n_name), med_x)
     df_filtered = df_filtered %>% 
                     ungroup() %>%
-                    mutate(color=ifelse(!!sym(n_name)==max(!!sym(n_name)), 
+                    mutate(color=ifelse(!!sym(n_name)==max(!!sym(n_name)) &
+                                        med_x==max(med_x), 
                            "highlight", "other"))
     
     
@@ -590,6 +590,9 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
       mutate(y_reordered = factor(!!sym(y), levels = ordered_levels))
     xlim_lower = min(df[[x]])
     xlim_upper = max(df[[x]])
+    color = rep("#000000", length(unique(df_filtered[["features"]])) - 1)
+    color = append(color, "#EE4B2B")
+    
     p <- ggplot(df_filtered) +
             geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 1.0, 
                              outlier.shape = outlier_shape) +
@@ -605,7 +608,9 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 strip.background = element_blank(),
                 strip.text.x = element_blank(),
                 plot.title = element_text(hjust = 0.5),
-                axis.text.y = element_text(size = 15),
+                axis.text.y = element_text(size = 15, colour = color,
+                                           face="bold"),
+                axis.text.x = element_text(size = 14),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank()
               ) +
