@@ -369,6 +369,9 @@ get_tissue_name <- function(file, dataset, annotation) {
   else if (dataset == "Wang_lung") {
     tissue_name = "lung"
   }
+  else if (dataset == "Bingren_adult_brain") {
+    tissue_name = "adult_brain"
+  }
   return(tissue_name)
 }
 
