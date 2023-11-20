@@ -2,6 +2,7 @@ library(optparse)
 library(dplyr)
 library(magrittr)
 library(tibble)
+library(stringi)
 ####### CUSTOM ANNOTATION OPTIONS ####### 
 ### Greenleaf pbmc bm
 # Greenleaf_pbmc_bm_CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm
@@ -229,7 +230,11 @@ if (dataset == "Greenleaf_pbmc_bm") {
                                            default_annotation_metadata_fn, sep="/")
     
     default_combined_count_ovs = readRDS(default_annotation_fp)
-    cell_types = gsub(" \\d+", "", rownames(default_combined_count_ovs))
+    if (dataset == "Bingren") {
+      cell_types = gsub(" \\d+", "", rownames(default_combined_count_ovs))
+    } else {
+      cell_types = sub("\\d_", "", stri_reverse(rownames(default_combined_count_ovs)))
+    }
     default_combined_count_ovs = as_tibble(default_combined_count_ovs) %>%
                                   add_column(cell_types, .before=1)
     default_combined_count_ovs = default_combined_count_ovs %>% 
