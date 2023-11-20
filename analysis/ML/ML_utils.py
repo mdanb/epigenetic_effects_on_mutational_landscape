@@ -221,6 +221,9 @@ def add_dataset_origin_to_cell_types(list_to_add_to, dataset):
         list_to_add_to = [c + " GL_Co" for c in list_to_add_to]
     elif dataset == "Wang_lung":
         list_to_add_to = [c + " W_L" for c in list_to_add_to]
+    elif dataset == "Bingren_adult_brain":
+        list_to_add_to = [c + " BR_Br" for c in list_to_add_to]
+
     return list_to_add_to
 
 
