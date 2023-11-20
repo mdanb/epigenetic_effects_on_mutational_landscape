@@ -207,10 +207,13 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df_metadata = l[[2]]
     save_collapsed_df(df, df_metadata, dataset, annotation)
   }
-} else if (dataset == "Bingren") {
-  if (annotation == "Bingren_remove_same_celltype_indexing") {
-    default_annotation_fn = "Bingren_combined_count_overlaps.rds"
-    default_annotation_metadata_fn = "Bingren_combined_count_overlaps_metadata.rds"
+} else if (dataset == "Bingren" || dataset == "Bingren_adult_brain") {
+  if (annotation == "Bingren_remove_same_celltype_indexing" || 
+      annotation == "Bingren_adult_brain_remove_same_celltype_indexing") {
+    default_annotation_fn = paste(dataset, "combined_count_overlaps.rds", 
+                                  sep="_")
+    default_annotation_metadata_fn = paste(dataset, 
+                                "combined_count_overlaps_metadata.rds", sep="_")
     
     if (which_interval_ranges != "polak") {
       default_annotation_fn = paste("interval_ranges", which_interval_ranges,
@@ -228,10 +231,10 @@ if (dataset == "Greenleaf_pbmc_bm") {
     default_combined_count_ovs = readRDS(default_annotation_fp)
     cell_types = gsub(" \\d+", "", rownames(default_combined_count_ovs))
     default_combined_count_ovs = as_tibble(default_combined_count_ovs) %>%
-      add_column(cell_types, .before=1)
+                                  add_column(cell_types, .before=1)
     default_combined_count_ovs = default_combined_count_ovs %>% 
-      group_by(cell_types) %>%
-      summarise_all(sum)
+                                  group_by(cell_types) %>%
+                                  summarise_all(sum)
     cell_types = default_combined_count_ovs[["cell_types"]]
     default_combined_count_ovs = as.data.frame(default_combined_count_ovs)[, 
                                             2:ncol(default_combined_count_ovs)]
