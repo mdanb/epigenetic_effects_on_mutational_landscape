@@ -50,11 +50,11 @@ parser <- add_option(parser, c("--grid_analysis"), action="store_true", default=
 parser <- add_option(parser, c("--grid_cell_types"), type="character")
 
 # args = parse_args(parser, args =
-#                       c("--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-#                         "--cancer_types=Panc-AdenoCA_cluster_1",
+#                       c("--datasets=Bingren_adult_brain,Greenleaf_brain",
+#                         "--cancer_types=CNS-GBM",
 #                         "--cell_number_filter=100",
 #                         "--ML_model=XGB",
-#                         "--annotation=Greenleaf_colon_remove_cancer_polyp_merge_normal_unaffected",
+#                         "--annotation=finalized_annotation",
 #                         "--robustness_analysis",
 #                         "--seed_range=1-10",
 #                         "--feature_importance_method=permutation_importance",
@@ -576,13 +576,16 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                       summarise(med_x = median(!!sym(x)))
     df_filtered = df_filtered %>% 
                     left_join(df_compressed) %>%
-                    arrange(!!sym(n_name), med_x)
+                    arrange(desc(!!sym(n_name)), desc(med_x)) 
+    top = unique(df_filtered %>% pull(!!sym(y)))[1]
+    
     df_filtered = df_filtered %>% 
                     ungroup() %>%
-                    mutate(color=ifelse(!!sym(n_name)==max(!!sym(n_name)) &
-                                        med_x==max(med_x), 
-                           "highlight", "other"))
+                    mutate(color=!!sym(y)==top)
     
+    # ifelse(!!sym(n_name)==max(!!sym(n_name)) &
+    #          med_x==max(med_x), "highlight", 
+    #        "other")
     
     ordered_levels <- df_filtered %>% pull(!!sym(y)) %>% unique()
     df_filtered <- df_filtered %>% 
