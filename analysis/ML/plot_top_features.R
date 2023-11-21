@@ -576,12 +576,13 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                       summarise(med_x = median(!!sym(x)))
     df_filtered = df_filtered %>% 
                     left_join(df_compressed) %>%
-                    arrange(desc(!!sym(n_name)), desc(med_x)) 
-    top = unique(df_filtered %>% pull(!!sym(y)))[1]
+                    arrange(!!sym(n_name), med_x)
+    top = unique(df_filtered %>% pull(!!sym(y)))
+    top = top[length(top)]
     
     df_filtered = df_filtered %>% 
                     ungroup() %>%
-                    mutate(color=!!sym(y)==top)
+                    mutate(color=ifelse(!!sym(y)==top, "highlight", "other"))
     
     # ifelse(!!sym(n_name)==max(!!sym(n_name)) &
     #          med_x==max(med_x), "highlight", 
@@ -1298,7 +1299,7 @@ if (!robustness_analysis) {
                                    y="features", 
                                    title=cancer_type, 
                                    savepath=savepath,
-                                   savefile="validation_boxplots.png", 
+                                   savefile=savefile, 
                                    n_name="n_feature",
                                    facet_var="num_features",
                                    xlabel="Variance Explained, Validation Set",
