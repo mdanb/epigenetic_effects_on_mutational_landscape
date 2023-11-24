@@ -218,17 +218,10 @@ command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
                          "--robustness_analysis",
                          "--feat_imp_min_n_robustness", str(feat_imp_min_n_robustness)])
 
-<<<<<<< HEAD
-Rscript_command = "Rscript /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/plot_top_features.R " + \
-=======
 if grid_analysis:
     command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + grid_cell_types
 else:
     command_args = command_args + " " + "--tissues_to_consider" + " " + ",".join(tissues_to_consider)
-
-Rscript_command = "Rscript /broad/hptmp/bgiotti/BingRen_scATAC_atlas/plot_top_features.R " + \
->>>>>>> c165bb88c4912d22293251192a2751bb1e509c27
-                  command_args
 
 try:
     with open(robustness_fp, "w") as f:
