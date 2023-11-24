@@ -60,6 +60,6 @@ def create_parser():
 
     group2 = parser.add_mutually_exclusive_group()
     group2.add_argument('--grid_analysis', action="store_true", default=False)
-    group2.add_argument('--tissues_to_consider', nargs="+", type=str, default=["all"])
+    group2.add_argument('--tissues_to_consider', nargs="+", type=str, default=None)
 
     return parser
