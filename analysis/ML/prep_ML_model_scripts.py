@@ -12,8 +12,6 @@ parser.add_argument('--scATAC_cell_number_filter', type=str,
                     help='minimum number of cells per cell type in scATAC', default="100")
 parser.add_argument('--annotation_dir', type=str,
                     help='name of annotation directory', default="default_annotation")
-parser.add_argument('--tissues_to_consider', nargs="+", type=str,
-                    default=["all"])
 parser.add_argument('--seed_interval', type=str)
 parser.add_argument('--seed_interval_step', type=int)
 parser.add_argument('--top_features_to_plot', nargs="+", type=str,
@@ -32,6 +30,7 @@ parser.add_argument("--make_plots", action="store_true", default=False)
 parser.add_argument("--create_bash_scripts", action="store_true", default=False)
 parser.add_argument("--cleanup", action="store_true", default=False)
 parser.add_argument('--feat_imp_min_n_robustness', type=int)
+parser.add_argument('--grid_cell_types', type=str, default=None)
 
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
@@ -41,6 +40,10 @@ group.add_argument("--histologically_subtyped_mutations", action="store_true", d
 group.add_argument("--hierarchically_subtyped_mutations", action="store_true", default=False)
 group.add_argument("--hundred_kb", action="store_true", default=False)
 group.add_argument("--expanded_hundred_kb", action="store_true", default=False)
+
+group2 = parser.add_mutually_exclusive_group()
+group2.add_argument('--grid_analysis', action="store_true", default=False)
+group2.add_argument('--tissues_to_consider', nargs="+", type=str, default=["all"])
 
 group_run_loc = parser.add_mutually_exclusive_group()
 group_run_loc.add_argument("--submit_jobs", action="store_true", default=False)
@@ -81,6 +84,8 @@ expanded_hundred_kb = config.expanded_hundred_kb
 tissues_to_consider = config.tissues_to_consider
 top_features_to_plot_feat_imp = config.top_features_to_plot_feat_imp
 feat_imp_min_n_robustness = config.feat_imp_min_n_robustness
+grid_analysis = config.grid_analysis
+grid_cell_types = config.grid_cell_types
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
@@ -128,6 +133,9 @@ for fold in fold_for_test_set_range:
         elif expanded_hundred_kb:
             script_filename = script_filename + "_" + "expanded_hundred_kb"
             command_args = command_args + " " + "--expanded_hundred_kb"
+
+        if grid_analysis:
+            command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + grid_cell_types
 
         robustness_filename = script_filename
         script_filename = "_".join([script_filename, "seed_range", seed_range, "fold_for_test_set", str(fold)])
