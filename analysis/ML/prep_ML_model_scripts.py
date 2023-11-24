@@ -110,8 +110,7 @@ for fold in fold_for_test_set_range:
                                  "--n_optuna_trials_prebackward_selection", n_optuna_trials_prebackward_selection,
                                  "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
                                  "--feature_importance_method", feature_importance_method,
-                                 "--fold_for_test_set", str(fold),
-                                 "--tissues_to_consider", " ".join(tissues_to_consider)])
+                                 "--fold_for_test_set", str(fold)])
 
         if meso:
             script_filename = script_filename + "_" + "meso"
@@ -137,6 +136,8 @@ for fold in fold_for_test_set_range:
         if grid_analysis:
             command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + '"' + \
                            grid_cell_types + '"'
+        else:
+            command_args = command_args + " " + "--tissues_to_consider" + " ".join(tissues_to_consider)
 
         robustness_filename = script_filename
         script_filename = "_".join([script_filename, "seed_range", seed_range, "fold_for_test_set", str(fold)])
@@ -214,9 +215,13 @@ command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
                          "--top_features_to_plot_feat_imp", ",".join(config.top_features_to_plot_feat_imp),
                          "--feature_importance_method", feature_importance_method,
                          "--folds_for_test_set 1-10",
-                         "--tissues_to_consider", ",".join(tissues_to_consider),
                          "--robustness_analysis",
                          "--feat_imp_min_n_robustness", str(feat_imp_min_n_robustness)])
+
+if grid_analysis:
+    command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + grid_cell_types
+else:
+    command_args = command_args + " " + "--tissues_to_consider" + " " + ",".join(tissues_to_consider)
 
 Rscript_command = "Rscript /broad/hptmp/bgiotti/BingRen_scATAC_atlas/plot_top_features.R " + \
                   command_args
