@@ -216,7 +216,9 @@ try:
     with open(robustness_fp, "w") as f:
         f.write(Rscript_command)
 except:
+    print("exception")
     robustness_fp = os.path.join("robustness_scripts", ",".join(config.cancer_types))
+    print(robustness_fp)
     with open(robustness_fp, "w") as f:
         f.write(Rscript_command)
 
