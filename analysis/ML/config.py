@@ -16,7 +16,7 @@ def create_parser():
     parser.add_argument('--cancer_types', nargs="+", type=str,
                         help='which cancer types to analyze', default=None)
     parser.add_argument('--datasets', nargs="+", type=str,
-                        help='which sc-ATACseq datasets to analyze', default=None)
+                        help='which sc-ATACseq datasets to analyze', required=True)
     parser.add_argument('--scATAC_cell_number_filter', type=int,
                         help='minimum number of cells per cell type in scATAC', default=100)
     parser.add_argument('--annotation_dir', type=str,
