@@ -234,8 +234,7 @@ parser = create_parser()
 config = parser.parse_args()
 cancer_types = config.cancer_types
 # run_clustered_mutations = config.clustered_mutations
-if config.datasets:
-    datasets = sorted(config.datasets)
+datasets = sorted(config.datasets)
 scATAC_cell_number_filter = config.scATAC_cell_number_filter
 annotation_dir = config.annotation_dir
 SCLC = config.SCLC
@@ -280,7 +279,6 @@ grid_analysis = config.grid_analysis
 grid_cell_types = None
 if grid_analysis:
     grid_cell_types = config.grid_cell_types.split(",")
-    assert config.datasets is not None
 
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
