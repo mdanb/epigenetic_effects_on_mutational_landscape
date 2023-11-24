@@ -727,7 +727,7 @@ def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, 
     if all_seeds:
         scATAC_dir = "_".join((scATAC_dir, "seed_all_seeds"))
     else:
-        scATAC_dir = "_".join((scATAC_dir, "seed", seed, "fold_for_test_set", fold_for_test_set + 1))
+        scATAC_dir = "_".join((scATAC_dir, "seed", seed, "fold_for_test_set", str(fold_for_test_set + 1)))
 
     if hundred_kb:
         scATAC_dir = f"interval_ranges_100kb_{scATAC_dir}"
