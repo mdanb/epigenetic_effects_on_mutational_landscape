@@ -135,7 +135,8 @@ for fold in fold_for_test_set_range:
             command_args = command_args + " " + "--expanded_hundred_kb"
 
         if grid_analysis:
-            command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + grid_cell_types
+            command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + '"' + \
+                           grid_cell_types + '"'
 
         robustness_filename = script_filename
         script_filename = "_".join([script_filename, "seed_range", seed_range, "fold_for_test_set", str(fold)])
