@@ -712,17 +712,17 @@ def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg,
 def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, hundred_kb,
                          expanded_hundred_kb, tissues_to_consider, grid_analysis=False,
                          seed=None, fold_for_test_set=None, all_seeds=False):
-    scATAC_dir = ""
+    scATAC_dir = None
 
     if not grid_analysis:
         scATAC_dir = f"cell_number_filter_{scATAC_cell_number_filter}_scATAC_source_{scATAC_sources}_{scATAC_dir}"
 
     if tissues_to_consider != "all":
-        scATAC_dir = "_".join((scATAC_dir, "tissues_to_consider", tissues_to_consider))
+        scATAC_dir = "_".join(filter(None, [scATAC_dir, "tissues_to_consider", tissues_to_consider]))
     if tss_filter:
-        scATAC_dir = "_".join((scATAC_dir, "tss_fragment_filter", tss_filter))
+        scATAC_dir = "_".join(filter(None, [scATAC_dir, "tss_fragment_filter", tss_filter]))
 
-    scATAC_dir = "_".join((scATAC_dir, "annotation", annotation_dir))
+    scATAC_dir = "_".join(filter(None, [scATAC_dir, "annotation", annotation_dir]))
     if all_seeds:
         scATAC_dir = "_".join((scATAC_dir, "seed_all_seeds"))
     else:
