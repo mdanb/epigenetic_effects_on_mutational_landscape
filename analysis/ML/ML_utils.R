@@ -53,21 +53,20 @@ construct_dir <- function(scATAC_source,
                           expanded_hundred_kb=F,
                           grid_analysis=F,
                           grid_cell_type=NULL) {
-  dir = paste("cell_number_filter", cell_number_filter, sep="_")
-  if (!grid_analysis) {
-    dir = paste("scATAC_source", scATAC_source, dir, sep="_")
-  }
-
-  if (tissues_to_consider != "all") {
-    dir = paste(dir, "tissues_to_consider", tissues_to_consider, sep="_")
-  }
-  
+  dir = paste("annotation", annotation, "seed", seed, sep="_")
   if (tss_fragment_filter != -1) {
     dir = paste(dir, "tss_fragment_filter", tss_fragment_filter, sep="_")
   }
   
-  dir = paste(dir, "annotation", annotation, "seed", seed, sep="_")
+  if (tissues_to_consider != "all") {
+    dir = paste(dir, "tissues_to_consider", tissues_to_consider, sep="_")
+  }
   
+  if (!grid_analysis) {
+    dir = paste("cell_number_filter", cell_number_filter, dir, sep="_")
+    dir = paste("scATAC_source", scATAC_source, dir, sep="_")
+  }
+
   if (fold_for_test_set != "-1") {
     dir = paste(dir, "fold_for_test_set", fold_for_test_set, sep="_")
   }
