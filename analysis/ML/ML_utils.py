@@ -719,7 +719,7 @@ def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, 
         scATAC_dir = "_".join(filter(None, ["scATAC_source",
                                             scATAC_sources,
                                             "cell_number_filter",
-                                            scATAC_cell_number_filter,
+                                            str(scATAC_cell_number_filter),
                                             scATAC_dir]))
         # scATAC_dir = f"cell_number_filter_{scATAC_cell_number_filter}_scATAC_source_{scATAC_sources}_{scATAC_dir}"
 
