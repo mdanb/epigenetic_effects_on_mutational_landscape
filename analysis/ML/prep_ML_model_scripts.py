@@ -223,6 +223,9 @@ if grid_analysis:
 else:
     command_args = command_args + " " + "--tissues_to_consider" + " " + ",".join(tissues_to_consider)
 
+Rscript_command = "Rscript /broad/hptmp/bgiotti/BingRen_scATAC_atlas/plot_top_features.R " + \
+                  command_args
+
 try:
     with open(robustness_fp, "w") as f:
         f.write(Rscript_command)
