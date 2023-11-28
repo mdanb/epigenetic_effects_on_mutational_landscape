@@ -32,8 +32,8 @@ def run_unclustered_data_analysis_helper(scATAC_df,
                                       fold_for_test_set=fold_for_test_set, grid_analysis=grid_analysis)
 
     if grid_analysis:
-        if grid_cell_type == "Astrocytes/Oligodendrocytes SH":
-           grid_cell_type = "Astrocytes-Oligodendrocytes SH"
+        if grid_cell_type == "cerebrum Astrocytes/Oligodendrocytes SH":
+           grid_cell_type = "cerebrum Astrocytes-Oligodendrocytes SH"
         backwards_elim_dir=f"models/{ML_model}/{cancer_type_or_donor_id}_{grid_cell_type[0].replace(' ', '-')}/" \
                            f"{scATAC_dir}/backwards_elimination_results"
     else:
