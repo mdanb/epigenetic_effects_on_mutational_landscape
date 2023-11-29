@@ -17,7 +17,8 @@ source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
 # source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/ML_utils.R")
 
 parser <- OptionParser()
-parser <- add_option(parser, c("--datasets"), type="character")
+parser <- add_option(parser, c("--datasets"), type="character",
+                     default=NULL)
 parser <- add_option(parser, c("--cancer_types"), type="character")
 parser <- add_option(parser, c("--cell_number_filter"), type="integer")
 # parser <- add_option(parser, c("--pie_chart"), action="store_true", default=F)
@@ -173,15 +174,13 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 #                                   "--feat_imp_min_n_robustness=50"))
 
 # args = parse_args(parser, args =
-#                     c("--datasets=Bingren",
-#                       "--cancer_types=Skin-Melanoma",
-#                       "--cell_number_filter=100",
+#                     c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC,Breast-AdenoCA,Lymph-CLL,Lymph-BNHL",
 #                       "--ML_model=XGB",
 #                       "--annotation=finalized_annotation",
 #                       "--robustness_analysis",
 #                       "--seed_range=1-10",
 #                       "--feature_importance_method=permutation_importance",
-#                       "--folds_for_test_set=1",
+#                       "--folds_for_test_set=1-10",
 #                       "--grid_analysis",
 #                       "--top_features_to_plot=1",
 #                       "--grid_cell_types=skin Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,stomach Foveolar Cell BR,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS,mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm"))
@@ -190,13 +189,13 @@ args = parse_args(parser)
 cancer_names = hash("Skin-Melanoma"="Melanoma",
                     "Liver-HCC"="Liver cancer", 
                     "ColoRect-AdenoCA"="Colorectal cancer",
-                    "Eso-AdenoCA"="Esophageal cancer",
+                    "Eso-AdenoCA"="Esophageal\ncancer",
                     "CNS-GBM"="Glioblastoma",
-                    "Lung-AdenoCA"="Lung adenocarcinoma",
-                    "Lung-SCC"="Lung squamous cell carcinoma",
-                    "Breast-AdenoCA"="Breast adenocarcinoma",
-                    "Lymph-CLL"="Chronic lymphocytic leukemia",
-                    "Lymph-BNHL"="Non-Hodgkin lymphoma")
+                    "Lung-AdenoCA"="Lung\nadenocarcinoma",
+                    "Lung-SCC"="Lung squamous\ncell carcinoma",
+                    "Breast-AdenoCA"="Breast\nadenocarcinoma",
+                    "Lymph-CLL"="Lymphocytic\nleukemia",
+                    "Lymph-BNHL"="Non-Hodgkin\nlymphoma")
 
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
@@ -441,26 +440,10 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
         summarise(mean_se(test_set_perf)) %>%
         mutate(color=ifelse(y == max(y), "highlight","other"))
   
-  # custom_labels <- rev(c("Hepatocyte",
-  #                        "Mammary Tissue,\nBasal"))
-  
-  # custom_labels <- rev(c("Melanocyte",
-  #                        "Hepatoblast",
-  #                        "Colon, Stem",
-  #                        "Foveolar",
-  #                        "Astrocyte/\nOligodendrocyte",
-  #                        "Lung, AT2",
-  #                        "Lung, Basal",
-  #                        "Mammary Tissue,\nBasal",
-  #                        "B"))
   xlim_lower = min(df[["ymin"]])
   xlim_upper = max(df[["ymax"]])
-  
+  x_breaks <- pretty(df$y, n = 3)
   plot <- ggplot(df) +
-    # geom_col(aes(x = y, y = factor(top_feature, 
-    #                                levels=rev(c("liver-Hepatocyte-BR",
-    #                                             "mammary_tissue-Basal-Epithelial-(Mammary)-BR"))), 
-    #              fill=color), lwd=1.2) +
     geom_col(aes(x = y, y = factor(top_feature,
                                    levels=rev(c("skin-Melanocyte-BR",
                                                "liver-Hepatoblasts-SH",
@@ -475,43 +458,24 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
     geom_errorbarh(aes(y = top_feature, xmin = ymin, xmax = ymax), linewidth=2) +  
     coord_cartesian(xlim = c(xlim_lower, xlim_upper)) +
     scale_fill_manual(values = c("highlight" = "#EE4B2B", "other" = "#A9A9A9")) +
-    # xlim(min(df2[["y"]]), min(df2[["y"]])) +  
-    # facet_wrap(as.formula(paste0("~", facet_var)), nrow=1, 
-    #            scales = "free_x",
-    #            labeller = as_labeller(to)) +
-    # xlab(xlabel) +
-    # xlim(xlim_lower - add_to_pos, xlim_upper + add_to_pos) +
     ylab("") +
-    # xlab(xlabel) +
     ggtitle(title) +
-    # scale_x_continuous(breaks = seq(round(min(df[[x]]), 2),
-    #                                 round(max(df[[x]]), 2), by = 0.05)) +
-    # scale_y_discrete(labels = custom_label_function) +
-    
-    # scale_color_manual(values = grayscale_palette) +
-    # scale_y_discrete(labels = custom_label_function) + 
-    # scale_y_discrete(labels = custom_labels) +
+    scale_x_continuous(breaks = x_breaks) +   
     theme_bw() +
     theme(
       legend.position="none",
       strip.background = element_blank(),
       strip.text.x = element_blank(),
       plot.title = element_text(hjust = 0.5, size = 40),
-      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=40),
+      axis.text.x = element_text(vjust = 0.5, hjust=1, size=40),
       axis.text.y = element_blank(),
       axis.ticks.y = element_blank(),
-      # axis.text.y = element_text(size = 45,  face="bold"),
       axis.title.x=element_blank(),
       panel.grid.major.y=element_blank(),
       panel.grid.minor.x=element_blank(),
-      panel.grid.major.x = element_line(size = 1)      
+      panel.grid.major.x = element_line(size = 1),
+      plot.margin = margin(t=0,r=1,b=0,l=0, unit = "cm")
     ) 
-  
-  # plot_built <- ggplot_build(plot)
-  # x_ticks <- plot_built$layout$panel_params[[1]]$x.sec$breaks
-  # plot +
-  #   geom_vline(xintercept = x_ticks, color = "grey", size = 0.4, )
-  # ggsave("temp.png", width=8, height=10)
   return(plot)
 }
 
@@ -785,8 +749,6 @@ cancer_types = unlist(strsplit(cancer_types, split = ","))
 top_features_to_plot = args$top_features_to_plot
 top_features_to_plot = as.integer(unlist(strsplit(top_features_to_plot, 
                                                   split = ",")))
-datasets = unlist(strsplit(args$datasets, split = ","))
-datasets = sort(datasets)
 cell_number_filter = args$cell_number_filter
 tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
 annotation = args$annotation
@@ -813,6 +775,13 @@ if (grid_analysis) {
   grid_cell_types = unlist(strsplit(args$grid_cell_types, split=","))
   grid_cell_types = gsub(" ", "-", grid_cell_types)
 }
+if (!grid_analysis) {
+  datasets = unlist(strsplit(args$datasets, split = ","))
+  datasets = sort(datasets)
+} else {
+  datasets=""
+}
+
 folds_for_test_set = args$folds_for_test_set
 folds_for_test_set = unlist(strsplit(args$folds_for_test_set, split = "-"))
 folds_for_test_set = seq(folds_for_test_set[1], folds_for_test_set[2])
@@ -845,12 +814,14 @@ if (!robustness_analysis) {
   i = 1
   for (cancer_type in cancer_types) {
     # for (tss_filter in tss_fragment_filter) {
-    scATAC_source = paste("cell_number_filter", cell_number_filter, sep="_")
-    
     if (!grid_analysis) {
+      scATAC_source = paste("cell_number_filter", cell_number_filter, sep="_")
       scATAC_sources = construct_sources_string(datasets)
       scATAC_source = paste("scATAC_source", scATAC_sources, 
                             scATAC_source, sep="_")
+      
+    } else {
+      scATAC_source = ""
     }
     
     if (tss_fragment_filter != "-1") {
@@ -866,26 +837,11 @@ if (!robustness_analysis) {
       scATAC_source = paste(scATAC_source, "tissues_to_consider", tissues_to_consider, 
                             sep="_")
     }
-    scATAC_source = paste(scATAC_source, "annotation", annotation, sep="_")
-    
-    # if (grid_analysis) {
-    #   savepath = c()
-    #   for (grid_cell_type in grid_cell_types) {
-    #     savepath = append(savepath, get_relevant_backwards_elim_dirs(cancer_types=paste(cancer_type, 
-    #                                                                    grid_cell_type, 
-    #                                                                    sep="_"), 
-    #                                                 # combined_datasets=combined_datasets,
-    #                                                 tissues_to_consider=tissues_to_consider,
-    #                                                 datasets=datasets,
-    #                                                 cell_number_filter=cell_number_filter,
-    #                                                 tss_fragment_filter=tss_fragment_filter,
-    #                                                 annotation=annotation,
-    #                                                 ML_model=ML_model,
-    #                                                 hundred_kb=hundred_kb,
-    #                                                 seed=
-    #                                                 accumulated_seeds=F))
-    #   }
-    #}
+    if (scATAC_source == "") {
+      scATAC_source = paste("annotation", annotation, sep="_")
+    } else {
+      scATAC_source = paste(scATAC_source, "annotation", annotation, sep="_")
+    }
     if (!grid_analysis) {
       savepath = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
                                                 # combined_datasets=combined_datasets,
@@ -946,7 +902,8 @@ if (!robustness_analysis) {
                                                    grid_analysis=grid_analysis,
                                                    grid_cell_type=grid_cell_type))
       }
-      plot = construct_robustness_barplots(df, x="test_set_perf", y="top_feature",
+      plot = construct_robustness_barplots(df, x="test_set_perf", 
+                                           y="top_feature",
                                            title=cancer_names[[cancer_type]])
       grid_plots[[i]] = plot
       i = i + 1
@@ -1067,11 +1024,14 @@ if (grid_analysis) {
     plot_annotation(caption = "Test Set Variance Explained (%)",
                     theme = theme(plot.caption = element_text(size = 40, hjust=0.5)))
   ggsave("../../figures/grid_analysis.png", 
-         width = 5 * length(cancer_names), height = 10, limitsize = FALSE)
+         width = 6 * length(cancer_names), height = 10, limitsize = FALSE)
 }
 
 
 
+# plot_list <- lapply(grid_plots, function(p) {
+#   p + plot_spacer(width=0.2) 
+# })
 
 
 # construct_boxplots(df=df_test, 
@@ -1393,5 +1353,23 @@ if (grid_analysis) {
 #                    savefile="feature_importance_top_feat_only.png", 
 #                    n_name="n_feature", facet_var="num_features",
 #                    ylabel="Permutation Importance")
+# if (grid_analysis) {
+#   savepath = c()
+#   for (grid_cell_type in grid_cell_types) {
+#     savepath = append(savepath, get_relevant_backwards_elim_dirs(cancer_types=paste(cancer_type, 
+#                                                                    grid_cell_type, 
+#                                                                    sep="_"), 
+#                                                 # combined_datasets=combined_datasets,
+#                                                 tissues_to_consider=tissues_to_consider,
+#                                                 datasets=datasets,
+#                                                 cell_number_filter=cell_number_filter,
+#                                                 tss_fragment_filter=tss_fragment_filter,
+#                                                 annotation=annotation,
+#                                                 ML_model=ML_model,
+#                                                 hundred_kb=hundred_kb,
+#                                                 seed=
+#                                                 accumulated_seeds=F))
+#   }
+#}
 
 
