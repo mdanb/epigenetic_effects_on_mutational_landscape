@@ -1023,7 +1023,7 @@ if (grid_analysis) {
     # plot_layout(guides = 'collect') +
     plot_annotation(caption = "Test Set Variance Explained (%)",
                     theme = theme(plot.caption = element_text(size = 40, hjust=0.5)))
-  ggsave("../../figures/grid_analysis.png", 
+  ggsave("../../figures/grid_analysis.pdf", 
          width = 6 * length(cancer_names), height = 10, limitsize = FALSE)
 }
 
