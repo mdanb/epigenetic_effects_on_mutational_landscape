@@ -1,0 +1,13 @@
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w16_p7_r1_fragments.tsv.gz
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w16_p7_r2_fragments.tsv.gz
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w16_p7_r3_fragments.tsv.gz
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w20_p3_r1_fragments.tsv.gz
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w20_p3_r2_fragments.tsv.gz
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w21_p5_r1_fragments.tsv.gz
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w21_p5_r2_fragments.tsv.gz
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w21_p5_r3_fragments.tsv.gz
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w21_p5_r4_fragments.tsv.gz
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w24_p6_r1_fragments.tsv.gz
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w24_p6_r2_fragments.tsv.gz
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w24_p6_r3_fragments.tsv.gz
+https://atrev.s3.amazonaws.com/brainchromatin/hft_w24_p6_r4_fragments.tsv.gz
