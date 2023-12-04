@@ -293,9 +293,8 @@ get_sample_name_greenleaf_brain <- function(file) {
 }
 
 get_sample_name_greenleaf_pbmc_bm <- function(file) {
-  part_one = unlist(strsplit(file, split="_"))[3]
-  part_two = unlist(strsplit(unlist(strsplit(file, split="_"))[4], split="\\."))[1]
-  sample_name = paste(part_one, part_two, sep="_")
+  sample_name = unlist(strsplit(file, split="\\."))[1]
+  sample_name = paste(unlist(strsplit(sample_name, split="_"))[3:4], collapse="_")
   return(sample_name)
 }
 
@@ -380,13 +379,16 @@ get_tissue_name_bingren <- function(filename) {
     tissue_name = "frontal_cortex"
   }
   else {
-    tissue_name = unlist(strsplit(str_extract(filename, 
-                                              "count_overlaps_.*[0-9]_.*_SM"), 
-                                  "_"))
-    tissue_name = paste(tissue_name[4:(length(tissue_name)-1)], 
-                        collapse="_")
-    # tissue_name = str_to_title(paste(tissue_name[4:(length(tissue_name)-1)], 
-    #                                  collapse=" "))
+    if (grepl("count_overlaps", filename)) {
+      tissue_name = unlist(strsplit(str_extract(filename, 
+                                                "count_overlaps_.*[0-9]_.*_SM"), 
+                                    "_"))
+      tissue_name = paste(tissue_name[4:(length(tissue_name)-1)], 
+                          collapse="_")
+    }
+    else {
+      tissue_name = paste(tissue_name[4:(length(tissue_name)-1)])
+    }
   }
   return(tissue_name)
 }
