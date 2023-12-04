@@ -434,6 +434,7 @@ if (dataset == "Bingren") {
              dataset=dataset,
              annotation=annotation,
              which_interval_ranges=which_interval_ranges,
+             overlaps_per_cell=overlaps_per_cell,
              mc.cores=cores)
 } else if (dataset == "Yang_kidney") {
   metadata_Yang = read_excel("../metadata/41467_2021_27660_MOESM4_ESM.xlsx", 
