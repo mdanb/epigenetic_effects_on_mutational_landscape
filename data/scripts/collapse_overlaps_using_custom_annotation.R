@@ -128,7 +128,10 @@ if (dataset == "Greenleaf_pbmc_bm") {
       c("bonemarrow CD", "bonemarrow T"),
       c("blood CD", "blood T"), 
       c("bonemarrow B|bonemarrow Pre\\.B", "bonemarrow B"),
-      c("bonemarrow .*Eryth", "bonemarrow Eryth"))
+      c("bonemarrow .*Eryth", "bonemarrow Eryth"),
+      c("blood .*Eryth", "blood Eryth")
+      )
+  
     
     l = collapse_using_mapping(mapping, default_combined_count_ovs,
                                 default_combined_metadata)
