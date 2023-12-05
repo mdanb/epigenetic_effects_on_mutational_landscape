@@ -121,6 +121,8 @@ if (dataset == "Greenleaf_pbmc_bm") {
   if (annotation == "Greenleaf_pbmc_bm_CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm") {
     # pattern --> replacement (collapsing)
     mapping = list(
+      c("blood CLP.*", "blood CLP"),
+      c("bonemarrow CLP.*", "bonemarrow CLP"),
       c("bonemarrow CD14.Mono", "bonemarrow Monocytes"),
       c("blood CD14\\.Mono", "blood Monocytes"), 
       c("bonemarrow CD", "bonemarrow T"),
