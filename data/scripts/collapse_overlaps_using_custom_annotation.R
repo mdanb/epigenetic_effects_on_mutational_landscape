@@ -20,8 +20,8 @@ option_list <- list(
 )
 
 # args = parse_args(parser, args =
-#                       c("--dataset=Bingren_adult_brain",
-#                         "--annotation=Bingren_adult_brain_remove_same_celltype_indexing",
+#                       c("--dataset=Greenleaf_pbmc_bm",
+#                         "--annotation=Greenleaf_pbmc_bm_CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm",
 #                         "--which_interval_ranges=polak"))
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -90,7 +90,9 @@ collapse_using_mapping <- function(mapping, df, df_metadata,
     temp = unlist(strsplit(pattern_replacement[[2]], split=" "))
     tissue = temp[1]
     cell_type = paste(temp[2:length(temp)], collapse=" ")
-    df_metadata = rbind(df_metadata, c(tissue, cell_type, collapsed_counts))
+    df_metadata = rbind(df_metadata, list(tissue_name=tissue, 
+                                       cell_type=cell_type, 
+                                       num_cells=collapsed_counts))
   }
   return(list(df, df_metadata))
 }
