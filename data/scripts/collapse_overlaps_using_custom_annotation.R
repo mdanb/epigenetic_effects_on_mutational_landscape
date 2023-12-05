@@ -135,7 +135,8 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df_metadata = l[[2]]
     df_metadata = df_metadata[-grep("Unk", df_metadata[["cell_type"]]), ]
     
-    save_collapsed_df(df, df_metadata, dataset, annotation)
+    save_collapsed_df(df, df_metadata, dataset, annotation,
+                      which_interval_ranges)
   } 
 } else if (dataset == "Greenleaf_brain") {
   lowest_level_annotation_fn = "Greenleaf_brain_combined_count_overlaps.rds"
@@ -177,7 +178,7 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df = df[-grep("c18", rownames(df)), ]
     df_metadata = l[[2]]
     df_metadata = df_metadata[-grep("c18", df_metadata[["cell_type"]]), ]
-    save_collapsed_df(df, df_metadata, dataset, annotation)
+    save_collapsed_df(df, df_metadata, dataset, annotation, which_interval_ranges)
   }
 } else if (dataset == "Yang_kidney") {
   default_annotation_fn = "Yang_kidney_combined_count_overlaps.rds"
@@ -208,7 +209,8 @@ if (dataset == "Greenleaf_pbmc_bm") {
                                default_combined_metadata)
     df = l[[1]]
     df_metadata = l[[2]]
-    save_collapsed_df(df, df_metadata, dataset, annotation)
+    save_collapsed_df(df, df_metadata, dataset, annotation, 
+                      which_interval_ranges)
   }
 } else if (dataset == "Bingren" || dataset == "Bingren_adult_brain") {
   if (annotation == "Bingren_remove_same_celltype_indexing" || 
@@ -301,7 +303,7 @@ if (dataset == "Greenleaf_pbmc_bm") {
     combined_metadata = combined_metadata[!grepl("\\?", 
                                                  combined_metadata[["cell_type"]]), ]
     save_collapsed_df(combined_count_ovs, combined_metadata, 
-                      dataset, annotation)
+                      dataset, annotation, which_interval_ranges)
   }
 } else if (dataset == "Rawlins_fetal_lung") {
   default_annotation_fn = "Rawlins_fetal_lung_combined_count_overlaps.rds"
@@ -350,7 +352,7 @@ if (dataset == "Greenleaf_pbmc_bm") {
              "Vascular SMC", "Pericyte")
     df_metadata = df_metadata %>% filter(cell_type %in% keep)
     df = df[rownames(df) %in% paste("fetal_lung", keep), ]
-    save_collapsed_df(df, df_metadata, dataset, annotation)
+    save_collapsed_df(df, df_metadata, dataset, annotation, which_interval_ranges)
   }
 } else if (dataset == "Tsankov") {
     refined_annotation_fn = "Tsankov_combined_count_overlaps.rds"
@@ -391,7 +393,7 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df_metadata = default_combined_metadata
     df = df[-grep("basal", rownames(df)), ]
     df_metadata = df_metadata[-grep("basal", df_metadata[["cell_type"]]), ]
-    save_collapsed_df(df, df_metadata, dataset, annotation)
+    save_collapsed_df(df, df_metadata, dataset, annotation, which_interval_ranges)
   }
 } else if (dataset == "Greenleaf_colon") {
     default_annotation_fn = "Greenleaf_colon_combined_count_overlaps.rds"
