@@ -16,7 +16,7 @@ args = parse_args(OptionParser(option_list=option_list))
 # args = parse_args(OptionParser(option_list=option_list), args =
 #                     c("--datasets=Bingren",
 #                       "--annotation=default_annotation",
-#                       "--which_interval_ranges=100kb"))
+#                       "--which_interval_ranges=polak"))
 # args = parse_args(OptionParser(option_list=option_list), args =
 #                     c("--datasets=Yang_kidney",
 #                       "--annotation=default_annotation",
@@ -29,7 +29,7 @@ args = parse_args(OptionParser(option_list=option_list))
 #                       "--overlaps_per_cell"))
 # args = parse_args(OptionParser(option_list=option_list), args =
 #                     c("--datasets=Greenleaf_colon",
-#                       "--annotation=default_annotation",
+#                       "--annotation=Greenleaf_colon_cancer_only",
 #                       "--which_interval_ranges=100kb"))
 
 annotation = args$annotation
