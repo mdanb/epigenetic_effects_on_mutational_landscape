@@ -293,7 +293,10 @@ get_sample_name_greenleaf_brain <- function(file) {
 }
 
 get_sample_name_greenleaf_pbmc_bm <- function(file) {
-  sample_name = unlist(strsplit(file, split="\\."))[1]
+  sample_name = str_remove(file, "Greenleaf_pbmc_bm_count_overlaps_")
+  sample_name = str_remove(sample_name, "per_cell_")
+  sample_name = str_remove(sample_name, ".fragments.rds")
+  sample_name = unlist(strsplit(sample_name, split="_"))
   sample_name = paste(unlist(strsplit(sample_name, split="_"))[3:4], collapse="_")
   return(sample_name)
 }
