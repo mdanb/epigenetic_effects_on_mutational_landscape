@@ -203,6 +203,26 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df_metadata = l[[2]]
     df_metadata = df_metadata[-grep("c18", df_metadata[["cell_type"]]), ]
     save_collapsed_df(df, df_metadata, dataset, annotation, which_interval_ranges)
+  } else if (annotation == "Greenleaf_brain_remove_unknown") {
+    mapping = list(
+      c("brain (c0$|c1$|c2$|c5|c6|c7|c13|c14)", "brain GluN"),
+      c("brain (c3|c4|c12|c16|c20)", "brain IN"), 
+      c("brain c8", "brain nIPC"),
+      c("brain c9", "brain late RG"),
+      c("brain c11", "brain early RG"),
+      c("brain c10", "brain mGPC"),
+      c("brain c15", "brain OPC/Oligo"),
+      c("brain c17", "brain Peric"),
+      c("brain c19", "brain MG"),
+      c("brain c21", "brain EC"))
+    l = collapse_using_mapping(mapping, lowest_level_combined_count_ovs, 
+                               lowest_level_annotation_combined_metadata)
+    
+    df = l[[1]]
+    df = df[-grep("c18", rownames(df)), ]
+    df_metadata = l[[2]]
+    df_metadata = df_metadata[-grep("c18", df_metadata[["cell_type"]]), ]
+    save_collapsed_df(df, df_metadata, dataset, annotation, which_interval_ranges)
   }
 } else if (dataset == "Yang_kidney") {
   default_annotation_fn = "Yang_kidney_combined_count_overlaps.rds"
