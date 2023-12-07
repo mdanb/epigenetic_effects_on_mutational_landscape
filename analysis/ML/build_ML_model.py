@@ -112,7 +112,7 @@ def run_unclustered_data_analysis_helper(scATAC_df,
 def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                   tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
-                                  combined_CPTAC_ICGC, meso, RNA_subtyped, hierarchically_subtyped_mutations,
+                                  combined_CPTAC_ICGC, meso, RNA_subtyped, hierarchically_subtyped_mutations, mm,
                                   hundred_kb, expanded_hundred_kb,
                                   per_donor, donor_range, aggregated_per_donor, ML_model, seed_range,
                                   n_optuna_trials_prebackward_selection,
@@ -143,7 +143,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                               histologically_subtyped_mutations, de_novo_seurat_clustering,
                                               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type,
                                               hundred_kb, expanded_hundred_kb, aggregated_per_donor,
-                                              hierarchically_subtyped_mutations)
+                                              hierarchically_subtyped_mutations, mm)
 
                 scdf, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scdf,
                                                                                         mutations_df,
@@ -276,6 +276,7 @@ expanded_hundred_kb = config.expanded_hundred_kb
 aggregated_per_donor = config.aggregated_per_donor
 hierarchically_subtyped_mutations = config.hierarchically_subtyped_mutations
 grid_analysis = config.grid_analysis
+mm = config.mm
 
 grid_cell_types = None
 if grid_analysis:
@@ -284,7 +285,7 @@ if grid_analysis:
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                               meso, RNA_subtyped, hierarchically_subtyped_mutations,
+                               meso, RNA_subtyped, hierarchically_subtyped_mutations, mm,
                                hundred_kb, expanded_hundred_kb, per_donor, donor_range, aggregated_per_donor, ML_model,
                                seed_range, n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method,
