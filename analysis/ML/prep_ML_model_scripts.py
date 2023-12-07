@@ -40,6 +40,7 @@ group.add_argument("--histologically_subtyped_mutations", action="store_true", d
 group.add_argument("--hierarchically_subtyped_mutations", action="store_true", default=False)
 group.add_argument("--hundred_kb", action="store_true", default=False)
 group.add_argument("--expanded_hundred_kb", action="store_true", default=False)
+group.add_argument("--mm", action="store_true", default=False)
 
 group2 = parser.add_mutually_exclusive_group()
 group2.add_argument('--grid_analysis', action="store_true", default=False)
@@ -68,6 +69,7 @@ SCLC = config.SCLC
 de_novo_seurat_clustering = config.de_novo_seurat_clustering
 histologically_subtyped_mutations = config.histologically_subtyped_mutations
 hierarchically_subtyped_mutations = config.hierarchically_subtyped_mutations
+mm = config.mm
 hundred_kb = config.hundred_kb
 cores = config.cores
 mem_per_core = config.mem_per_core
@@ -132,6 +134,9 @@ for fold in fold_for_test_set_range:
         elif expanded_hundred_kb:
             script_filename = script_filename + "_" + "expanded_hundred_kb"
             command_args = command_args + " " + "--expanded_hundred_kb"
+        elif mm:
+            script_filename = script_filename + "_" + "mm"
+            command_args = command_args + " " + "--mm"
 
         if grid_analysis:
             command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + '"' + \
