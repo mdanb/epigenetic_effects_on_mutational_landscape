@@ -174,7 +174,7 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 #                                   "--feat_imp_min_n_robustness=50"))
 
 # args = parse_args(parser, args =
-#                     c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC,Breast-AdenoCA,Lymph-CLL,Lymph-BNHL",
+#                     c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC,Breast-AdenoCA,Lymph-CLL,Lymph-BNHL,multiple_myeloma",
 #                       "--ML_model=XGB",
 #                       "--annotation=finalized_annotation",
 #                       "--robustness_analysis",
@@ -187,7 +187,7 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
-                    "Liver-HCC"="Liver cancer", 
+                    "Liver-HCC"="Liver cancer",
                     "ColoRect-AdenoCA"="Colorectal cancer",
                     "Eso-AdenoCA"="Esophageal\ncancer",
                     "CNS-GBM"="Glioblastoma",
@@ -195,7 +195,8 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
                     "Lung-SCC"="Lung squamous\ncell carcinoma",
                     "Breast-AdenoCA"="Breast\nadenocarcinoma",
                     "Lymph-CLL"="Lymphocytic\nleukemia",
-                    "Lymph-BNHL"="Non-Hodgkin\nlymphoma")
+                    "Lymph-BNHL"="Non-Hodgkin\nlymphoma",
+                    "multiple_myeloma"="Multiple\nMyeloma")
 
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
