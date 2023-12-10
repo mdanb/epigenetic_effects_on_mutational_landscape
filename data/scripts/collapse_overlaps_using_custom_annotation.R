@@ -13,7 +13,7 @@ library(stringi)
 ### Yang Kidney
 # Yang_kidney_remove_PT_distinctions
 
-option_list <- list( 
+option_list <- list(
   make_option("--dataset", type="character"),
   make_option("--annotation", type="character"),
   make_option("--which_interval_ranges", type="character")
@@ -157,6 +157,12 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df = l[[1]]
     df = df[-grep("Unk", rownames(df)), ]
     df_metadata = l[[2]]
+    df_metadata = df_metadata[-grep("Unk", df_metadata[["cell_type"]]), ]
+    
+    save_collapsed_df(df, df_metadata, dataset, annotation,
+                      which_interval_ranges)
+  } else if (annotation == "default_remove_unk") {
+    df = df[-grep("Unk", rownames(df)), ]
     df_metadata = df_metadata[-grep("Unk", df_metadata[["cell_type"]]), ]
     
     save_collapsed_df(df, df_metadata, dataset, annotation,
