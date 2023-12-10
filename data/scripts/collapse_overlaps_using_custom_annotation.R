@@ -162,6 +162,8 @@ if (dataset == "Greenleaf_pbmc_bm") {
     save_collapsed_df(df, df_metadata, dataset, annotation,
                       which_interval_ranges)
   } else if (annotation == "default_remove_unk") {
+    df = default_combined_count_ovs
+    df_metadata = default_combined_metadata
     df = df[-grep("Unk", rownames(df)), ]
     df_metadata = df_metadata[-grep("Unk", df_metadata[["cell_type"]]), ]
     
