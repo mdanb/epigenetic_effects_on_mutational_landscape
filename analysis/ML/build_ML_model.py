@@ -1,6 +1,9 @@
 #### Imports ####
+import os
+
 from ML_utils import *
 from config import create_parser
+import time
 
 def run_unclustered_data_analysis_helper(scATAC_df,
                                          cancer_specific_mutations,
@@ -51,7 +54,7 @@ def run_unclustered_data_analysis_helper(scATAC_df,
         test_set_perf_filepath = f"models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance.txt"
 
-    # All Cells
+    start = time.time()
     train_val_test(scATAC_df,
                    cancer_specific_mutations,
                    backwards_elim_dir,
@@ -67,7 +70,11 @@ def run_unclustered_data_analysis_helper(scATAC_df,
                    debug_bfs,
                    fold_for_test_set,
                    hundred_kb)
-
+    end = time.time()
+    print(f"{(end - start) / 60} minutes")
+    time_fp = f"{scATAC_dir}/time.txt"
+    with open(time_fp, "a") as f:
+        f.write(f"{(end - start) / 60}\n")
     print(f"Done modeling {cancer_type_or_donor_id}!")
 
     if save_test_set_perf:
@@ -124,7 +131,10 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                     hundred_kb, expanded_hundred_kb, tissues_to_consider,
                                     grid_analysis, grid_cell_types)
     if not grid_analysis:
-        grid_cell_types = [scATAC_df.columns]
+        grouped_cell_types = [scATAC_df.columns]
+    else:
+        # 1 cell type per group i.e cell type grid analysis
+        grouped_cell_types = grid_cell_types
 
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
     # Note that the loading process arranges the bins so that it's in the correct order of the genome
@@ -133,10 +143,10 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
         print(f"Running model for seed {seed}")
         print(f"Using scATAC sources: {scATAC_sources}")
         for cancer_type in cancer_types:
-            for grid_cell_type in grid_cell_types:
-                if isinstance(grid_cell_type, str):
-                    grid_cell_type = [grid_cell_type]
-                scdf = scATAC_df.loc[:, grid_cell_type]
+            for cell_type_group in grouped_cell_types:
+                if isinstance(cell_type_group, str):
+                    cell_type_group = [cell_type_group]
+                scdf = scATAC_df.loc[:, cell_type_group]
                 print(f"Working on {cancer_type}...")
                 mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                               histologically_subtyped_mutations, de_novo_seurat_clustering,
@@ -197,7 +207,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          test_set_perf_num_features,
                                                          tissues_to_consider,
                                                          grid_analysis,
-                                                         grid_cell_type)
+                                                         cell_type_group)
                 else:
                     for idx, donor in enumerate(mutations_df.columns):
                         if idx in range(*donor_range):
