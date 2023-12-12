@@ -72,8 +72,8 @@ def run_unclustered_data_analysis_helper(scATAC_df,
                    hundred_kb)
     end = time.time()
     print(f"{(end - start) / 60} minutes")
-    time_fp = f"{scATAC_dir}/time.txt"
-    with open(time_fp, "aw") as f:
+    time_fp = f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}/time.txt"
+    with open(time_fp, "a") as f:
         f.write(f"{(end - start) / 60}\n")
     print(f"Done modeling {cancer_type_or_donor_id}!")
 
