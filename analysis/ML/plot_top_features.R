@@ -174,7 +174,7 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 #                                   "--feat_imp_min_n_robustness=50"))
 
 # args = parse_args(parser, args =
-#                     c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC,Breast-AdenoCA,Lymph-CLL,Lymph-BNHL,multiple_myeloma",
+#                     c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC",
 #                       "--ML_model=XGB",
 #                       "--annotation=finalized_annotation",
 #                       "--robustness_analysis",
@@ -183,7 +183,32 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 #                       "--folds_for_test_set=1-10",
 #                       "--grid_analysis",
 #                       "--top_features_to_plot=1",
-#                       "--grid_cell_types=skin Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,stomach Foveolar Cell BR,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS,mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm"))
+#                       "--grid_cell_types=skin Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
+# args = parse_args(parser, args =
+#                     c("--cancer_types=Breast-AdenoCA,Lymph-BNHL,Myeloid-AML,SoftTissue-Leiomyo,Thy-AdenoCA",
+#                       "--ML_model=XGB",
+#                       "--annotation=finalized_annotation",
+#                       "--robustness_analysis",
+#                       "--seed_range=1-10",
+#                       "--feature_importance_method=permutation_importance",
+#                       "--folds_for_test_set=1-10",
+#                       "--grid_analysis",
+#                       "--top_features_to_plot=1",
+#                       "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow GMP GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"))
+
+# args = parse_args(parser, args= c("--cancer_types=Lung-SCC",
+#                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--seed_range=1-10",
+#                                   "--top_features_to_plot=5",
+#                                   "--top_features_to_plot_feat_imp=5",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=all",
+#                                   "--robustness_analysis",
+#                                   "--feat_imp_min_n_robustness=50"))
+
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -196,7 +221,17 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
                     "Breast-AdenoCA"="Breast\nadenocarcinoma",
                     "Lymph-CLL"="Lymphocytic\nleukemia",
                     "Lymph-BNHL"="Non-Hodgkin\nlymphoma",
-                    "multiple_myeloma"="Multiple\nMyeloma")
+                    "multiple_myeloma"="Multiple\nMyeloma",
+                    "Myeloid-AML"="Acute myeloid\nleukemia",
+                    "SoftTissue-Leiomyo"="Leiomyosarcoma",
+                    "Thy-AdenoCA"="Thyroid\nadenocarcinoma")
+
+cell_types = c("lung Basal TS"="Basal, Lung",
+                "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial,\nEsophagus Mucosa", 
+                "lung Ciliated epithelial cells SH"="Ciliated,\nLung",
+                "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Colon\nTransverse",
+                "artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle,\nArtery Aorta")
+                 
 
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
@@ -331,9 +366,7 @@ construct_bar_plots <- function(cancer_type,
 
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
-                                          n_name=NULL, width=12, height=8,
-                                          add_to_pos=0.001,
-                                          xlim_add=0.025) {
+                                          n_name=NULL, width=12, height=8) {
   if (plot_fold) {
     outlier_shape = NA
   } else {
@@ -341,6 +374,10 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   }
   
   plots <- list()
+  df = df %>% 
+        ungroup() %>%
+         mutate("{y}" := unname(cell_types[df %>% pull(!!sym(y))]))
+  
   for (level in unique(df[[facet_var]])) {
     df_filtered <- df %>% 
                      filter(!!sym(facet_var) == level)
@@ -373,10 +410,10 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     p <- ggplot(df_filtered) +
             geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 1.0, 
                              outlier.shape = outlier_shape) +
-            geom_text(aes(x = x_position + add_to_pos,
+            geom_text(aes(x = x_position + xlim_upper / 10,
                           y = y_reordered),
                           label = paste0("n=", df_filtered[[n_name]])) +
-            ggtitle(paste(level, "features")) +
+            ggtitle(title) +
             scale_fill_manual(values = c("highlight" = "#EE4B2B",
                                          "other" = "#A9A9A9")) +
             theme_classic() +
@@ -385,14 +422,12 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 strip.background = element_blank(),
                 strip.text.x = element_blank(),
                 plot.title = element_text(hjust = 0.5),
-                axis.text.y = element_text(size = 15, colour = color,
-                                           face="bold"),
+                axis.text.y = element_text(size = 15, colour = color),
                 axis.text.x = element_text(size = 14),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank()
               ) +
-            xlim(xlim_lower - add_to_pos - xlim_add, xlim_upper + add_to_pos + 
-                   xlim_add)
+            xlim(xlim_lower - xlim_lower / 10, xlim_upper + xlim_upper / 10)
     plots[[as.character(level)]] <- p
   }
   
@@ -449,12 +484,12 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
                                    levels=rev(c("skin-Melanocyte-BR",
                                                "liver-Hepatoblasts-SH",
                                                "normal_colon-Stem-GL_Co",
-                                               "stomach-Foveolar-Cell-BR",
+                                               "bonemarrow-B-GL_BlBm",
+                                               "stomach-Goblet-cells-SH",
                                                "cerebrum-Astrocytes-Oligodendrocytes-SH",
                                                "lung-AT2-TS",
-                                               "lung-Basal-TS",
-                                               "mammary_tissue-Basal-Epithelial-(Mammary)-BR",
-                                               "bonemarrow-B-GL_BlBm"))),
+                                               "lung-Basal-TS"
+                                               ))),
                  fill=color), lwd=1.2) +
     geom_errorbarh(aes(y = top_feature, xmin = ymin, xmax = ymax), linewidth=2) +  
     coord_cartesian(xlim = c(xlim_lower, xlim_upper)) +
@@ -932,31 +967,35 @@ if (!robustness_analysis) {
         # group_by(num_features, seed, fold_for_test_set) %>%
         group_by(num_features, features) %>%
         mutate(n_feature = n(), 
+               med_imp = median(permutation_importance), 
                x_position = max(permutation_importance)) %>%
         filter(num_features %in% top_features_to_plot_feat_imp) 
-      unique_combos = unique(df_feat_imp[, c("features", "n_feature")])
-      top_five_n_feature = sort(unique_combos[["n_feature"]], decreasing=T)
-      df_feat_imp_at_least_n = df_feat_imp %>% 
+      unique_combos = unique(df_feat_imp[, c("features", "n_feature", "med_imp")])
+      sorted_features = unique_combos %>% 
+                              arrange(desc(n_feature), desc(med_imp)) %>%
+                              pull(features)
+      df_feat_imp_top_5 = df_feat_imp %>% 
         # filter(n_feature >= feat_imp_min_n_robustness)%>%
-        filter(n_feature %in% top_five_n_feature[1:5])
-      savefile = paste0("feature_importance_with_",
+        filter(features %in% sorted_features[1:5])
+      savefile = paste0(cancer_type, "_feature_importance_with_",
                         paste(top_features_to_plot_feat_imp, collapse="_"),
-                        "_features_", feat_imp_min_n_robustness,
-                        "_n_min.png")
+                        "_features_", "top_5_features.pdf")
       
-      construct_robustness_boxplots(df=df_feat_imp_at_least_n, 
+      construct_robustness_boxplots(df=df_feat_imp_top_5, 
                                     x="permutation_importance", 
                                     y="features", 
-                                    title=cancer_type, 
+                                    title=cancer_names[[cancer_type]], 
                                     savepath=savepath,
                                     savefile=savefile, 
                                     n_name="n_feature", 
                                     facet_var="num_features",
-                                    xlabel="Permutation Importance",
-                                    add_to_pos = 0.04)
+                                    xlabel="Feature Importance",
+                                    width=11,
+                                    height=7)
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
         mutate(n_top_feature = n(), x_position = max(test_set_perf))
+      
       if (plot_fold_on_test_set_plot) {
         l = get_and_plot_scatac_and_mutation_counts_per_fold(cancer_type,
                                                              folds_for_test_set,
@@ -987,8 +1026,8 @@ if (!robustness_analysis) {
                                     facet_var="top_n",
                                     xlabel="Variance Explained, Test Set",
                                     width=8, 
-                                    height=5,
-                                    add_to_pos=0.01)
+                                    height=5)
+      
       df_val = df_feature_importances_all_seeds %>% 
         group_by(num_features, seed, fold_for_test_set) %>%
         mutate(max_feature_importance=max(permutation_importance)) %>%
@@ -1011,21 +1050,20 @@ if (!robustness_analysis) {
                                     facet_var="num_features",
                                     xlabel="Variance Explained, Validation Set",
                                     width=12, 
-                                    height=5,
-                                    add_to_pos=0.002)
+                                    height=5)
       
     }
   }
 }
 
 if (grid_analysis) {
-  plot <- wrap_plots(grid_plots, ncol=length(cancer_names), nrow=1)
+  plot <- wrap_plots(grid_plots, ncol=8, nrow=1)
   plot <- plot + 
     # plot_layout(guides = 'collect') +
     plot_annotation(caption = "Test Set Variance Explained (%)",
                     theme = theme(plot.caption = element_text(size = 40, hjust=0.5)))
   ggsave("../../figures/grid_analysis.pdf", 
-         width = 6 * length(cancer_names), height = 10, limitsize = FALSE)
+         width = 6 * 8, height = 10, limitsize = FALSE)
 }
 
 
