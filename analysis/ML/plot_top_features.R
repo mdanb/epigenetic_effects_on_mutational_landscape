@@ -414,7 +414,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
             geom_text(aes(x = x_position + xlim_upper / 10,
                           y = y_reordered),
                           label = paste0("n=", df_filtered[[n_name]])) +
-            ggtitle(print(level, "features")) +
+            ggtitle(paste(level, "features")) +
             scale_fill_manual(values = c("highlight" = "#EE4B2B",
                                          "other" = "#A9A9A9")) +
             theme_classic() +
