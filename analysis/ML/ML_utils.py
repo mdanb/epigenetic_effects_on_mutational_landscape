@@ -42,10 +42,9 @@ def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or
     return scATAC_df, mutations_df
 
 
-def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
-                   histologically_subtyped_mutations, de_novo_seurat_clustering,
-                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type, hundred_kb,
-                   expanded_hundred_kb, aggregated_per_donor, hierarchically_subtyped_mutations, mm):
+def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg, histologically_subtyped_mutations, de_novo_seurat_clustering,
+                   CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type, hundred_kb, expanded_hundred_kb,
+                   aggregated_per_donor, hierarchically_subtyped_mutations, mm, msi_high):
     if meso:
         mutations_df = load_meso()
     elif SCLC:
@@ -74,6 +73,8 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
         mutations_df = load_hierarchically_subtyped_mutations()
     elif mm:
         mutations_df = load_mm_mutations()
+    elif msi_high:
+        mutations_df = load_msi_high_mutations()
     else:
         mutations_df = load_agg_mutations()
     return mutations_df
@@ -132,6 +133,10 @@ def load_meso():
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
+def load_msi_high_mutations():
+    df = pd.read_csv("../../data/processed_data/msi_high.csv",
+                       index_col=0)
+    return df.loc[natsorted(df.index)]
 
 def load_sclc_mutations():
     df = pd.read_csv("../../data/processed_data/sclc_count_overlaps.csv",
