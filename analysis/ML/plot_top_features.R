@@ -196,18 +196,18 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 #                       "--top_features_to_plot=1",
 #                       "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow GMP GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"))
 
-args = parse_args(parser, args= c("--cancer_types=waddell_combined",
-                                  "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
-                                  "--cell_number_filter=100",
-                                  "--annotation=finalized_annotation",
-                                  "--seed_range=1-10",
-                                  "--top_features_to_plot=5",
-                                  "--top_features_to_plot_feat_imp=5",
-                                  "--feature_importance_method=permutation_importance",
-                                  "--folds_for_test_set=1-10",
-                                  "--tissues_to_consider=all",
-                                  "--robustness_analysis",
-                                  "--feat_imp_min_n_robustness=50"))
+# args = parse_args(parser, args= c("--cancer_types=waddell_combined",
+#                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--seed_range=1-10",
+#                                   "--top_features_to_plot=5",
+#                                   "--top_features_to_plot_feat_imp=5",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=all",
+#                                   "--robustness_analysis",
+#                                   "--feat_imp_min_n_robustness=50"))
 
 args = parse_args(parser)
 
@@ -978,7 +978,7 @@ if (!robustness_analysis) {
       print(sorted_features)
       df_feat_imp_top_5 = df_feat_imp %>% 
         # filter(n_feature >= feat_imp_min_n_robustness)%>%
-        filter(features %in% sorted_features[1:5])
+        filter(features %in% unique(sorted_features)[1:5])
       savefile = paste0(cancer_type, "_feature_importance_with_",
                         paste(top_features_to_plot_feat_imp, collapse="_"),
                         "_features_", "top_5_features.pdf")
