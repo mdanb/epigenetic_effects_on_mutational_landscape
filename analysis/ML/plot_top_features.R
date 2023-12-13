@@ -196,13 +196,13 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 #                       "--top_features_to_plot=1",
 #                       "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow GMP GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"))
 
-# args = parse_args(parser, args= c("--cancer_types=waddell_combined",
+# args = parse_args(parser, args= c("--cancer_types=SCLC",
 #                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
 #                                   "--cell_number_filter=100",
 #                                   "--annotation=finalized_annotation",
 #                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot=5",
-#                                   "--top_features_to_plot_feat_imp=5",
+#                                   "--top_features_to_plot=10,5,2,1",
+#                                   "--top_features_to_plot_feat_imp=10,5,2,1",
 #                                   "--feature_importance_method=permutation_importance",
 #                                   "--folds_for_test_set=1-10",
 #                                   "--tissues_to_consider=all",
@@ -382,6 +382,16 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   for (level in unique(df[[facet_var]])) {
     df_filtered <- df %>% 
                      filter(!!sym(facet_var) == level)
+    
+    if (x = "permutation_importance") {
+      unique_combos = unique(df_filtered[, c("features", "n_feature", "med_imp")])
+      sorted_features = unique_combos %>% 
+        arrange(desc(n_feature), desc(med_imp)) %>%
+        pull(features)
+      df_filtered = df_filtered %>% 
+          filter(features %in% unique(sorted_features)[1:5])
+    }
+    
     df_compressed = df_filtered %>%
                       group_by(!!sym(y)) %>%
                       summarise(med_x = median(!!sym(x)))
@@ -971,14 +981,14 @@ if (!robustness_analysis) {
                med_imp = median(permutation_importance), 
                x_position = max(permutation_importance)) %>%
         filter(num_features %in% top_features_to_plot_feat_imp) 
-      unique_combos = unique(df_feat_imp[, c("features", "n_feature", "med_imp")])
-      sorted_features = unique_combos %>% 
-                              arrange(desc(n_feature), desc(med_imp)) %>%
-                              pull(features)
-      print(sorted_features)
-      df_feat_imp_top_5 = df_feat_imp %>% 
-        # filter(n_feature >= feat_imp_min_n_robustness)%>%
-        filter(features %in% unique(sorted_features)[1:5])
+      # unique_combos = unique(df_feat_imp[, c("features", "n_feature", "med_imp")])
+      # sorted_features = unique_combos %>% 
+      #                         arrange(desc(n_feature), desc(med_imp)) %>%
+      #                         pull(features)
+      # print(sorted_features)
+      # df_feat_imp_top_5 = df_feat_imp %>% 
+      #   # filter(n_feature >= feat_imp_min_n_robustness)%>%
+      #   filter(features %in% unique(sorted_features)[1:5])
       savefile = paste0(cancer_type, "_feature_importance_with_",
                         paste(top_features_to_plot_feat_imp, collapse="_"),
                         "_features_", "top_5_features.pdf")
