@@ -119,7 +119,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                   histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC,
                                   combined_CPTAC_ICGC, meso, RNA_subtyped, hierarchically_subtyped_mutations, mm,
-                                  hundred_kb, expanded_hundred_kb,
+                                  msi_high, hundred_kb, expanded_hundred_kb,
                                   per_donor, donor_range, aggregated_per_donor, ML_model, seed_range,
                                   n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
@@ -152,7 +152,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                               histologically_subtyped_mutations, de_novo_seurat_clustering,
                                               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type,
                                               hundred_kb, expanded_hundred_kb, aggregated_per_donor,
-                                              hierarchically_subtyped_mutations, mm)
+                                              hierarchically_subtyped_mutations, mm, msi_high)
 
                 scdf, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scdf,
                                                                                         mutations_df,
