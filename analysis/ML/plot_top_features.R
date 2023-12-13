@@ -993,7 +993,7 @@ if (!robustness_analysis) {
                         paste(top_features_to_plot_feat_imp, collapse="_"),
                         "_features_", "top_5_features.pdf")
       
-      construct_robustness_boxplots(df=df_feat_imp_top_5, 
+      construct_robustness_boxplots(df=df_feat_imp, 
                                     x="permutation_importance", 
                                     y="features", 
                                     title=cancer_names[[cancer_type]], 
