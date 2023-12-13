@@ -286,6 +286,7 @@ aggregated_per_donor = config.aggregated_per_donor
 hierarchically_subtyped_mutations = config.hierarchically_subtyped_mutations
 grid_analysis = config.grid_analysis
 mm = config.mm
+msi_high = config.msi_high
 
 grid_cell_types = None
 if grid_analysis:
@@ -294,7 +295,7 @@ if grid_analysis:
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
                                histologically_subtyped_mutations, de_novo_seurat_clustering, CPTAC, combined_CPTAC_ICGC,
-                               meso, RNA_subtyped, hierarchically_subtyped_mutations, mm,
+                               meso, RNA_subtyped, hierarchically_subtyped_mutations, mm, msi_high,
                                hundred_kb, expanded_hundred_kb, per_donor, donor_range, aggregated_per_donor, ML_model,
                                seed_range, n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method,
