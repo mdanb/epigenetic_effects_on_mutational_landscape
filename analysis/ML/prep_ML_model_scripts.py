@@ -42,6 +42,7 @@ group.add_argument("--hundred_kb", action="store_true", default=False)
 group.add_argument("--expanded_hundred_kb", action="store_true", default=False)
 group.add_argument("--mm", action="store_true", default=False)
 group.add_argument("--woo_pcawg", action="store_true", default=False)
+group.add_argument("--msi_high", action="store_true", default=False)
 
 
 group2 = parser.add_mutually_exclusive_group()
@@ -91,6 +92,7 @@ top_features_to_plot_feat_imp = config.top_features_to_plot_feat_imp
 feat_imp_min_n_robustness = config.feat_imp_min_n_robustness
 grid_analysis = config.grid_analysis
 grid_cell_types = config.grid_cell_types
+msi_high = config.msi_high
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
@@ -143,6 +145,9 @@ for fold in fold_for_test_set_range:
         elif woo_pcawg:
             script_filename = script_filename + "_" + "woo_pcawg"
             command_args = command_args + " " + "--woo_pcawg"
+        elif msi_high:
+            script_filename = script_filename + "_" + "msi_high"
+            command_args = command_args + " " + "--msi_high"
 
         if grid_analysis:
             command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + '"' + \
