@@ -383,7 +383,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     df_filtered <- df %>% 
                      filter(!!sym(facet_var) == level)
     
-    if (x = "permutation_importance") {
+    if (x == "permutation_importance") {
       unique_combos = unique(df_filtered[, c("features", "n_feature", "med_imp")])
       sorted_features = unique_combos %>% 
         arrange(desc(n_feature), desc(med_imp)) %>%
