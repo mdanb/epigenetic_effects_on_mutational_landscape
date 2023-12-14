@@ -209,6 +209,18 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 #                                   "--robustness_analysis",
 #                                   "--feat_imp_min_n_robustness=50"))
 
+# args = parse_args(parser, args= c("--cancer_types=msi_high",
+#                                   "--datasets=Greenleaf_colon",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=Greenleaf_colon_normal_merge_goblet",
+#                                   "--seed_range=1-10",
+#                                   "--top_features_to_plot_feat_imp=5,2,1",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=all",
+#                                   "--robustness_analysis",
+#                                   "--feat_imp_min_n_robustness=50"))
+
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
