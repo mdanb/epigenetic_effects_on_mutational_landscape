@@ -221,20 +221,20 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 #                                   "--robustness_analysis",
 #                                   "--feat_imp_min_n_robustness=50"))
 
-args = parse_args(parser, args= c("--cancer_types=Breast-AdenoCa,Lymph-BNHL,Myeloid-AML,SoftTissue-Leiomyo,Thy-AdenoCA",
-                                  "--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
-                                  "--cell_number_filter=100",
-                                  "--annotation=finalized_annotation",
-                                  "--seed_range=1-10",
-                                  "--top_features_to_plot_feat_imp=1",
-                                  "--top_features_to_plot=1",
-                                  "--feature_importance_method=permutation_importance",
-                                  "--folds_for_test_set=1-10",
-                                  "--tissues_to_consider=all",
-                                  "--robustness_analysis",
-                                  "--feat_imp_min_n_robustness=50",
-                                  "--grid_analysis",
-                                  "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow Early.Baso GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"))
+# args = parse_args(parser, args= c("--cancer_types=Breast-AdenoCa,Lymph-BNHL,Myeloid-AML,SoftTissue-Leiomyo,Thy-AdenoCA",
+#                                   "--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--seed_range=1-10",
+#                                   "--top_features_to_plot_feat_imp=1",
+#                                   "--top_features_to_plot=1",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=all",
+#                                   "--robustness_analysis",
+#                                   "--feat_imp_min_n_robustness=50",
+#                                   "--grid_analysis",
+#                                   "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow Early.Baso GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"))
 
 args = parse_args(parser)
 
@@ -1100,7 +1100,8 @@ if (grid_analysis) {
   plot <- plot + 
     # plot_layout(guides = 'collect') +
     plot_annotation(caption = "Test Set Variance Explained (%)",
-                    theme = theme(plot.caption = element_text(size = 40, hjust=0.5)))
+                    theme = theme(plot.caption = element_text(size = 40, 
+                                                              hjust=0.5)))
   ggsave("../../figures/grid_analysis.pdf", 
          width = 6 * length(cancer_types), height = 10, limitsize = FALSE)
 }
