@@ -221,20 +221,20 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 #                                   "--robustness_analysis",
 #                                   "--feat_imp_min_n_robustness=50"))
 
-# args = parse_args(parser, args= c("--cancer_types=Breast-AdenoCa,Lymph-BNHL,Myeloid-AML,SoftTissue-Leiomyo,Thy-AdenoCA",
-#                                   "--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
-#                                   "--cell_number_filter=100",
-#                                   "--annotation=finalized_annotation",
-#                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot_feat_imp=1",
-#                                   "--top_features_to_plot=1",
-#                                   "--feature_importance_method=permutation_importance",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=all",
-#                                   "--robustness_analysis",
-#                                   "--feat_imp_min_n_robustness=50",
-#                                   "--grid_analysis",
-#                                   "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow Early.Baso GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"))
+args = parse_args(parser, args= c("--cancer_types=Breast-AdenoCa,Lymph-BNHL,Myeloid-AML,Bone-Leiomyo,Thy-AdenoCA",
+                                  "--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+                                  "--cell_number_filter=100",
+                                  "--annotation=finalized_annotation",
+                                  "--seed_range=1-10",
+                                  "--top_features_to_plot_feat_imp=1",
+                                  "--top_features_to_plot=1",
+                                  "--feature_importance_method=permutation_importance",
+                                  "--folds_for_test_set=1-10",
+                                  "--tissues_to_consider=all",
+                                  "--robustness_analysis",
+                                  "--feat_imp_min_n_robustness=50",
+                                  "--grid_analysis",
+                                  "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow Early.Baso GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"))
 
 args = parse_args(parser)
 
@@ -518,16 +518,23 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
   xlim_upper = max(df[["ymax"]])
   x_breaks <- pretty(df$y, n = 3)
   plot <- ggplot(df) +
+    # geom_col(aes(x = y, y = factor(top_feature,
+    #                                levels=rev(c("skin-Melanocyte-BR",
+    #                                            "liver-Hepatoblasts-SH",
+    #                                            "normal_colon-Stem-GL_Co",
+    #                                            "bonemarrow-B-GL_BlBm",
+    #                                            "stomach-Goblet-cells-SH",
+    #                                            "cerebrum-Astrocytes-Oligodendrocytes-SH",
+    #                                            "lung-AT2-TS",
+    #                                            "lung-Basal-TS"
+    #                                            ))),
     geom_col(aes(x = y, y = factor(top_feature,
-                                   levels=rev(c("skin-Melanocyte-BR",
-                                               "liver-Hepatoblasts-SH",
-                                               "normal_colon-Stem-GL_Co",
-                                               "bonemarrow-B-GL_BlBm",
-                                               "stomach-Goblet-cells-SH",
-                                               "cerebrum-Astrocytes-Oligodendrocytes-SH",
-                                               "lung-AT2-TS",
-                                               "lung-Basal-TS"
-                                               ))),
+                                   levels=rev(c("mammary_tissue-Basal-Epithelial-(Mammary)-BR",
+                                                "bonemarrow-B-GL_BlBm",
+                                                "bonemarrow-Early.Baso-GL_BlBm",
+                                                "stomach-Stromal-cells-SH",
+                                                "thyroid-Thyroid-Follicular-Cell-BR"
+                                   ))),
                  fill=color), lwd=1.2) +
     geom_errorbarh(aes(y = top_feature, xmin = ymin, xmax = ymax), linewidth=2) +  
     coord_cartesian(xlim = c(xlim_lower, xlim_upper)) +
