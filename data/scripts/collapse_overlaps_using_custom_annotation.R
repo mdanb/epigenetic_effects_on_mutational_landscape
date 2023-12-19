@@ -169,6 +169,23 @@ if (dataset == "Greenleaf_pbmc_bm") {
     
     save_collapsed_df(df, df_metadata, dataset, annotation,
                       which_interval_ranges)
+  } else if (annotation == "intermediate_blood_bm_annotation_2") {
+    df = readRDS(paste(root, "intermediate_blood_bm_annotation",
+                       "Greenleaf_pbmc_bm_combined_count_overlaps.rds", sep="/"))
+    df_metadata = readRDS(paste(root, "intermediate_blood_bm_annotation",
+                                "Greenleaf_pbmc_bm_combined_count_overlaps_metadata.rds",
+                                sep="/"))
+    mapping = list(
+      c("bonemarrow GMP.Neut", "bonemarrow GMP")
+    )
+    
+    l = collapse_using_mapping(mapping, df, df_metadata, 
+                               exact_match_first_mapping_arg=T)
+    df = l[[1]]
+    df_metadata = l[[2]]
+    
+    save_collapsed_df(df, df_metadata, dataset, annotation,
+                      which_interval_ranges)
   }
 } else if (dataset == "Greenleaf_brain") {
   lowest_level_annotation_fn = "Greenleaf_brain_combined_count_overlaps.rds"
@@ -564,7 +581,7 @@ if (dataset == "Greenleaf_pbmc_bm") {
     save_collapsed_df(df, df_metadata, dataset, annotation, 
                       which_interval_ranges)
   }
-  else if (annotation == "Greenleaf_colon_normal_merge_goblet") {
+  else if (annotation == "Greenleaf_colon_normal_merge_mature_immature") {
     df = default_combined_count_ovs
     df_metadata = default_combined_metadata
     df = df[-grep("adenocarcinoma", rownames(df)), ]
@@ -583,8 +600,10 @@ if (dataset == "Greenleaf_pbmc_bm") {
         index = index + 1
       }
     }
-    mapping[[index]] = c("normal_colon Immature Goblet GL_Co", 
-                         "normal_colon Goblet GL_Co")
+    mapping[[index]] = c("normal_colon Immature Goblet", 
+                         "normal_colon Goblet")
+    mapping[[index + 1]] = c("normal_colon Immature Enterocytes", 
+                             "normal_colon Enterocytes")
     l = collapse_using_mapping(mapping, df=df,
                                df_metadata=df_metadata,
                                exact_match_first_mapping_arg = T)
@@ -593,5 +612,37 @@ if (dataset == "Greenleaf_pbmc_bm") {
     
     save_collapsed_df(df, df_metadata, dataset, annotation, 
                       which_interval_ranges)
-  }
+  } else if (annotation == "Greenleaf_colon_polyp_normal_merge_mature_immature") {
+      df = default_combined_count_ovs
+      df_metadata = default_combined_metadata
+      df = df[-grep("adenocarcinoma", rownames(df)), ]
+      df_metadata = df_metadata[-grep("adenocarcinoma", 
+                                      df_metadata[["tissue_name"]]), ]
+      mapping = list() 
+      index = 1
+      for (celltype in rownames(df)) {
+        if (grepl("unaffected", celltype)) {
+          modified_celltype = gsub("unaffected", "normal", celltype)
+          mapping[[index]] = c(celltype, modified_celltype)
+          index = index + 1
+        }
+      }
+      mapping[[index]] = c("normal_colon Immature Goblet", 
+                           "normal_colon Goblet")
+      mapping[[index + 1]] = c("normal_colon Immature Enterocytes", 
+                               "normal_colon Enterocytes")
+      mapping[[index + 2]] = c("polyp_colon Immature Enterocytes", 
+                               "polyp_colon Enterocytes")
+      mapping[[index + 3]] = c("polyp_colon Immature Enterocytes", 
+                               "polyp_colon Enterocytes")
+      
+      l = collapse_using_mapping(mapping, df=df,
+                                 df_metadata=df_metadata,
+                                 exact_match_first_mapping_arg = T)
+      df = l[[1]]
+      df_metadata = l[[2]]
+      
+      save_collapsed_df(df, df_metadata, dataset, annotation, 
+                        which_interval_ranges)
+    }
 }
