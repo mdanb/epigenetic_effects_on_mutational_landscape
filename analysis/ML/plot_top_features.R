@@ -299,7 +299,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
             geom_text(aes(x = x_position + xlim_upper / 10,
                           y = y_reordered),
                           label = paste0("n=", df_filtered[[n_name]]),
-			  size=10, fontface="plain", family = "Arial") +
+			  size=20) +
             ggtitle(subtitle) +
             scale_fill_manual(values = c("highlight" = "#EE4B2B",
                                          "other" = "#A9A9A9")) +
@@ -308,9 +308,9 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 legend.position="none",
                 strip.background = element_blank(),
                 strip.text.x = element_blank(),
-                plot.title = element_text(hjust = 0.5, size=30),
-                axis.text.y = element_text(size = 30, colour = color),
-                axis.text.x = element_text(size = 30),
+                plot.title = element_text(hjust = 0.5, size=45),
+                axis.text.y = element_text(size = 55, colour = color),
+                axis.text.x = element_text(size = 55),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank()
               ) #+
@@ -909,7 +909,7 @@ if (!robustness_analysis) {
       
       savefile = paste0("test_set_boxplots_with_",
                         paste(top_features_to_plot_feat_imp, collapse="_"),
-                        "_features.png")
+                        "_features.pdf")
       
       construct_robustness_boxplots(df=df_test, 
                                     x="test_set_perf", 
@@ -920,7 +920,7 @@ if (!robustness_analysis) {
                                     n_name="n_top_feature",
                                     facet_var="top_n",
                                     xlabel="Variance Explained, Test Set",
-                                    width=6 * length(top_features_to_plot), 
+                                    width=5 * length(top_features_to_plot), 
                                     height=10)
       
       df_val = df_feature_importances_all_seeds %>% 
