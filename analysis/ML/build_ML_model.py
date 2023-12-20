@@ -34,6 +34,7 @@ def run_unclustered_data_analysis_helper(scATAC_df,
                                       hundred_kb, expanded_hundred_kb, tissues_string, seed=seed,
                                       fold_for_test_set=fold_for_test_set, grid_analysis=grid_analysis)
 
+    print(grid_cell_type)
     if grid_analysis:
         if grid_cell_type[0] == "cerebrum Astrocytes/Oligodendrocytes SH":
            grid_cell_type[0] = "cerebrum Astrocytes-Oligodendrocytes SH"
