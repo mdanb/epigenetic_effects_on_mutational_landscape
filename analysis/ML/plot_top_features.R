@@ -920,6 +920,19 @@ if (!robustness_analysis) {
                                     xlabel="Variance Explained, Test Set",
                                     width=5.5 * length(top_features_to_plot), 
                                     height=10)
+
+      savefile = "temp.pdf"
+      construct_robustness_boxplots(df=df_test, 
+                                    x="test_set_perf", 
+                                    y="top_feature", 
+                                    title=cancer_type, 
+                                    savepath=savepath,
+                                    savefile=savefile, 
+                                    n_name="n_top_feature",
+                                    facet_var="top_n",
+                                    xlabel="Variance Explained, Test Set",
+                                    width=5.5 * length(top_features_to_plot), 
+                                    height=10)
       
       df_val = df_feature_importances_all_seeds %>% 
         group_by(num_features, seed, fold_for_test_set) %>%
