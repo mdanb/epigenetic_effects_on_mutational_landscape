@@ -51,191 +51,6 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_analysis"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_cell_types"), type="character")
 
-# args = parse_args(parser, args =
-#                       c("--datasets=Bingren_adult_brain",
-#                         "--cancer_types=CNS-Oligo",
-#                         "--cell_number_filter=100",
-#                         "--ML_model=XGB",
-#                         "--annotation=finalized_annotation",
-#                         "--robustness_analysis",
-#                         "--seed_range=1-10",
-#                         "--feature_importance_method=permutation_importance",
-#                         "--top_features_to_plot_feat_imp=10",
-#                         "--folds_for_test_set=1-10",
-#                         "--feat_imp_min_n_robustness=50"))
-
-# args = parse_args(parser, args =
-#                     c("--datasets=Bingren,Shendure",
-#                       "--cancer_types=Panc-AdenoCA",
-#                       "--cell_number_filter=100",
-#                       "--top_features_to_plot=1",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--seed_range=1-1",
-#                       "--feature_importance_method=permutation_importance",
-#                       "--top_features_to_plot_feat_imp=1",
-#                       "--folds_for_test_set=1-1",
-#                       "--per_donor"))
-
-# args = parse_args(parser, args =
-#                     c("--datasets=Greenleaf_colon",
-#                       "--cancer_types=ColoRect-AdenoCA",
-#                       "--cell_number_filter=1",
-#                       "--top_features_to_plot=1",
-#                       "--ML_model=XGB",
-#                       "--annotation=Greenleaf_colon_remove_cancer_polyp_merge_normal_unaffected",
-#                       "--seed_range=1-10",
-#                       "--feature_importance_method=permutation_importance",
-#                       "--top_features_to_plot_feat_imp=1",
-#                       "--folds_for_test_set=1-10",
-#                       "--robustness_analysis",
-#                       "--hundred_kb"))
-
-# args = parse_args(parser, args =
-#                     c("--datasets=Tsankov,Rawlins_fetal_lung",
-#                       "--cancer_types=SCLC",
-#                       "--cell_number_filter=1",
-#                       "--top_features_to_plot=1",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--seed_range=1-1",
-#                       "--feature_importance_method=permutation_importance",
-#                       "--top_features_to_plot_feat_imp=1",
-#                       "--folds_for_test_set=1-1",
-#                       "--per_donor"))
-
-# args = parse_args(parser, args =
-#                     c("--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-#                       "--cancer_types=ColoRect-AdenoCA_cluster_1",
-#                       "--cell_number_filter=100",
-#                       "--top_features_to_plot_feat_imp=10",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--seed_range=1-10",
-#                       "--feature_importance_method=permutation_importance",
-#                       "--folds_for_test_set=1-10",
-#                       "--tissues_to_consider=all",
-#                       "--robustness_analysis",
-#                       "--feat_imp_min_n_robustness=50"))
-
-# args = parse_args(parser, args =
-#                     c("--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-#                       "--cancer_types=Skin-Melanoma",
-#                       "--cell_number_filter=100",
-#                       "--top_features_to_plot_feat_imp=10",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--seed_range=1-10",
-#                       "--feature_importance_method=permutation_importance",
-#                       "--folds_for_test_set=1-10",
-#                       "--tissues_to_consider=all",
-#                       "--robustness_analysis",
-#                       "--feat_imp_min_n_robustness=50"))
-
-# ,CNS-GBM,ColoRect-AdenoCA,Eso-AdenoCA,Liver-HCC,Lung-AdenoCA,Lung-SCC,Lymph-BNHL,Lymph-CLL,Skin-Melanoma
-
-
-# args = parse_args(parser, args =
-#                     c("--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Tsankov,Shendure",
-#                       "--cancer_types=Skin-Melanoma",
-#                       "--cell_number_filter=100",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--robustness_analysis",
-#                       "--seed_range=1-10",
-#                       "--feature_importance_method=permutation_importance",
-#                       "--folds_for_test_set=1",
-#                       "--grid_analysis",
-#                       "--top_features_to_plot=1",
-#                       "--grid_cell_types=skin Melanocyte BR,lung AT2 TS,liver Hepatoblasts SH,stomach Foveolar Cell BR,lung Basal TS,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,mammary_tissue Basal Epithelial (Mammary) BR,cerebrum Astrocytes-Oligodendrocytes SH"))
-
-# args = parse_args(parser, args= c("--cancer_types=Thy-AdenoCA",
-#                                   "--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-#                                   "--cell_number_filter=100",
-#                                   "--annotation=Greenleaf_colon_remove_cancer_polyp_merge_normal_unaffected",
-#                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot_feat_imp=10",
-#                                   "--feature_importance_method=permutation_importance",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=all",
-#                                   "--robustness_analysis",
-#                                   "--feat_imp_min_n_robustness=50"))
-
-# args = parse_args(parser, args= c("--cancer_types=Thy-AdenoCA",
-#                                   "--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
-#                                   "--cell_number_filter=100",
-#                                   "--annotation=Greenleaf_colon_remove_cancer_polyp_merge_normal_unaffected",
-#                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot_feat_imp=10",
-#                                   "--feature_importance_method=permutation_importance",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=all",
-#                                   "--robustness_analysis",
-#                                   "--feat_imp_min_n_robustness=50"))
-
-# args = parse_args(parser, args =
-#                     c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--robustness_analysis",
-#                       "--seed_range=1-10",
-#                       "--feature_importance_method=permutation_importance",
-#                       "--folds_for_test_set=1-10",
-#                       "--grid_analysis",
-#                       "--top_features_to_plot=1",
-#                       "--grid_cell_types=skin Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
-# args = parse_args(parser, args =
-#                     c("--cancer_types=Breast-AdenoCA,Lymph-BNHL,Myeloid-AML,SoftTissue-Leiomyo,Thy-AdenoCA",
-#                       "--ML_model=XGB",
-#                       "--annotation=finalized_annotation",
-#                       "--robustness_analysis",
-#                       "--seed_range=1-10",
-#                       "--feature_importance_method=permutation_importance",
-#                       "--folds_for_test_set=1-10",
-#                       "--grid_analysis",
-#                       "--top_features_to_plot=1",
-#                       "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow GMP GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"))
-
-# args = parse_args(parser, args= c("--cancer_types=SCLC",
-#                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
-#                                   "--cell_number_filter=100",
-#                                   "--annotation=finalized_annotation",
-#                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot=10,5,2,1",
-#                                   "--top_features_to_plot_feat_imp=10,5,2,1",
-#                                   "--feature_importance_method=permutation_importance",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=all",
-#                                   "--robustness_analysis",
-#                                   "--feat_imp_min_n_robustness=50"))
-
-# args = parse_args(parser, args= c("--cancer_types=msi_high",
-#                                   "--datasets=Greenleaf_colon",
-#                                   "--cell_number_filter=100",
-#                                   "--annotation=Greenleaf_colon_normal_merge_goblet",
-#                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot_feat_imp=5,2,1",
-#                                   "--feature_importance_method=permutation_importance",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=all",
-#                                   "--robustness_analysis",
-#                                   "--feat_imp_min_n_robustness=50"))
-
-# args = parse_args(parser, args= c("--cancer_types=Breast-AdenoCa,Lymph-BNHL,Myeloid-AML,Bone-Leiomyo,Thy-AdenoCA",
-#                                   "--datasets=Bingren,Greenleaf_brain,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
-#                                   "--cell_number_filter=100",
-#                                   "--annotation=finalized_annotation",
-#                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot_feat_imp=1",
-#                                   "--top_features_to_plot=1",
-#                                   "--feature_importance_method=permutation_importance",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=all",
-#                                   "--robustness_analysis",
-#                                   "--feat_imp_min_n_robustness=50",
-#                                   "--grid_analysis",
-#                                   "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow Early.Baso GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"))
-
 #args = parse_args(parser, args= c("--cancer_types=Panc-AdenoCA",
 #                                  "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
 #                                  "--cell_number_filter=100",
@@ -268,27 +83,28 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
  cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle,\nArtery Aorta BR",
                  "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Colon\nTransverse BR",
                  "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial,\nEsophagus Mucosa BR",
-		 "lung Basal TS"="Basal, Lung TS",
-		 "lung Ciliated epithelial cells SH"="Ciliated,\nLung SH",
-		 "lung Mesothelium TS" = "Mesothelium, \nLung TS",
+            		 "lung Basal TS"="Basal, Lung TS",
+            		 "lung Ciliated epithelial cells SH"="Ciliated,\nLung SH",
+            		 "lung Mesothelium TS" = "Mesothelium,\nLung TS",
                  "lung AT2 TS" = "AT2, Lung TS",
                  "lung distal_lung Secretory TS" = "Secretory, Distal\nLung TS",
                  "lung Bronchiolar and alveolar epithelial cells SH" = "Bronchiolar/alveolar,\nLung SH",
-                 "lung proximal Ciliated TS" = "lung proximal\nCiliated TS",
-		 "muscle Lymphoid and Myeloid cells SH" = "muscle Lymphoid\nand Myeloid cells SH",
-		 "muscle Schwann cells SH" = "muscle Schwann\ncells SH",
-		 "muscle Type II Skeletal Myocyte BR" = "muscle Type II\nSkeletal Myocyte BR",
-		 "nerve_tibial Fibroblast (Peripheral Nerve) BR" = "nerve_tibial Fibroblast\n(Peripheral Nerve) BR",
-		 "normal_colon Stem GL_Co" = "normal_colon\nStem GL_Co",
-		 "normal_colon TA2 GL_Co" = "normal_colon\nTA2 GL_Co",
-	 	 "normal_colon Secretory TA GL_Co" = "normal_colon\nSecretory TA GL_Co",
-		 "placenta PAEP_MECOM positive cells SH" = "placenta PAEP_MECOM\npositive cells SH",
-		 "placenta Extravillous trophoblasts SH" = "placenta Extravillous\ntrophoblasts SH",
-		 "polyp_colon Goblet GL_Co" = "polyp_colon\nGoblet GL_Co",
-		 "polyp_colon Secretory TA GL_Co" = "polyp_colon\nSecretory TA GL_Co",
-                 "polyp_colon Stem GL_Co" = "polyp_colon\nStem GL_Co",
-		 "pancreas Islet endocrine cells SH" = "pancreas Islet\nendocrine cells SH",
-		 "pancreas Pancreatic Alpha Cell BR" = "pancreas Pancreatic\nAlpha Cell BR")
+                 "lung proximal Ciliated TS" = "Ciliated, Proximal\nLung TS",
+            		 "muscle Lymphoid and Myeloid cells SH" = "Lymphoid and Myeloid\ncells, Muscle SH",
+            		 "muscle Schwann cells SH" = "Schwann cells,\nMuscle SH",
+            		 "muscle Type II Skeletal Myocyte BR" = "Skeletal Myocyte\nMuscle Type II BR",
+            		 "nerve_tibial Fibroblast (Peripheral Nerve) BR" = "Fibroblast\nTibial Nerve BR",
+            		 "normal_colon Stem GL_Co" = "Stem,\nColon GL_Co",
+            		 "normal_colon TA2 GL_Co" = "TA2, Colon GL_Co",
+            	 	 "normal_colon Secretory TA GL_Co" = "Secretory TA,\nColon GL_Co",
+            		 "placenta PAEP_MECOM positive cells SH" = "PAEP_MECOM positive\ncells, Placenta SH",
+            		 "placenta Extravillous trophoblasts SH" = "Extravillous trophoblasts,\nPlacenta SH",
+            		 "polyp_colon Goblet GL_Co" = "Goblet,\nPolyp Colon GL_Co",
+            		 "polyp_colon Secretory TA GL_Co" = "Secretory TA,\nPolyp Colon GL_Co",
+                 "polyp_colon Stem GL_Co" = "Stem,\nPolyp Colon GL_Co",
+            		 "pancreas Islet endocrine cells SH" = "Islet neurodocrine\ncells, Pancreas SH",
+            		 "pancreas Pancreatic Alpha Cell BR" = "Alpha Cell\nPancreas BR")
+
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
   df$num_features_f = factor(df$num_features, levels=unique(df$num_features))
@@ -483,7 +299,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
             geom_text(aes(x = x_position + xlim_upper / 10,
                           y = y_reordered),
                           label = paste0("n=", df_filtered[[n_name]]),
-			  size=10) +
+			  size=10, fontface="plain") +
             ggtitle(subtitle) +
             scale_fill_manual(values = c("highlight" = "#EE4B2B",
                                          "other" = "#A9A9A9")) +
