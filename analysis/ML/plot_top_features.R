@@ -236,17 +236,17 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 #                                   "--grid_analysis",
 #                                   "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow Early.Baso GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"))
 
-args = parse_args(parser, args= c("--cancer_types=Panc-AdenoCA",
-                                  "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
-                                  "--cell_number_filter=100",
-                                  "--annotation=finalized_annotation",
-                                  "--seed_range=1-10",
-                                  "--top_features_to_plot_feat_imp=5",
-                                  "--feature_importance_method=permutation_importance",
-                                  "--folds_for_test_set=1-10",
-                                  "--tissues_to_consider=all",
-                                  "--robustness_analysis",
-                                  "--top_features_to_plot_feat_imp=5"))
+#args = parse_args(parser, args= c("--cancer_types=Panc-AdenoCA",
+#                                  "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+#                                  "--cell_number_filter=100",
+#                                  "--annotation=finalized_annotation",
+#                                  "--seed_range=1-10",
+#                                  "--top_features_to_plot_feat_imp=5",
+#                                  "--feature_importance_method=permutation_importance",
+#                                  "--folds_for_test_set=1-10",
+#                                  "--tissues_to_consider=all",
+#                                  "--robustness_analysis",
+#                                  "--top_features_to_plot_feat_imp=5"))
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -265,16 +265,30 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
                     "Thy-AdenoCA"="Thyroid\nadenocarcinoma")
 
 
- cell_types = c("lung Basal TS"="Basal, Lung TS",
-                 "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial,\nEsophagus Mucosa BR", 
-                 "lung Ciliated epithelial cells SH"="Ciliated,\nLung SH",
+ cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle,\nArtery Aorta BR",
                  "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Colon\nTransverse BR",
-                 "artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle,\nArtery Aorta BR",
-                 "lung Mesothelium TS" = "Mesothelium, \nLung TS",
-            		 "lung AT2 TS" = "AT2, Lung TS",
-            		 "lung distal_lung Secretory TS" = "Secretory, Distal\nLung TS",
-            		 "lung Bronchiolar and alveolar epithelial cells SH" = "Bronchiolar/alveolar,\nLung SH")
-
+                 "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial,\nEsophagus Mucosa BR",
+		 "lung Basal TS"="Basal, Lung TS",
+		 "lung Ciliated epithelial cells SH"="Ciliated,\nLung SH",
+		 "lung Mesothelium TS" = "Mesothelium, \nLung TS",
+                 "lung AT2 TS" = "AT2, Lung TS",
+                 "lung distal_lung Secretory TS" = "Secretory, Distal\nLung TS",
+                 "lung Bronchiolar and alveolar epithelial cells SH" = "Bronchiolar/alveolar,\nLung SH",
+                 "lung proximal Ciliated TS" = "lung proximal\nCiliated TS",
+		 "muscle Lymphoid and Myeloid cells SH" = "muscle Lymphoid\nand Myeloid cells SH",
+		 "muscle Schwann cells SH" = "muscle Schwann\ncells SH",
+		 "muscle Type II Skeletal Myocyte BR" = "muscle Type II\nSkeletal Myocyte BR",
+		 "nerve_tibial Fibroblast (Peripheral Nerve) BR" = "nerve_tibial Fibroblast\n(Peripheral Nerve) BR",
+		 "normal_colon Stem GL_Co" = "normal_colon\nStem GL_Co",
+		 "normal_colon TA2 GL_Co" = "normal_colon\nTA2 GL_Co",
+	 	 "normal_colon Secretory TA GL_Co" = "normal_colon\nSecretory TA GL_Co",
+		 "placenta PAEP_MECOM positive cells SH" = "placenta PAEP_MECOM\npositive cells SH",
+		 "placenta Extravillous trophoblasts SH" = "placenta Extravillous\ntrophoblasts SH",
+		 "polyp_colon Goblet GL_Co" = "polyp_colon\nGoblet GL_Co",
+		 "polyp_colon Secretory TA GL_Co" = "polyp_colon\nSecretory TA GL_Co",
+                 "polyp_colon Stem GL_Co" = "polyp_colon\nStem GL_Co",
+		 "pancreas Islet endocrine cells SH" = "pancreas Islet\nendocrine cells SH",
+		 "pancreas Pancreatic Alpha Cell BR" = "pancreas Pancreatic\nAlpha Cell BR")
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
   df$num_features_f = factor(df$num_features, levels=unique(df$num_features))
@@ -1055,8 +1069,8 @@ if (!robustness_analysis) {
                                     n_name="n_feature", 
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
-                                    width=9,
-                                    height=7)
+                                    width=15,
+                                    height=10)
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
         mutate(n_top_feature = n(), x_position = max(test_set_perf))
@@ -1090,8 +1104,8 @@ if (!robustness_analysis) {
                                     n_name="n_top_feature",
                                     facet_var="top_n",
                                     xlabel="Variance Explained, Test Set",
-                                    width=8 * length(top_features_to_plot), 
-                                    height=5)
+                                    width=6 * length(top_features_to_plot), 
+                                    height=10)
       
       df_val = df_feature_importances_all_seeds %>% 
         group_by(num_features, seed, fold_for_test_set) %>%
