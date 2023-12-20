@@ -236,6 +236,17 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 #                                   "--grid_analysis",
 #                                   "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow Early.Baso GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"))
 
+args = parse_args(parser, args= c("--cancer_types=Panc-AdenoCA",
+                                  "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+                                  "--cell_number_filter=100",
+                                  "--annotation=finalized_annotation",
+                                  "--seed_range=1-10",
+                                  "--top_features_to_plot_feat_imp=5",
+                                  "--feature_importance_method=permutation_importance",
+                                  "--folds_for_test_set=1-10",
+                                  "--tissues_to_consider=all",
+                                  "--robustness_analysis",
+                                  "--top_features_to_plot_feat_imp=5"))
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -253,13 +264,12 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
                     "Bone-Leiomyo"="Leiomyosarcoma",
                     "Thy-AdenoCA"="Thyroid\nadenocarcinoma")
 
-# cell_types = c("lung Basal TS"="Basal, Lung",
-#                 "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial,\nEsophagus Mucosa", 
-#                 "lung Ciliated epithelial cells SH"="Ciliated,\nLung",
-#                 "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Colon\nTransverse",
-#                 "artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle,\nArtery Aorta",
-#                 "lung Mesothelium TS" = "Mesothelium",
-#                 "")
+cell_types = c("lung Basal TS"="Basal, Lung",
+                "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial,\nEsophagus Mucosa",
+                "lung Ciliated epithelial cells SH"="Ciliated,\nLung",
+                "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Colon\nTransverse",
+                "artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle,\nArtery Aorta",
+                "lung Mesothelium TS" = "Mesothelium")
 
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
@@ -402,9 +412,9 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   }
   
   plots <- list()
-  # df = df %>% 
-  #       ungroup() %>%
-  #        mutate("{y}" := unname(cell_types[df %>% pull(!!sym(y))]))
+  df = df %>%
+        ungroup() %>%
+         mutate("{y}" := unname(cell_types[df %>% pull(!!sym(y))]))
   
   for (level in unique(df[[facet_var]])) {
     df_filtered <- df %>% 
