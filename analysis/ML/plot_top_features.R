@@ -416,16 +416,10 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   }
   
   plots <- list()
-<<<<<<< HEAD
-  df = df %>%
-        ungroup() %>%
-         mutate("{y}" := unname(cell_types[df %>% pull(!!sym(y))]))
-=======
   df = df %>% 
         ungroup() %>%
         mutate("{y}" := unname(cell_types[df %>% pull(!!sym(y))]))
->>>>>>> 105feca3a2583509c579ba7b85d7babcadcefe2a
-  
+
   for (level in unique(df[[facet_var]])) {
     df_filtered <- df %>% 
                      filter(!!sym(facet_var) == level)
