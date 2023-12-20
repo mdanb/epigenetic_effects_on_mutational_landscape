@@ -867,6 +867,8 @@ if (!robustness_analysis) {
                med_imp = median(permutation_importance), 
                x_position = max(permutation_importance)) %>%
         filter(num_features %in% top_features_to_plot_feat_imp) 
+      print(top_features_to_plot_feat_imp)
+      print(unique(df_feat_imp[["num_features"]]))
       # unique_combos = unique(df_feat_imp[, c("features", "n_feature", "med_imp")])
       # sorted_features = unique_combos %>% 
       #                         arrange(desc(n_feature), desc(med_imp)) %>%
@@ -878,6 +880,7 @@ if (!robustness_analysis) {
       savefile = paste0(cancer_type, "_feature_importance_with_",
                         paste(top_features_to_plot_feat_imp, collapse="_"),
                         "_features_", "top_5_features.pdf")
+     
       construct_robustness_boxplots(df=df_feat_imp, 
                                     x="permutation_importance", 
                                     y="features", 
@@ -887,7 +890,7 @@ if (!robustness_analysis) {
                                     n_name="n_feature", 
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
-                                    width=8 * length(top_features_to_plot_feat_imp),
+                                    width=5.5 * length(top_features_to_plot_feat_imp),
                                     height=10)
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
@@ -921,7 +924,7 @@ if (!robustness_analysis) {
                                     n_name="n_top_feature",
                                     facet_var="top_n",
                                     xlabel="Variance Explained, Test Set",
-                                    width=8 * length(top_features_to_plot), 
+                                    width=5.5 * length(top_features_to_plot), 
                                     height=10)
 
       savefile = "temp.pdf"
@@ -934,7 +937,7 @@ if (!robustness_analysis) {
                                     n_name="n_top_feature",
                                     facet_var="top_n",
                                     xlabel="Variance Explained, Test Set",
-                                    width=8 * length(top_features_to_plot), 
+                                    width=5.5 * length(top_features_to_plot), 
                                     height=10)
       
       df_val = df_feature_importances_all_seeds %>% 
@@ -958,7 +961,7 @@ if (!robustness_analysis) {
                                     n_name="n_feature",
                                     facet_var="num_features",
                                     xlabel="Variance Explained, Validation Set",
-                                    width=8 * length(top_features_to_plot), 
+                                    width=5.5 * length(top_features_to_plot), 
                                     height=5)
       
     }
