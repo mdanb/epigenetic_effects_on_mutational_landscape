@@ -875,7 +875,6 @@ if (!robustness_analysis) {
       savefile = paste0(cancer_type, "_feature_importance_with_",
                         paste(top_features_to_plot_feat_imp, collapse="_"),
                         "_features_", "top_5_features.pdf")
-      
       construct_robustness_boxplots(df=df_feat_imp, 
                                     x="permutation_importance", 
                                     y="features", 
@@ -885,7 +884,7 @@ if (!robustness_analysis) {
                                     n_name="n_feature", 
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
-                                    width=15,
+                                    width=5.5 * length(top_features_to_plot),
                                     height=10)
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
@@ -907,10 +906,9 @@ if (!robustness_analysis) {
         df_test["mut_counts"] = mut_counts[df[["fold"]]]
       }
       
-      savefile = paste0("test_set_boxplots_with_",
+      savefile = paste(cancer_type, "test_set_boxplots_with",
                         paste(top_features_to_plot_feat_imp, collapse="_"),
-                        "_features.pdf")
-      
+                        "features.pdf", sep="_")
       construct_robustness_boxplots(df=df_test, 
                                     x="test_set_perf", 
                                     y="top_feature", 
@@ -920,7 +918,7 @@ if (!robustness_analysis) {
                                     n_name="n_top_feature",
                                     facet_var="top_n",
                                     xlabel="Variance Explained, Test Set",
-                                    width=5 * length(top_features_to_plot), 
+                                    width=5.5 * length(top_features_to_plot), 
                                     height=10)
       
       df_val = df_feature_importances_all_seeds %>% 
