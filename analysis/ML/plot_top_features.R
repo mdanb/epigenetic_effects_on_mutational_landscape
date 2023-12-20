@@ -299,7 +299,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
             geom_text(aes(x = x_position + xlim_upper / 10,
                           y = y_reordered),
                           label = paste0("n=", df_filtered[[n_name]]),
-			  size=10, fontface="plain", family = "Arial") +
+			                    size=10) +
             ggtitle(subtitle) +
             scale_fill_manual(values = c("highlight" = "#EE4B2B",
                                          "other" = "#A9A9A9")) +
@@ -907,7 +907,7 @@ if (!robustness_analysis) {
         df_test["mut_counts"] = mut_counts[df[["fold"]]]
       }
       
-      savefile = paste0("test_set_boxplots_with_",
+      savefile = paste0(cancer_type, "test_set_boxplots_with_",
                         paste(top_features_to_plot_feat_imp, collapse="_"),
                         "_features.png")
       
