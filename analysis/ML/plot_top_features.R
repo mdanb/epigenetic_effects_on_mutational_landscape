@@ -312,8 +312,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 strip.background = element_blank(),
                 strip.text.x = element_blank(),
                 plot.title = element_text(hjust = 0.5, size=45),
-                axis.text.y = element_text(size = 45, colour = color),
-                axis.text.x = element_text(size = 45),
+                axis.text.y = element_text(size = 50, colour = color),
+                axis.text.x = element_text(size = 50),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank()
               ) #+
@@ -910,7 +910,7 @@ if (!robustness_analysis) {
       }
       
       savefile = paste(cancer_type, "test_set_boxplots_with",
-                        paste(top_features_to_plot_feat_imp, collapse="_"),
+                        paste(top_features_to_plot, collapse="_"),
                         "features.pdf", sep="_")
       construct_robustness_boxplots(df=df_test, 
                                     x="test_set_perf", 
@@ -946,7 +946,7 @@ if (!robustness_analysis) {
         mutate(n_feature = n(), x_position = max(score))
       
       savefile = paste0("validation_boxplots_with_",
-                        paste(top_features_to_plot_feat_imp, collapse="_"),
+                        paste(top_features_to_plot, collapse="_"),
                         "_features.png")
       
       construct_robustness_boxplots(df=df_val, 
