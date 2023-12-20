@@ -253,13 +253,16 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
                     "Bone-Leiomyo"="Leiomyosarcoma",
                     "Thy-AdenoCA"="Thyroid\nadenocarcinoma")
 
-# cell_types = c("lung Basal TS"="Basal, Lung",
-#                 "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial,\nEsophagus Mucosa", 
-#                 "lung Ciliated epithelial cells SH"="Ciliated,\nLung",
-#                 "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Colon\nTransverse",
-#                 "artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle,\nArtery Aorta",
-#                 "lung Mesothelium TS" = "Mesothelium",
-#                 "")
+ cell_types = c("lung Basal TS"="Basal, Lung",
+                 "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial,\nEsophagus Mucosa", 
+                 "lung Ciliated epithelial cells SH"="Ciliated,\nLung SH",
+                 "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Colon\nTransverse",
+                 "artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle,\nArtery Aorta",
+                 "lung Mesothelium TS" = "Mesothelium",
+		 "lung AT2 TS" = "AT2, Lung TS",
+		 "lung distal_lung Secretory TS" = "Secretory, Distal\nLung TS",
+		 "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Colon\ntransverse BR",
+		 "lung Bronchiolar and alveolar epithelial cells SH" = "Bronchiolar/alveolar,\nLung SH")
 
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
@@ -402,9 +405,9 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   }
   
   plots <- list()
-  # df = df %>% 
-  #       ungroup() %>%
-  #        mutate("{y}" := unname(cell_types[df %>% pull(!!sym(y))]))
+  df = df %>% 
+        ungroup() %>%
+        mutate("{y}" := unname(cell_types[df %>% pull(!!sym(y))]))
   
   for (level in unique(df[[facet_var]])) {
     df_filtered <- df %>% 
@@ -444,14 +447,19 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     xlim_upper = max(df[[x]])
     color = rep("#000000", length(unique(df_filtered[[y]])) - 1)
     color = append(color, "#EE4B2B")
-    
+    if (level == "1") {
+    	subtitle = paste(level, "feature")
+    } else {
+    	subtitle = paste(level, "features")
+    }
     p <- ggplot(df_filtered) +
             geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 1.0, 
                              outlier.shape = outlier_shape) +
             geom_text(aes(x = x_position + xlim_upper / 10,
                           y = y_reordered),
-                          label = paste0("n=", df_filtered[[n_name]])) +
-            ggtitle(paste(level, "features")) +
+                          label = paste0("n=", df_filtered[[n_name]]),
+			  size=10) +
+            ggtitle(subtitle) +
             scale_fill_manual(values = c("highlight" = "#EE4B2B",
                                          "other" = "#A9A9A9")) +
             theme_classic() +
@@ -459,13 +467,13 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 legend.position="none",
                 strip.background = element_blank(),
                 strip.text.x = element_blank(),
-                plot.title = element_text(hjust = 0.5),
-                axis.text.y = element_text(size = 15, colour = color),
-                axis.text.x = element_text(size = 14),
+                plot.title = element_text(hjust = 0.5, size=30),
+                axis.text.y = element_text(size = 30, colour = color),
+                axis.text.x = element_text(size = 30),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank()
-              ) +
-            xlim(xlim_lower - xlim_lower / 10, xlim_upper + xlim_upper / 10)
+              ) #+
+            #xlim(xlim_lower - xlim_lower / 10, xlim_upper + xlim_upper / 10)
     plots[[as.character(level)]] <- p
   }
   
@@ -503,7 +511,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   print(plot)
   ggsave(paste(savepath, savefile, sep="/"), 
          width = width * length(unique(df[[facet_var]])), 
-         height = height, plot)
+         height = height, plot, limitsize=F)
 }
 
 
@@ -1036,7 +1044,7 @@ if (!robustness_analysis) {
                                     n_name="n_feature", 
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
-                                    width=11,
+                                    width=9,
                                     height=7)
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
@@ -1071,7 +1079,7 @@ if (!robustness_analysis) {
                                     n_name="n_top_feature",
                                     facet_var="top_n",
                                     xlabel="Variance Explained, Test Set",
-                                    width=8, 
+                                    width=8 * length(top_features_to_plot), 
                                     height=5)
       
       df_val = df_feature_importances_all_seeds %>% 
@@ -1095,7 +1103,7 @@ if (!robustness_analysis) {
                                     n_name="n_feature",
                                     facet_var="num_features",
                                     xlabel="Variance Explained, Validation Set",
-                                    width=12, 
+                                    width=8 * length(top_features_to_plot), 
                                     height=5)
       
     }
