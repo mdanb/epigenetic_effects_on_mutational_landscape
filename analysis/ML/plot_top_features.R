@@ -312,8 +312,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 strip.background = element_blank(),
                 strip.text.x = element_blank(),
                 plot.title = element_text(hjust = 0.5, size=45),
-                axis.text.y = element_text(size = 55, colour = color),
-                axis.text.x = element_text(size = 55),
+                axis.text.y = element_text(size = 45, colour = color),
+                axis.text.x = element_text(size = 45),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank()
               ) #+
