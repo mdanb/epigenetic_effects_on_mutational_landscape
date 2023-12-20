@@ -302,7 +302,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
             geom_text(aes(x = x_position + xlim_upper / 10,
                           y = y_reordered),
                           label = paste0("n=", df_filtered[[n_name]]),
-			  size=20) +
+			  size=15) +
             ggtitle(subtitle) +
             scale_fill_manual(values = c("highlight" = "#EE4B2B",
                                          "other" = "#A9A9A9")) +
@@ -312,8 +312,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 strip.background = element_blank(),
                 strip.text.x = element_blank(),
                 plot.title = element_text(hjust = 0.5, size=45),
-                axis.text.y = element_text(size = 45, colour = color),
-                axis.text.x = element_text(size = 45),
+                axis.text.y = element_text(size = 40, colour = color),
+                axis.text.x = element_text(size = 40),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank()
               ) #+
@@ -887,7 +887,7 @@ if (!robustness_analysis) {
                                     n_name="n_feature", 
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
-                                    width=5.5 * length(top_features_to_plot),
+                                    width=8 * length(top_features_to_plot_feat_imp),
                                     height=10)
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
@@ -921,7 +921,7 @@ if (!robustness_analysis) {
                                     n_name="n_top_feature",
                                     facet_var="top_n",
                                     xlabel="Variance Explained, Test Set",
-                                    width=5.5 * length(top_features_to_plot), 
+                                    width=8 * length(top_features_to_plot), 
                                     height=10)
 
       savefile = "temp.pdf"
@@ -934,7 +934,7 @@ if (!robustness_analysis) {
                                     n_name="n_top_feature",
                                     facet_var="top_n",
                                     xlabel="Variance Explained, Test Set",
-                                    width=5.5 * length(top_features_to_plot), 
+                                    width=8 * length(top_features_to_plot), 
                                     height=10)
       
       df_val = df_feature_importances_all_seeds %>% 
