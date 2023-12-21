@@ -565,7 +565,13 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
             
             top_feature_file = paste0(top_feature_file, ".txt")
             top_feature_fp = paste(test_dir, top_feature_file, sep="/")
-            top_feature = readLines(top_feature_fp, n = 1)
+            tryCatch(
+              { top_feature = readLines(top_feature_fp, n = 1)
+              }, 
+              error = function(e) {
+                print(paste("Problem with fold", fold, ", seed", seed))
+              }
+            )
             top_feature = substring(top_feature, 4, nchar(top_feature))
           }
           suppressWarnings({
