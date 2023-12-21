@@ -287,8 +287,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     df_filtered <- df_filtered %>% 
                       mutate(y_reordered = factor(!!sym(y), 
                                                   levels = ordered_levels))
-    xlim_lower = min(df[[x]])
-    xlim_upper = max(df[[x]])
+    xlim_lower = min(df_filtered[[x]])
+    xlim_upper = max(df_filtered[[x]])
     color = rep("#000000", length(unique(df_filtered[[y]])) - 1)
     color = append(color, "#EE4B2B")
     if (level == "1") {
@@ -316,8 +316,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 axis.text.x = element_text(size = 50),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank()
-              ) #+
-            # xlim(xlim_lower - xlim_lower / 10, xlim_upper + xlim_upper / 10)
+              ) +
+            xlim(xlim_lower - xlim_lower / 10, xlim_upper + 2 * xlim_upper / 10)
     plots[[as.character(level)]] <- p
   }
   
