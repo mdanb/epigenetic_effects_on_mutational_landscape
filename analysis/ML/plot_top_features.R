@@ -312,8 +312,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 strip.background = element_blank(),
                 strip.text.x = element_blank(),
                 plot.title = element_text(hjust = 0.5, size=45),
-                axis.text.y = element_text(size = 40, colour = color),
-                axis.text.x = element_text(size = 40),
+                axis.text.y = element_text(size = 50, colour = color),
+                axis.text.x = element_text(size = 50),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank()
               ) #+
@@ -844,7 +844,7 @@ if (!robustness_analysis) {
       df_feature_importances_all_seeds = 
         construct_df_feature_importances_all_seeds(all_seeds_dirs,
                                                    feature_importance_method,
-                                                   top_features_to_plot)
+                                                   top_features_to_plot_feat_imp)
       df = construct_all_seeds_test_df(top_features_to_plot=top_features_to_plot,
                                        seed_range=seed_range,
                                        skip_seeds_robustness=skip_seeds_robustness,
@@ -860,6 +860,8 @@ if (!robustness_analysis) {
                                        hundred_kb=hundred_kb)
       # y_position is for plotting number of times feature appears at the top of
       # the boxplot. 
+      #print(top_features_to_plot_feat_imp)
+      #print(unique(df_feature_importances_all_seeds[["num_features"]]))
       df_feat_imp = df_feature_importances_all_seeds %>% 
         # group_by(num_features, seed, fold_for_test_set) %>%
         group_by(num_features, features) %>%
@@ -867,8 +869,7 @@ if (!robustness_analysis) {
                med_imp = median(permutation_importance), 
                x_position = max(permutation_importance)) %>%
         filter(num_features %in% top_features_to_plot_feat_imp) 
-      print(top_features_to_plot_feat_imp)
-      print(unique(df_feat_imp[["num_features"]]))
+      #print(unique(df_feat_imp[["num_features"]]))
       # unique_combos = unique(df_feat_imp[, c("features", "n_feature", "med_imp")])
       # sorted_features = unique_combos %>% 
       #                         arrange(desc(n_feature), desc(med_imp)) %>%
