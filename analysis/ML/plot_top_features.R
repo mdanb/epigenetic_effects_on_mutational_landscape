@@ -51,61 +51,61 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_analysis"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_cell_types"), type="character")
 
-#args = parse_args(parser, args= c("--cancer_types=Panc-AdenoCA",
-#                                  "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
-#                                  "--cell_number_filter=100",
-#                                  "--annotation=finalized_annotation",
-#                                  "--seed_range=1-10",
-#                                  "--top_features_to_plot_feat_imp=5",
-#                                  "--feature_importance_method=permutation_importance",
-#                                  "--folds_for_test_set=1-10",
-#                                  "--tissues_to_consider=all",
-#                                  "--robustness_analysis",
-#                                  "--top_features_to_plot_feat_imp=5"))
+args = parse_args(parser, args= c("--cancer_types=Lung-SCC",
+                                 "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+                                 "--cell_number_filter=100",
+                                 "--annotation=finalized_annotation",
+                                 "--seed_range=1-10",
+                                 "--top_features_to_plot_feat_imp=10,5,2",
+                                 "--top_features_to_plot=10,5,1",
+                                 "--feature_importance_method=permutation_importance",
+                                 "--folds_for_test_set=1-10",
+                                 "--tissues_to_consider=all",
+                                 "--robustness_analysis"))
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
                     "Liver-HCC"="Liver cancer",
                     "ColoRect-AdenoCA"="Colorectal cancer",
-                    "Eso-AdenoCA"="Esophageal\ncancer",
+                    "Eso-AdenoCA"="Esophageal cancer",
                     "CNS-GBM"="Glioblastoma",
-                    "Lung-AdenoCA"="Lung\nadenocarcinoma",
-                    "Lung-SCC"="Lung squamous\ncell carcinoma",
-                    "Breast-AdenoCa"="Breast\nadenocarcinoma",
-                    "Lymph-CLL"="Lymphocytic\nleukemia",
-                    "Lymph-BNHL"="Non-Hodgkin\nlymphoma",
-                    "multiple_myeloma"="Multiple\nMyeloma",
-                    "Myeloid-AML"="Acute myeloid\nleukemia",
+                    "Lung-AdenoCA"="Lung adenocarcinoma",
+                    "Lung-SCC"="Lung squamous cell carcinoma",
+                    "Breast-AdenoCa"="Breast adenocarcinoma",
+                    "Lymph-CLL"="Lymphocytic leukemia",
+                    "Lymph-BNHL"="Non-Hodgkin lymphoma",
+                    "multiple_myeloma"="Multiple Myeloma",
+                    "Myeloid-AML"="Acute myeloid leukemia",
                     "Bone-Leiomyo"="Leiomyosarcoma",
-                    "Thy-AdenoCA"="Thyroid\nadenocarcinoma")
+                    "Thy-AdenoCA"="Thyroid adenocarcinoma")
 
 
- cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle,\nArtery Aorta BR",
-                 "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Colon\nTransverse BR",
-                 "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial,\nEsophagus Mucosa BR",
+ cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle, Artery Aorta BR",
+                 "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Colon Transverse BR",
+                 "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial, Esophagus Mucosa BR",
             		 "lung Basal TS"="Basal, Lung TS",
-            		 "lung Ciliated epithelial cells SH"="Ciliated,\nLung SH",
-            		 "lung Mesothelium TS" = "Mesothelium,\nLung TS",
+            		 "lung Ciliated epithelial cells SH"="Ciliated, Lung SH",
+            		 "lung Mesothelium TS" = "Mesothelium, Lung TS",
                  "lung AT2 TS" = "AT2, Lung TS",
-                 "lung Tuft.like TS" = "Tuft-like,\nLung TS",
-                 "lung distal_lung Secretory TS" = "Secretory, Distal\nLung TS",
-                 "lung Bronchiolar and alveolar epithelial cells SH" = "Bronchiolar/alveolar,\nLung SH",
-                 "lung proximal Ciliated TS" = "Ciliated, Proximal\nLung TS",
-                 "lung proximal Secretory TS" = "Secretory, Proximal\nLung TS",
-            		 "muscle Lymphoid and Myeloid cells SH" = "Lymphoid and Myeloid\ncells, Muscle SH",
-            		 "muscle Schwann cells SH" = "Schwann cells,\nMuscle SH",
-            		 "muscle Type II Skeletal Myocyte BR" = "Skeletal Myocyte\nMuscle Type II BR",
-            		 "nerve_tibial Fibroblast (Peripheral Nerve) BR" = "Fibroblast\nTibial Nerve BR",
-            		 "normal_colon Stem GL_Co" = "Stem,\nColon GL_Co",
+                 "lung Tuft.like TS" = "Tuft-like, Lung TS",
+                 "lung distal_lung Secretory TS" = "Secretory, Distal Lung TS",
+                 "lung Bronchiolar and alveolar epithelial cells SH" = "Bronchiolar/alveolar, Lung SH",
+                 "lung proximal Ciliated TS" = "Ciliated, Proximal Lung TS",
+                 "lung proximal Secretory TS" = "Secretory, Proximal Lung TS",
+            		 "muscle Lymphoid and Myeloid cells SH" = "Lymphoid and Myeloid cells, Muscle SH",
+            		 "muscle Schwann cells SH" = "Schwann cells, Muscle SH",
+            		 "muscle Type II Skeletal Myocyte BR" = "Skeletal Myocyte Muscle Type II BR",
+            		 "nerve_tibial Fibroblast (Peripheral Nerve) BR" = "Fibroblast Tibial Nerve BR",
+            		 "normal_colon Stem GL_Co" = "Stem, Colon GL_Co",
             		 "normal_colon TA2 GL_Co" = "TA2, Colon GL_Co",
-            	 	 "normal_colon Secretory TA GL_Co" = "Secretory TA,\nColon GL_Co",
-            		 "placenta PAEP_MECOM positive cells SH" = "PAEP_MECOM positive\ncells, Placenta SH",
-            		 "placenta Extravillous trophoblasts SH" = "Extravillous trophoblasts,\nPlacenta SH",
-            		 "polyp_colon Goblet GL_Co" = "Goblet,\nPolyp Colon GL_Co",
-            		 "polyp_colon Secretory TA GL_Co" = "Secretory TA,\nPolyp Colon GL_Co",
-                 "polyp_colon Stem GL_Co" = "Stem,\nPolyp Colon GL_Co",
-            		 "pancreas Islet endocrine cells SH" = "Islet neurodocrine\ncells, Pancreas SH",
-            		 "pancreas Pancreatic Alpha Cell BR" = "Alpha Cell\nPancreas BR")
+            	 	 "normal_colon Secretory TA GL_Co" = "Secretory TA, Colon GL_Co",
+            		 "placenta PAEP_MECOM positive cells SH" = "PAEP_MECOM positive cells, Placenta SH",
+            		 "placenta Extravillous trophoblasts SH" = "Extravillous trophoblasts, Placenta SH",
+            		 "polyp_colon Goblet GL_Co" = "Goblet, Polyp Colon GL_Co",
+            		 "polyp_colon Secretory TA GL_Co" = "Secretory TA, Polyp Colon GL_Co",
+                 "polyp_colon Stem GL_Co" = "Stem, Polyp Colon GL_Co",
+            		 "pancreas Islet endocrine cells SH" = "Islet neurodocrine cells, Pancreas SH",
+            		 "pancreas Pancreatic Alpha Cell BR" = "Alpha Cell Pancreas BR")
 
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
@@ -241,6 +241,15 @@ construct_bar_plots <- function(cancer_type,
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
                                           n_name=NULL, width=12, height=8) {
+# df = df_feat_imp 
+  if (!(savefile == "temp.pdf")) {
+    df = df %>%
+      ungroup() %>%
+      mutate("{y}" := unname(cell_types[df %>% pull(!!sym(y))]))
+  }
+  
+  df[y] = str_wrap(df[[y]], width=15)
+
   if (plot_fold) {
     outlier_shape = NA
   } else {
@@ -248,11 +257,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   }
   
   plots <- list()
-  if (!(savefile == "temp.pdf")) {
-    df = df %>% 
-          ungroup() %>%
-          mutate("{y}" := unname(cell_types[df %>% pull(!!sym(y))]))
-  }
+
   for (level in unique(df[[facet_var]])) {
     df_filtered <- df %>% 
                      filter(!!sym(facet_var) == level)
@@ -296,14 +301,16 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     } else {
     	subtitle = paste(level, "features")
     }
+    
+    # df_filtered["wrapped_y"] = str_wrap(df_filtered$y_reordered, width=15)
     p <- ggplot(df_filtered) +
-            geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 1.0, 
-                             outlier.shape = outlier_shape) +
+            geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 1, 
+                             outlier.shape = outlier_shape, outlier.size=3) +
             geom_text(aes(x = x_position + xlim_upper / 10,
                           y = y_reordered),
                           label = paste0("n=", df_filtered[[n_name]]),
-			  size=15) +
-            ggtitle(subtitle) +
+			  size=0.1) +
+            # ggtitle(subtitle) +
             scale_fill_manual(values = c("highlight" = "#EE4B2B",
                                          "other" = "#A9A9A9")) +
             theme_classic() +
@@ -311,11 +318,12 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 legend.position="none",
                 strip.background = element_blank(),
                 strip.text.x = element_blank(),
-                plot.title = element_text(hjust = 0.5, size=45),
-                axis.text.y = element_text(size = 50, colour = color),
-                axis.text.x = element_text(size = 50),
+                plot.title = element_text(hjust = 2, size=15),
+                axis.text.y = element_text(size = 25, colour = color),
+                axis.text.x = element_text(size = 25),
                 axis.title.x=element_blank(),
-                axis.title.y=element_blank()
+                axis.title.y=element_blank(),
+                axis.ticks = element_line(size=2)
               ) +
             xlim(xlim_lower - xlim_lower / 10, xlim_upper + 2 * xlim_upper / 10)
     plots[[as.character(level)]] <- p
@@ -325,14 +333,15 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     plot <- wrap_plots(plots, ncol=length(unique(df[[facet_var]])), 
                                 nrow=1)
     plot <- plot + 
-              plot_annotation(title = title) +
-              plot_layout(guides = 'collect') +
-              plot_annotation(caption = xlabel)
+              plot_layout(guides = 'collect')
+      # plot_annotation(caption = xlabel)
+      # plot_annotation(title = title) +
+      
   } else {
     plot <- plots[[1]] +
-              xlab(xlabel) +
               theme(axis.title.x=element_text(size=15),
                     axis.text.x = element_text(size=12))
+    # xlab(xlabel)
   }
 
   if (plot_fold) {
@@ -786,7 +795,7 @@ if (!robustness_analysis) {
                                                 ML_model=ML_model,
                                                 hundred_kb=hundred_kb,
                                                 accumulated_seeds=T)
-      savepath = paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", savepath, sep="/")
+      savepath = paste("../../figures", savepath, sep="/")
       # savepath = paste("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/figures", savepath, sep="/")
       
       dir.create(path=savepath, recursive = T)
@@ -869,7 +878,6 @@ if (!robustness_analysis) {
                med_imp = median(permutation_importance), 
                x_position = max(permutation_importance)) %>%
         filter(num_features %in% top_features_to_plot_feat_imp) 
-      #print(unique(df_feat_imp[["num_features"]]))
       # unique_combos = unique(df_feat_imp[, c("features", "n_feature", "med_imp")])
       # sorted_features = unique_combos %>% 
       #                         arrange(desc(n_feature), desc(med_imp)) %>%
