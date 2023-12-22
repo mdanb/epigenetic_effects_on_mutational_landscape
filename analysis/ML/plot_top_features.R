@@ -88,6 +88,7 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
                  "colon_transverse Plasma Cell BR" = "Plasma Cell, Transverse Colon BR",
                  "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial, Esophagus Mucosa BR",
             		 "esophagus_mucosa Plasma Cell BR" = "Plasma Cell, Esophagus Mucosa BR",
+                 "heart Schwann cells SH" = "Schwann cells, Heart SH",
                  "liver Lymphoid cells SH" = "Lymphoid Cells, Liver SH",
                  "liver Erythroblasts cells SH" = "Erythroblasts, Liver SH",
                 "lung Basal TS"="Basal, Lung TS",
@@ -106,6 +107,7 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
             		 "nerve_tibial Fibroblast (Peripheral Nerve) BR" = "Fibroblast Tibial Nerve BR",
             		 "normal_colon Stem GL_Co" = "Stem, Colon GL_Co",
             		 "normal_colon TA2 GL_Co" = "TA2, Colon GL_Co",
+                 "normal_colon TA1 GL_Co" = "TA1, Colon GL_Co",
             	 	 "normal_colon Secretory TA GL_Co" = "Secretory TA, Colon GL_Co",
             		 "placenta PAEP_MECOM positive cells SH" = "PAEP_MECOM positive cells, Placenta SH",
             		 "placenta Extravillous trophoblasts SH" = "Extravillous trophoblasts, Placenta SH",
@@ -115,7 +117,10 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
             		 "pancreas Islet endocrine cells SH" = "Islet neurodocrine cells, Pancreas SH",
             		 "pancreas Pancreatic Alpha Cell BR" = "Alpha Cell Pancreas BR",
                  "small_intestine T Lymphocyte (CD8+) BR" = "T Lymphocyte, Small Intestine BR",
-                 "thymus Antigen presenting cells SH" = "Antigen presenting cells, Thymus SH")
+                 "thymus Antigen presenting cells SH" = "Antigen presenting cells, Thymus SH",
+                 "skin_sun_exposed Melanocyte BR" = "Sun Exposed Melanocyte BR",
+                 "skin Melanocyte BR" = "Melanocyte BR",
+                 "stomach ENS glia SH" = "ENS glia, Stomach SH")
 
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
@@ -251,7 +256,7 @@ construct_bar_plots <- function(cancer_type,
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
                                           n_name=NULL, width=12, height=8) {
-  # df = df_feat_imp
+  df = df_feat_imp
   if (!(savefile == "temp.pdf")) {
     df = df %>%
       ungroup() %>%
@@ -317,7 +322,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     p <- ggplot(df_filtered) +
             geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 2, 
                              outlier.shape = outlier_shape, outlier.size=3) +
-            geom_text(aes(x = x_position + xlim_upper / 10,
+            geom_text(aes(x = x_position + xlim_upper / 7,
                           y = y_reordered),
                           label = paste0("n=", df_filtered[[n_name]]),
 			  size=10) +
