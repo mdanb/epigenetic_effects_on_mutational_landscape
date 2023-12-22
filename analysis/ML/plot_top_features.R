@@ -80,18 +80,23 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
                     "Thy-AdenoCA"="Thyroid adenocarcinoma")
 
 
- cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle, Artery Aorta BR",
+cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle, Artery Aorta BR",
                  "bonemarrow B GL_BlBm" = "B, bonemarrow GL_BlBm",
                  "bonemarrow T GL_BlBm" = "T, bonemarrow GL_BlBm",
+                 "cerebrum Astrocytes SH" = "Astrocytes, cerebrum SH",
+                 "cerebrum Astrocytes/Oligodendrocytes SH" = "Astrocytes/Oligo, Cerebrum SH",
                  "colon_transverse Macrophage (General) BR" = "Macrophage, Transverse Colon BR",
                  "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Transverse Colon BR",
                  "colon_transverse Plasma Cell BR" = "Plasma Cell, Transverse Colon BR",
                  "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial, Esophagus Mucosa BR",
             		 "esophagus_mucosa Plasma Cell BR" = "Plasma Cell, Esophagus Mucosa BR",
+                 "eye Ganglion cells SH" = "Ganglion cells, Eye SH",
+                 "frontal_cortex Oligodendrocyte Precursor BR" = "Oligodendrocyte Precursor, Frontal Cortex BR",
                  "heart Schwann cells SH" = "Schwann cells, Heart SH",
+                 "heart_atrial_appendage Cardiac Pericyte BR" = "Pericyte, Atrial Appendage BR",
                  "liver Lymphoid cells SH" = "Lymphoid Cells, Liver SH",
                  "liver Erythroblasts cells SH" = "Erythroblasts, Liver SH",
-                "lung Basal TS"="Basal, Lung TS",
+                 "lung Basal TS"="Basal, Lung TS",
             		 "lung Ciliated epithelial cells SH"="Ciliated, Lung SH",
             		 "lung Mesothelium TS" = "Mesothelium, Lung TS",
                  "lung AT2 TS" = "AT2, Lung TS",
@@ -105,6 +110,7 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
             		 "muscle Schwann cells SH" = "Schwann cells, Muscle SH",
             		 "muscle Type II Skeletal Myocyte BR" = "Skeletal Myocyte Muscle Type II BR",
             		 "nerve_tibial Fibroblast (Peripheral Nerve) BR" = "Fibroblast Tibial Nerve BR",
+                 "nerve_tibial Schwann Cell (General) BR" = "Schwann Cell, Tibial Nerve BR",
             		 "normal_colon Stem GL_Co" = "Stem, Colon GL_Co",
             		 "normal_colon TA2 GL_Co" = "TA2, Colon GL_Co",
                  "normal_colon TA1 GL_Co" = "TA1, Colon GL_Co",
@@ -384,7 +390,62 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
          height = height, plot, limitsize=F)
 }
 
-
+construct_top_feat_barplot <- function(df_test, savefile, savepath) {
+  df = df_test
+  if (!(savefile == "temp.pdf")) {
+    df = df %>%
+      mutate(top_feature = unname(cell_types[df %>% pull(top_feature)]))
+  }
+  
+  df["top_feature"] = str_wrap(df[["top_feature"]], width=15)
+  
+  df = df %>% 
+          filter(top_n == 1) %>%
+          select(top_feature, n_top_feature) %>%
+          unique() %>%
+          arrange(desc(n_top_feature))
+  # y = factor(top_feature,
+  #            levels=rev(c("mammary_tissue-Basal-Epithelial-(Mammary)-BR",
+  #                         "bonemarrow-B-GL_BlBm",
+  #                         "bonemarrow-Early.Baso-GL_BlBm",
+  #                         "stomach-Stromal-cells-SH",
+  #                         "thyroid-Thyroid-Follicular-Cell-BR"
+  #            ))
+  df = df %>% 
+        mutate(color=ifelse(n_top_feature == max(n_top_feature), 
+                            "highlight","other"))
+  color = rep("#000000", nrow(df) - 1)
+  color = append(color, "#EE4B2B")
+  num_appearances = df[["n_top_feature"]]
+  p <- ggplot(df) +
+    geom_col(aes(x = n_top_feature, y = factor(top_feature,
+                                               levels=rev(df[["top_feature"]])),
+                 fill=color), lwd=1.2) +
+    geom_text(aes(x = n_top_feature + 6,
+                  y = top_feature),
+              label = paste0("n=", num_appearances), size=6) +
+    scale_fill_manual(values = c("highlight" = "#EE4B2B", "other" = "#A9A9A9")) +
+    ylab("") +
+    xlab("") +
+    # xlab("top feature across 100 runs") +
+    theme_bw() +
+    xlim(0, max(df[["n_top_feature"]]) + 8) +
+    theme(
+      legend.position="none",
+      strip.background = element_blank(),
+      strip.text.x = element_blank(),
+      # plot.title = element_text(hjust = 0.5, size = 40),
+      axis.text.x = element_text(vjust = 0.5, hjust=1, size=15),
+      axis.text.y = element_text(size=15, colour = color),
+      panel.grid.major.y=element_blank(),
+      panel.grid.minor.x=element_blank(),
+      panel.grid.major.x = element_line(size = 1)
+      # plot.margin = margin(t=0,r=1,b=0,l=0, unit = "cm")
+    ) 
+  print(p)
+  ggsave(paste(savepath, savefile, sep="/"), 
+         width = 9, height = 7, limitsize = FALSE)
+}
 construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
   df[x] = 100 * df[x]
   df = df %>% 
@@ -436,6 +497,53 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
       plot.margin = margin(t=0,r=1,b=0,l=0, unit = "cm")
     ) 
   return(plot)
+}
+
+construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath) {
+  df["test_set_perf"] = 100 * df[["test_set_perf"]]
+  feature = unname(cell_types[feature])
+  # if (!(savefile == "temp.pdf")) {
+  #   df_test = df_test %>%
+  #               mutate(top_feature = unname(cell_types[df_test %>% 
+  #                                                        pull(top_feature)]))
+  # }
+
+  # feature = str_wrap(feature, width=15)
+  
+  outlier_shape = 19
+  n_top_feature = unique(df %>% select(top_n, n_top_feature)) %>%
+                         arrange(desc(top_n))
+  # a = n_top_feature[["n_top_feature"]]
+  df$top_n = factor(df$top_n)
+  df$top_n = factor(df$top_n, levels = rev(levels(df$top_n)))
+  df$x_position = 100 * df$x_position
+  # ggplot2 plot
+  ggplot(df) +
+    geom_boxplot(aes(x = top_n, y = test_set_perf), lwd = 2, 
+                 outlier.shape = outlier_shape, outlier.size = 3) +
+    scale_x_discrete(limits = levels(df$top_n)) +
+    geom_text(aes(x = top_n,
+                    y = x_position + x_position / 30),
+                label = paste0("n=", df[["n_top_feature"]]), 
+              size=7) +
+    ggtitle(feature) +
+    # theme_bw() +
+    theme(
+      # legend.position="none",
+      # strip.background = element_blank(),
+      strip.text.x = element_blank(),
+      plot.title = element_text(hjust = 0.5, size=25),
+      axis.text.y = element_text(size = 25),
+      axis.text.x = element_text(size = 25),
+      axis.title.x=element_blank(),
+      axis.title.y=element_blank(),
+      axis.ticks = element_line(size=2),
+      axis.line = element_line(linewidth=1)
+    )
+  
+    ggsave(paste(savepath, savefile, sep="/"), 
+         width = 9, 
+         height = 7)
 }
 
 construct_df_feature_importances_all_seeds <- function(all_seeds_dirs,
@@ -498,6 +606,31 @@ construct_df_feature_importances_all_seeds <- function(all_seeds_dirs,
 #                         accumulated_imp=T)
 # }
 
+get_top_feat_at_idx <- function(test_file_idx, idx, feature_importance_method,
+                                test_dir, fold, seed) {
+  top_feature_file = paste0("top_features_iteration_",
+                            test_file_idx[idx])
+  
+  if (feature_importance_method != "default_importance") {
+    top_feature_file = paste(top_feature_file,
+                             "by", 
+                             feature_importance_method, 
+                             sep = "_")
+  }
+  
+  top_feature_file = paste0(top_feature_file, ".txt")
+  top_feature_fp = paste(test_dir, top_feature_file, sep="/")
+  tryCatch(
+    { top_feature = readLines(top_feature_fp, n = 1)
+    }, 
+    error = function(e) {
+      print(paste("Problem with fold", fold, ", seed", seed))
+    }
+  )
+  top_feature = substring(top_feature, 4, nchar(top_feature))
+  return(top_feature)
+}
+
 construct_all_seeds_test_df <- function(top_features_to_plot,
                                         seed_range,
                                         skip_seeds_robustness,
@@ -543,12 +676,12 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
         } else {
           model_pattern = "^model_iteration_[0-9]+\\.pkl"
         }
-        total_num_features = list.files(test_dir,
-                                        pattern=model_pattern)
-        total_num_features = length(total_num_features)
+        # total_num_features = list.files(test_dir,
+        #                                 pattern=model_pattern)
+        # total_num_features = length(total_num_features)
 
         # #### TEMP ####
-        # total_num_features=1
+        total_num_features=20
         # ###############
         # sort so that later the first test_file_idx can be checked for 
         # total_num_features == test_file_idx
@@ -569,28 +702,56 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
         idx = 1
 
         for (file in test_set_perf_files) {
-          if (!(idx == length(test_set_perf_files) &&
-                test_file_idx[length(test_file_idx)] == total_num_features)) {
-            top_feature_file = paste0("top_features_iteration_",
-                                      test_file_idx[idx])
+          # if (!(idx == length(test_set_perf_files) &&
+          #       test_file_idx[length(test_file_idx)] == total_num_features)) {
+          if (test_file_idx[length(test_file_idx)] != total_num_features) {
             
-            if (feature_importance_method != "default_importance") {
-              top_feature_file = paste(top_feature_file,
-                                       "by", 
-                                       feature_importance_method, 
-                                       sep = "_")
-            }
-            
-            top_feature_file = paste0(top_feature_file, ".txt")
-            top_feature_fp = paste(test_dir, top_feature_file, sep="/")
-            tryCatch(
-              { top_feature = readLines(top_feature_fp, n = 1)
-              }, 
-              error = function(e) {
-                print(paste("Problem with top feature file fold", fold, ", seed", seed))
-              }
+#<<<<<<< HEAD
+#            top_feature_file = paste0(top_feature_file, ".txt")
+#            top_feature_fp = paste(test_dir, top_feature_file, sep="/")
+#            tryCatch(
+#              { top_feature = readLines(top_feature_fp, n = 1)
+#              }, 
+#              error = function(e) {
+#                print(paste("Problem with top feature file fold", fold, ", seed", seed))
+#              }
+#=======
+            # top_feature_file = paste0("top_features_iteration_",
+            #                           test_file_idx[idx])
+            # 
+            # if (feature_importance_method != "default_importance") {
+            #   top_feature_file = paste(top_feature_file,
+            #                            "by", 
+            #                            feature_importance_method, 
+            #                            sep = "_")
+            # }
+            # 
+            # top_feature_file = paste0(top_feature_file, ".txt")
+            # top_feature_fp = paste(test_dir, top_feature_file, sep="/")
+            # tryCatch(
+            #   { top_feature = readLines(top_feature_fp, n = 1)
+            #   }, 
+            #   error = function(e) {
+            #     print(paste("Problem with fold", fold, ", seed", seed))
+            #   }
+            # )
+            # top_feature = substring(top_feature, 4, nchar(top_feature))
+            top_feature = get_top_feat_at_idx(test_file_idx = test_file_idx,
+                                              idx=idx,
+                                              feature_importance_method = 
+                                                feature_importance_method,
+                                              test_dir = test_dir,
+                                              fold=fold, seed=seed
+                                              )
+          } else {
+            top_feature = get_top_feat_at_idx(test_file_idx = test_file_idx - 1,
+                                              idx=idx,
+                                              feature_importance_method = 
+                                                feature_importance_method,
+                                              test_dir = test_dir,
+                                              fold=fold, seed=seed
+#>>>>>>> 93c474fe5bfbd01a26036880fde9313f7a76ea66
             )
-            top_feature = substring(top_feature, 4, nchar(top_feature))
           }
           suppressWarnings({
 	    tryCatch(
@@ -932,7 +1093,29 @@ if (!robustness_analysis) {
                                     height=7)
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
-        mutate(n_top_feature = n(), x_position = max(test_set_perf))
+        mutate(n_top_feature = n(), x_position = max(test_set_perf)) %>%
+        ungroup()
+      
+      savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
+      construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath)
+      
+      top_appearing_feature = unique(df_test %>% 
+                                  filter(top_n == 1) %>%
+                                  filter(n_top_feature == max(n_top_feature)) %>%
+                                  pull(top_feature))
+      if (length(top_feature) > 1) {
+        print("MORE THAN ONE TOP FEATURE!")
+        exit()
+      }
+      
+      df_test = df_test %>% filter(top_feature == top_appearing_feature)
+      savefile = paste(cancer_type, "top_feature_test_set_perf_with", 
+                       paste(top_features_to_plot, collapse="_"), 
+                       "features.pdf", sep="_")
+      construct_test_set_perf_boxplots(df=df_test, 
+                                     feature=top_appearing_feature,
+                                       savefile=savefile, 
+                                       savepath=savepath)
       
       if (plot_fold_on_test_set_plot) {
         l = get_and_plot_scatac_and_mutation_counts_per_fold(cancer_type,
@@ -950,33 +1133,33 @@ if (!robustness_analysis) {
         df_test["mut_counts"] = mut_counts[df[["fold"]]]
       }
       
-      savefile = paste(cancer_type, "test_set_boxplots_with",
+      savefile = paste(cancer_type, "top_feature_barplot_with",
                         paste(top_features_to_plot, collapse="_"),
                         "features.pdf", sep="_")
-      construct_robustness_boxplots(df=df_test, 
-                                    x="test_set_perf", 
-                                    y="top_feature", 
-                                    title=cancer_type, 
-                                    savepath=savepath,
-                                    savefile=savefile, 
-                                    n_name="n_top_feature",
-                                    facet_var="top_n",
-                                    xlabel="Variance Explained, Test Set",
-                                    width=5.5 * length(top_features_to_plot), 
-                                    height=10)
+      # construct_robustness_boxplots(df=df_test, 
+      #                               x="test_set_perf", 
+      #                               y="top_feature", 
+      #                               title=cancer_type, 
+      #                               savepath=savepath,
+      #                               savefile=savefile, 
+      #                               n_name="n_top_feature",
+      #                               facet_var="top_n",
+      #                               xlabel="Variance Explained, Test Set",
+      #                               width=5.5 * length(top_features_to_plot), 
+      #                               height=10)
 
-      savefile = "temp.pdf"
-      construct_robustness_boxplots(df=df_test, 
-                                    x="test_set_perf", 
-                                    y="top_feature", 
-                                    title=cancer_type, 
-                                    savepath=savepath,
-                                    savefile=savefile, 
-                                    n_name="n_top_feature",
-                                    facet_var="top_n",
-                                    xlabel="Variance Explained, Test Set",
-                                    width=5.5 * length(top_features_to_plot), 
-                                    height=10)
+      # savefile = "temp.pdf"
+      # construct_robustness_boxplots(df=df_test, 
+      #                               x="test_set_perf", 
+      #                               y="top_feature", 
+      #                               title=cancer_type, 
+      #                               savepath=savepath,
+      #                               savefile=savefile, 
+      #                               n_name="n_top_feature",
+      #                               facet_var="top_n",
+      #                               xlabel="Variance Explained, Test Set",
+      #                               width=5.5 * length(top_features_to_plot), 
+      #                               height=10)
       
       df_val = df_feature_importances_all_seeds %>% 
         group_by(num_features, seed, fold_for_test_set) %>%
