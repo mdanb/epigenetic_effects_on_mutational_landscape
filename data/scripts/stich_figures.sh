@@ -4,10 +4,10 @@ root="../../figures/models/XGB/Skin-Melanoma/scATAC_source_Bingren_Greenleaf_col
 
 cancer_types=("Skin-Melanoma" "Liver-HCC" "ColoRect-AdenoCA" "multiple_myeloma" "Eso-AdenoCA" "CNS-GBM" "Lung-AdenoCA" "Lung-SCC")
 
-# for i in "${!cancer_types[@]}"; do
-#    cancer_types[$i]="${root}${cancer_types[$i]}"
-#done
+for i in "${!cancer_types[@]}"; do
+    cancer_types[$i]="${root}${cancer_types[$i]}_feature_importance_with_10_5_2_features_top_5_features.pdf
+done
 
-#for i in "${cancer_types[@]}"; do
-#    echo "$i"
-#done
+for i in "${cancer_types[@]}"; do
+    echo "$i"
+done
