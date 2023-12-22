@@ -256,7 +256,7 @@ construct_bar_plots <- function(cancer_type,
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
                                           n_name=NULL, width=12, height=8) {
-  df = df_feat_imp
+  #df = df_feat_imp
   if (!(savefile == "temp.pdf")) {
     df = df %>%
       ungroup() %>%
