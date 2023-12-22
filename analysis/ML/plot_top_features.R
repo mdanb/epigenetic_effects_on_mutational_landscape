@@ -252,7 +252,6 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
                                           n_name=NULL, width=12, height=8) {
   # df = df_feat_imp
-  print(unique(df %>% pull(!!sym(y))))
   if (!(savefile == "temp.pdf")) {
     df = df %>%
       ungroup() %>%
@@ -281,6 +280,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
       df_filtered = df_filtered %>% 
           filter(features %in% unique(sorted_features)[1:5])
     }
+    print(unique(df %>% pull(!!sym(y))))
     
     df_compressed = df_filtered %>%
                       group_by(!!sym(y)) %>%
