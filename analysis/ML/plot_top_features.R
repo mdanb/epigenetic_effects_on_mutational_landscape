@@ -81,9 +81,16 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
 
 
  cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle, Artery Aorta BR",
-                 "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Colon Transverse BR",
+                 "bonemarrow B GL_BlBm" = "B, bonemarrow GL_BlBm",
+                 "bonemarrow T GL_BlBm" = "T, bonemarrow GL_BlBm",
+                 "colon_transverse Macrophage (General) BR" = "Macrophage, Transverse Colon BR",
+                 "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Transverse Colon BR",
+                 "colon_transverse Plasma Cell BR" = "Plasma Cell, Transverse Colon BR",
                  "esophagus_mucosa Esophageal Epithelial Cell BR"="Epithelial, Esophagus Mucosa BR",
-            		 "lung Basal TS"="Basal, Lung TS",
+            		 "esophagus_mucosa Plasma Cell BR" = "Plasma Cell, Esophagus Mucosa BR",
+                 "liver Lymphoid cells SH" = "Lymphoid Cells, Liver SH",
+                 "liver Erythroblasts cells SH" = "Erythroblasts, Liver SH",
+                "lung Basal TS"="Basal, Lung TS",
             		 "lung Ciliated epithelial cells SH"="Ciliated, Lung SH",
             		 "lung Mesothelium TS" = "Mesothelium, Lung TS",
                  "lung AT2 TS" = "AT2, Lung TS",
@@ -92,6 +99,7 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
                  "lung Bronchiolar and alveolar epithelial cells SH" = "Bronchiolar/alveolar, Lung SH",
                  "lung proximal Ciliated TS" = "Ciliated, Proximal Lung TS",
                  "lung proximal Secretory TS" = "Secretory, Proximal Lung TS",
+                 "lung B.cells TS" = "B, Lung TS",
             		 "muscle Lymphoid and Myeloid cells SH" = "Lymphoid and Myeloid cells, Muscle SH",
             		 "muscle Schwann cells SH" = "Schwann cells, Muscle SH",
             		 "muscle Type II Skeletal Myocyte BR" = "Skeletal Myocyte Muscle Type II BR",
@@ -105,7 +113,9 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
             		 "polyp_colon Secretory TA GL_Co" = "Secretory TA, Polyp Colon GL_Co",
                  "polyp_colon Stem GL_Co" = "Stem, Polyp Colon GL_Co",
             		 "pancreas Islet endocrine cells SH" = "Islet neurodocrine cells, Pancreas SH",
-            		 "pancreas Pancreatic Alpha Cell BR" = "Alpha Cell Pancreas BR")
+            		 "pancreas Pancreatic Alpha Cell BR" = "Alpha Cell Pancreas BR",
+                 "small_intestine T Lymphocyte (CD8+) BR" = "T Lymphocyte, Small Intestine BR",
+                 "thymus Antigen presenting cells SH" = "Antigen presenting cells, Thymus SH")
 
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
@@ -241,7 +251,7 @@ construct_bar_plots <- function(cancer_type,
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
                                           n_name=NULL, width=12, height=8) {
-# df = df_feat_imp 
+  df = df_feat_imp
   if (!(savefile == "temp.pdf")) {
     df = df %>%
       ungroup() %>%
@@ -304,12 +314,12 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     
     # df_filtered["wrapped_y"] = str_wrap(df_filtered$y_reordered, width=15)
     p <- ggplot(df_filtered) +
-            geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 1, 
+            geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 2, 
                              outlier.shape = outlier_shape, outlier.size=3) +
             geom_text(aes(x = x_position + xlim_upper / 10,
                           y = y_reordered),
                           label = paste0("n=", df_filtered[[n_name]]),
-			  size=0.1) +
+			  size=10) +
             # ggtitle(subtitle) +
             scale_fill_manual(values = c("highlight" = "#EE4B2B",
                                          "other" = "#A9A9A9")) +
@@ -323,9 +333,10 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 axis.text.x = element_text(size = 25),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank(),
-                axis.ticks = element_line(size=2)
+                axis.ticks = element_line(size=2),
+                axis.line = element_line(linewidth=2)
               ) +
-            xlim(xlim_lower - xlim_lower / 10, xlim_upper + 2 * xlim_upper / 10)
+            xlim(xlim_lower - xlim_lower / 10, xlim_upper + 2 * xlim_upper / 6)
     plots[[as.character(level)]] <- p
   }
   
@@ -361,7 +372,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                    "#f032e6", "#a9a9a9",
                                    "#ffd8b1", "#aaffc3"))
   }
-  print(plot)
+  # print(plot)
   ggsave(paste(savepath, savefile, sep="/"), 
          width = width * length(unique(df[[facet_var]])), 
          height = height, plot, limitsize=F)
