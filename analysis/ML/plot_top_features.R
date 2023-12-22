@@ -51,17 +51,17 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_analysis"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_cell_types"), type="character")
 
-args = parse_args(parser, args= c("--cancer_types=Lung-SCC",
-                                 "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
-                                 "--cell_number_filter=100",
-                                 "--annotation=finalized_annotation",
-                                 "--seed_range=1-10",
-                                 "--top_features_to_plot_feat_imp=10,5,2",
-                                 "--top_features_to_plot=10,5,1",
-                                 "--feature_importance_method=permutation_importance",
-                                 "--folds_for_test_set=1-10",
-                                 "--tissues_to_consider=all",
-                                 "--robustness_analysis"))
+# args = parse_args(parser, args= c("--cancer_types=Lung-SCC",
+#                                  "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+#                                  "--cell_number_filter=100",
+#                                  "--annotation=finalized_annotation",
+#                                  "--seed_range=1-10",
+#                                  "--top_features_to_plot_feat_imp=10,5,2",
+#                                  "--top_features_to_plot=10,5,1",
+#                                  "--feature_importance_method=permutation_importance",
+#                                  "--folds_for_test_set=1-10",
+#                                  "--tissues_to_consider=all",
+#                                  "--robustness_analysis"))
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -251,7 +251,7 @@ construct_bar_plots <- function(cancer_type,
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
                                           n_name=NULL, width=12, height=8) {
-  # df = df_feat_imp
+  df = df_feat_imp
   if (!(savefile == "temp.pdf")) {
     df = df %>%
       ungroup() %>%
@@ -280,8 +280,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
       df_filtered = df_filtered %>% 
           filter(features %in% unique(sorted_features)[1:5])
     }
-    print(unique(df %>% pull(!!sym(y))))
-    
+    # print(unique(df %>% pull(!!sym(y))))
+    # 
     df_compressed = df_filtered %>%
                       group_by(!!sym(y)) %>%
                       summarise(med_x = median(!!sym(x)))
