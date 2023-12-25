@@ -88,6 +88,8 @@ cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle, Arter
                  "bonemarrow GMP.Neut GL_BlBm" = "GMP.Neut, bonemarrow GL_BlBm",
                  "bonemarrow CLP GL_BlBm" = "CLP, bonemarrow GL_BlBm",
                  "bonemarrow CMP.LMPP GL_BlBm" = "CMP.LMPP, bonemarrow GL_BlBm",
+                 "bonemarrow cDC GL_BlBm" = "cDC, bonemarrow GL_BlBm",
+                 "bonemarrow pDC GL_BlBm" = "pDC, bonemarrow GL_BlBm",
                  "cerebrum Astrocytes SH" = "Astrocytes, cerebrum SH",
                  "cerebrum Astrocytes/Oligodendrocytes SH" = "Astrocytes/Oligo, Cerebrum SH",
                  "colon_transverse Macrophage (General) BR" = "Macrophage, Transverse Colon BR",
