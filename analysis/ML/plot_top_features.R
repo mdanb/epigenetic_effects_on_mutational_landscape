@@ -51,17 +51,17 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_analysis"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_cell_types"), type="character")
 
-args = parse_args(parser, args= c("--cancer_types=Myeloid-AML",
-                                 "--datasets=Greenleaf_pbmc_bm",
-                                 "--cell_number_filter=100",
-                                 "--annotation=finalized_annotation",
-                                 "--seed_range=1-10",
-                                 "--top_features_to_plot_feat_imp=5",
-                                 "--top_features_to_plot=1",
-                                 "--feature_importance_method=permutation_importance",
-                                 "--folds_for_test_set=1-10",
-                                 "--tissues_to_consider=all",
-                                 "--robustness_analysis"))
+# args = parse_args(parser, args= c("--cancer_types=Myeloid-AML",
+#                                  "--datasets=Greenleaf_pbmc_bm",
+#                                  "--cell_number_filter=100",
+#                                  "--annotation=finalized_annotation",
+#                                  "--seed_range=1-10",
+#                                  "--top_features_to_plot_feat_imp=5",
+#                                  "--top_features_to_plot=1",
+#                                  "--feature_importance_method=permutation_importance",
+#                                  "--folds_for_test_set=1-10",
+#                                  "--tissues_to_consider=all",
+#                                  "--robustness_analysis"))
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -84,12 +84,14 @@ cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle, Arter
                  "bonemarrow B GL_BlBm" = "B, bonemarrow GL_BlBm",
                  "bonemarrow T GL_BlBm" = "T, bonemarrow GL_BlBm",
                  "bonemarrow Early.Baso GL_BlBm" = "Early.Baso, bonemarrow GL_BlBm",
+                 "bonemarrow Early.Eryth GL_BlBm" = "Early.Eryth, bonemarrow GL_BlBm",
                  "bonemarrow GMP GL_BlBm" = "GMP, bonemarrow GL_BlBm",
                  "bonemarrow GMP.Neut GL_BlBm" = "GMP.Neut, bonemarrow GL_BlBm",
                  "bonemarrow CLP GL_BlBm" = "CLP, bonemarrow GL_BlBm",
                  "bonemarrow CMP.LMPP GL_BlBm" = "CMP.LMPP, bonemarrow GL_BlBm",
                  "bonemarrow cDC GL_BlBm" = "cDC, bonemarrow GL_BlBm",
                  "bonemarrow pDC GL_BlBm" = "pDC, bonemarrow GL_BlBm",
+                 "bonemarrow HSC GL_BlBm" = "HSC, bonemarrow GL_BlBm",
                  "cerebrum Astrocytes SH" = "Astrocytes, cerebrum SH",
                  "cerebrum Astrocytes/Oligodendrocytes SH" = "Astrocytes/Oligo, Cerebrum SH",
                  "colon_transverse Macrophage (General) BR" = "Macrophage, Transverse Colon BR",
