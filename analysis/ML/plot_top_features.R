@@ -676,12 +676,12 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
         } else {
           model_pattern = "^model_iteration_[0-9]+\\.pkl"
         }
-        # total_num_features = list.files(test_dir,
-        #                                 pattern=model_pattern)
-        # total_num_features = length(total_num_features)
+        total_num_features = list.files(test_dir,
+                                        pattern=model_pattern)
+        total_num_features = length(total_num_features)
 
         # #### TEMP ####
-        total_num_features=20
+        # total_num_features=20
         # ###############
         # sort so that later the first test_file_idx can be checked for 
         # total_num_features == test_file_idx
@@ -739,7 +739,7 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
             top_feature = get_top_feat_at_idx(test_file_idx = test_file_idx,
                                               idx=idx,
                                               feature_importance_method = 
-                                                feature_importance_method,
+                                              feature_importance_method,
                                               test_dir = test_dir,
                                               fold=fold, seed=seed
                                               )
