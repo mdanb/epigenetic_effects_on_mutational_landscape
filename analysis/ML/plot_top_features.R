@@ -124,6 +124,7 @@ cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle, Arter
             		 "normal_colon TA2 GL_Co" = "TA2, Colon GL_Co",
                  "normal_colon TA1 GL_Co" = "TA1, Colon GL_Co",
             	 	 "normal_colon Secretory TA GL_Co" = "Secretory TA, Colon GL_Co",
+                 "normal_colon Enteroendocrine GL_Co" = "Enteroendocrine, Colon GL_Co",
             		 "placenta PAEP_MECOM positive cells SH" = "PAEP_MECOM positive cells, Placenta SH",
             		 "placenta Extravillous trophoblasts SH" = "Extravillous trophoblasts, Placenta SH",
             		 "polyp_colon Goblet GL_Co" = "Goblet, Polyp Colon GL_Co",
