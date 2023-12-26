@@ -59,7 +59,7 @@ construct_dir <- function(scATAC_source,
   }
   
   if (tissues_to_consider != "all") {
-    dir = paste(dir, "tissues_to_consider", tissues_to_consider, sep="_")
+    dir = paste("tissues_to_consider", tissues_to_consider, dir, sep="_")
   }
   
   if (!grid_analysis) {
