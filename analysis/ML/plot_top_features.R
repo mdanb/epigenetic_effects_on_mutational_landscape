@@ -694,7 +694,7 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
         total_num_features = length(total_num_features)
 
         # #### TEMP ####
-        total_num_features=20
+        # total_num_features=20
         # ###############
         # sort so that later the first test_file_idx can be checked for 
         # total_num_features == test_file_idx
