@@ -1071,8 +1071,8 @@ if (!robustness_analysis) {
                                     n_name="n_feature", 
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
-                                    width=9,
-                                    height=7)
+                                    width=14,
+                                    height=9)
       construct_robustness_boxplots(df=df_feat_imp, 
                                     x="permutation_importance", 
                                     y="features", 
