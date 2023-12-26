@@ -10,11 +10,11 @@ library(gridExtra)
 library(patchwork)
 library(hash)
 
-# source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
-# source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
+source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
+source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
 
-source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/utils.R")
-source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/ML_utils.R")
+# source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/utils.R")
+# source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/ML_utils.R")
 
 parser <- OptionParser()
 parser <- add_option(parser, c("--datasets"), type="character",
