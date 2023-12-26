@@ -1082,8 +1082,8 @@ if (!robustness_analysis) {
                                     n_name="n_feature", 
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
-                                    width=12,
-                                    height=7)
+                                    width=14,
+                                    height=9)
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
         mutate(n_top_feature = n(), x_position = max(test_set_perf)) %>%
