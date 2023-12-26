@@ -117,7 +117,7 @@ cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle, Arter
                  "lung Bronchiolar and alveolar epithelial cells SH" = "Bronchiolar/alveolar, Lung SH",
                  "lung proximal Ciliated TS" = "Ciliated, Proximal Lung TS",
                  "lung proximal Secretory TS" = "Secretory, Proximal Lung TS",
-                 "lung Club Cell BR = Club, Lung BR",
+                 "lung Club Cell BR" = "Club, Lung BR",
                  "lung B.cells TS" = "B, Lung TS",
             		 "muscle Lymphoid and Myeloid cells SH" = "Lymphoid and Myeloid cells, Muscle SH",
             		 "muscle Schwann cells SH" = "Schwann cells, Muscle SH",
