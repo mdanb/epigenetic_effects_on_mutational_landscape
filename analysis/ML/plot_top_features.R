@@ -401,7 +401,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
 
 construct_top_feat_barplot <- function(df_test, savefile, savepath) {
   df = df_test
-  if (!(savefile == "temp.pdf")) {
+  if (!(savefile == "temp_test.pdf")) {
     df = df %>%
       mutate(top_feature = unname(cell_types[df %>% pull(top_feature)]))
   }
@@ -1086,7 +1086,7 @@ if (!robustness_analysis) {
       
       savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
       construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath)
-      construct_top_feat_barplot(df_test, savefile="temp.pdf", savepath=savepath)
+      construct_top_feat_barplot(df_test, savefile="temp_test.pdf", savepath=savepath)
       
       top_appearing_feature = unique(df_test %>% 
                                   filter(top_n == 1) %>%
