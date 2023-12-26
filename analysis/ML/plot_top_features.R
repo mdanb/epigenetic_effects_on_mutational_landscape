@@ -340,8 +340,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     
     # df_filtered["wrapped_y"] = str_wrap(df_filtered$y_reordered, width=15)
     p <- ggplot(df_filtered) +
-            geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 2, 
-                             outlier.shape = outlier_shape, outlier.size=3) +
+            geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 1, 
+                             outlier.shape = outlier_shape, outlier.size=2) +
             geom_text(aes(x = x_position + xlim_upper / 7,
                           y = y_reordered),
                           label = paste0("n=", df_filtered[[n_name]]),
@@ -359,8 +359,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 axis.text.x = element_text(size = 25),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank(),
-                axis.ticks = element_line(size=2),
-                axis.line = element_line(linewidth=2)
+                axis.ticks = element_line(size=0.5),
+                axis.line = element_line(linewidth=0.5)
               ) +
             xlim(xlim_lower - xlim_lower / 10, xlim_upper + 2 * xlim_upper / 10)
     plots[[as.character(level)]] <- p
@@ -375,9 +375,9 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
       # plot_annotation(title = title) +
       
   } else {
-    plot <- plots[[1]] +
-              theme(axis.title.x=element_text(size=15),
-                    axis.text.x = element_text(size=12))
+    plot <- plots[[1]] #+
+              #theme(axis.title.x=element_text(size=15),
+                    #axis.text.x = element_text(size=12))
     # xlab(xlabel)
   }
 
@@ -1082,7 +1082,7 @@ if (!robustness_analysis) {
                                     n_name="n_feature", 
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
-                                    width=9,
+                                    width=12,
                                     height=7)
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
