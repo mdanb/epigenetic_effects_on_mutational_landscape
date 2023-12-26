@@ -10,11 +10,11 @@ library(gridExtra)
 library(patchwork)
 library(hash)
 
-source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
-source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
+# source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
+# source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
 
-# source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/utils.R")
-# source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/ML_utils.R")
+source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/utils.R")
+source("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/analysis/ML/ML_utils.R")
 
 parser <- OptionParser()
 parser <- add_option(parser, c("--datasets"), type="character",
@@ -51,13 +51,13 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_analysis"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_cell_types"), type="character")
 
-# args = parse_args(parser, args= c("--cancer_types=Myeloid-AML",
-#                                  "--datasets=Greenleaf_pbmc_bm",
+# args = parse_args(parser, args= c("--cancer_types=Lung-SCC",
+#                                  "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
 #                                  "--cell_number_filter=100",
 #                                  "--annotation=finalized_annotation",
 #                                  "--seed_range=1-10",
 #                                  "--top_features_to_plot_feat_imp=5",
-#                                  "--top_features_to_plot=1",
+#                                  "--top_features_to_plot=1,2,5,10",
 #                                  "--feature_importance_method=permutation_importance",
 #                                  "--folds_for_test_set=1-10",
 #                                  "--tissues_to_consider=all",
@@ -434,9 +434,9 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath) {
     geom_col(aes(x = n_top_feature, y = factor(top_feature,
                                                levels=rev(df[["top_feature"]])),
                  fill=color), lwd=1.2) +
-    geom_text(aes(x = n_top_feature + 6,
+    geom_text(aes(x = n_top_feature + 7,
                   y = top_feature),
-              label = paste0("n=", num_appearances), size=6) +
+              label = paste0("n=", num_appearances), size=10) +
     scale_fill_manual(values = c("highlight" = "#EE4B2B", "other" = "#A9A9A9")) +
     ylab("") +
     xlab("") +
@@ -448,8 +448,8 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath) {
       strip.background = element_blank(),
       strip.text.x = element_blank(),
       # plot.title = element_text(hjust = 0.5, size = 40),
-      axis.text.x = element_text(vjust = 0.5, hjust=1, size=15),
-      axis.text.y = element_text(size=15, colour = color),
+      axis.text.x = element_text(vjust = 0.5, hjust=1, size=25),
+      axis.text.y = element_text(size=25, colour = color),
       panel.grid.major.y=element_blank(),
       panel.grid.minor.x=element_blank(),
       panel.grid.major.x = element_line(size = 1)
@@ -457,7 +457,7 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath) {
     ) 
   print(p)
   ggsave(paste(savepath, savefile, sep="/"), 
-         width = 9, height = 7, limitsize = FALSE)
+         width = 12, height = 7, limitsize = FALSE)
 }
 construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
   df[x] = 100 * df[x]
@@ -694,7 +694,7 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
         total_num_features = length(total_num_features)
 
         # #### TEMP ####
-        # total_num_features=20
+        total_num_features=20
         # ###############
         # sort so that later the first test_file_idx can be checked for 
         # total_num_features == test_file_idx
