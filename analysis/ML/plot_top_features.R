@@ -359,7 +359,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 axis.text.x = element_text(size = 25),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank(),
-                axis.ticks = element_line(size=0.5),
+                axis.ticks = element_line(size=2),
                 axis.line = element_line(linewidth=0.5)
               ) +
             xlim(xlim_lower - xlim_lower / 10, xlim_upper + 2 * xlim_upper / 10)
