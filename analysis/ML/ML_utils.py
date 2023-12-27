@@ -264,7 +264,10 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
         metadata = metadata[None]
 
         if tissues_to_consider[0] != "all":
-            keep = metadata["tissue_name"].isin(tissues_to_consider)
+            try:
+                keep = metadata["tissue_name"].isin(tissues_to_consider)
+            except KeyError:
+                keep = metadata["tissue"].isin(tissues_to_consider)
             metadata = metadata.loc[keep, :]
         return metadata
     datasets_combined_count_overlaps = []
