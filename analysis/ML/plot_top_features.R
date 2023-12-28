@@ -51,17 +51,17 @@ parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_analysis"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_cell_types"), type="character")
 
-# args = parse_args(parser, args= c("--cancer_types=Lung-SCC",
-#                                  "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
-#                                  "--cell_number_filter=100",
-#                                  "--annotation=finalized_annotation",
-#                                  "--seed_range=1-10",
-#                                  "--top_features_to_plot_feat_imp=5",
-#                                  "--top_features_to_plot=1,2,5,10",
-#                                  "--feature_importance_method=permutation_importance",
-#                                  "--folds_for_test_set=1-10",
-#                                  "--tissues_to_consider=all",
-#                                  "--robustness_analysis"))
+# args = parse_args(parser, args= c("--cancer_types=CNS-GBM",
+#                                   "--datasets=Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--seed_range=1-10",
+#                                   "--top_features_to_plot_feat_imp=5",
+#                                   "--top_features_to_plot=1,2,5,10",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=adult_brain,brain,frontal_cortex,cerebrum,cerebellum",
+#                                   "--robustness_analysis"))
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -1054,8 +1054,8 @@ if (!robustness_analysis) {
         group_by(num_features, features) %>%
         mutate(n_feature = n(), 
                med_imp = median(permutation_importance), 
-               x_position = max(permutation_importance)) #%>%
-        filter(num_features %in% top_features_to_plot_feat_imp) 
+               x_position = max(permutation_importance)) %>%
+        filter(num_features %in% top_features_to_plot_feat_imp)
       # unique_combos = unique(df_feat_imp[, c("features", "n_feature", "med_imp")])
       # sorted_features = unique_combos %>% 
       #                         arrange(desc(n_feature), desc(med_imp)) %>%
@@ -1092,11 +1092,11 @@ if (!robustness_analysis) {
                                     height=9)
       df_feat_imp = df_feature_importances_all_seeds %>% 
         # group_by(num_features, seed, fold_for_test_set) %>%
-        group_by(num_features, features) %>%
-        mutate(n_feature = n(), 
-               med_imp = median(permutation_importance), 
-               x_position = max(permutation_importance)) %>%
-        filter(num_features %in% c(1,2,5,10)) 
+                    group_by(num_features, features) %>%
+                    mutate(n_feature = n(), 
+                           med_imp = median(permutation_importance), 
+                           x_position = max(permutation_importance)) %>%
+                    filter(num_features %in% c(1,2,5,10)) 
       savefile = paste0(cancer_type, "_feature_importance_with_",
                         paste(c(1,2,5,10), collapse="_"),
                         "_features_", "top_5_features.pdf")
