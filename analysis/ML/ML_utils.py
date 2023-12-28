@@ -295,13 +295,14 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
                                             tissues_to_consider)
             df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
             # datasets_combined_count_overlaps.append(scATAC_df)
-        for cell_type_dataset in cell_types_keep:
-            cell_type_dataset = cell_type_dataset.split("_")
-            cell_type = cell_type_dataset[0]
-            ds = cell_type_dataset[1]
-            if ds == dataset:
-                df_add = scATAC_df.loc[:, cell_type]
-                df = pd.concat((df, df_add))
+        if cell_types_keep:
+            for cell_type_dataset in cell_types_keep:
+                cell_type_dataset = cell_type_dataset.split("_")
+                cell_type = cell_type_dataset[0]
+                ds = cell_type_dataset[1]
+                if ds == dataset:
+                    df_add = scATAC_df.loc[:, cell_type]
+                    df = pd.concat((df, df_add))
         print("Num features", df.shape[1])
         print("Loaded!")
         datasets_combined_count_overlaps.append(df)
