@@ -569,8 +569,7 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath) {
 }
 
 construct_df_feature_importances_all_seeds <- function(all_seeds_dirs,
-                                                       feature_importance_method,
-                                                       top_features_to_plot) {
+                                                       feature_importance_method) {
   df_feature_importances_all_seeds = tibble()
   for (dir in all_seeds_dirs) {
     tryCatch(
@@ -587,8 +586,8 @@ construct_df_feature_importances_all_seeds <- function(all_seeds_dirs,
                                            "csv",
                                            sep=".")
         df_feature_importances = as_tibble(read.csv(df_feature_importance_path))
-        df_feature_importances = df_feature_importances %>%
-          filter(num_features %in% top_features_to_plot)
+        # df_feature_importances = df_feature_importances %>%
+        #   filter(num_features %in% top_features_to_plot)
         seed = str_extract(dir, pattern="seed_[0-9]*")
         seed = unlist(strsplit(seed, split="_"))
         seed = seed[length(seed)]
@@ -1032,8 +1031,7 @@ if (!robustness_analysis) {
     } else {
       df_feature_importances_all_seeds = 
         construct_df_feature_importances_all_seeds(all_seeds_dirs,
-                                                   feature_importance_method,
-                                                   top_features_to_plot_feat_imp)
+                                                   feature_importance_method)
       df = construct_all_seeds_test_df(top_features_to_plot=top_features_to_plot,
                                        seed_range=seed_range,
                                        skip_seeds_robustness=skip_seeds_robustness,
@@ -1056,7 +1054,7 @@ if (!robustness_analysis) {
         group_by(num_features, features) %>%
         mutate(n_feature = n(), 
                med_imp = median(permutation_importance), 
-               x_position = max(permutation_importance)) %>%
+               x_position = max(permutation_importance)) #%>%
         filter(num_features %in% top_features_to_plot_feat_imp) 
       # unique_combos = unique(df_feat_imp[, c("features", "n_feature", "med_imp")])
       # sorted_features = unique_combos %>% 
