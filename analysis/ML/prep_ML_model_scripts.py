@@ -31,6 +31,7 @@ parser.add_argument("--create_bash_scripts", action="store_true", default=False)
 parser.add_argument("--cleanup", action="store_true", default=False)
 parser.add_argument('--feat_imp_min_n_robustness', type=int)
 parser.add_argument('--grid_cell_types', type=str, default=None)
+parser.add_argument('--cell_types_keep', nargs="+", type=str, default=None)
 
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
@@ -93,6 +94,7 @@ feat_imp_min_n_robustness = config.feat_imp_min_n_robustness
 grid_analysis = config.grid_analysis
 grid_cell_types = config.grid_cell_types
 msi_high = config.msi_high
+cell_types_keep = config.cell_types_keep
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
@@ -118,6 +120,9 @@ for fold in fold_for_test_set_range:
                                  "--n_optuna_trials_backward_selection", n_optuna_trials_backward_selection,
                                  "--feature_importance_method", feature_importance_method,
                                  "--fold_for_test_set", str(fold)])
+
+        if cell_types_keep:
+            command_args = command_args + " " + "--cell_types_keep" + " ".join(cell_types_keep)
 
         if meso:
             script_filename = script_filename + "_" + "meso"
@@ -239,6 +244,9 @@ if grid_analysis:
     command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + grid_cell_types
 else:
     command_args = command_args + " " + "--tissues_to_consider" + " " + ",".join(tissues_to_consider)
+
+if cell_types_keep:
+    command_args = "--cell_types_keep" + ",".join(cell_types_keep)
 
 Rscript_command = "Rscript /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/plot_top_features.R " + \
                   command_args

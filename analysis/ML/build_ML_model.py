@@ -1,5 +1,4 @@
 #### Imports ####
-import os
 
 from ML_utils import *
 from config import create_parser
@@ -26,13 +25,15 @@ def run_unclustered_data_analysis_helper(scATAC_df,
                                          test_set_perf_num_features,
                                          tissues_to_consider,
                                          grid_analysis,
-                                         grid_cell_type):
+                                         grid_cell_type,
+                                         cell_types_keep):
 
     tissues_string = "_".join(tissues_to_consider)
 
     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter, annotation_dir,
                                       hundred_kb, expanded_hundred_kb, tissues_string, seed=seed,
-                                      fold_for_test_set=fold_for_test_set, grid_analysis=grid_analysis)
+                                      fold_for_test_set=fold_for_test_set, grid_analysis=grid_analysis,
+                                      cell_types_keep="_".join(cell_types_keep))
 
     print(grid_cell_type)
     if grid_analysis:
@@ -125,12 +126,13 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   n_optuna_trials_prebackward_selection,
                                   n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
                                   make_plots, feature_importance_method, sqlite, test_set_perf_num_features,
-                                  debug_bfs, fold_for_test_set, tissues_to_consider, grid_analysis, grid_cell_types):
+                                  debug_bfs, fold_for_test_set, tissues_to_consider, grid_analysis, grid_cell_types,
+                                  cell_types_keep):
     ### args used at the end for plot_top_features.R ###
     scATAC_sources = construct_scATAC_sources(datasets)
     scATAC_df = construct_scATAC_df(tss_fragment_filter, datasets, scATAC_cell_number_filter, annotation_dir,
                                     hundred_kb, expanded_hundred_kb, tissues_to_consider,
-                                    grid_analysis, grid_cell_types)
+                                    grid_analysis, grid_cell_types, cell_types_keep)
     if not grid_analysis:
         grouped_cell_types = [scATAC_df.columns]
     else:
@@ -288,7 +290,7 @@ hierarchically_subtyped_mutations = config.hierarchically_subtyped_mutations
 grid_analysis = config.grid_analysis
 mm = config.mm
 msi_high = config.msi_high
-
+cell_types_keep = config.cell_types_keep
 grid_cell_types = None
 if grid_analysis:
     grid_cell_types = config.grid_cell_types.split(",")
@@ -301,7 +303,7 @@ run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter,
                                seed_range, n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method,
                                sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set, tissues_to_consider,
-                               grid_analysis, grid_cell_types)
+                               grid_analysis, grid_cell_types, cell_types_keep)
 
 
 
