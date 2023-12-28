@@ -1092,6 +1092,29 @@ if (!robustness_analysis) {
                                     xlabel="Feature Importance",
                                     width=14,
                                     height=9)
+      df_feat_imp = df_feature_importances_all_seeds %>% 
+        # group_by(num_features, seed, fold_for_test_set) %>%
+        group_by(num_features, features) %>%
+        mutate(n_feature = n(), 
+               med_imp = median(permutation_importance), 
+               x_position = max(permutation_importance)) %>%
+        filter(num_features %in% c(1,2,5,10)) 
+      savefile = paste0(cancer_type, "_feature_importance_with_",
+                        paste(c(1,2,5,10), collapse="_"),
+                        "_features_", "top_5_features.pdf")
+      
+      construct_robustness_boxplots(df=df_feat_imp, 
+                                    x="permutation_importance", 
+                                    y="features", 
+                                    title=cancer_names[[cancer_type]], 
+                                    savepath=savepath,
+                                    savefile="temp.pdf", 
+                                    n_name="n_feature", 
+                                    facet_var="num_features",
+                                    xlabel="Feature Importance",
+                                    width=14,
+                                    height=9)
+      
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
         mutate(n_top_feature = n(), x_position = max(test_set_perf)) %>%
