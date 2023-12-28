@@ -296,17 +296,18 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
             # datasets_combined_count_overlaps.append(scATAC_df)
         if cell_types_keep:
+            ds = ""
             for cell_type_dataset in cell_types_keep:
                 cell_type_dataset = cell_type_dataset.split("-")
                 cell_type = cell_type_dataset[0]
                 ds = cell_type_dataset[1]
-                print("Keeping:")
-                print(cell_type)
-                print("From:")
-                print(ds)
                 if ds == dataset:
+                    print("Keeping:")
+                    print(cell_type)
+                    print("From:")
+                    print(ds)
                     df_add = scATAC_df.loc[:, cell_type]
-                    df = pd.concat((df, df_add))
+                    df = pd.concat((df, df_add), axis=1)
         print("Num features", df.shape[1])
         print("Loaded!")
         datasets_combined_count_overlaps.append(df)
