@@ -300,6 +300,10 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
                 cell_type_dataset = cell_type_dataset.split("_")
                 cell_type = cell_type_dataset[0]
                 ds = cell_type_dataset[1]
+                print("Keeping:")
+                print(cell_type)
+                print("From:")
+                print(ds)
                 if ds == dataset:
                     df_add = scATAC_df.loc[:, cell_type]
                     df = pd.concat((df, df_add))
