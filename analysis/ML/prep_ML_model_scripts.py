@@ -122,7 +122,8 @@ for fold in fold_for_test_set_range:
                                  "--fold_for_test_set", str(fold)])
 
         if cell_types_keep:
-            command_args = command_args + " " + "--cell_types_keep" + " " + " ".join(cell_types_keep)
+            ctk = " ".join(cell_types_keep)
+            command_args = command_args + " " + "--cell_types_keep" + " " + f"'{ctk}'"
 
         if meso:
             script_filename = script_filename + "_" + "meso"
