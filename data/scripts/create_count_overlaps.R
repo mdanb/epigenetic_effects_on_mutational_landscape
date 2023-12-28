@@ -19,11 +19,11 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Bingren_adult_brain",
-#                    "--cores=1",
-#                    "--annotation=default_annotation",
-#                    "--which_interval_ranges=polak"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                 c("--dataset=Rawlins_fetal_lung",
+                   "--cores=1",
+                   "--annotation=default_annotation",
+                   "--which_interval_ranges=polak"))
 cores = args$cores
 dataset = args$dataset
 dataset_subsets = args$dataset_subsets
@@ -84,53 +84,53 @@ create_count_overlaps_files <- function(file, metadata, interval_ranges,
   dirpath = paste("../processed_data/count_overlap_data", annotation, sep="/")
   filepath = paste(dirpath, filename, sep="/")
   dir.create(dirpath)
-    if (!file.exists(filepath)) {
-      print(paste("Processing", file, sep= " "))
-      sample = import_sample(file, dataset, which_interval_ranges)
-      sample_name = get_sample_name(file, dataset)
-      filtered_metadata = filter_metadata_by_sample_name(sample_name, metadata)
-      if (nrow(filtered_metadata) == 0) {
-        print(paste(file, "has no high quality fragments", sep=" "))
-        return()
-      }
-      
-      sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(filtered_metadata,
-                                                                    dataset)
-      
-      if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || 
-          dataset == "Greenleaf_pbmc_bm" || dataset == "Yang_kidney" ||
-          dataset == "Rawlins_fetal_lung") {
-        sample$name = substr(sample$name, 1, 16)
-      } else if (dataset == "Bingren_adult_brain") {
-        sample$name = unlist(lapply(strsplit(sample$name, ":"), "[", 1))
-      }
-      # if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || dataset == "Bingren") {
-      #   sample = migrate_bed_file_to_hg37(sample, chain)
-      # }
-
-      # Because the function applied is used in another place over multiple 
-      # samples, not just one, as is done here.
-      sample <- unlist(lapply(c(1), 
-                              filter_samples_to_contain_only_cells_in_metadata,
-                              list(sample),
-                              list(sample_barcodes_in_metadata)))
-      
-      sample <- get_sample_cell_types(sample[[1]], sample_barcodes_in_metadata,
-                                      filtered_metadata)
-      if (!overlaps_per_cell) {
-        save_num_cells_per_sample(sample, gsub(".rds", "", filename), annotation)
-      }
-      # sample <- filter_sample_by_cell_number(sample,
-      #                                        counts_per_cell_type, 
-      #                                        cell_number_filter)
-      # if (dataset == "Yang_kidney") {
-      #   sample$seqnames = paste0("chr", sample$seqnames)
-      # }
-      # 
-      count_overlaps <- compute_count_overlaps(sample, interval_ranges, 
-                                               overlaps_per_cell)
-      saveRDS(count_overlaps, filepath)
+  if (!file.exists(filepath)) {
+    print(paste("Processing", file, sep= " "))
+    sample = import_sample(file, dataset, which_interval_ranges)
+    sample_name = get_sample_name(file, dataset)
+    filtered_metadata = filter_metadata_by_sample_name(sample_name, metadata)
+    if (nrow(filtered_metadata) == 0) {
+      print(paste(file, "has no high quality fragments", sep=" "))
+      return()
     }
+    
+    sample_barcodes_in_metadata = get_sample_barcodes_in_metadata(filtered_metadata,
+                                                                  dataset)
+    
+    if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || 
+        dataset == "Greenleaf_pbmc_bm" || dataset == "Yang_kidney" ||
+        dataset == "Rawlins_fetal_lung") {
+      sample$name = substr(sample$name, 1, 16)
+    } else if (dataset == "Bingren_adult_brain") {
+      sample$name = unlist(lapply(strsplit(sample$name, ":"), "[", 1))
+    }
+    # if (dataset == "Tsankov" || dataset == "Greenleaf_brain" || dataset == "Bingren") {
+    #   sample = migrate_bed_file_to_hg37(sample, chain)
+    # }
+
+    # Because the function applied is used in another place over multiple 
+    # samples, not just one, as is done here.
+    sample <- unlist(lapply(c(1), 
+                            filter_samples_to_contain_only_cells_in_metadata,
+                            list(sample),
+                            list(sample_barcodes_in_metadata)))
+    
+    sample <- get_sample_cell_types(sample[[1]], sample_barcodes_in_metadata,
+                                    filtered_metadata)
+    if (!overlaps_per_cell) {
+      save_num_cells_per_sample(sample, gsub(".rds", "", filename), annotation)
+    }
+    # sample <- filter_sample_by_cell_number(sample,
+    #                                        counts_per_cell_type, 
+    #                                        cell_number_filter)
+    # if (dataset == "Yang_kidney") {
+    #   sample$seqnames = paste0("chr", sample$seqnames)
+    # }
+    # 
+    count_overlaps <- compute_count_overlaps(sample, interval_ranges, 
+                                             overlaps_per_cell)
+    saveRDS(count_overlaps, filepath)
+  }
 }
 # 
 # filter_sample_by_cell_number <- function(sample, 
@@ -196,41 +196,30 @@ dir.create(cell_counts_dir)
 # Note: later functions not parallelized since this is already parallelized
 if (dataset == "Bingren") {
   if (annotation == "default_annotation") {
-    metadata_bingren = read.table("../metadata/GSE184462_metadata.tsv", 
+    metadata = read.table("../metadata/GSE184462_metadata.tsv", 
                           sep="\t",
                           header=T)
   } 
   # Can do below without re-counting 
   # else if (annotation == "bingren_remove_same_celltype_indexing") {
-  #   metadata_bingren = read.table("../metadata/bingren_remove_same_celltype_indexing.csv", 
+  #   metadata = read.table("../metadata/bingren_remove_same_celltype_indexing.csv", 
   #                                 sep=",",
   #                                 header=T)
   # }
-  colnames(metadata_bingren)[grepl("cell.type", 
-                                   colnames(metadata_bingren))] = "cell_type"
-  files_bingren = list.files("../bed_files/bingren_scATAC/migrated_to_hg19",
+  colnames(metadata)[grepl("cell.type", colnames(metadata))] = "cell_type"
+  files = list.files("../bed_files/bingren_scATAC/migrated_to_hg19",
                               pattern=".*fragments\\.bed\\.bgz$")
-  
-  mclapply(files_bingren, create_count_overlaps_files,
-           metadata=metadata_bingren,
-           interval_ranges=interval.ranges,
-           dataset=dataset,
-           annotation=annotation,
-           which_interval_ranges=which_interval_ranges,
-           overlaps_per_cell=overlaps_per_cell,
-           mc.cores=cores)
 } else if (dataset == "Bingren_adult_brain") {
   if (annotation == "default_annotation") {
-    metadata_bingren_adult_brain = read.table("../metadata/bingren_adult_brain_metadata.txt",
-                                              sep="\t",
-                                              header=TRUE)
-    colnames(metadata_bingren_adult_brain)[grepl("celltype", 
-                                     colnames(metadata_bingren_adult_brain))] = "cell_type"
+    metadata = read.table("../metadata/bingren_adult_brain_metadata.txt",
+                           sep="\t",
+                           header=TRUE)
+    colnames(metadata)[grepl("celltype", colnames(metadata))] = "cell_type"
     
-    files_bingren_adult_brain = list.files("../bed_files/bingren_adult_brain/migrated_to_hg19",
-                                pattern = "bed.bgz")
-    mclapply(files_bingren_adult_brain, create_count_overlaps_files,
-             metadata=metadata_bingren_adult_brain,
+    files = list.files("../bed_files/bingren_adult_brain/migrated_to_hg19",
+                       pattern = "bed.bgz")
+    mclapply(files, create_count_overlaps_files,
+             metadata=metadata,
              interval_ranges=interval.ranges,
              dataset=dataset,
              annotation=annotation,
@@ -239,20 +228,10 @@ if (dataset == "Bingren") {
              mc.cores=cores)
   }
 } else if (dataset == "Shendure") {
-  metadata_Shendure = read.table("../metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-                                  sep="\t",
-                                  header=TRUE)
-  files_Shendure = list.files("../bed_files/JShendure_scATAC/",
-                              pattern = ".*fragments\\.txt\\.gz")
-  
-  mclapply(files_Shendure, create_count_overlaps_files,
-           metadata=metadata_Shendure,
-           interval_ranges=interval.ranges,
-           dataset=dataset,
-           annotation=annotation,
-           which_interval_ranges=which_interval_ranges,
-           overlaps_per_cell=overlaps_per_cell,
-           mc.cores=cores)
+  metadata = read.table("../metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+                        sep="\t", header=TRUE)
+  files = list.files("../bed_files/JShendure_scATAC/", 
+                     pattern = ".*fragments\\.txt\\.gz")
 } else if (dataset == "Tsankov") {
   # metadata_tsankov_proximal = 
   #   read.csv("../metadata/tsankov_lung_proximal_barcode_annotation.csv")
@@ -266,15 +245,6 @@ if (dataset == "Bingren") {
     metadata = read.csv("../metadata/tsankov_refined_annotation.csv")
     colnames(metadata) = c("sample", "cell_type")
     files = c(files_Tsankov_distal, files_Tsankov_proximal)
-    mclapply(files, 
-             create_count_overlaps_files,
-             metadata=metadata,
-             interval_ranges=interval.ranges,
-             dataset=dataset,
-             annotation=annotation,
-             which_interval_ranges=which_interval_ranges,
-             overlaps_per_cell=overlaps_per_cell,
-             mc.cores=cores)
   } else if (annotation == "Tsankov_basal_refined") {
     metadata = read.csv("../metadata/tsankov_refined_annotation.csv")
     metadata_basal = read.csv("../metadata/tsankov_basal_refined_annotation.csv")
@@ -282,15 +252,6 @@ if (dataset == "Bingren") {
       metadata_basal[["new_annotation"]]
     colnames(metadata) = c("sample", "cell_type")
     files = c(files_Tsankov_distal, files_Tsankov_proximal)
-    mclapply(files, 
-             create_count_overlaps_files,
-             metadata=metadata,
-             interval_ranges=interval.ranges,
-             dataset=dataset,
-             annotation=annotation,
-             which_interval_ranges=which_interval_ranges,
-             mc.cores=cores)
-    
   }
   else if (annotation == "default_annotation") {
     metadata_tsankov_proximal =
@@ -363,139 +324,95 @@ if (dataset == "Bingren") {
   # }
 } else if (dataset == "Greenleaf_brain") {
     if (!(file.exists("../metadata/GSE162170_atac_cell_metadata_with_cell_names.txt"))) {
-      metadata_greenleaf_brain =
+      metadata =
         read.csv("../metadata/GSE162170_atac_cell_metadata.txt.gz",
                  sep="\t")
       cluster_to_cell_names = read.csv("../metadata/scATAC_Colors_greenleaf_brain.txt",
                                        sep = "\t") 
-      cell_name_idx = match(metadata_greenleaf_brain[["Iterative.LSI.Clusters"]], 
+      cell_name_idx = match(metadata[["Iterative.LSI.Clusters"]], 
                          cluster_to_cell_names[["cluster"]])
       cell_types = cluster_to_cell_names[cell_name_idx, "class"]
-      metadata_greenleaf_brain["cell_type"] = cell_types
-      write.csv(metadata_greenleaf_brain,
+      metadata["cell_type"] = cell_types
+      write.csv(metadata,
                 "../metadata/GSE162170_atac_cell_metadata_with_cell_names.txt")
     }
     else {
       if (annotation == "Greenleaf_brain_lowest_level_annotation") {
-        metadata_greenleaf_brain =
+        metadata =
           read.csv("../metadata/GSE162170_atac_cell_metadata.txt.gz",
                    sep="\t")
-        colnames(metadata_greenleaf_brain)[grepl("Iterative.LSI.Clusters", 
-                              colnames(metadata_greenleaf_brain))] = "cell_type"
+        colnames(metadata)[grepl("Iterative.LSI.Clusters", 
+                              colnames(metadata))] = "cell_type"
         dir.create("../processed_data/count_overlap_data/Greenleaf_brain_lowest_level_annotation")
       } 
       else if (annotation == "default_annotation") {
-          metadata_greenleaf_brain =
+          metadata =
             read.csv("../metadata/GSE162170_atac_cell_metadata_with_cell_names.txt")
       }
     }
   
-  colnames(metadata_greenleaf_brain)[grepl("Sample.ID", 
-                                           colnames(metadata_greenleaf_brain))] = "sample"
-  files_greenleaf_brain = list.files("../bed_files/greenleaf_brain_scATAC/migrated_to_hg19", 
+  colnames(metadata)[grepl("Sample.ID", colnames(metadata))] = "sample"
+  files = list.files("../bed_files/greenleaf_brain_scATAC/migrated_to_hg19", 
                                      pattern=".*fragments\\.tsv\\.bgz$")
   # mclapply(files_greenleaf_brain, create_count_overlaps_files,
   #          cell_number_filter=cell_number_filter,
-  #          metadata=metadata_greenleaf_brain,
+  #          metadata=metadata,
   #          interval_ranges=interval.ranges,
   #          chain=ch,
   #          dataset=dataset,
   #          mc.cores=cores)
-  mclapply(files_greenleaf_brain, create_count_overlaps_files,
-           metadata=metadata_greenleaf_brain,
-           interval_ranges=interval.ranges,
-           dataset=dataset,
-           annotation=annotation,
-           which_interval_ranges=which_interval_ranges,
-           overlaps_per_cell=overlaps_per_cell,
-           mc.cores=cores)
 } else if (dataset == "Greenleaf_pbmc_bm") {
     if (!(file.exists("../metadata/greenleaf_pbmc_bm.txt"))) {
-      metadata_greenleaf_pbmc_bm = readRDS("../metadata/scATAC-Healthy-Hematopoiesis-191120.rds")
-      metadata_greenleaf_pbmc_bm = data.frame(barcode = metadata_greenleaf_pbmc_bm$Barcode, 
+      metadata = readRDS("../metadata/scATAC-Healthy-Hematopoiesis-191120.rds")
+      metadata = data.frame(barcode = metadata$Barcode, 
                                               cell_type = unlist(lapply(
-                                              strsplit(metadata_greenleaf_pbmc_bm$BioClassification, 
+                                              strsplit(metadata$BioClassification, 
                                                        split="_"), "[", 2)),
-                                              sample = metadata_greenleaf_pbmc_bm$Group)
+                                              sample = metadata$Group)
       
-      write.csv(metadata_greenleaf_pbmc_bm, 
+      write.csv(metadata, 
                 "../metadata/greenleaf_pbmc_bm.txt")
     }
     else {
-      metadata_greenleaf_pbmc_bm = 
+      metadata = 
         read.csv("../metadata/greenleaf_pbmc_bm.txt")
     }
-    files_greenleaf_pbmc_bm = list.files("../bed_files/greenleaf_pbmc_bm_scATAC", 
-                                         pattern=".*fragments\\.tsv\\.gz")
-    mclapply(files_greenleaf_pbmc_bm, 
-             create_count_overlaps_files,
-             metadata=metadata_greenleaf_pbmc_bm,
-             interval_ranges=interval.ranges,
-             dataset=dataset,
-             annotation=annotation,
-             which_interval_ranges=which_interval_ranges,
-             overlaps_per_cell=overlaps_per_cell,
-             mc.cores=cores)
+    files = list.files("../bed_files/greenleaf_pbmc_bm_scATAC", 
+                                         pattern=".*fragments\\.tsv\\.gz$")
 } else if (dataset == "Yang_kidney") {
-  metadata_Yang = read_excel("../metadata/41467_2021_27660_MOESM4_ESM.xlsx", 
+  metadata = read_excel("../metadata/41467_2021_27660_MOESM4_ESM.xlsx", 
                              skip=1)
   if (which_interval_ranges == "polak") {
-    files_Yang = list.files("../bed_files/yang_kidney_scATAC/",
+    files = list.files("../bed_files/yang_kidney_scATAC/",
                             pattern = ".*fragments\\.tsv\\.gz")
   } else {
-    files_Yang = list.files("../bed_files/yang_kidney_scATAC/migrated_to_hg38",
+    files = list.files("../bed_files/yang_kidney_scATAC/migrated_to_hg38",
                             pattern = ".*fragments\\.tsv\\.bgz$")
   }
-  print(files_Yang)
-  colnames(metadata_Yang)[2] = "cell_type"
-  colnames(metadata_Yang)[3] = "sample"
-  metadata_Yang[, "sample"] = as.character(metadata_Yang$sample)
-  metadata_Yang[metadata_Yang[3] == 1, "sample"] = "SRR13679156"
-  metadata_Yang[metadata_Yang[3] == 2, "sample"] = "SRR13679157"
-  
-  mclapply(files_Yang, create_count_overlaps_files,
-           metadata=metadata_Yang,
-           interval_ranges=interval.ranges,
-           dataset=dataset,
-           annotation=annotation,
-           which_interval_ranges=which_interval_ranges,
-           overlaps_per_cell=overlaps_per_cell,
-           mc.cores=cores)
+  colnames(metadata)[2] = "cell_type"
+  colnames(metadata)[3] = "sample"
+  metadata[, "sample"] = as.character(metadata$sample)
+  metadata[metadata[3] == 1, "sample"] = "SRR13679156"
+  metadata[metadata[3] == 2, "sample"] = "SRR13679157"
 } else if (dataset == "Greenleaf_colon") {
   if (annotation == "default_annotation") {
     metadata = read.csv("../metadata/greenleaf_colon_metadata.csv", 
                         row.names = 1)
     metadata = metadata[metadata[["general_cell_type"]] == "epithelial", ]
   }
-  files_colon_greenleaf = list.files("../bed_files/greenleaf_colon_scATAC/migrated_to_hg19",
+  files = list.files("../bed_files/greenleaf_colon_scATAC/migrated_to_hg19",
                                      pattern = ".*fragments\\.tsv\\.bgz$")
   colnames(metadata)[4] = "cell_type"
   colnames(metadata)[2] = "sample"
-  # metadata_Yang[, "sample"] = as.character(metadata_Yang$sample)
-  # metadata_Yang[metadata_Yang[3] == 1, "sample"] = "SRR13679156"
-  # metadata_Yang[metadata_Yang[3] == 2, "sample"] = "SRR13679157"
-  
-  mclapply(files_colon_greenleaf, create_count_overlaps_files,
-           metadata=metadata,
-           interval_ranges=interval.ranges,
-           dataset=dataset,
-           annotation=annotation,
-           which_interval_ranges=which_interval_ranges,
-           overlaps_per_cell=overlaps_per_cell,
-           mc.cores=cores)
+  # metadata[, "sample"] = as.character(metadata$sample)
+  # metadata[metadata[3] == 1, "sample"] = "SRR13679156"
+  # metadata[metadata[3] == 2, "sample"] = "SRR13679157"
 } else if (dataset == "Rawlins_fetal_lung") {
   if (annotation == "default_annotation") {
     metadata = read.csv("../metadata/rawlins_fetal_lung_metadata.csv")
   }
-  files_rawlins_fetal_lung = list.files("../bed_files/rawlins_fetal_lung_scATAC/migrated_to_hg19",
+  files = list.files("../bed_files/rawlins_fetal_lung_scATAC/migrated_to_hg19",
                                      pattern = "\\.tsv\\.bgz$")
-  mclapply(files_rawlins_fetal_lung, create_count_overlaps_files,
-           metadata=metadata,
-           interval_ranges=interval.ranges,
-           dataset=dataset,
-           annotation=annotation,
-           which_interval_ranges=which_interval_ranges,
-           mc.cores=cores)
 } else if (dataset == "Wang_lung") {
   if (annotation == "default_annotation") {
     if (file.exists("../metadata/wang_adult_metadata.csv")) {
@@ -512,13 +429,15 @@ if (dataset == "Bingren") {
       write.csv(metadata, "../metadata/wang_adult_metadata.csv")
     }
   }
-  files_wang_lung = list.files("../bed_files/wang_adult_lung",
+  files = list.files("../bed_files/wang_adult_lung",
                                         pattern = "D.*")
-  mclapply(files_wang_lung, create_count_overlaps_files,
-           metadata=metadata,
-           interval_ranges=interval.ranges,
-           dataset=dataset,
-           annotation=annotation,
-           which_interval_ranges=which_interval_ranges,
-           mc.cores=cores)
 }
+
+mclapply(files, create_count_overlaps_files,
+         metadata=metadata,
+         interval_ranges=interval.ranges,
+         dataset=dataset,
+         annotation=annotation,
+         which_interval_ranges=which_interval_ranges,
+         overlaps_per_cell=overlaps_per_cell,
+         mc.cores=cores)
