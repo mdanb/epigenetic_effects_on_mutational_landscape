@@ -210,7 +210,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          test_set_perf_num_features,
                                                          tissues_to_consider,
                                                          grid_analysis,
-                                                         cell_type_group)
+                                                         cell_type_group,
+                                                         cell_types_keep)
                 else:
                     for idx, donor in enumerate(mutations_df.columns):
                         if idx in range(*donor_range):
