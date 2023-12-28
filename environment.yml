@@ -34,3 +34,4 @@ dependencies:
     - statsmodels==0.13.5
   # bash
   - entrez-direct=16.2
+  - p7zip
