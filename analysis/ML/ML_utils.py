@@ -297,7 +297,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             # datasets_combined_count_overlaps.append(scATAC_df)
         if cell_types_keep:
             for cell_type_dataset in cell_types_keep:
-                cell_type_dataset = cell_type_dataset.split("_")
+                cell_type_dataset = cell_type_dataset.split("-")
                 cell_type = cell_type_dataset[0]
                 ds = cell_type_dataset[1]
                 print("Keeping:")
