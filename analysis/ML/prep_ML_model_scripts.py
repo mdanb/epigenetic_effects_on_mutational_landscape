@@ -246,7 +246,8 @@ else:
     command_args = command_args + " " + "--tissues_to_consider" + " " + ",".join(tissues_to_consider)
 
 if cell_types_keep:
-    command_args = "--cell_types_keep" + ",".join(cell_types_keep)
+    cell_types_keep = ",".join(cell_types_keep)
+    command_args = "--cell_types_keep" + " " + f"'{cell_types_keep}'"
 
 Rscript_command = "Rscript /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/plot_top_features.R " + \
                   command_args
