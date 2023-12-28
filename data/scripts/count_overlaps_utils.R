@@ -230,7 +230,8 @@ get_sample_name <- function(file, dataset) {
 
 get_sample_name_rawlins_fetal_lung <- function(file) {
   if (file == "cellranger-atac200_count_5891STDY8038657_GRCh38-2020-A-2_0_0.tsv.bgz" || 
-      file == "cellranger-atac200_count_5891STDY8038658_GRCh38-2020-A-2_0_0.tsv.bgz") {
+      file == "cellranger-atac200_count_5891STDY8038658_GRCh38-2020-A-2_0_0.tsv.bgz" || 
+      file == "cellranger-atac200_count_5891STDY8038655_GRCh38-2020-A-2_0_0.tsv.bgz") {
     file = str_extract(file, "[a-zA-Z0-9]+_GRCh38")
     sample_name = unlist(strsplit(file, split="_"))[1]
   } 

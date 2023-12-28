@@ -39,6 +39,7 @@ def create_parser():
     parser.add_argument('--test_set_perf_num_features', nargs="+", type=int)
     parser.add_argument('--debug_bfs', action="store_true", default=False)
     parser.add_argument('--grid_cell_types', type=str, default=None)
+    parser.add_argument('--cell_types_keep', nargs="+", type=str, default=None) # Keep these despite not passing cell filter
     parser.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
                         default=None)
 
