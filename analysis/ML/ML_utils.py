@@ -239,7 +239,7 @@ def add_dataset_origin_to_cell_types(list_to_add_to, dataset):
 
 
 def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb,
-                        expanded_hundred_kb, tissues_to_consider, grid_analysis, grid_cell_types):
+                        expanded_hundred_kb, tissues_to_consider, grid_analysis, grid_cell_types, cell_types_keep):
     def load_scATAC(scATAC_path, hundred_kb, expanded_hundred_kb, tissues_to_consider):
         if hundred_kb or expanded_hundred_kb:
             scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_100kb_{os.path.basename(scATAC_path)}"
@@ -293,11 +293,18 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
             f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb, expanded_hundred_kb,
                                             tissues_to_consider)
-            scATAC_df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
+            df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
             # datasets_combined_count_overlaps.append(scATAC_df)
-        print("Num features", scATAC_df.shape[1])
+        for cell_type_dataset in cell_types_keep:
+            cell_type_dataset = cell_type_dataset.split("_")
+            cell_type = cell_type_dataset[0]
+            ds = cell_type_dataset[1]
+            if ds == dataset:
+                df_add = scATAC_df.loc[:, cell_type]
+                df = pd.concat((df, df_add))
+        print("Num features", df.shape[1])
         print("Loaded!")
-        datasets_combined_count_overlaps.append(scATAC_df)
+        datasets_combined_count_overlaps.append(df)
 
 
     for idx, dataset in enumerate(datasets):
@@ -726,7 +733,7 @@ def call_plot_top_features(seed_range, cancer_types_arg, ML_model, datasets_arg,
 #### Other ####
 def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir, hundred_kb,
                          expanded_hundred_kb, tissues_to_consider, grid_analysis=False,
-                         seed=None, fold_for_test_set=None, all_seeds=False):
+                         seed=None, fold_for_test_set=None, all_seeds=False, cell_types_keep=None):
     scATAC_dir = None
 
     if not grid_analysis:
@@ -743,6 +750,9 @@ def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, 
         scATAC_dir = "_".join(filter(None, [scATAC_dir, "tss_fragment_filter", tss_filter]))
 
     scATAC_dir = "_".join(filter(None, [scATAC_dir, "annotation", annotation_dir]))
+    if cell_types_keep and cell_types_keep != "":
+        scATAC_dir = "_".join(filter(None, [scATAC_dir, "cell_types_keep", cell_types_keep]))
+
     if all_seeds:
         scATAC_dir = "_".join((scATAC_dir, "seed_all_seeds"))
     else:
