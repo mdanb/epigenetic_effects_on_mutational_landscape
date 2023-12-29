@@ -50,6 +50,8 @@ parser <- add_option(parser, c("--hundred_kb"), action="store_true", default=F)
 parser <- add_option(parser, c("--per_donor"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_analysis"), action="store_true", default=F)
 parser <- add_option(parser, c("--grid_cell_types"), type="character")
+parser <- add_option(parser, c("--cell_types_keep"), type="character", 
+                     default=NULL)
 
 # args = parse_args(parser, args= c("--cancer_types=CNS-GBM",
 #                                   "--datasets=Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure",
@@ -914,6 +916,10 @@ feat_imp_min_n_robustness = args$feat_imp_min_n_robustness
 plot_fold_on_test_set_plot = args$plot_fold_on_test_set_plot
 hundred_kb = args$hundred_kb
 per_donor = args$per_donor
+cell_types_keep = args$cell_types_keep
+cell_types_keep = strsplit(cell_types_keep, split=",")
+cell_types_keep = paste(cell_types_keep, collapse="_")
+cell_types_keep = gsub(" ", "_", cell_types_keep)
 
 if (!robustness_analysis) {
   for (seed in seed_range) {
