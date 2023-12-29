@@ -12,7 +12,8 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
                                              fold_for_test_set = "-1",
                                              seed = "-1",
                                              accumulated_seeds=F,
-                                             per_donor=F) {
+                                             per_donor=F,
+                                             cell_types_keep=NULL) {
   if (accumulated_seeds) {
     seed = "all_seeds"
   }
@@ -34,7 +35,8 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
                                                                hundred_kb,
                                                                fold_for_test_set,
                                                                # test=F,
-                                                               per_donor))
+                                                               per_donor,
+                                                               cell_types_keep))
     }
   }
   return(unlist(backward_elim_dirs))
