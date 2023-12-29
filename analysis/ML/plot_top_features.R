@@ -1107,7 +1107,7 @@ if (!robustness_analysis) {
                                     y="features", 
                                     title=cancer_names[[cancer_type]], 
                                     savepath=savepath,
-                                    savefile="temp.pdf", 
+                                    savefile=savefile, 
                                     n_name="n_feature", 
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
