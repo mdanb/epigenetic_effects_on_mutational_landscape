@@ -924,6 +924,7 @@ cell_types_keep = args$cell_types_keep
 cell_types_keep = strsplit(cell_types_keep, split=",")
 cell_types_keep = paste(cell_types_keep, collapse="_")
 cell_types_keep = gsub(" ", "_", cell_types_keep)
+print(cell_types_keep)
 
 if (!robustness_analysis) {
   for (seed in seed_range) {
@@ -1054,6 +1055,7 @@ if (!robustness_analysis) {
       df_feature_importances_all_seeds = 
         construct_df_feature_importances_all_seeds(all_seeds_dirs,
                                                    feature_importance_method)
+      print(head(df_feature_importances_all_seeds))
       df = construct_all_seeds_test_df(top_features_to_plot=top_features_to_plot,
                                        seed_range=seed_range,
                                        skip_seeds_robustness=skip_seeds_robustness,

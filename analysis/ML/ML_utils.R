@@ -19,7 +19,7 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
   }
   
   scATAC_sources = construct_sources_string(datasets)
-  
+  print(cell_types_keep)
   backward_elim_dirs = list()
   for (cancer_type in cancer_types) {
     for (tss_filter in tss_fragment_filter) {
