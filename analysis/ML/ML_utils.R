@@ -56,12 +56,13 @@ construct_dir <- function(scATAC_source,
                           grid_analysis=F,
                           grid_cell_type=NULL,
                           cell_types_keep=NULL) {
-  print(cell_types_keep)
-  dir = paste("annotation", annotation, "seed", seed, sep="_")
+  dir = paste("seed", seed, sep="_")
   
   if (!is.null(cell_types_keep)) {
     dir = paste("ctk", cell_types_keep, dir, sep="_")
   }
+  
+  dir = paste("annotation", annotation, dir, sep="_")
   if (tss_fragment_filter != -1) {
     dir = paste(dir, "tss_fragment_filter", tss_fragment_filter, sep="_")
   }
