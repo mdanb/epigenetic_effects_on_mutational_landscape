@@ -53,17 +53,18 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 parser <- add_option(parser, c("--cell_types_keep"), type="character", 
                      default=NULL)
 
-# args = parse_args(parser, args= c("--cancer_types=CNS-GBM",
-#                                   "--datasets=Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure",
-#                                   "--cell_number_filter=100",
-#                                   "--annotation=finalized_annotation",
-#                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot_feat_imp=5",
-#                                   "--top_features_to_plot=1,2,5,10",
-#                                   "--feature_importance_method=permutation_importance",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=adult_brain,brain,frontal_cortex,cerebrum,cerebellum",
-#                                   "--robustness_analysis"))
+args = parse_args(parser, args= c("--cancer_types=Lung-AdenoCA",
+                                  "--datasets=Bingren,Rawlins_fetal_lung,Shendure,Tsankov",
+                                  "--cell_number_filter=100",
+                                  "--annotation=finalized_annotation",
+                                  "--seed_range=1-10",
+                                  "--top_features_to_plot_feat_imp=5",
+                                  "--top_features_to_plot=1,2,5,10",
+                                  "--feature_importance_method=permutation_importance",
+                                  "--folds_for_test_set=1-10",
+                                  "--tissues_to_consider=lung,fetal_lung",
+                                  "--cell_types_keep=lung Neuroendocrine-Tsankov",
+                                  "--robustness_analysis"))
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -474,6 +475,7 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath) {
   ggsave(paste(savepath, savefile, sep="/"), 
          width = 12, height = 7, limitsize = FALSE)
 }
+
 construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
   df[x] = 100 * df[x]
   df = df %>% 
@@ -672,7 +674,8 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                         feature_importance_method,
                                         hundred_kb, 
                                         grid_analysis=F,
-                                        grid_cell_type=NULL) {
+                                        grid_cell_type=NULL,
+                                        cell_types_keep=NULL) {
   df = tibble(top_feature = character(0),
               top_n = integer(0),
               test_set_perf = double(0),
@@ -694,7 +697,8 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                                 fold_for_test_set = fold,
                                                 hundred_kb = hundred_kb,
                                                 grid_analysis=grid_analysis,
-                                                grid_cell_type=grid_cell_type)
+                                                grid_cell_type=grid_cell_type,
+                                                cell_types_keep=cell_types_keep)
         
         if (feature_importance_method != "default_importance") {
           model_pattern = paste("^model_iteration_[0-9]+_feature_importance",
@@ -973,6 +977,11 @@ if (!robustness_analysis) {
     } else {
       scATAC_source = paste(scATAC_source, "annotation", annotation, sep="_")
     }
+    
+    if (!is.null(cell_types_keep)) {
+      scATAC_source = paste(scATAC_source, "ctk", cell_types_keep, sep="_")
+    }
+    
     if (!grid_analysis) {
       savepath = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
                                                 # combined_datasets=combined_datasets,
@@ -1003,9 +1012,6 @@ if (!robustness_analysis) {
     # dirs = list.dirs(paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", "models", ML_model, cancer_type, 
     #                        sep="/"), recursive = F)
     combos = expand.grid(seed = seed_range, fold = folds_for_test_set)
-    if (!is.null(cell_types_keep)) {
-      scATAC_source = paste(scATAC_source, "ctk", cell_types_keep, sep="_")
-    }
     
     seed_fold_for_test_combinations = apply(combos, 1, function(row) {
       paste(scATAC_source, "seed", row["seed"], "fold_for_test_set", row["fold"], 
@@ -1036,7 +1042,8 @@ if (!robustness_analysis) {
                                                    feature_importance_method=feature_importance_method,
                                                    hundred_kb=hundred_kb,
                                                    grid_analysis=grid_analysis,
-                                                   grid_cell_type=grid_cell_type))
+                                                   grid_cell_type=grid_cell_type,
+                                                   cell_types_keep = cell_types_keep))
       }
       plot = construct_robustness_barplots(df, x="test_set_perf", 
                                            y="top_feature",
@@ -1059,7 +1066,8 @@ if (!robustness_analysis) {
                                        ML_model=ML_model,
                                        folds_for_test_set=folds_for_test_set,
                                        feature_importance_method=feature_importance_method,
-                                       hundred_kb=hundred_kb)
+                                       hundred_kb=hundred_kb,
+                                       cell_types_keep = cell_types_keep)
       # y_position is for plotting number of times feature appears at the top of
       # the boxplot. 
       #print(top_features_to_plot_feat_imp)
