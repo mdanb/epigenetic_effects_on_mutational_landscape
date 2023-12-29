@@ -1003,6 +1003,10 @@ if (!robustness_analysis) {
     # dirs = list.dirs(paste("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/figures", "models", ML_model, cancer_type, 
     #                        sep="/"), recursive = F)
     combos = expand.grid(seed = seed_range, fold = folds_for_test_set)
+    if (!is.null(cell_types_keep)) {
+      scATAC_source = paste(scATAC_source, "ctk", cell_types_keep, sep="_")
+    }
+    
     seed_fold_for_test_combinations = apply(combos, 1, function(row) {
       paste(scATAC_source, "seed", row["seed"], "fold_for_test_set", row["fold"], 
             sep="_")
