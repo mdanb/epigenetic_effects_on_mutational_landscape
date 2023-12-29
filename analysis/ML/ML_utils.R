@@ -19,7 +19,7 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
   }
   
   scATAC_sources = construct_sources_string(datasets)
-  
+  print(cell_types_keep)
   backward_elim_dirs = list()
   for (cancer_type in cancer_types) {
     for (tss_filter in tss_fragment_filter) {
@@ -56,6 +56,7 @@ construct_dir <- function(scATAC_source,
                           grid_analysis=F,
                           grid_cell_type=NULL,
                           cell_types_keep=NULL) {
+  print(cell_types_keep)
   dir = paste("annotation", annotation, "seed", seed, sep="_")
   
   if (!is.null(cell_types_keep)) {
