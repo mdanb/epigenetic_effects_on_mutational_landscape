@@ -52,8 +52,13 @@ construct_dir <- function(scATAC_source,
                           tissues_to_consider,
                           expanded_hundred_kb=F,
                           grid_analysis=F,
-                          grid_cell_type=NULL) {
+                          grid_cell_type=NULL,
+                          cell_types_keep=NULL) {
   dir = paste("annotation", annotation, "seed", seed, sep="_")
+  
+  if (!is.null(cell_types_keep)) {
+    dir = paste("ctk", cell_types_keep, dir, sep="_")
+  }
   if (tss_fragment_filter != -1) {
     dir = paste(dir, "tss_fragment_filter", tss_fragment_filter, sep="_")
   }
@@ -93,7 +98,8 @@ construct_backwards_elim_dir <- function(cancer_type,
                                          # test=F,
                                          per_donor=F,
                                          grid_analysis=F,
-                                         grid_cell_type=NULL) {
+                                         grid_cell_type=NULL,
+                                         cell_types_keep=NULL) {
   dir = construct_dir(scATAC_source=scATAC_source,
                       cell_number_filter=cell_number_filter,
                       tss_fragment_filter=tss_fragment_filter,
@@ -105,7 +111,8 @@ construct_backwards_elim_dir <- function(cancer_type,
                       hundred_kb=hundred_kb,
                       tissues_to_consider=tissues_to_consider,
                       grid_analysis=grid_analysis,
-                      grid_cell_type=grid_cell_type)
+                      grid_cell_type=grid_cell_type,
+                      cell_types_keep=cell_types_keep)
   
   if (per_donor) {
     part_one = unlist(strsplit(dir, split="/"))[1:2]
