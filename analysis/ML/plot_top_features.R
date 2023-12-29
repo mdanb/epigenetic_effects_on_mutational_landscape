@@ -920,6 +920,7 @@ cell_types_keep = args$cell_types_keep
 cell_types_keep = strsplit(cell_types_keep, split=",")
 cell_types_keep = paste(cell_types_keep, collapse="_")
 cell_types_keep = gsub(" ", "_", cell_types_keep)
+print(cell_types_keep)
 
 if (!robustness_analysis) {
   for (seed in seed_range) {
