@@ -983,7 +983,8 @@ if (!robustness_analysis) {
                                                 annotation=annotation,
                                                 ML_model=ML_model,
                                                 hundred_kb=hundred_kb,
-                                                accumulated_seeds=T)
+                                                accumulated_seeds=T,
+                                                cell_types_keep=cell_types_keep)
       savepath = paste("../../figures", savepath, sep="/")
       # savepath = paste("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/figures", savepath, sep="/")
       
