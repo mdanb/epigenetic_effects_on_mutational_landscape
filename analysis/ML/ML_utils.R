@@ -36,7 +36,7 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
                                                                fold_for_test_set,
                                                                # test=F,
                                                                per_donor,
-                                                               cell_types_keep))
+                                                               cell_types_keep=cell_types_keep))
     }
   }
   return(unlist(backward_elim_dirs))
