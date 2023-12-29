@@ -757,6 +757,7 @@ def construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, 
 
     scATAC_dir = "_".join(filter(None, [scATAC_dir, "annotation", annotation_dir]))
     if cell_types_keep and cell_types_keep != "":
+        cell_types_keep = "_".join(cell_types_keep)
         scATAC_dir = "_".join(filter(None, [scATAC_dir, "ctk", cell_types_keep]))
 
     if all_seeds:
