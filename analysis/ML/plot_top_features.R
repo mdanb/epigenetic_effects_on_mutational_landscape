@@ -80,7 +80,9 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
                     "Thy-AdenoCA"="Thyroid adenocarcinoma")
 
 
-cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle, Artery Aorta BR",
+cell_types = c("adult_brain OPC BR_Br" = "OPC, Adult Brain BR_Br", 
+               "adult_brain PKJ BR_Br" = "PKJ, Adult Brain BR_Br",
+                 "artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle, Artery Aorta BR",
                  "bonemarrow B GL_BlBm" = "B, bonemarrow GL_BlBm",
                  "bonemarrow T GL_BlBm" = "T, bonemarrow GL_BlBm",
                  "bonemarrow Early.Baso GL_BlBm" = "Early.Baso, bonemarrow GL_BlBm",
@@ -98,7 +100,6 @@ cell_types = c("artery_aorta Smooth Muscle (General) BR" = "Smooth Muscle, Arter
                  "brain late RG GL_Br" = "late RG, brain GL_Br",
                  "brain mGPC GL_Br" = "mGPC, brain GL_Br",
                  "brain OPC/Oligo GL_Br" = "OPC/Oligo, brain GL_Br",
-                 "adult_brain OPC BR_Br" = "OPC, Adult Brain BR_Br", 
                  "cerebrum Astrocytes SH" = "Astrocytes, cerebrum SH",
                  "cerebrum Astrocytes/Oligodendrocytes SH" = "Astrocytes/Oligo, Cerebrum SH",
                  "cerebellum Granule neurons SH" = "Granule neurons, cerebellum SH",
