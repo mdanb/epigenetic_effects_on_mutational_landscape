@@ -7,6 +7,13 @@ def range_type(range_str):
                                          'less than or equal to end value')
     return (start, end)
 
+def int_or_all(value):
+    if value == 'all':
+        return value
+    try:
+        return int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"{value} is not an integer or 'all'")
 
 def comma_separated_string(s):
     return s.split(',')
@@ -36,7 +43,7 @@ def create_parser():
     parser.add_argument("--make_plots", action="store_true", default=False)
     parser.add_argument("--feature_importance_method", type=str, default="permutation_importance")
     parser.add_argument("--sqlite", action="store_true", default=False)
-    parser.add_argument('--test_set_perf_num_features', nargs="+", type=int)
+    parser.add_argument('--test_set_perf_num_features', nargs="+", type=int_or_all)
     parser.add_argument('--debug_bfs', action="store_true", default=False)
     parser.add_argument('--grid_cell_types', type=str, default=None)
     parser.add_argument('--cell_types_keep', nargs="+", type=str, default=None) # Keep these despite not passing cell filter
