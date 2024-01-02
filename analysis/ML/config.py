@@ -32,7 +32,7 @@ def create_parser():
     parser.add_argument('--n_optuna_trials_prebackward_selection', type=int, default=None)
     parser.add_argument('--n_optuna_trials_backward_selection', type=int, default=None)
     parser.add_argument('--top_features_to_plot', nargs="+", type=int)
-    parser.add_argument("--save_test_set_perf", action="store_true", default=False)
+    # parser.add_argument("--save_test_set_perf", action="store_true", default=False)
     parser.add_argument("--make_plots", action="store_true", default=False)
     parser.add_argument("--feature_importance_method", type=str, default="permutation_importance")
     parser.add_argument("--sqlite", action="store_true", default=False)

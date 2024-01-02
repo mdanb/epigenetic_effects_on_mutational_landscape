@@ -21,7 +21,7 @@ def run_unclustered_data_analysis_helper(scATAC_df,
                                          scATAC_cell_number_filter,
                                          annotation_dir,
                                          tss_fragment_filter,
-                                         save_test_set_perf,
+                                         # save_test_set_perf,
                                          test_set_perf_num_features,
                                          tissues_to_consider,
                                          grid_analysis,
@@ -80,18 +80,24 @@ def run_unclustered_data_analysis_helper(scATAC_df,
         f.write(f"{(end - start) / 60}\n")
     print(f"Done modeling {cancer_type_or_donor_id}!")
 
-    if save_test_set_perf:
-        print("Saving test set performances for backward elimination...")
-        # total_num_features = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))) + 1
-        # for curr_num_feats in range(1, total_num_features):
-            # if curr_num_feats in test_set_perf_num_features:
-        #range(1, total_num_features)
-        for curr_num_feats in test_set_perf_num_features:
-            save_model_with_n_features_test_performance(scATAC_df, cancer_specific_mutations, scATAC_dir,
-                                                        curr_num_feats, ML_model, cancer_type_or_donor_id,
-                                                        feature_importance_method,
-                                                        fold_for_test_set)
-        print("Done saving test set performances!")
+    # if save_test_set_perf:
+    print("Saving test set performances for backward elimination...")
+    # total_num_features = len(natsorted(glob.glob(f"{backwards_elim_dir}/*pkl"))) + 1
+    # for curr_num_feats in range(1, total_num_features):
+        # if curr_num_feats in test_set_perf_num_features:
+    #range(1, total_num_features)
+    if test_set_perf_num_features == "all":
+        if scATAC_df.shape[1] > 20:
+            test_set_perf_num_features = [i for i in range(1, 20)]
+        else:
+            test_set_perf_num_features = [i for i in range(1, scATAC_df.shape[1])]
+
+    for curr_num_feats in test_set_perf_num_features:
+        save_model_with_n_features_test_performance(scATAC_df, cancer_specific_mutations, scATAC_dir,
+                                                    curr_num_feats, ML_model, cancer_type_or_donor_id,
+                                                    feature_importance_method,
+                                                    fold_for_test_set)
+    print("Done saving test set performances!")
 
     # # Tissue Specific
     # else:
@@ -125,7 +131,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   msi_high, hundred_kb, expanded_hundred_kb,
                                   per_donor, donor_range, aggregated_per_donor, ML_model, seed_range,
                                   n_optuna_trials_prebackward_selection,
-                                  n_optuna_trials_backward_selection, top_features_to_plot, save_test_set_perf,
+                                  n_optuna_trials_backward_selection, top_features_to_plot,
                                   make_plots, feature_importance_method, sqlite, test_set_perf_num_features,
                                   debug_bfs, fold_for_test_set, tissues_to_consider, grid_analysis, grid_cell_types,
                                   cell_types_keep):
@@ -207,7 +213,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                          scATAC_cell_number_filter,
                                                          annotation_dir,
                                                          tss_fragment_filter,
-                                                         save_test_set_perf,
+                                                         # save_test_set_perf,
                                                          test_set_perf_num_features,
                                                          tissues_to_consider,
                                                          grid_analysis,
@@ -234,7 +240,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                                                  scATAC_cell_number_filter,
                                                                  annotation_dir,
                                                                  tss_fragment_filter,
-                                                                 save_test_set_perf,
+                                                                 # save_test_set_perf,
                                                                  test_set_perf_num_features,
                                                                  tissues_to_consider)
 
@@ -279,7 +285,7 @@ fold_for_test_set = fold_for_test_set - 1
 n_optuna_trials_prebackward_selection = config.n_optuna_trials_prebackward_selection
 n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 top_features_to_plot = config.top_features_to_plot
-save_test_set_perf = config.save_test_set_perf
+# save_test_set_perf = config.save_test_set_perf
 make_plots = config.make_plots
 feature_importance_method = config.feature_importance_method
 sqlite = config.sqlite
@@ -303,7 +309,7 @@ run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter,
                                meso, RNA_subtyped, hierarchically_subtyped_mutations, mm, msi_high,
                                hundred_kb, expanded_hundred_kb, per_donor, donor_range, aggregated_per_donor, ML_model,
                                seed_range, n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
-                               top_features_to_plot, save_test_set_perf, make_plots, feature_importance_method,
+                               top_features_to_plot, make_plots, feature_importance_method,
                                sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set, tissues_to_consider,
                                grid_analysis, grid_cell_types, cell_types_keep)
 

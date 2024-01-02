@@ -20,7 +20,7 @@ parser.add_argument('--top_features_to_plot_feat_imp', nargs="+", type=str)
 parser.add_argument('--fold_for_test_set_range', type=str)
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=str)
 parser.add_argument('--n_optuna_trials_backward_selection', type=str)
-parser.add_argument("--save_test_set_perf", action="store_true", default=False)
+# parser.add_argument("--save_test_set_perf", action="store_true", default=False)
 parser.add_argument('--test_set_perf_num_features', nargs="+", type=int)
 parser.add_argument('--cores', type=str, default="8")
 parser.add_argument('--mem_per_core', type=str, default="8")
@@ -82,7 +82,7 @@ time = config.time
 top_features_to_plot = config.top_features_to_plot
 feature_importance_method = config.feature_importance_method
 make_plots = config.make_plots
-save_test_set_perf = config.save_test_set_perf
+# save_test_set_perf = config.save_test_set_perf
 test_set_perf_num_features = config.test_set_perf_num_features
 submit_jobs = config.submit_jobs
 cleanup = config.cleanup
@@ -168,10 +168,10 @@ for fold in fold_for_test_set_range:
 
         if make_plots:
             command_args = command_args + " " + "--make_plots"
-        if save_test_set_perf:
-            command_args = command_args + " " + "--save_test_set_perf"
-            command_args = command_args + " " + "--test_set_perf_num_features" + " " + " ".join(map(str,
-                                                                                        test_set_perf_num_features))
+        # if save_test_set_perf:
+        #     command_args = command_args + " " + "--save_test_set_perf"
+        command_args = command_args + " " + "--test_set_perf_num_features" + " " + " ".join(map(str,
+                                                                                    test_set_perf_num_features))
 
         python_command = "python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py " + \
                          command_args
