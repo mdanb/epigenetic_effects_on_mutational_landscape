@@ -154,12 +154,16 @@ cell_types = c("adult_brain ASCNT BR_Br" = "ASCNT, Adult Brain BR_Br",
           		 "polyp_colon Secretory TA GL_Co" = "Secretory TA, Polyp Colon GL_Co",
                "polyp_colon Stem GL_Co" = "Stem, Polyp Colon GL_Co",
           		 "pancreas Islet endocrine cells SH" = "Islet neurodocrine cells, Pancreas SH",
-          		 "pancreas Pancreatic Alpha Cell BR" = "Alpha Cell Pancreas BR",
+          		 "pancreas Pancreatic Alpha Cell BR" = "Alpha Cell, Pancreas BR",
+          		 "pancreas Ductal cells SH" = "Ductal cells, Pancreas SH",
                "small_intestine T Lymphocyte (CD8+) BR" = "T Lymphocyte, Small Intestine BR",
                "thymus Antigen presenting cells SH" = "Antigen presenting cells, Thymus SH",
                "skin_sun_exposed Melanocyte BR" = "Sun Exposed Melanocyte BR",
                "skin Melanocyte BR" = "Melanocyte BR",
-               "stomach ENS glia SH" = "ENS glia, Stomach SH")
+               "stomach ENS glia SH" = "ENS glia, Stomach SH",
+          		 "stomach Foveolar Cell BR" = "Foveolar Cell, Stomach BR", 
+          		 "stomach Goblet cells SH" = "Goblet, Stomach SH",
+          		 "stomach Epithelial cells SH" = "Epithelial, Stomach SH")
 
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
