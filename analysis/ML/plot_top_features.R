@@ -53,16 +53,16 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 parser <- add_option(parser, c("--cell_types_keep"), type="character", 
                      default=NULL)
 
-# args = parse_args(parser, args= c("--cancer_types=Lymph-CLL",
-#                                   "--datasets=Greenleaf_pbmc_bm",
+# args = parse_args(parser, args= c("--cancer_types=Panc-Endocrine",
+#                                   "--datasets=Bingren,Shendure",
 #                                   "--cell_number_filter=100",
-#                                   "--annotation=intermediate_blood_bm_annotation",
+#                                   "--annotation=finalized_annotation",
 #                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot_feat_imp=1,2,5,10",
-#                                   "--top_features_to_plot=1,2,5,10",
+#                                   "--top_features_to_plot_feat_imp=5",
+#                                   "--top_features_to_plot=1",
 #                                   "--feature_importance_method=permutation_importance",
 #                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=all",
+#                                   "--tissues_to_consider=pancreas,stomach",
 #                                   "--robustness_analysis"))
 
 args = parse_args(parser)
@@ -706,15 +706,15 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                                 cell_types_keep=cell_types_keep)
         
         if (feature_importance_method != "default_importance") {
-          model_pattern = paste("^model_iteration_[0-9]+_feature_importance",
+          model_pattern = paste("^top_features_iteration_[0-9]+_by",
                                 feature_importance_method, sep="_")
-          model_pattern = paste(model_pattern, "pkl", sep=".")
+          model_pattern = paste(model_pattern, "txt", sep=".")
         } else {
-          model_pattern = "^model_iteration_[0-9]+\\.pkl"
+          model_pattern = "^top_features_iteration_[0-9]+\\.txt"
         }
         total_num_features = list.files(test_dir,
                                         pattern=model_pattern)
-        total_num_features = length(total_num_features)
+        total_num_features = length(total_num_features) + 1
 
         # #### TEMP ####
         # total_num_features=20
