@@ -2,6 +2,7 @@ import argparse
 import subprocess
 import re
 import os
+from config import int_or_all
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--cancer_types', nargs="+", type=str,
@@ -21,7 +22,7 @@ parser.add_argument('--fold_for_test_set_range', type=str)
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=str)
 parser.add_argument('--n_optuna_trials_backward_selection', type=str)
 # parser.add_argument("--save_test_set_perf", action="store_true", default=False)
-parser.add_argument('--test_set_perf_num_features', nargs="+", type=int)
+parser.add_argument('--test_set_perf_num_features', nargs="+", type=int_or_all)
 parser.add_argument('--cores', type=str, default="8")
 parser.add_argument('--mem_per_core', type=str, default="8")
 parser.add_argument('--time', type=str, default="24:00:00")
