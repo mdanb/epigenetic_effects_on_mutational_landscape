@@ -86,7 +86,7 @@ def run_unclustered_data_analysis_helper(scATAC_df,
     # for curr_num_feats in range(1, total_num_features):
         # if curr_num_feats in test_set_perf_num_features:
     #range(1, total_num_features)
-    if test_set_perf_num_features == "all":
+    if test_set_perf_num_features[0] == "all":
         if scATAC_df.shape[1] > 20:
             test_set_perf_num_features = [i for i in range(1, 20)]
         else:
