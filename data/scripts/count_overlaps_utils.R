@@ -281,7 +281,10 @@ get_sample_name_shendure <- function(file) {
 }
 
 get_sample_name_tsankov <- function(file) {
-  sample_name = str_remove(file, "_fragments.tsv.bgz")
+  sample_name = str_remove(file, ".tsv.bgz")
+  sample_name = str_remove(sample_name, "Tsankov_count_overlaps_")
+  sample_name = str_remove(sample_name, "per_cell_")
+  sample_name = str_remove(sample_name, ".rds")
   return(sample_name)
 }
 
