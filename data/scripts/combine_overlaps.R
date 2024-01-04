@@ -27,10 +27,11 @@ args = parse_args(OptionParser(option_list=option_list))
 #                       "--annotation=Greenleaf_brain_lowest_level_annotation",
 #                       "--which_interval_ranges=polak",
 #                       "--overlaps_per_cell"))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                     c("--datasets=Greenleaf_colon",
-#                       "--annotation=Greenleaf_colon_cancer_only",
-#                       "--which_interval_ranges=100kb"))
+  args = parse_args(OptionParser(option_list=option_list), args =
+                      c("--datasets=Tsankov",
+                        "--annotation=Tsankov_refined",
+                        "--which_interval_ranges=polak",
+                        "--overlaps_per_cell"))
 
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
