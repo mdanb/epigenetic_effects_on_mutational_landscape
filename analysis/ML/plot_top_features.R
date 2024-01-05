@@ -128,6 +128,8 @@ cell_types = c("adult_brain ASCNT BR_Br" = "ASCNT, Adult Brain BR_Br",
                "heart_atrial_appendage Cardiac Pericyte BR" = "Pericyte, Atrial Appendage BR",
                "intestine Lymphatic endothelial cells SH" = "Lymphatic endothelial cells, Intestine SH",
           		 "intestine Mesothelial cells SH" = "Mesothelial cells, Intestine SH",
+          		 "kidney ICA Y_K" = "ICA, Kidney Y_K",
+          		 "kidney DCT Y_K" = "DCT, Kidney Y_K",
           		 "liver Lymphoid cells SH" = "Lymphoid Cells, Liver SH",
                "liver Erythroblasts cells SH" = "Erythroblasts, Liver SH",
                "lung Basal TS"="Basal, Lung TS",
@@ -306,10 +308,19 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
                                           n_name=NULL, width=12, height=8) {
   #df = df_feat_imp
+  y_names = df %>% pull(!!sym(y))
+  renamed_y = strsplit(y_names, split=" ")
+  tissue = renamed_y[1]
+  dataset = renamed_y[length(renamed_y)]
+  cell_type = paste(renamed_y[2:length(renamed_y)-1], collapse=" ")
+  renamed_y = paste(paste0(cell_type, ","), tissue, dataset)
+  renamed_y = ifelse(y_names %in% names(cell_types), unname(cell_types[y_names]), renamed_y)
+  
   if (!(savefile == "temp.pdf")) {
     df = df %>%
       ungroup() %>%
-      mutate("{y}" := unname(cell_types[df %>% pull(!!sym(y))]))
+      mutate("{y}" := renamed_y)
+      # mutate("{y}" := unname(cell_types[df %>% pull(!!sym(y))]))
   }
   
   df[y] = str_wrap(df[[y]], width=15)
