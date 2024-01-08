@@ -19,11 +19,11 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Rawlins_fetal_lung",
-#                    "--cores=1",
-#                    "--annotation=default_annotation",
-#                    "--which_interval_ranges=polak"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                 c("--dataset=ding",
+                   "--cores=1",
+                   "--annotation=default_annotation",
+                   "--which_interval_ranges=polak"))
 cores = args$cores
 dataset = args$dataset
 dataset_subsets = args$dataset_subsets
@@ -431,6 +431,13 @@ if (dataset == "Bingren") {
   }
   files = list.files("../bed_files/wang_adult_lung",
                                         pattern = "D.*")
+} else if (dataset == "Ding") {
+  if (annotation == "default_annotation") {
+    metadata = read.table("../metadata/NormalGBM_Barcode_Annotation.tsv",
+                          header=1)
+  }
+  files = list.files("../bed_files/ding_scATAC/migrated_to_hg19",
+                     pattern = "\\.tsv\\.bgz$")
 }
 
 mclapply(files, create_count_overlaps_files,

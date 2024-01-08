@@ -6,9 +6,13 @@ load('/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/hg19.1Mb.rang
 rownames = names(interval.ranges)
 mut_df = read.csv("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/mutation_data/SCLC_MutCountperBin.txt",
                   sep="\t")
-agg = rowSums(mut_df[, 4:ncol(mut_df)])
+mut_df = mut_df[, 4:ncol(mut_df)]
+rownames(mut_df) = rownames
+write.csv(mut_df, paste(
+  "/broad/hptmp/bgiotti/BingRen_scATAC_atlas/data/processed_data/per_patient_mutations",
+  "SCLC_per_donor.csv", sep="/"))
+agg = rowSums(mut_df)
 agg = data.frame(SCLC = agg)
-rownames(agg) = rownames
 # mut_df = mut_df[, 1:3]
 
 # mut_df["agg"] = agg
