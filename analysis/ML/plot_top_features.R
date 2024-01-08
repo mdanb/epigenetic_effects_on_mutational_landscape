@@ -53,8 +53,8 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 parser <- add_option(parser, c("--cell_types_keep"), type="character", 
                      default=NULL)
 
-# args = parse_args(parser, args= c("--cancer_types=Kidney-ChRCC",
-#                                   "--datasets=Shendure,Yang_kidney",
+# args = parse_args(parser, args= c("--cancer_types=Liver-HCC",
+#                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
 #                                   "--cell_number_filter=100",
 #                                   "--annotation=finalized_annotation",
 #                                   "--seed_range=1-10",
@@ -62,7 +62,7 @@ parser <- add_option(parser, c("--cell_types_keep"), type="character",
 #                                   "--top_features_to_plot=1",
 #                                   "--feature_importance_method=permutation_importance",
 #                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=kidney",
+#                                   "--tissues_to_consider=all",
 #                                   "--robustness_analysis"))
 
 args = parse_args(parser)
@@ -454,7 +454,7 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath) {
   df = df_test
   if (!(savefile == "temp_test.pdf")) {
     df = df %>%
-      mutate(top_feature = unname(cell_types[df %>% pull(top_feature)]))
+      mutate(top_feature = rename_cell_types(df %>% pull(top_feature)))
   }
   
   df["top_feature"] = str_wrap(df[["top_feature"]], width=15)
@@ -1193,7 +1193,7 @@ if (!robustness_analysis) {
                        paste(top_features_to_plot, collapse="_"), 
                        "features.pdf", sep="_")
       construct_test_set_perf_boxplots(df=df_test, 
-                                     feature=top_appearing_feature,
+                                       feature=top_appearing_feature,
                                        savefile=savefile, 
                                        savepath=savepath)
       
