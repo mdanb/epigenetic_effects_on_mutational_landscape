@@ -53,17 +53,17 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 parser <- add_option(parser, c("--cell_types_keep"), type="character", 
                      default=NULL)
 
-args = parse_args(parser, args= c("--cancer_types=Kidney-ChRCC",
-                                  "--datasets=Shendure,Yang_kidney",
-                                  "--cell_number_filter=100",
-                                  "--annotation=finalized_annotation",
-                                  "--seed_range=1-10",
-                                  "--top_features_to_plot_feat_imp=5",
-                                  "--top_features_to_plot=1",
-                                  "--feature_importance_method=permutation_importance",
-                                  "--folds_for_test_set=1-10",
-                                  "--tissues_to_consider=kidney",
-                                  "--robustness_analysis"))
+# args = parse_args(parser, args= c("--cancer_types=Kidney-ChRCC",
+#                                   "--datasets=Shendure,Yang_kidney",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--seed_range=1-10",
+#                                   "--top_features_to_plot_feat_imp=5",
+#                                   "--top_features_to_plot=1",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=kidney",
+#                                   "--robustness_analysis"))
 
 args = parse_args(parser)
 
@@ -302,17 +302,24 @@ construct_bar_plots <- function(cancer_type,
   }
 }
 
+rename_cell_types <- function(cell_types) {
+  renamed = strsplit(cell_types, split=" ")
+  tissue = lapply(renamed, "[", 1)
+  dataset = lapply(renamed, function(x) x[length(x)])
+  cell_type = lapply(renamed, function(x) paste(x[2:(length(x)-1)], 
+                                                  collapse=" "))
+  renamed = paste(paste0(cell_type, ","), tissue, dataset)
+  renamed = ifelse(cell_types %in% names(cell_types), 
+                     unname(cell_types[cell_types]), 
+                   renamed)
+  return(renamed)
+}
+
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
                                           n_name=NULL, width=12, height=8) {
   #df = df_feat_imp
-  y_names = df %>% pull(!!sym(y))
-  renamed_y = strsplit(y_names, split=" ")
-  tissue = lapply(renamed_y, "[", 1)
-  dataset = lapply(renamed_y, function(x) x[length(x)])
-  cell_type = lapply(renamed_y, function(x) paste(x[2:(length(x)-1)], collapse=" "))
-  renamed_y = paste(paste0(cell_type, ","), tissue, dataset)
-  renamed_y = ifelse(y_names %in% names(cell_types), unname(cell_types[y_names]), renamed_y)
+  renamed_y = rename_cell_types(df %>% pull(!!sym(y)))
   
   if (!(savefile == "temp.pdf")) {
     df = df %>%
@@ -555,7 +562,7 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
 
 construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath) {
   df["test_set_perf"] = 100 * df[["test_set_perf"]]
-  feature = unname(cell_types[feature])
+  feature = rename_cell_types(feature)
   # if (!(savefile == "temp.pdf")) {
   #   df_test = df_test %>%
   #               mutate(top_feature = unname(cell_types[df_test %>% 
