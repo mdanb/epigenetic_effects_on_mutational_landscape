@@ -1147,6 +1147,21 @@ if (!robustness_analysis) {
                                     xlabel="Feature Importance",
                                     width=14,
                                     height=9)
+      
+      savefile = paste0(cancer_type, "_feature_importance_with_",
+                        paste(top_features_to_plot_feat_imp, collapse="_"),
+                        "_features_", "top_5_features.svg")
+      construct_robustness_boxplots(df=df_feat_imp, 
+                                    x="permutation_importance", 
+                                    y="features", 
+                                    title=cancer_names[[cancer_type]], 
+                                    savepath=savepath,
+                                    savefile=savefile, 
+                                    n_name="n_feature", 
+                                    facet_var="num_features",
+                                    xlabel="Feature Importance",
+                                    width=14,
+                                    height=9)
       df_feat_imp = df_feature_importances_all_seeds %>% 
         # group_by(num_features, seed, fold_for_test_set) %>%
                     group_by(num_features, features) %>%
@@ -1169,6 +1184,20 @@ if (!robustness_analysis) {
                                     xlabel="Feature Importance",
                                     width=14,
                                     height=9)
+      savefile = paste0(cancer_type, "_feature_importance_with_",
+                        paste(c(1,2,5,10), collapse="_"),
+                        "_features_", "top_5_features.svg")
+      construct_robustness_boxplots(df=df_feat_imp, 
+                                    x="permutation_importance", 
+                                    y="features", 
+                                    title=cancer_names[[cancer_type]], 
+                                    savepath=savepath,
+                                    savefile=savefile, 
+                                    n_name="n_feature", 
+                                    facet_var="num_features",
+                                    xlabel="Feature Importance",
+                                    width=14,
+                                    height=9)
       
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
@@ -1178,6 +1207,8 @@ if (!robustness_analysis) {
       savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
       construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath)
       construct_top_feat_barplot(df_test, savefile="temp_test.pdf", savepath=savepath)
+      savefile = paste(cancer_type, "top_feature_appearances.svg", sep="_")
+      construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath)
       
       top_appearing_feature = unique(df_test %>% 
                                   filter(top_n == 1) %>%
@@ -1196,7 +1227,13 @@ if (!robustness_analysis) {
                                        feature=top_appearing_feature,
                                        savefile=savefile, 
                                        savepath=savepath)
-      
+      savefile = paste(cancer_type, "top_feature_test_set_perf_with", 
+                       paste(top_features_to_plot, collapse="_"), 
+                       "features.svg", sep="_")
+      construct_test_set_perf_boxplots(df=df_test, 
+                                       feature=top_appearing_feature,
+                                       savefile=savefile, 
+                                       savepath=savepath)
       if (plot_fold_on_test_set_plot) {
         l = get_and_plot_scatac_and_mutation_counts_per_fold(cancer_type,
                                                              folds_for_test_set,
