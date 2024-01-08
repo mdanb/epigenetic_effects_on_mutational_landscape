@@ -302,15 +302,15 @@ construct_bar_plots <- function(cancer_type,
   }
 }
 
-rename_cell_types <- function(cell_types) {
-  renamed = strsplit(cell_types, split=" ")
+rename_cell_types <- function(cell_type_names) {
+  renamed = strsplit(cell_type_names, split=" ")
   tissue = lapply(renamed, "[", 1)
   dataset = lapply(renamed, function(x) x[length(x)])
   cell_type = lapply(renamed, function(x) paste(x[2:(length(x)-1)], 
                                                   collapse=" "))
   renamed = paste(paste0(cell_type, ","), tissue, dataset)
-  renamed = ifelse(cell_types %in% names(cell_types), 
-                     unname(cell_types[cell_types]), 
+  renamed = ifelse(cell_type_names %in% names(cell_types), 
+                     unname(cell_types[cell_type_names]), 
                    renamed)
   return(renamed)
 }
