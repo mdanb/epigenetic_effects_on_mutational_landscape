@@ -10,11 +10,31 @@ sarcomatoid_mesomics = read.csv("../mutation_data/Mesothelioma_MMS_MutCountperBi
                              sep="\t")
 epithelioid_mesomics = read.csv("../mutation_data/Mesothelioma_MME_MutCountperBin.txt",
                                 sep="\t")
+patients_keep = read.csv("../../data/Tumor_Normal_Paired_Sample.csv")[, 1]
+
+biphasic_patients = colnames(biphasic_mesomics)[4:ncol(biphasic_mesomics)]
+sarcomatoid_patients = colnames(sarcomatoid_mesomics)[4:ncol(sarcomatoid_mesomics)]
+epithelioid_patients = colnames(epithelioid_mesomics)[4:ncol(epithelioid_mesomics)]
+
+biphasic_keep = biphasic_patients[biphasic_patients %in% patients_keep]
+# 4 biphasic
+length(biphasic_keep)
+
+sarcomatoid_keep = sarcomatoid_patients[sarcomatoid_patients %in% patients_keep]
+# 0 sarcomatoid
+length(sarcomatoid_keep)
+
+epithelioid_keep = epithelioid_patients[epithelioid_patients %in% patients_keep]
+# 39 epithelioid
+length(epithelioid_keep)
 
 all_mesomics = cbind(biphasic_mesomics, 
                      sarcomatoid_mesomics[, 4:ncol(sarcomatoid_mesomics)], 
                      epithelioid_mesomics[, 4:ncol(epithelioid_mesomics)])
-                    
+mesomics_keep = cbind(biphasic_mesomics[, 1:3], 
+                      biphasic_mesomics[, biphasic_keep], 
+                      epithelioid_mesomics[, epithelioid_keep])        
+
 tsankov_samples = read.csv("../mutation_data/mesothelioma_p786_p848.csv")
 colnames(tsankov_samples) = c("chr", "s786", "s848")
 
@@ -65,6 +85,7 @@ agg_sarcomatoid = aggregate_mutations(sarcomatoid_mesomics,
                                       "sarcomatoid_mesomics")
 agg_biphasic = aggregate_mutations(biphasic_mesomics, "biphasic_mesomics")
 
+agg_keep = aggregate_mutations(mesomics_keep, "mesomics_keep")
 waddell = read.csv("../mutation_data/mesothelioma_WGS_Waddell.csv", 
                    row.names = 1)
 

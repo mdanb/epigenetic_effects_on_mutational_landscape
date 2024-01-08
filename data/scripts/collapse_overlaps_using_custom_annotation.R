@@ -631,8 +631,8 @@ if (dataset == "Greenleaf_pbmc_bm") {
                            "normal_colon Goblet")
       mapping[[index + 1]] = c("normal_colon Immature Enterocytes", 
                                "normal_colon Enterocytes")
-      mapping[[index + 2]] = c("polyp_colon Immature Enterocytes", 
-                               "polyp_colon Enterocytes")
+      mapping[[index + 2]] = c("polyp_colon Immature Goblet", 
+                               "polyp_colon Goblet")
       mapping[[index + 3]] = c("polyp_colon Immature Enterocytes", 
                                "polyp_colon Enterocytes")
       

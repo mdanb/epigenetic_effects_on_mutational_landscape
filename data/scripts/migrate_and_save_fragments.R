@@ -11,9 +11,9 @@ option_list <- list(
   make_option("--chain", type="character", default="hg38ToHg19")
 )
 # 
-# args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=Bingren_adult_brain",
-#                    "--cores=1"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                 c("--dataset=Ding",
+                   "--cores=1"))
 
 args = parse_args(OptionParser(option_list=option_list))
 dataset = args$dataset
@@ -100,7 +100,9 @@ get_files_not_done <- function(files, dir_path) {
   files_not_done = c()
   migrated_filepaths_not_done = c()
   for (i in 1:length(migrated_filepaths)) {
-    bgz_file = paste(migrated_filepaths[i], ".bgz", sep="")
+    bgz_file = migrated_filepaths[i]
+    
+    # bgz_file = paste(migrated_filepaths[i], ".bgz", sep="")
     # if (!file.exists(bgz_file) || !file.exists(migrated_filepaths_tbi[i])) {
     if (!file.exists(bgz_file)) {
       migrated_filepaths_not_done = append(migrated_filepaths_not_done, 
@@ -159,6 +161,12 @@ if (dataset == "Bingren") {
   dir.create(dir_path)
   files = list.files("../bed_files/bingren_adult_brain",
                      pattern="bedpe.gz",
+                     full.names=TRUE)
+} else if (dataset == "Ding") {
+  dir_path = "../bed_files/ding_scATAC/migrated_to_hg19"
+  dir.create(dir_path)
+  files = list.files("../bed_files/ding_scATAC",
+                     pattern="gz",
                      full.names=TRUE)
 }
 
