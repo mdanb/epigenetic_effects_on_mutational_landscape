@@ -19,11 +19,11 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-args = parse_args(OptionParser(option_list=option_list), args =
-                 c("--dataset=ding",
-                   "--cores=1",
-                   "--annotation=default_annotation",
-                   "--which_interval_ranges=polak"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                  c("--dataset=ding",
+#                    "--cores=1",
+#                    "--annotation=default_annotation",
+#                    "--which_interval_ranges=polak"))
 cores = args$cores
 dataset = args$dataset
 dataset_subsets = args$dataset_subsets
@@ -433,11 +433,20 @@ if (dataset == "Bingren") {
                                         pattern = "D.*")
 } else if (dataset == "Ding") {
   if (annotation == "default_annotation") {
-    metadata = read.table("../metadata/NormalGBM_Barcode_Annotation.tsv",
-                          header=1)
+    if (file.exists("../metadata/wang_adult_metadata.csv")) {
+      metadata = read.csv("../metadata/ding_metadata.csv", row.names = 1)
+    } else {
+      metadata = read.table("../metadata/NormalGBM_Barcode_Annotation.tsv",
+                            header=1)
+      colnames(metadata)[3] = "Barcode"
+      metadata["Barcode"] = gsub("_1|_2", "", metadata[["Barcode"]])
+      colnames(metadata)[4] = "sample"
+      colnames(metadata)[2] = "cell_type"
+      write.csv(metadata, "../metadata/ding_metadata.csv")
+    }
   }
   files = list.files("../bed_files/ding_scATAC/migrated_to_hg19",
-                     pattern = "\\.tsv\\.bgz$")
+                     pattern = "\\.tsv\\.gz$")
 }
 
 mclapply(files, create_count_overlaps_files,

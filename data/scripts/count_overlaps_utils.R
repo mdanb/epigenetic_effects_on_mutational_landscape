@@ -84,6 +84,9 @@ import_sample <- function(file, dataset, which_interval_ranges) {
     sample = import(paste("..", "bed_files",
                           "wang_adult_lung",
                           file, sep="/"), format="bed")
+  } else if (dataset == "Ding") {
+    sample = import(paste("..", "bed_files",
+                          "ding_scATAC", file, sep="/"), format="bed")
   }
   return(sample)
 }
@@ -142,6 +145,11 @@ get_sample_filename <- function(file, dataset) {
     filename = paste("Wang_lung_count_overlaps",
                      paste(filename, "fragments",
                            "rds", sep="."), sep="_")
+  } else if (dataset == "Ding") {
+    filename = remove_extension(file)
+    filename = paste("Ding_count_overlaps",
+                     paste(filename,
+                           "rds", sep="."), sep="_")
   }
   return(filename)
 }
@@ -191,6 +199,9 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
                                                                           "X",
                                                                           "#")
     sample_barcodes_in_metadata = substr(sample_barcodes_in_metadata, 1, 16)
+  } 
+  else if (dataset == "Ding") {
+    sample_barcodes_in_metadata = filtered_metadata[["Barcode"]]
   }
   return(sample_barcodes_in_metadata)
 }
@@ -224,6 +235,8 @@ get_sample_name <- function(file, dataset) {
     sample_name = get_sample_name_rawlins_fetal_lung(file)
   } else if (dataset == "Wang_lung") {
     sample_name = get_sample_name_wang_lung(file)
+  } else if (dataset == "Ding") {
+    sample_name = get_sample_name_ding(file)
   }
   return(sample_name)
 }
@@ -322,6 +335,20 @@ get_sample_name_greenleaf_colon <- function(file) {
   sample_name = str_remove(sample_name, "_fragments.rds")
   # added line below, may cause issues
   sample_name = unlist(strsplit(sample_name, split="_"))[2]
+  return(sample_name)
+}
+
+get_sample_name_ding <- function(file) {
+  sample_name = str_remove(file, "Ding_count_overlaps_")
+  sample_name = str_remove(sample_name, "per_cell_")
+  sample_name = str_remove(sample_name, "interval_ranges_100kb_")
+  sample_name = str_remove(sample_name, "_fragments.tsv.gz")
+  sample_name = str_remove(sample_name, "_fragments.rds")
+  sample_name = str_remove(sample_name, "-atac")
+  sample_name = gsub("-", "_", sample_name)
+  
+  # added line below, may cause issues
+  # sample_name = unlist(strsplit(sample_name, split="_"))[2]
   return(sample_name)
 }
 
