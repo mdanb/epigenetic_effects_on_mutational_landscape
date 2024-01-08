@@ -11,9 +11,9 @@ option_list <- list(
   make_option("--chain", type="character", default="hg38ToHg19")
 )
 # 
-args = parse_args(OptionParser(option_list=option_list), args =
-                 c("--dataset=Ding",
-                   "--cores=1"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                  c("--dataset=Ding",
+#                    "--cores=1"))
 
 args = parse_args(OptionParser(option_list=option_list))
 dataset = args$dataset
