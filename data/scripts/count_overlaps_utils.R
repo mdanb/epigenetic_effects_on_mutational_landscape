@@ -404,6 +404,9 @@ get_tissue_name <- function(file, dataset, annotation) {
   }
   else if (dataset == "Bingren_adult_brain") {
     tissue_name = "adult_brain"
+  } 
+  else if (dataset == "Ding") {
+    tissue_name = "adult_brain"
   }
   return(tissue_name)
 }
