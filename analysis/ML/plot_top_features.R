@@ -199,7 +199,7 @@ ggplot_barplot_helper <- function(df, title, savepath, y, ylab,
     ggtitle(title) +
     theme(plot.title = element_text(hjust = 0.5))
   ggsave(paste(savepath, paste(y, "bar_plot.png", sep="_"), sep="/"), 
-         width = 20, height = 15, plot)
+         width = 20, height = 15, plot, limitsize=F)
 }
 
 construct_bar_plots <- function(cancer_type, 
@@ -404,8 +404,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 axis.text.x = element_text(size = 25),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank(),
-                axis.ticks = element_line(size=2),
-                axis.ticks.length = unit(0.25, "cm"),
+                axis.ticks = element_line(size=30),
+                axis.ticks.length = unit(3, "cm"),
                 axis.line = element_line(linewidth=0.5)
               ) +
             xlim(xlim_lower - xlim_lower / 10, xlim_upper + 2 * xlim_upper / 10)
@@ -484,7 +484,7 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath, width=12,
                  fill=color), lwd=1.2) +
     geom_text(aes(x = n_top_feature + 7,
                   y = top_feature),
-              label = paste0("n=", num_appearances), size=10) +
+              label = paste0("n=", num_appearances), size=40) +
     scale_fill_manual(values = c("highlight" = "#EE4B2B", "other" = "#A9A9A9")) +
     ylab("") +
     xlab("") +
@@ -496,10 +496,13 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath, width=12,
       strip.background = element_blank(),
       strip.text.x = element_blank(),
       # plot.title = element_text(hjust = 0.5, size = 40),
-      axis.text.x = element_text(vjust = 0.5, hjust=1, size=25),
-      axis.text.y = element_text(size=25, colour = color),
+      axis.text.x = element_text(vjust = 0.5, hjust=1, size=150),
+      axis.text.y = element_text(size=150, colour = color),
+      axis.title = element_text(size=150),
       panel.grid.major.y=element_blank(),
       panel.grid.minor.x=element_blank(),
+      axis.ticks = element_line(size=7),
+      axis.ticks.length = unit(1, "cm"),
       panel.grid.major.x = element_line(size = 1)
       # plot.margin = margin(t=0,r=1,b=0,l=0, unit = "cm")
     ) 
@@ -583,31 +586,32 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
   # ggplot2 plot
   ggplot(df) +
     geom_boxplot(aes(x = top_n, y = test_set_perf), lwd = 2, 
-                 outlier.shape = outlier_shape, outlier.size = 3) +
+                 outlier.shape = outlier_shape, outlier.size = 30) +
     scale_x_discrete(limits = levels(df$top_n)) +
     geom_text(aes(x = top_n,
                     y = x_position + x_position / 30),
                 label = paste0("n=", df[["n_top_feature"]]), 
-              size=7) +
+              size=40) +
     ggtitle(feature) +
     # theme_bw() +
     theme(
       # legend.position="none",
       # strip.background = element_blank(),
-      plot.title = element_text(size = 50), 
       strip.text.x = element_blank(),
-      plot.title = element_text(hjust = 0.5, size=25),
-      axis.text.y = element_text(size = 50),
-      axis.text.x = element_text(size = 50),
+      plot.title = element_text(hjust = 0.5, size=150),
+      axis.text.y = element_text(size = 150),
+      axis.text.x = element_text(size = 150),
       axis.title.x=element_blank(),
       axis.title.y=element_blank(),
       axis.ticks = element_line(size=30),
+      # axis.ticks.length = unit(1, "cm"),
       axis.line = element_line(linewidth=1)
     )
   
     ggsave(paste(savepath, savefile, sep="/"), 
          width = width, 
-         height = height)
+         height = height,
+	 limitsize=F)
 }
 
 construct_df_feature_importances_all_seeds <- function(all_seeds_dirs,
