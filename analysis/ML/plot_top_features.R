@@ -53,17 +53,17 @@ parser <- add_option(parser, c("--grid_cell_types"), type="character")
 parser <- add_option(parser, c("--cell_types_keep"), type="character", 
                      default=NULL)
 
-# args = parse_args(parser, args= c("--cancer_types=Liver-HCC",
-#                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
-#                                   "--cell_number_filter=100",
-#                                   "--annotation=finalized_annotation",
-#                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot_feat_imp=5",
-#                                   "--top_features_to_plot=1",
-#                                   "--feature_importance_method=permutation_importance",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=all",
-#                                   "--robustness_analysis"))
+args = parse_args(parser, args= c("--cancer_types=Lung-SCC",
+                                  "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+                                  "--cell_number_filter=100",
+                                  "--annotation=finalized_annotation",
+                                  "--seed_range=1-10",
+                                  "--top_features_to_plot_feat_imp=5",
+                                  "--top_features_to_plot=1",
+                                  "--feature_importance_method=permutation_importance",
+                                  "--folds_for_test_set=1-10",
+                                  "--tissues_to_consider=all",
+                                  "--robustness_analysis"))
 
 args = parse_args(parser)
 
@@ -385,12 +385,12 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     
     # df_filtered["wrapped_y"] = str_wrap(df_filtered$y_reordered, width=15)
     p <- ggplot(df_filtered) +
-            geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 0.3, 
+            geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 1, 
                              outlier.shape = outlier_shape, outlier.size=2) +
             geom_text(aes(x = x_position + xlim_upper / 7,
                           y = y_reordered),
                           label = paste0("n=", df_filtered[[n_name]]),
-			  size=10) +
+			  size=20) +
             # ggtitle(subtitle) +
             scale_fill_manual(values = c("highlight" = "#EE4B2B",
                                          "other" = "#A9A9A9")) +
