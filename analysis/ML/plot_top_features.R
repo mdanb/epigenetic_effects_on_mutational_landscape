@@ -1304,7 +1304,6 @@ if (!robustness_analysis) {
       #                               x="score", 
       #                               y="features", 
       #                    - Show bar plot mYELOID mpn
-      title=cancer_type, 
       #                               savepath=savepath,
       #                               savefile=savefile, 
       #                               n_name="n_feature",
