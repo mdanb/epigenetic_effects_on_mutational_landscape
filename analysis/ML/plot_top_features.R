@@ -595,6 +595,7 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
     theme(
       # legend.position="none",
       # strip.background = element_blank(),
+      plot.title = element_text(size = 50), 
       strip.text.x = element_blank(),
       plot.title = element_text(hjust = 0.5, size=50),
       axis.text.y = element_text(size = 50),
