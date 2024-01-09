@@ -385,12 +385,12 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     
     # df_filtered["wrapped_y"] = str_wrap(df_filtered$y_reordered, width=15)
     p <- ggplot(df_filtered) +
-            geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 0.3, 
-                             outlier.shape = outlier_shape, outlier.size=2) +
+            geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 1, 
+                             outlier.shape = outlier_shape, outlier.size=20) +
             geom_text(aes(x = x_position + xlim_upper / 7,
                           y = y_reordered),
                           label = paste0("n=", df_filtered[[n_name]]),
-			  size=10) +
+			  size=50) +
             # ggtitle(subtitle) +
             scale_fill_manual(values = c("highlight" = "#EE4B2B",
                                          "other" = "#A9A9A9")) +
@@ -399,13 +399,13 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 legend.position="none",
                 strip.background = element_blank(),
                 strip.text.x = element_blank(),
-                plot.title = element_text(hjust = 2, size=15),
-                axis.text.y = element_text(size = 25, colour = color),
-                axis.text.x = element_text(size = 25),
+                plot.title = element_text(hjust = 2, size=150),
+                axis.text.y = element_text(size = 150, colour = color),
+                axis.text.x = element_text(size = 150),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank(),
-                axis.ticks = element_line(size=30),
-                axis.ticks.length = unit(3, "cm"),
+                axis.ticks = element_line(size=3),
+                axis.ticks.length = unit(1, "cm"),
                 axis.line = element_line(linewidth=0.5)
               ) +
             xlim(xlim_lower - xlim_lower / 10, xlim_upper + 2 * xlim_upper / 10)
