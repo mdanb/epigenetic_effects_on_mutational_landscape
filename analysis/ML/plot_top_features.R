@@ -1135,7 +1135,7 @@ if (!robustness_analysis) {
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
                                     width=28,
-                                    height=18)
+                                    height=28)
       construct_robustness_boxplots(df=df_feat_imp, 
                                     x="permutation_importance", 
                                     y="features", 
@@ -1146,7 +1146,7 @@ if (!robustness_analysis) {
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
                                     width=28,
-                                    height=18)
+                                    height=28)
       
       savefile = paste0(cancer_type, "_feature_importance_with_",
                         paste(top_features_to_plot_feat_imp, collapse="_"),
@@ -1161,7 +1161,7 @@ if (!robustness_analysis) {
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
                                     width=28,
-                                    height=18)
+                                    height=28)
       df_feat_imp = df_feature_importances_all_seeds %>% 
         # group_by(num_features, seed, fold_for_test_set) %>%
                     group_by(num_features, features) %>%
@@ -1183,7 +1183,7 @@ if (!robustness_analysis) {
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
                                     width=28,
-                                    height=18)
+                                    height=28)
       savefile = paste0(cancer_type, "_feature_importance_with_",
                         paste(c(1,2,5,10), collapse="_"),
                         "_features_", "top_5_features.svg")
@@ -1197,7 +1197,7 @@ if (!robustness_analysis) {
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
                                     width=28,
-                                    height=18)
+                                    height=28)
       
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
