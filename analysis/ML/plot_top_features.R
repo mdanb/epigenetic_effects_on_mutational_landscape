@@ -601,7 +601,7 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
       axis.text.x = element_text(size = 50),
       axis.title.x=element_blank(),
       axis.title.y=element_blank(),
-      axis.ticks = element_line(size=2),
+      axis.ticks = element_line(size=30),
       axis.line = element_line(linewidth=1)
     )
   
