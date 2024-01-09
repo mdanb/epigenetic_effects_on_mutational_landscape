@@ -450,7 +450,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
          height = height, plot, limitsize=F)
 }
 
-construct_top_feat_barplot <- function(df_test, savefile, savepath) {
+construct_top_feat_barplot <- function(df_test, savefile, savepath, width=12,
+                                       height=7) {
   df = df_test
   if (!(savefile == "temp_test.pdf")) {
     df = df %>%
@@ -504,7 +505,7 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath) {
     ) 
   print(p)
   ggsave(paste(savepath, savefile, sep="/"), 
-         width = 12, height = 7, limitsize = FALSE)
+         width = width, height = height, limitsize = FALSE)
 }
 
 construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
@@ -560,7 +561,8 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
   return(plot)
 }
 
-construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath) {
+construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
+                                             width=9, height=7) {
   df["test_set_perf"] = 100 * df[["test_set_perf"]]
   feature = rename_cell_types(feature)
   # if (!(savefile == "temp.pdf")) {
@@ -603,8 +605,8 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath) {
     )
   
     ggsave(paste(savepath, savefile, sep="/"), 
-         width = 9, 
-         height = 7)
+         width = width, 
+         height = height)
 }
 
 construct_df_feature_importances_all_seeds <- function(all_seeds_dirs,
@@ -1205,10 +1207,14 @@ if (!robustness_analysis) {
         ungroup()
       
       savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
-      construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath)
-      construct_top_feat_barplot(df_test, savefile="temp_test.pdf", savepath=savepath)
+      construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
+                                 width=12, height=12)
+      construct_top_feat_barplot(df_test, savefile="temp_test.pdf", 
+                                 savepath=savepath, 
+                                 width=12, height=12)
       savefile = paste(cancer_type, "top_feature_appearances.svg", sep="_")
-      construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath)
+      construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
+                                 width=12, height=12)
       
       top_appearing_feature = unique(df_test %>% 
                                   filter(top_n == 1) %>%
@@ -1226,14 +1232,18 @@ if (!robustness_analysis) {
       construct_test_set_perf_boxplots(df=df_test, 
                                        feature=top_appearing_feature,
                                        savefile=savefile, 
-                                       savepath=savepath)
+                                       savepath=savepath,
+                                       width=12,
+                                       height=15)
       savefile = paste(cancer_type, "top_feature_test_set_perf_with", 
                        paste(top_features_to_plot, collapse="_"), 
                        "features.svg", sep="_")
       construct_test_set_perf_boxplots(df=df_test, 
                                        feature=top_appearing_feature,
                                        savefile=savefile, 
-                                       savepath=savepath)
+                                       savepath=savepath,
+                                       width=12,
+                                       height=15)
       if (plot_fold_on_test_set_plot) {
         l = get_and_plot_scatac_and_mutation_counts_per_fold(cancer_type,
                                                              folds_for_test_set,
