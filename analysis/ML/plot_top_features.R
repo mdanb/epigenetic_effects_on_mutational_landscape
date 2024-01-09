@@ -385,7 +385,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     
     # df_filtered["wrapped_y"] = str_wrap(df_filtered$y_reordered, width=15)
     p <- ggplot(df_filtered) +
-            geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 10, 
+            geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = 5, 
                              outlier.shape = outlier_shape, outlier.size=20) +
             geom_text(aes(x = x_position + xlim_upper / 7,
                           y = y_reordered),
@@ -404,7 +404,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 axis.text.x = element_text(size = 150),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank(),
-                axis.ticks = element_line(size=10),
+                axis.ticks = element_line(size=5),
                 axis.ticks.length = unit(1, "cm"),
                 axis.line = element_line(linewidth=0.5)
               ) +
