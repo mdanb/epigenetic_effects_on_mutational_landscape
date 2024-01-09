@@ -404,8 +404,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                 axis.text.x = element_text(size = 25),
                 axis.title.x=element_blank(),
                 axis.title.y=element_blank(),
-                axis.ticks = element_line(size=2),
-                axis.ticks.length = unit(0.25, "cm"),
+                axis.ticks = element_line(size=30),
+                axis.ticks.length = unit(3, "cm"),
                 axis.line = element_line(linewidth=0.5)
               ) +
             xlim(xlim_lower - xlim_lower / 10, xlim_upper + 2 * xlim_upper / 10)
@@ -496,11 +496,13 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath, width=12,
       strip.background = element_blank(),
       strip.text.x = element_blank(),
       # plot.title = element_text(hjust = 0.5, size = 40),
-      axis.text.x = element_text(vjust = 0.5, hjust=1, size=100),
-      axis.text.y = element_text(size=100, colour = color),
-      axis.title = element_text(size=100),
+      axis.text.x = element_text(vjust = 0.5, hjust=1, size=150),
+      axis.text.y = element_text(size=150, colour = color),
+      axis.title = element_text(size=150),
       panel.grid.major.y=element_blank(),
       panel.grid.minor.x=element_blank(),
+      axis.ticks = element_line(size=7),
+      axis.ticks.length = unit(1, "cm"),
       panel.grid.major.x = element_line(size = 1)
       # plot.margin = margin(t=0,r=1,b=0,l=0, unit = "cm")
     ) 
@@ -595,14 +597,14 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
     theme(
       # legend.position="none",
       # strip.background = element_blank(),
-      plot.title = element_text(size = 50), 
       strip.text.x = element_blank(),
-      plot.title = element_text(hjust = 0.5, size=50),
-      axis.text.y = element_text(size = 50),
-      axis.text.x = element_text(size = 50),
+      plot.title = element_text(hjust = 0.5, size=150),
+      axis.text.y = element_text(size = 150),
+      axis.text.x = element_text(size = 150),
       axis.title.x=element_blank(),
       axis.title.y=element_blank(),
-      axis.ticks = element_line(size=2),
+      axis.ticks = element_line(size=7),
+      axis.ticks.length = unit(1, "cm"),
       axis.line = element_line(linewidth=1)
     )
   
