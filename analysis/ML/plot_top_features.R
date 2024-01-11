@@ -342,12 +342,13 @@ rename_cell_types <- function(cell_type_names) {
     title_cased_words <- sapply(words, custom_title_case)
     return(paste(title_cased_words, collapse = " "))
   }
+  renamed[idx] = unlist(lapply(renamed[idx], to_custom_title))
+  
   renamed = paste(renamed, dataset)
   renamed = ifelse(cell_type_names %in% names(cell_types), 
                      unname(cell_types[cell_type_names]), 
                    renamed)
 
-  renamed[idx] = unlist(lapply(renamed[idx], to_custom_title))
   idx <- lapply(renamed, function(x) {
     matches_colon_gl_co <- grep("Colon GL_Co", x)
     non_matches_specific <- grep("Normal Colon GL_Co|Polyp Colon GL_Co", x, invert = TRUE)
