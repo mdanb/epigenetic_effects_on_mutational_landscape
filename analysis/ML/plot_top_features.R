@@ -325,10 +325,8 @@ rename_cell_types <- function(cell_type_names) {
                                                   collapse=" "))
   cell_type = gsub("_", " ", cell_type)
   tissue = gsub("_", " ", tissue)
-  renamed = paste(paste0(cell_type, ","), tissue, dataset)
-  renamed = ifelse(cell_type_names %in% names(cell_types), 
-                     unname(cell_types[cell_type_names]), 
-                   renamed)
+  renamed = paste(paste0(cell_type, ","), tissue)
+  
   idx = !(substring(renamed, 1, 1) == tolower(substring(renamed, 1, 1))
           & substring(renamed, 2, 2) == toupper(substring(renamed, 2, 2)))
   
@@ -344,7 +342,11 @@ rename_cell_types <- function(cell_type_names) {
     title_cased_words <- sapply(words, custom_title_case)
     return(paste(title_cased_words, collapse = " "))
   }
-  
+  renamed = paste(renamed, dataset)
+  renamed = ifelse(cell_type_names %in% names(cell_types), 
+                     unname(cell_types[cell_type_names]), 
+                   renamed)
+
   renamed[idx] = unlist(lapply(renamed[idx], to_custom_title))
   idx <- lapply(renamed, function(x) {
     matches_colon_gl_co <- grep("Colon GL_Co", x)
