@@ -330,7 +330,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
       # mutate("{y}" := unname(cell_types[df %>% pull(!!sym(y))]))
   }
   
-  df[y] = str_wrap(df[[y]], width=15)
+  # df[y] = str_wrap(df[[y]], width=15)
 
   if (plot_fold) {
     outlier_shape = NA
@@ -353,6 +353,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
           filter(features %in% unique(sorted_features)[1:5] | features %in% 
                    keep)
     }
+    df_filtered[y] = str_wrap(df_filtered[[y]], width=15)
+    
     # print(unique(df %>% pull(!!sym(y))))
     # 
     df_compressed = df_filtered %>%
