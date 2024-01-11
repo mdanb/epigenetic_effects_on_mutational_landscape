@@ -54,13 +54,27 @@ parser <- add_option(parser, c("--cell_types_keep"), type="character",
                      default=NULL)
 parser <- add_option(parser, c("--robustness_keep"), type="character", 
                      default=NULL)
-# args = parse_args(parser, args= c("--cancer_types=Lung-SCC",
-#                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+# args = parse_args(parser, args= c("--cancer_types=SCLC",
+#                                   "--datasets=Bingren,Rawlins_fetal_lung,Shendure,Tsankov",
 #                                   "--cell_number_filter=100",
 #                                   "--annotation=finalized_annotation",
 #                                   "--seed_range=1-10",
 #                                   "--top_features_to_plot_feat_imp=5",
-#                                   "--top_features_to_plot=1",
+#                                   "--top_features_to_plot=10,5,2,1",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=lung,fetal_lung",
+#                                   "--robustness_analysis",
+#                                   "--cell_types_keep=lung Neuroendocrine-Tsankov",
+#                                   "--robustness_keep=lung Neuroendocrine TS,fetal_lung Pulmonary NE R_Fl,fetal_lung GHRL+ NE R_Fl"))
+
+# args = parse_args(parser, args= c("--cancer_types=kidney_papillary",
+#                                   "--datasets=Bingren,Greenleaf_pbmc_bm,Greenleaf_colon,Shendure,Tsankov,Yang_kidney",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--seed_range=1-10",
+#                                   "--top_features_to_plot_feat_imp=10,5,2",
+#                                   "--top_features_to_plot=10,5,2,1",
 #                                   "--feature_importance_method=permutation_importance",
 #                                   "--folds_for_test_set=1-10",
 #                                   "--tissues_to_consider=all",
@@ -145,7 +159,7 @@ cell_types = c("adult_brain ASCNT BR_Br" = "ASCNT, Adult Brain BR_Br",
           		 "lung SmoothMuscle TS" = "SmoothMuscle, Lung TS",
           		 "muscle Lymphoid and Myeloid cells SH" = "Lymphoid and Myeloid cells, Muscle SH",
           		 "muscle Schwann cells SH" = "Schwann cells, Muscle SH",
-          		 "muscle Type II Skeletal Myocyte BR" = "Skeletal Myocyte Muscle Type II BR",
+          		 "muscle Type II Skeletal Myocyte BR" = "Skeletal Myocyte, Muscle Type II BR",
           		 "nerve_tibial Fibroblast (Peripheral Nerve) BR" = "Fibroblast Tibial Nerve BR",
                "nerve_tibial Schwann Cell (General) BR" = "Schwann Cell, Tibial Nerve BR",
           		 "normal_colon Stem GL_Co" = "Stem, Colon GL_Co",
@@ -309,10 +323,39 @@ rename_cell_types <- function(cell_type_names) {
   dataset = lapply(renamed, function(x) x[length(x)])
   cell_type = lapply(renamed, function(x) paste(x[2:(length(x)-1)], 
                                                   collapse=" "))
+  cell_type = gsub("_", " ", cell_type)
+  tissue = gsub("_", " ", tissue)
   renamed = paste(paste0(cell_type, ","), tissue, dataset)
   renamed = ifelse(cell_type_names %in% names(cell_types), 
                      unname(cell_types[cell_type_names]), 
                    renamed)
+  idx = !(substring(renamed, 1, 1) == tolower(substring(renamed, 1, 1))
+          & substring(renamed, 2, 2) == toupper(substring(renamed, 2, 2)))
+  
+  to_custom_title <- function(input_string) {
+    words <- str_split(input_string, "\\s+")[[1]]
+    custom_title_case <- function(word) {
+      if (toupper(word) != word) {
+        return(str_to_title(word))
+      } else {
+        return(word)
+      }
+    }
+    title_cased_words <- sapply(words, custom_title_case)
+    return(paste(title_cased_words, collapse = " "))
+  }
+  
+  renamed[idx] = unlist(lapply(renamed[idx], to_custom_title))
+  idx <- lapply(renamed, function(x) {
+    matches_colon_gl_co <- grep("Colon GL_Co", x)
+    non_matches_specific <- grep("Normal Colon GL_Co|Polyp Colon GL_Co", x, invert = TRUE)
+    
+    intersect(matches_colon_gl_co, non_matches_specific)
+  })
+  idx <- which(sapply(idx, length) > 0)
+  renamed[idx] = gsub("Colon GL_Co", "Normal Colon GL_Co", renamed[idx])
+  renamed = gsub("brain GL_Br", "Cerebral Cortex GL_Br", renamed)
+  renamed = gsub("\\s+\\(.*\\)", "", renamed)
   return(renamed)
 }
 
@@ -346,7 +389,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     
     if (x == "permutation_importance") {
       unique_combos = unique(df_filtered[, c("features", "n_feature", "med_imp")])
-      sorted_features = unique_combos %>% 
+        sorted_features = unique_combos %>% 
         arrange(desc(n_feature), desc(med_imp)) %>%
         pull(features)
       df_filtered = df_filtered %>% 
@@ -974,7 +1017,7 @@ if (!is.null(cell_types_keep)) {
 }
 
 if (!is.null(robustness_keep)) {
-  robustness_keep = strsplit(robustness_keep, split=",")
+  robustness_keep = unlist(strsplit(robustness_keep, split=","))
 }
 
 if (!robustness_analysis) {
