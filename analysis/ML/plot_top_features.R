@@ -52,7 +52,8 @@ parser <- add_option(parser, c("--grid_analysis"), action="store_true", default=
 parser <- add_option(parser, c("--grid_cell_types"), type="character")
 parser <- add_option(parser, c("--cell_types_keep"), type="character", 
                      default=NULL)
-
+parser <- add_option(parser, c("--robustness_keep"), type="character", 
+                     default=NULL)
 # args = parse_args(parser, args= c("--cancer_types=Lung-SCC",
 #                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
 #                                   "--cell_number_filter=100",
@@ -317,7 +318,8 @@ rename_cell_types <- function(cell_type_names) {
 
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
-                                          n_name=NULL, width=12, height=8) {
+                                          n_name=NULL, width=12, height=8,
+                                          keep=NULL) {
   #df = df_feat_imp
   renamed_y = rename_cell_types(df %>% pull(!!sym(y)))
   
@@ -348,7 +350,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
         arrange(desc(n_feature), desc(med_imp)) %>%
         pull(features)
       df_filtered = df_filtered %>% 
-          filter(features %in% unique(sorted_features)[1:5])
+          filter(features %in% unique(sorted_features)[1:5] | features %in% 
+                   keep)
     }
     # print(unique(df %>% pull(!!sym(y))))
     # 
@@ -966,6 +969,10 @@ if (!is.null(cell_types_keep)) {
   cell_types_keep = gsub(" ", "_", cell_types_keep)
 }
 
+if (!is.null(robustness_keep)) {
+  robustness_keep = strsplit(cell_types_keep, split=",")
+}
+
 if (!robustness_analysis) {
   for (seed in seed_range) {
     for (fold in folds_for_test_set) {
@@ -1143,7 +1150,8 @@ if (!robustness_analysis) {
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
                                     width=50,
-                                    height=35)
+                                    height=35,
+                                    keep = robustness_keep)
       construct_robustness_boxplots(df=df_feat_imp, 
                                     x="permutation_importance", 
                                     y="features", 
@@ -1154,7 +1162,8 @@ if (!robustness_analysis) {
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
                                     width=50,
-                                    height=35)
+                                    height=35,
+                                    keep = robustness_keep)
       
       savefile = paste0(cancer_type, "_feature_importance_with_",
                         paste(top_features_to_plot_feat_imp, collapse="_"),
@@ -1169,7 +1178,8 @@ if (!robustness_analysis) {
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
                                     width=50,
-                                    height=35)
+                                    height=35, 
+                                    keep=robustness_keep)
       df_feat_imp = df_feature_importances_all_seeds %>% 
         # group_by(num_features, seed, fold_for_test_set) %>%
                     group_by(num_features, features) %>%
@@ -1191,7 +1201,8 @@ if (!robustness_analysis) {
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
                                     width=50,
-                                    height=35)
+                                    height=35,
+                                    keep=robustness_keep)
       savefile = paste0(cancer_type, "_feature_importance_with_",
                         paste(c(1,2,5,10), collapse="_"),
                         "_features_", "top_5_features.svg")
@@ -1205,7 +1216,8 @@ if (!robustness_analysis) {
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
                                     width=50,
-                                    height=35)
+                                    height=35,
+                                    keep=robustness_keep)
       
       df_test = df %>% 
         group_by(top_n, top_feature) %>%
