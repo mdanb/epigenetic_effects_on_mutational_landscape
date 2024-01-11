@@ -965,6 +965,8 @@ plot_fold_on_test_set_plot = args$plot_fold_on_test_set_plot
 hundred_kb = args$hundred_kb
 per_donor = args$per_donor
 cell_types_keep = args$cell_types_keep
+robustness_keep = args$robustness_keep
+
 if (!is.null(cell_types_keep)) {
   cell_types_keep = strsplit(cell_types_keep, split=",")
   cell_types_keep = paste(cell_types_keep, collapse="_")
@@ -972,7 +974,7 @@ if (!is.null(cell_types_keep)) {
 }
 
 if (!is.null(robustness_keep)) {
-  robustness_keep = strsplit(cell_types_keep, split=",")
+  robustness_keep = strsplit(robustness_keep, split=",")
 }
 
 if (!robustness_analysis) {
