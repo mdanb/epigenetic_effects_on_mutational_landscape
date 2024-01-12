@@ -314,7 +314,7 @@ rename_cell_types <- function(cell_type_names) {
   renamed[idx] = gsub("Colon GL_Co", "Normal Colon GL_Co", renamed[idx])
   renamed = gsub("brain GL_Br", "Cerebral Cortex GL_Br", renamed, 
                  ignore.case = T)
-  renamed = gsub("GluN", "Glutamatergic neuron", renamed)
+  renamed = gsub("GluN", "Glutamatergic Neuron", renamed)
   renamed = gsub("\\s+\\(.*\\)", "", renamed)
   # renamed = gsub("brain GluN GL_Br", "Cerebral Cortex GL_Br", renamed)
   return(renamed)
