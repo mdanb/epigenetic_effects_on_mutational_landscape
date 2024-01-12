@@ -109,7 +109,7 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
                     "Thy-AdenoCA"="Thyroid adenocarcinoma")
 
 
-cell_types = c("cerebrum Astrocytes/Oligodendrocytes SH" = "cerebrum Astrocytes/Oligo SH",
+cell_types = c("cerebrum Astrocytes/Oligodendrocytes SH" = "Astrocytes/Oligo, Cerebrum SH",
                "colon_transverse Macrophage (General) BR" = "Macrophage, Transverse Colon BR",
                "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Transverse Colon BR",
                "colon_transverse Plasma Cell BR" = "Plasma Cell, Transverse Colon BR",
