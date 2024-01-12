@@ -92,7 +92,7 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--tissues_to_consider=all",
 #                                   "--robustness_analysis"))
 
-# args = parse_args(parser, args= c("--cancer_types=CNS-GBM",
+# args = parse_args(parser, args= c("--cancer_types=CNS-Medullo",
 #                                   "--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Greenleaf_colon,Shendure,Tsankov,Yang_kidney",
 #                                   "--cell_number_filter=100",
 #                                   "--annotation=finalized_annotation",
@@ -312,7 +312,9 @@ rename_cell_types <- function(cell_type_names) {
   })
   idx <- which(sapply(idx, length) > 0)
   renamed[idx] = gsub("Colon GL_Co", "Normal Colon GL_Co", renamed[idx])
-  renamed = gsub("brain GL_Br", "Cerebral Cortex GL_Br", renamed)
+  renamed = gsub("brain GL_Br", "Cerebral Cortex GL_Br", renamed, 
+                 ignore.case = T)
+  renamed = gsub("GluN", "Glutamatergic neuron", renamed)
   renamed = gsub("\\s+\\(.*\\)", "", renamed)
   # renamed = gsub("brain GluN GL_Br", "Cerebral Cortex GL_Br", renamed)
   return(renamed)
