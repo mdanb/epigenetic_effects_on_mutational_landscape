@@ -91,6 +91,18 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--folds_for_test_set=1-10",
 #                                   "--tissues_to_consider=all",
 #                                   "--robustness_analysis"))
+
+# args = parse_args(parser, args= c("--cancer_types=CNS-GBM",
+#                                   "--datasets=Bingren,Greenleaf_brain,Greenleaf_pbmc_bm,Greenleaf_colon,Shendure,Tsankov,Yang_kidney",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--seed_range=1-10",
+#                                   "--top_features_to_plot_feat_imp=10,5,2",
+#                                   "--top_features_to_plot=10,5,2,1",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=all",
+#                                   "--robustness_analysis"))
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -269,8 +281,9 @@ rename_cell_types <- function(cell_type_names) {
   tissue = gsub("_", " ", tissue)
   renamed = paste(paste0(cell_type, ","), tissue)
   
-  idx = !(substring(renamed, 1, 1) == tolower(substring(renamed, 1, 1))
-          & substring(renamed, 2, 2) == toupper(substring(renamed, 2, 2)))
+  idx = !((substring(renamed, 1, 1) == tolower(substring(renamed, 1, 1))
+          & substring(renamed, 2, 2) == toupper(substring(renamed, 2, 2))) |
+            grepl("GluN", renamed) | grepl("\\/", renamed))
   
   to_custom_title <- function(input_string) {
     words <- str_split(input_string, "\\s+")[[1]]
@@ -301,6 +314,7 @@ rename_cell_types <- function(cell_type_names) {
   renamed[idx] = gsub("Colon GL_Co", "Normal Colon GL_Co", renamed[idx])
   renamed = gsub("brain GL_Br", "Cerebral Cortex GL_Br", renamed)
   renamed = gsub("\\s+\\(.*\\)", "", renamed)
+  # renamed = gsub("brain GluN GL_Br", "Cerebral Cortex GL_Br", renamed)
   return(renamed)
 }
 
