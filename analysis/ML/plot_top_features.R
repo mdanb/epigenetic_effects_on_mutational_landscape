@@ -345,6 +345,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     title_size = 150
     axis_text_size = 40
     axis_tick_size = 1
+    width = 12
+    height = 8
   }
   
   renamed_y = rename_cell_types(df %>% pull(!!sym(y)))
