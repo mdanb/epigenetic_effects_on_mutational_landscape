@@ -329,7 +329,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   str_wrap_width = 15
   outlier_size = 20
   text_size = 60
-  axis_lwd = 2
+  axis_lwd = 10
   tick_length = 1
   title_size = 150
   axis_text_size = 150
