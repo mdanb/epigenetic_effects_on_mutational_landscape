@@ -329,11 +329,24 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   str_wrap_width = 15
   outlier_size = 20
   text_size = 60
-  axis_lwd = 10
+  axis_lwd = 0.5
   tick_length = 1
   title_size = 150
   axis_text_size = 150
   axis_tick_size = 5
+  
+  if (length(facet_var) == 1) {
+    lwd = 0.5
+    str_wrap_width = 5
+    outlier_size = 10
+    text_size = 10
+    axis_lwd = 0.1
+    tick_length = 0.1
+    title_size = 150
+    axis_text_size = 40
+    axis_tick_size = 1
+  }
+  
   renamed_y = rename_cell_types(df %>% pull(!!sym(y)))
   
   if (!(savefile == "temp.pdf")) {
