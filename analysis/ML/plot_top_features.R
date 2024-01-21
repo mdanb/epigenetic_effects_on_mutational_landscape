@@ -335,16 +335,18 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   axis_text_size = 150
   axis_tick_size = 5
   
-  if (length(facet_var) == 1) {
-    lwd = 0.5
-    str_wrap_width = 5
-    outlier_size = 10
+  if (length(unique(df[[facet_var]])) == 1) {
+    print(facet_var)
+    print("Facet var length is 1")
+    lwd = 0.2
+    str_wrap_width = 15
+    outlier_size = 2
     text_size = 10
     axis_lwd = 0.1
-    tick_length = 0.1
+    tick_length = 0.2
     title_size = 150
-    axis_text_size = 40
-    axis_tick_size = 1
+    axis_text_size = 20
+    axis_tick_size = 0.3
     width = 12
     height = 8
   }
@@ -484,8 +486,16 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
          height = height, plot, limitsize=F)
 }
 
-construct_top_feat_barplot <- function(df_test, savefile, savepath, width=12,
+construct_top_feat_barplot <- function(df_test, savefile, savepath, cancer_type, width=12,
                                        height=7) {
+  
+  y_text_size=150
+  if (cancer_type == "Biliary-AdenoCA" || 
+      cancer_type == "Bone-Leiomyo" || 
+      cancer_type == "Bladder-TCC") {
+    y_text_size=50
+  }
+
   df = df_test
   if (!(savefile == "temp_test.pdf")) {
     df = df %>%
@@ -531,7 +541,7 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath, width=12,
       strip.text.x = element_blank(),
       # plot.title = element_text(hjust = 0.5, size = 40),
       axis.text.x = element_text(vjust = 0.5, hjust=1, size=150),
-      axis.text.y = element_text(size=150, colour = color),
+      axis.text.y = element_text(size=y_text_size, colour = color),
       axis.title = element_text(size=150),
       panel.grid.major.y=element_blank(),
       panel.grid.minor.x=element_blank(),
@@ -1257,13 +1267,15 @@ if (!robustness_analysis) {
         ungroup()
       
       savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
-      construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
-                                 width=50, height=35)
+      construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath, 
+      				 cancer_type=cancer_type, width=50, height=35)
       construct_top_feat_barplot(df_test, savefile="temp_test.pdf", 
-                                 savepath=savepath, 
+                                 cancer_type=cancer_type,
+				 savepath=savepath, 
                                  width=50, height=35)
       savefile = paste(cancer_type, "top_feature_appearances.svg", sep="_")
       construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
+      				 cancer_type=cancer_type,
                                  width=50, height=35)
       
       top_appearing_feature = unique(df_test %>% 
