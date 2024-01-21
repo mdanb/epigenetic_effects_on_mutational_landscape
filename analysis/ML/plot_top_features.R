@@ -68,7 +68,7 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--cell_types_keep=lung Neuroendocrine-Tsankov",
 #                                   "--robustness_keep=lung Neuroendocrine TS,fetal_lung Pulmonary NE R_Fl,fetal_lung GHRL+ NE R_Fl"))
 
-# args = parse_args(parser, args= c("--cancer_types=msi_high",
+# args = parse_args(parser, args= c("--cancer_types=Bone-Leiomyo",
 #                                   "--datasets=Bingren,Greenleaf_pbmc_bm,Greenleaf_colon,Shendure,Tsankov,Yang_kidney",
 #                                   "--cell_number_filter=100",
 #                                   "--annotation=finalized_annotation",
@@ -571,7 +571,8 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
                                                 "bonemarrow-B-GL_BlBm",
                                                 "bonemarrow-Early.Baso-GL_BlBm",
                                                 "stomach-Stromal-cells-SH",
-                                                "thyroid-Thyroid-Follicular-Cell-BR"
+                                                "thyroid-Thyroid-Follicular-Cell-BR",
+                                                "uterus-PAEP-MECOM-Positive-Cells-SH"
                                    ))),
                  fill=color), lwd=1.2) +
     geom_errorbarh(aes(y = top_feature, xmin = ymin, xmax = ymax), linewidth=2) +  
