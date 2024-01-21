@@ -103,6 +103,18 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--folds_for_test_set=1-10",
 #                                   "--tissues_to_consider=all",
 #                                   "--robustness_analysis"))
+
+args = parse_args(parser, args= c("--cancer_types=Breast-AdenoCa,Lymph-BNHL,Myeloid-AML,Bone-Leiomyo,Thy-AdenoCA,Uterus-AdenoCA",
+                                  "--annotation=finalized_annotation",
+                                  "--ML_model=XGB",
+                                  "--seed_range=1-10",
+                                  "--folds_for_test_set=1-10",
+                                  "--feature_importance_method=permutation_importance",
+                                  "--folds_for_test_set=1-10",
+                                  "--robustness_analysis",
+                                  "--grid_analysis",
+                                  "--top_features_to_plot=1",
+                                  "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow Early.Baso GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR,placenta PAEP_MECOM positive cells SH"))
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -808,21 +820,25 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
         for (file in test_set_perf_files) {
           # if (!(idx == length(test_set_perf_files) &&
           #       test_file_idx[length(test_file_idx)] == total_num_features)) {
-          if (test_file_idx[length(test_file_idx)] != total_num_features) {
-            top_feature = get_top_feat_at_idx(test_file_idx = test_file_idx,
-                                              idx=idx,
-                                              feature_importance_method = 
-                                              feature_importance_method,
-                                              test_dir = test_dir,
-                                              fold=fold, seed=seed
-                                              )
-          } else {
-            top_feature = get_top_feat_at_idx(test_file_idx = test_file_idx - 1,
-                                              idx=idx,
-                                              feature_importance_method = 
+          if (!grid_analysis) {
+            if (test_file_idx[length(test_file_idx)] != total_num_features) {
+              top_feature = get_top_feat_at_idx(test_file_idx = test_file_idx,
+                                                idx=idx,
+                                                feature_importance_method = 
                                                 feature_importance_method,
-                                              test_dir = test_dir,
-                                              fold=fold, seed=seed)
+                                                test_dir = test_dir,
+                                                fold=fold, seed=seed
+                                                )
+            } else {
+              top_feature = get_top_feat_at_idx(test_file_idx = test_file_idx - 1,
+                                                idx=idx,
+                                                feature_importance_method = 
+                                                  feature_importance_method,
+                                                test_dir = test_dir,
+                                                fold=fold, seed=seed)
+            }
+          } else {
+            top_feature = grid_cell_type
           }
           suppressWarnings({
         	    tryCatch(
@@ -833,9 +849,9 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
               		                fold, ", seed", seed))
               	    }    
           )})
-          if (grid_analysis) {
-            top_feature = grid_cell_type
-          }
+          # if (grid_analysis) {
+          #   top_feature = grid_cell_type
+          # }
           df = df %>% add_row(top_feature = top_feature,
                               top_n = top_features_to_plot[idx],
                               test_set_perf = perf,
