@@ -771,6 +771,7 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                         grid_analysis=F,
                                         grid_cell_type=NULL,
                                         cell_types_keep=NULL) {
+  print(paste("Constructing test df for", cancer_type))
   df = tibble(top_feature = character(0),
               top_n = integer(0),
               test_set_perf = double(0),
