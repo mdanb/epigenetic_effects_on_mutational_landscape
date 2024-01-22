@@ -130,7 +130,8 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
                     "multiple_myeloma"="Multiple Myeloma",
                     "Myeloid-AML"="Acute myeloid leukemia",
                     "Bone-Leiomyo"="Leiomyosarcoma",
-                    "Thy-AdenoCA"="Thyroid adenocarcinoma")
+                    "Thy-AdenoCA"="Thyroid adenocarcinoma",
+                    "Uterus-AdenoCA" = "Uterus adenocarcinoma")
 
 
 cell_types = c("brain OPC/Oligo GL_Br" = "OPC/Oligo, Cerebral Cortex GL_Br",
