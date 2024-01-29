@@ -47,7 +47,7 @@ get_n_colors <- function(n, seed) {
 }
 
 load_mutation_data <- function() {
-  mut = readRDS('data/mutation_data/mutations.aggregated.PCAWG.RK.20181215.Rds')
+  mut = readRDS('data/processed/mut_count_data.csv')
   # get all mutations, without distinctions e.g clonal vs subclonal 
   mut = mut[, 1:37]
   return(mut)
