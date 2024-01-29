@@ -115,6 +115,31 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--grid_analysis",
 #                                   "--top_features_to_plot=1",
 #                                   "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow Early.Baso GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR,placenta PAEP_MECOM positive cells SH"))
+
+# args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC",
+#                                   "--annotation=finalized_annotation",
+#                                   "--ML_model=XGB",
+#                                   "--seed_range=1-10",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--robustness_analysis",
+#                                   "--grid_analysis",
+#                                   "--top_features_to_plot=1",
+#                                   "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
+
+# args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma",
+#                                   "--datasets=Bingren,Greenleaf_pbmc_bm,Greenleaf_colon,Shendure,Tsankov,Yang_kidney",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--ML_model=XGB",
+#                                   "--seed_range=1-10",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--robustness_analysis",
+#                                   "--top_features_to_plot=1"))
+
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -497,8 +522,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
          height = height, plot, limitsize=F)
 }
 
-construct_top_feat_barplot <- function(df_test, savefile, savepath, width=12,
-                                       height=7) {
+construct_top_feat_barplot <- function(df_test, savefile, savepath, 
+                                       width=12, height=7) {
   df = df_test
   if (!(savefile == "temp_test.pdf")) {
     df = df %>%
@@ -569,24 +594,24 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
   xlim_upper = max(df[["ymax"]])
   x_breaks <- pretty(df$y, n = 3)
   plot <- ggplot(df) +
-    # geom_col(aes(x = y, y = factor(top_feature,
-    #                                levels=rev(c("skin-Melanocyte-BR",
-    #                                            "liver-Hepatoblasts-SH",
-    #                                            "normal_colon-Stem-GL_Co",
-    #                                            "bonemarrow-B-GL_BlBm",
-    #                                            "stomach-Goblet-cells-SH",
-    #                                            "cerebrum-Astrocytes-Oligodendrocytes-SH",
-    #                                            "lung-AT2-TS",
-    #                                            "lung-Basal-TS"
-    #                                            ))),
     geom_col(aes(x = y, y = factor(top_feature,
-                                   levels=rev(c("mammary_tissue-Basal-Epithelial-(Mammary)-BR",
-                                                "bonemarrow-B-GL_BlBm",
-                                                "bonemarrow-Early.Baso-GL_BlBm",
-                                                "stomach-Stromal-cells-SH",
-                                                "thyroid-Thyroid-Follicular-Cell-BR",
-                                                "uterus-PAEP-MECOM-Positive-Cells-SH"
-                                   ))),
+                                   levels=rev(c("skin-Melanocyte-BR",
+                                               "liver-Hepatoblasts-SH",
+                                               "normal_colon-Stem-GL_Co",
+                                               "bonemarrow-B-GL_BlBm",
+                                               "stomach-Goblet-cells-SH",
+                                               "cerebrum-Astrocytes-Oligodendrocytes-SH",
+                                               "lung-AT2-TS",
+                                               "lung-Basal-TS"
+                                               ))),
+    # geom_col(aes(x = y, y = factor(top_feature,
+    #                                levels=rev(c("mammary_tissue-Basal-Epithelial-(Mammary)-BR",
+    #                                             "bonemarrow-B-GL_BlBm",
+    #                                             "bonemarrow-Early.Baso-GL_BlBm",
+    #                                             "stomach-Stromal-cells-SH",
+    #                                             "thyroid-Thyroid-Follicular-Cell-BR",
+    #                                             "placenta-PAEP_MECOM-positive-cells-SH"
+    #                                ))),
                  fill=color), lwd=1.2) +
     geom_errorbarh(aes(y = top_feature, xmin = ymin, xmax = ymax), linewidth=2) +  
     coord_cartesian(xlim = c(xlim_lower, xlim_upper)) +
@@ -612,7 +637,18 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
   return(plot)
 }
 
-construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
+save_perf_to_file <- function(df_save, feature, cancer_type, 
+                              perf, perf_savefile) {
+  if (feature %in% rownames(df_save) && cancer_type %in% colnames(df_save)) {
+    warning("OVERWRITING PREVIOUS RESULT")
+  }
+  df_save[feature, cancer_type] = perf
+  write.csv(df_save, perf_savefile)
+}
+
+
+construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath, 
+                                             df_perf, perf_savefile, cancer_type, 
                                              width=9, height=7) {
   df["test_set_perf"] = 100 * df[["test_set_perf"]]
   feature = rename_cell_types(feature)
@@ -632,6 +668,13 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
   df$top_n = factor(df$top_n, levels = rev(levels(df$top_n)))
   df$x_position = 100 * df$x_position
   # ggplot2 plot
+  save_perf_to_file(df_perf, feature=feature, 
+                    cancer_type=cancer_type,
+                    perf = median(df[["test_set_perf"]]),
+                    perf_savefile=perf_savefile)
+                    
+                    
+  
   ggplot(df) +
     geom_boxplot(aes(x = top_n, y = test_set_perf), lwd = 2, 
                  outlier.shape = outlier_shape, outlier.size = 30) +
@@ -1275,6 +1318,7 @@ if (!robustness_analysis) {
         ungroup()
       
       savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
+
       construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
                                  width=50, height=35)
       construct_top_feat_barplot(df_test, savefile="temp_test.pdf", 
@@ -1297,12 +1341,25 @@ if (!robustness_analysis) {
       savefile = paste(cancer_type, "top_feature_test_set_perf_with", 
                        paste(top_features_to_plot, collapse="_"), 
                        "features.pdf", sep="_")
+      
+      perf_savefile = "models/XGB/feature_cancer_median_performances.txt"
+      if (file.exists(perf_savefile)) {
+        df_perf = read.csv(perf_savefile, row.names = 1)
+        colnames(df_perf) = gsub("\\.","-", colnames(df_perf))
+      } else {
+        df_perf = data.frame()
+      }
+      
       construct_test_set_perf_boxplots(df=df_test, 
                                        feature=top_appearing_feature,
                                        savefile=savefile, 
                                        savepath=savepath,
+                                       df_perf=df_perf,
+                                       cancer_type=cancer_type,
+                                       perf_savefile=perf_savefile,
                                        width=50,
                                        height=35)
+      
       savefile = paste(cancer_type, "top_feature_test_set_perf_with", 
                        paste(top_features_to_plot, collapse="_"), 
                        "features.svg", sep="_")
@@ -1310,6 +1367,8 @@ if (!robustness_analysis) {
                                        feature=top_appearing_feature,
                                        savefile=savefile, 
                                        savepath=savepath,
+                                       df_perf=df_perf,
+                                       perf_savefile=perf_savefile,
                                        width=50,
                                        height=35)
       if (plot_fold_on_test_set_plot) {
