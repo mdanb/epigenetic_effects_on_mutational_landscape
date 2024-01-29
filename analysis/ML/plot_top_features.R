@@ -115,6 +115,19 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--grid_analysis",
 #                                   "--top_features_to_plot=1",
 #                                   "--grid_cell_types=mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow Early.Baso GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR,placenta PAEP_MECOM positive cells SH"))
+
+#args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC",
+#                                  "--annotation=finalized_annotation",
+#                                  "--ML_model=XGB",
+#                                  "--seed_range=1-10",
+#                                  "--folds_for_test_set=1-10",
+#                                  "--feature_importance_method=permutation_importance",
+#                                  "--folds_for_test_set=1-10",
+#                                  "--robustness_analysis",
+#                                  "--grid_analysis",
+#                                  "--top_features_to_plot=1",
+#                                  "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,stomach Goblet cells SH,cerebrum Astrocytes/Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
+#
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -348,18 +361,16 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   axis_text_size = 150
   axis_tick_size = 5
   
-  if (length(unique(df[[facet_var]])) == 1) {
-    print(facet_var)
-    print("Facet var length is 1")
-    lwd = 0.2
-    str_wrap_width = 15
-    outlier_size = 2
+  if (length(facet_var) == 1) {
+    lwd = 0.5
+    str_wrap_width = 5
+    outlier_size = 10
     text_size = 10
     axis_lwd = 0.1
-    tick_length = 0.2
+    tick_length = 0.1
     title_size = 150
-    axis_text_size = 20
-    axis_tick_size = 0.3
+    axis_text_size = 40
+    axis_tick_size = 1
     width = 12
     height = 8
   }
@@ -499,16 +510,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
          height = height, plot, limitsize=F)
 }
 
-construct_top_feat_barplot <- function(df_test, savefile, savepath, cancer_type, width=12,
+construct_top_feat_barplot <- function(df_test, savefile, savepath, width=12,
                                        height=7) {
-  
-  y_text_size=150
-  if (cancer_type == "Biliary-AdenoCA" || 
-      cancer_type == "Bone-Leiomyo" || 
-      cancer_type == "Bladder-TCC") {
-    y_text_size=50
-  }
-
   df = df_test
   if (!(savefile == "temp_test.pdf")) {
     df = df %>%
@@ -554,7 +557,7 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath, cancer_type,
       strip.text.x = element_blank(),
       # plot.title = element_text(hjust = 0.5, size = 40),
       axis.text.x = element_text(vjust = 0.5, hjust=1, size=150),
-      axis.text.y = element_text(size=y_text_size, colour = color),
+      axis.text.y = element_text(size=150, colour = color),
       axis.title = element_text(size=150),
       panel.grid.major.y=element_blank(),
       panel.grid.minor.x=element_blank(),
@@ -579,24 +582,24 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
   xlim_upper = max(df[["ymax"]])
   x_breaks <- pretty(df$y, n = 3)
   plot <- ggplot(df) +
-    # geom_col(aes(x = y, y = factor(top_feature,
-    #                                levels=rev(c("skin-Melanocyte-BR",
-    #                                            "liver-Hepatoblasts-SH",
-    #                                            "normal_colon-Stem-GL_Co",
-    #                                            "bonemarrow-B-GL_BlBm",
-    #                                            "stomach-Goblet-cells-SH",
-    #                                            "cerebrum-Astrocytes-Oligodendrocytes-SH",
-    #                                            "lung-AT2-TS",
-    #                                            "lung-Basal-TS"
-    #                                            ))),
     geom_col(aes(x = y, y = factor(top_feature,
-                                   levels=rev(c("mammary_tissue-Basal-Epithelial-(Mammary)-BR",
+                                    levels=rev(c("skin_sun_exposed-Melanocyte-BR",
+                                                "liver-Hepatoblasts-SH",
+                                                "normal_colon-Stem-GL_Co",
                                                 "bonemarrow-B-GL_BlBm",
-                                                "bonemarrow-Early.Baso-GL_BlBm",
-                                                "stomach-Stromal-cells-SH",
-                                                "thyroid-Thyroid-Follicular-Cell-BR",
-                                                "uterus-PAEP-MECOM-Positive-Cells-SH"
-                                   ))),
+                                                "stomach-Goblet-cells-SH",
+                                                "cerebrum-Astrocytes-Oligodendrocytes-SH",
+                                                "lung-AT2-TS",
+                                                "lung-Basal-TS"
+                                                ))),
+    #geom_col(aes(x = y, y = factor(top_feature,
+    #                               levels=rev(c("mammary_tissue-Basal-Epithelial-(Mammary)-BR",
+    #                                            "bonemarrow-B-GL_BlBm",
+    #                                            "bonemarrow-Early.Baso-GL_BlBm",
+    #                                            "stomach-Stromal-cells-SH",
+    #                                            "thyroid-Thyroid-Follicular-Cell-BR",
+    #                                            "placenta-PAEP_MECOM-positive-cells-SH"
+    #                               ))),
                  fill=color), lwd=1.2) +
     geom_errorbarh(aes(y = top_feature, xmin = ymin, xmax = ymax), linewidth=2) +  
     coord_cartesian(xlim = c(xlim_lower, xlim_upper)) +
@@ -772,7 +775,6 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                         grid_analysis=F,
                                         grid_cell_type=NULL,
                                         cell_types_keep=NULL) {
-  print(paste("Constructing test df for", cancer_type))
   df = tibble(top_feature = character(0),
               top_n = integer(0),
               test_set_perf = double(0),
@@ -1058,6 +1060,7 @@ if (!robustness_analysis) {
   i = 1
   for (cancer_type in cancer_types) {
     # for (tss_filter in tss_fragment_filter) {
+    print(cancer_type)
     if (!grid_analysis) {
       scATAC_source = paste("cell_number_filter", cell_number_filter, sep="_")
       scATAC_sources = construct_sources_string(datasets)
@@ -1137,6 +1140,7 @@ if (!robustness_analysis) {
     if (grid_analysis) {
       df = data.frame()
       for (grid_cell_type in grid_cell_types) {
+        print(grid_cell_type)
         df = rbind(df, construct_all_seeds_test_df(top_features_to_plot=top_features_to_plot,
                                                    seed_range=seed_range,
                                                    skip_seeds_robustness=skip_seeds_robustness,
@@ -1286,15 +1290,13 @@ if (!robustness_analysis) {
         ungroup()
       
       savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
-      construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath, 
-      				 cancer_type=cancer_type, width=50, height=35)
+      construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
+                                 width=50, height=35)
       construct_top_feat_barplot(df_test, savefile="temp_test.pdf", 
-                                 cancer_type=cancer_type,
-				 savepath=savepath, 
+                                 savepath=savepath, 
                                  width=50, height=35)
       savefile = paste(cancer_type, "top_feature_appearances.svg", sep="_")
       construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
-      				 cancer_type=cancer_type,
                                  width=50, height=35)
       
       top_appearing_feature = unique(df_test %>% 
