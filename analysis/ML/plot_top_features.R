@@ -1390,6 +1390,7 @@ if (!robustness_analysis) {
                                        savefile=savefile, 
                                        savepath=savepath,
                                        df_perf=df_perf,
+                                       cancer_type=cancer_type,
                                        perf_savefile=perf_savefile,
                                        width=50,
                                        height=35)
