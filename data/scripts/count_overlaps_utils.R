@@ -453,9 +453,10 @@ get_tissue_name_shendure <- function(filename) {
 get_tissue_name_greenleaf_pbmc_bm <- function(filename) {
   if (grepl("PBMC", filename)) {
     tissue_name = "blood"
-  }
-  else {
+  } else if (grepl("BMMC", filename)) {
     tissue_name = "bonemarrow"
+  } else {
+    tissue_name = "cd34pos bonemarrow"
   }
   return(tissue_name)
 }
