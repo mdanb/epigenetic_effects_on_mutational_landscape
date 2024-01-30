@@ -19,10 +19,10 @@ option_list <- list(
   make_option("--which_interval_ranges", type="character")
 )
 
-args = parse_args(parser, args =
-                      c("--dataset=Greenleaf_pbmc_bm",
-                        "--annotation=remove_neutro",
-                        "--which_interval_ranges=polak"))
+# args = parse_args(parser, args =
+#                       c("--dataset=Greenleaf_pbmc_bm",
+#                         "--annotation=remove_neutro",
+#                         "--which_interval_ranges=polak"))
 
 args = parse_args(OptionParser(option_list=option_list))
 
