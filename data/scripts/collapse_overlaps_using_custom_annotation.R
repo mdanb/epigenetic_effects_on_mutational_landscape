@@ -186,6 +186,27 @@ if (dataset == "Greenleaf_pbmc_bm") {
     
     save_collapsed_df(df, df_metadata, dataset, annotation,
                       which_interval_ranges)
+  } else if (annotation == "remove_neutro") {
+    mapping = list(
+      c("blood CLP.*", "blood CLP"),
+      c("bonemarrow CLP.*", "bonemarrow CLP"),
+      c("bonemarrow CD14.Mono", "bonemarrow Monocytes"),
+      c("blood CD14\\.Mono", "blood Monocytes"), 
+      c("bonemarrow CD", "bonemarrow T"),
+      c("blood CD", "blood T")
+    )
+    
+    l = collapse_using_mapping(mapping, default_combined_count_ovs,
+                               default_combined_metadata)
+    df = l[[1]]
+    df = df[-grep("Unk", rownames(df)), ]
+    df = df[-grep("GMP.Neut", rownames(df)), ]
+    
+    df_metadata = l[[2]]
+    df_metadata = df_metadata[-grep("Unk", df_metadata[["cell_type"]]), ]
+    df_metadata = df_metadata[-grep("GMP.Neut", df_metadata[["cell_type"]]), ]
+    save_collapsed_df(df, df_metadata, dataset, annotation,
+                      which_interval_ranges)
   }
 } else if (dataset == "Greenleaf_brain") {
   lowest_level_annotation_fn = "Greenleaf_brain_combined_count_overlaps.rds"
