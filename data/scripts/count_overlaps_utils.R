@@ -456,7 +456,7 @@ get_tissue_name_greenleaf_pbmc_bm <- function(filename) {
   } else if (grepl("BMMC", filename)) {
     tissue_name = "bonemarrow"
   } else {
-    tissue_name = "cd34pos bonemarrow"
+    tissue_name = "cd34pos_bonemarrow"
   }
   return(tissue_name)
 }
