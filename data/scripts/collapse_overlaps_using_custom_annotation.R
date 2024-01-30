@@ -19,10 +19,10 @@ option_list <- list(
   make_option("--which_interval_ranges", type="character")
 )
 
-# args = parse_args(parser, args =
-#                       c("--dataset=Greenleaf_pbmc_bm",
-#                         "--annotation=Greenleaf_pbmc_bm_CD14-mono_CDlike-T_preB+B-B_late+early-no+distinction_Unk-rm",
-#                         "--which_interval_ranges=polak"))
+args = parse_args(parser, args =
+                      c("--dataset=Greenleaf_pbmc_bm",
+                        "--annotation=remove_neutro",
+                        "--which_interval_ranges=polak"))
 
 args = parse_args(OptionParser(option_list=option_list))
 
@@ -71,13 +71,12 @@ collapse_using_mapping <- function(mapping, df, df_metadata,
       #                                           "num_cells"])
       
       idxs_metadata = c(idxs_metadata, collapsed_counts_idx)
-    }
-    else {
+    } else {
       collapsed_co = rep(0, length(colnames(df)))
       # collapsed_counts = 0
     }
     
-    collapsed_counts = sum(as.numeric(df_metadata[idxs_metadata, "num_cells"]))
+    collapsed_counts = sum(apply(df_metadata[idxs_metadata, "num_cells"], 2, as.numeric))
     
     for (idx in idxs) {
       row_to_add = df[idx, ]
@@ -145,10 +144,12 @@ if (dataset == "Greenleaf_pbmc_bm") {
   } else if (annotation == "intermediate_blood_bm_annotation") {
     mapping = list(
       c("blood CLP.*", "blood CLP"),
-      c("bonemarrow CLP.*", "bonemarrow CLP"),
-      c("bonemarrow CD14.Mono", "bonemarrow Monocytes"),
+      c("cd34pos_bonemarrow CLP.*", "cd34pos_bonemarrow CLP"),
+      c("^bonemarrow CD14.Mono", "bonemarrow Monocytes"),
+      c("cd34pos_bonemarrow CD14.Mono", "cd34pos_bonemarrow Monocytes"),
       c("blood CD14\\.Mono", "blood Monocytes"), 
-      c("bonemarrow CD", "bonemarrow T"),
+      c("^bonemarrow CD", "bonemarrow T"),
+      c("cd34pos_bonemarrow CD", "cd34pos_bonemarrow T"),
       c("blood CD", "blood T")
     )
     
