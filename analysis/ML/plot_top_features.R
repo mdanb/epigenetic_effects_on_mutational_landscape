@@ -391,14 +391,13 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   #df = df_feat_imp
   lwd = 3
   str_wrap_width = 15
-  outlier_size = 20
+  outlier_size = 1
   text_size = 60
   axis_lwd = 0.5
   tick_length = 1
   title_size = 150
   axis_text_size = 150
   axis_tick_size = 5
-  
   if (length(facet_var) == 1) {
     lwd = 0.5
     str_wrap_width = 5
@@ -674,7 +673,7 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
 save_perf_to_file <- function(df_save, feature, cancer_type, 
                               perf, perf_savefile) {
   if (feature %in% rownames(df_save) && cancer_type %in% colnames(df_save)) {
-    warning("OVERWRITING PREVIOUS RESULT")
+    print("OVERWRITING PREVIOUS RESULT")
   }
   df_save[feature, cancer_type] = perf
   write.csv(df_save, perf_savefile)
@@ -1329,7 +1328,7 @@ if (!robustness_analysis) {
                                     n_name="n_feature", 
                                     facet_var="num_features",
                                     xlabel="Feature Importance",
-                                    width=50,
+                                    width=70,
                                     height=35,
                                     keep=robustness_keep)
       savefile = paste0(cancer_type, "_feature_importance_with_",
