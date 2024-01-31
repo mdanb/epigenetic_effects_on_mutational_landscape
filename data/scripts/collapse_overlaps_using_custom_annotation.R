@@ -145,6 +145,7 @@ if (dataset == "Greenleaf_pbmc_bm") {
     mapping = list(
       c("blood CLP.*", "blood CLP"),
       c("cd34pos_bonemarrow CLP.*", "cd34pos_bonemarrow CLP"),
+      c("^bonemarrow CLP.*", "bonemarrow CLP"),
       c("^bonemarrow CD14.Mono", "bonemarrow Monocytes"),
       c("cd34pos_bonemarrow CD14.Mono", "cd34pos_bonemarrow Monocytes"),
       c("blood CD14\\.Mono", "blood Monocytes"), 
