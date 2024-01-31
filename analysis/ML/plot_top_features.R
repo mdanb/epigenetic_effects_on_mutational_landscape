@@ -152,18 +152,19 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--robustness_analysis",
 #                                   "--top_features_to_plot=1"))
 
-# args = parse_args(parser, args= c("--cancer_types=Panc-AdenoCA,Panc-Endocrine",
-#                                   "--datasets=Bingren,Shendure",
-#                                   "--cell_number_filter=100",
-#                                   "--annotation=finalized_annotation",
-#                                   "--ML_model=XGB",
-#                                   "--seed_range=1-10",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--feature_importance_method=permutation_importance",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--robustness_analysis",
-#                                   "--tissues_to_consider=pancreas,stomach",
-#                                   "--top_features_to_plot=1"))
+args = parse_args(parser, args= c("--cancer_types=Panc-AdenoCA,Panc-Endocrine",
+                                  "--datasets=Bingren,Shendure",
+                                  "--cell_number_filter=100",
+                                  "--annotation=finalized_annotation",
+                                  "--ML_model=XGB",
+                                  "--seed_range=1-10",
+                                  "--feat_imp_min_n_robustness=50",
+                                  "--folds_for_test_set=1-10",
+                                  "--feature_importance_method=permutation_importance",
+                                  "--folds_for_test_set=1-10",
+                                  "--robustness_analysis",
+                                  "--tissues_to_consider=pancreas,stomach",
+                                  "--top_features_to_plot=10,5,2,1"))
 
 
 args = parse_args(parser)
