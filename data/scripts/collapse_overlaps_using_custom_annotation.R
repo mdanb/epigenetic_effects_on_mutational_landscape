@@ -595,12 +595,27 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df = df[-grep("polyp", rownames(df)), ]
     df_metadata = df_metadata[-grep("polyp", 
                                     df_metadata[["tissue_name"]]), ]
-    df = df[-grep("cancer", rownames(df)), ]
-    df_metadata = df_metadata[-grep("cancer", 
+    df = df[-grep("adenocarcinoma", rownames(df)), ]
+    df_metadata = df_metadata[-grep("adenocarcinoma", 
                                     df_metadata[["tissue_name"]]), ]
-    df = df[-grep("cancer", rownames(df)), ]
-    df_metadata = df_metadata[-grep("cancer", 
+    df = df[-grep("adenocarcinoma", rownames(df)), ]
+    df_metadata = df_metadata[-grep("adenocarcinoma", 
                                     df_metadata[["tissue_name"]]), ]
+    mapping = list() 
+    index = 1
+    for (celltype in rownames(df)) {
+      if (grepl("unaffected", celltype)) {
+        modified_celltype = gsub("unaffected", "normal", celltype)
+        mapping[[index]] = c(celltype, modified_celltype)
+        index = index + 1
+      }
+    }
+    l = collapse_using_mapping(mapping, df=df,
+                               df_metadata=df_metadata,
+                               exact_match_first_mapping_arg = T)
+    df = l[[1]]
+    df_metadata = l[[2]]
+    
     save_collapsed_df(df, df_metadata, dataset, annotation, 
                       which_interval_ranges)
   } else if (annotation == "Greenleaf_colon_cancer_only") {
