@@ -589,6 +589,20 @@ if (dataset == "Greenleaf_pbmc_bm") {
                                     df_metadata[["tissue_name"]]), ]
     save_collapsed_df(df, df_metadata, dataset, annotation, 
                       which_interval_ranges)
+  } else if (annotation == "Greenleaf_colon_normal_only") {
+    df = default_combined_count_ovs
+    df_metadata = default_combined_metadata
+    df = df[-grep("polyp", rownames(df)), ]
+    df_metadata = df_metadata[-grep("polyp", 
+                                    df_metadata[["tissue_name"]]), ]
+    df = df[-grep("cancer", rownames(df)), ]
+    df_metadata = df_metadata[-grep("cancer", 
+                                    df_metadata[["tissue_name"]]), ]
+    df = df[-grep("cancer", rownames(df)), ]
+    df_metadata = df_metadata[-grep("cancer", 
+                                    df_metadata[["tissue_name"]]), ]
+    save_collapsed_df(df, df_metadata, dataset, annotation, 
+                      which_interval_ranges)
   } else if (annotation == "Greenleaf_colon_cancer_only") {
     df = default_combined_count_ovs
     df_metadata = default_combined_metadata
