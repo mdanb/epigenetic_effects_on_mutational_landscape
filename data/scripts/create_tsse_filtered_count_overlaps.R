@@ -121,21 +121,21 @@ args = parse_args(OptionParser(option_list=option_list))
 #                       "--cores=8",
 #                       "--annotation=default_annotation"))
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000",
-                      "--dataset=Greenleaf_pbmc_bm",
-                      "--cell_types=all",
-                      "--files_pattern=BMMC",
-                      "--cores=3",
-                      "--annotation=new_intermediate_blood_bm_annotation"))
-
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000",
-                      "--dataset=Greenleaf_pbmc_bm",
-                      "--cell_types=all",
-                      "--files_pattern=PBMC",
-                      "--cores=5",
-                      "--annotation=new_intermediate_blood_bm_annotation"))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000",
+#                       "--dataset=Greenleaf_pbmc_bm",
+#                       "--cell_types=all",
+#                       "--files_pattern=BMMC",
+#                       "--cores=3",
+#                       "--annotation=new_intermediate_blood_bm_annotation"))
+# 
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000",
+#                       "--dataset=Greenleaf_pbmc_bm",
+#                       "--cell_types=all",
+#                       "--files_pattern=PBMC",
+#                       "--cores=5",
+#                       "--annotation=new_intermediate_blood_bm_annotation"))
 
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
                                            args$top_tsse_fragment_count_range, 
