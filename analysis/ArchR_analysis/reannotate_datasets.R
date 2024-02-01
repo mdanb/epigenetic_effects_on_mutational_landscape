@@ -39,7 +39,7 @@ option_list <- list(
   # make_option("--cancer_for_correlation_plot", type="character"),
   make_option("--harmonize", action="store_true", default=FALSE),
   make_option("--doublet_filter", type="double", default=FALSE),
-  make_option("--get_metacells", action="store_true", default=FALSE),
+  make_option("--get_metacells", action="store_true", default=FALSE)
 )
 
 # args = parse_args(OptionParser(option_list=option_list), args=
