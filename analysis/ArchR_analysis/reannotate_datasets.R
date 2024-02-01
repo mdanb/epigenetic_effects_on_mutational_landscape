@@ -240,20 +240,20 @@ option_list <- list(
 #                       "--doublet_filter=5"
 #                     ))
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=8",
-                      "--dataset=Greenleaf_brain",
-                      "--metadata_for_celltype_fn=GSE162170_atac_cell_metadata.txt.gz",
-                      "--sep_for_metadata=\t",
-                      "--cell_type_col_in_metadata=cell_type",
-                      "--tissue=all",
-                      "--nfrags_filter=1",
-                      "--tss_filter=0",
-                      "--min_cells_per_cell_type=1",
-                      "--cluster_res=0.6",
-                      "--filter_per_cell_type",
-                      "--get_metacells"
-                    ))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Greenleaf_brain",
+#                       "--metadata_for_celltype_fn=GSE162170_atac_cell_metadata.txt.gz",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--min_cells_per_cell_type=1",
+#                       "--cluster_res=0.6",
+#                       "--filter_per_cell_type",
+#                       "--get_metacells"
+#                     ))
 
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
