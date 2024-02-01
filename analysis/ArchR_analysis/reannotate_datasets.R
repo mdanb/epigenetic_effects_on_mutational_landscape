@@ -35,9 +35,10 @@ option_list <- list(
   make_option("--save_clusters", action="store_true", default=FALSE),
   make_option("--reannotate", action="store_true", default=FALSE),
   make_option("--de_novo_marker_discovery", action="store_true", default=FALSE),
-  make_option("--plot_correlation_with_cancer", action="store_true", default=FALSE),
+  # make_option("--plot_correlation_with_cancer", action="store_true", default=FALSE),
   # make_option("--cancer_for_correlation_plot", type="character"),
-  make_option("--harmonize", action="store_true", default=FALSE)
+  make_option("--harmonize", action="store_true", default=FALSE),
+  make_option("--doublet_filter", type="double", default=FALSE)
 )
 
 # args = parse_args(OptionParser(option_list=option_list), args=
@@ -104,6 +105,21 @@ option_list <- list(
 #                       "--cell_types=all",
 #                       "--min_cells_per_cell_type=1",
 #                       "--marker_genes=CD3D,CD3E,CD3G,CD247,CD4,CD8A,CD8B,IL2RA,FOXP3,IL7R,PTPRC,MS4A1,CD19,NCAM1,ITGAM,CD14,FCGR3A,FCGR3B,FCGR2A,FCGR2B")
+# )
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=4",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=tsankov_refined_annotation.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=1",
+#                       "--filter_doublets",
+#                       "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,MUC5B,SCGB1A1,SCGB3A1,SCGB3A2")
 # )
 
 # args = parse_args(OptionParser(option_list=option_list), args=
@@ -200,13 +216,13 @@ option_list <- list(
 #                       "--filter_per_cell_type",
 #                       "--plot_custom_column",
 #                       "--plus_to_add_to_metadata=GrossPathology,CellType",
-#                       "--plus_filters=Normal|Polyp|Unaffected",
+#                       "--plus_filters=Normal|Unaffected",
 #                       "--color_embedding_by=GrossPathology",
-#                       "--marker_genes=CLDN2,CD44,AXIN2,RNF43,TGFBI,EPHB2,TEAD2,CDX2,LGR5,OLFM4,ASCL2",
+#                       # "--marker_genes=CLDN2,CD44,AXIN2,RNF43,TGFBI,EPHB2,TEAD2,CDX2,LGR5,OLFM4,ASCL2",
 #                       "--harmonize"
 #                     ))
 # args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
+#                     c("--cores=4",
 #                       "--dataset=Yang_kidney",
 #                       "--metadata_for_celltype_fn=41467_2021_27660_MOESM4_ESM.csv",
 #                       "--sep_for_metadata=,",
@@ -218,24 +234,26 @@ option_list <- list(
 #                       "--cluster_res=0.6",
 #                       "--filter_per_cell_type",
 #                       "--plot_custom_column",
-#                       "--color_embedding_by=batch"
+#                       "--color_embedding_by=batch",
+#                       "--filter_doublets",
+#                       "--doublet_filter=5"
 #                     ))
 
-args = parse_args(OptionParser(option_list=option_list), args=
-                    c("--cores=8",
-                      "--dataset=Greenleaf_brain",
-                      "--metadata_for_celltype_fn=GSE162170_atac_cell_metadata.txt.gz",
-                      "--sep_for_metadata=\t",
-                      "--cell_type_col_in_metadata=cell_type",
-                      "--tissue=all",
-                      "--nfrags_filter=1",
-                      "--tss_filter=0",
-                      "--min_cells_per_cell_type=1",
-                      "--cluster_res=0.6",
-                      "--filter_per_cell_type",
-                      "--plot_custom_column",
-                      "--color_embedding_by=batch"
-                    ))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=1",
+#                       "--dataset=Greenleaf_brain",
+#                       "--metadata_for_celltype_fn=GSE162170_atac_cell_metadata.txt.gz",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--min_cells_per_cell_type=1",
+#                       "--cluster_res=0.6",
+#                       "--filter_per_cell_type"
+#                       # "--plot_custom_column"
+#                       # "--color_embedding_by=batch"
+#                     ))
 
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
@@ -274,12 +292,128 @@ args = parse_args(OptionParser(option_list=option_list), args=
 #                       "--color_embedding_by=cell_type"
 #                     ))
 
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=4",
+#                       "--dataset=Bingren",
+#                       "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=celltype",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--min_cells_per_cell_type=1",
+#                       "--cluster_res=0.6",
+#                       "--filter_per_cell_type",
+#                       "--plot_custom_column",
+#                       "--color_embedding_by=batch"
+#                     ))
+# 
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Shendure",
+#                       "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--min_cells_per_cell_type=1",
+#                       "--cluster_res=0.6",
+#                       "--filter_per_cell_type",
+#                       "--plot_custom_column",
+#                       "--color_embedding_by=batch",
+#                       "--marker_genes=ACTA2,TAGLN,MYH11"
+#                     ))
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Greenleaf_pbmc_bm",
+#                       "--metadata_for_celltype_fn=intermediate_blood_bm_annotation_metadata.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--tissue=all",
+#                       "--nfrags_filter=10000",
+#                       "--tss_filter=0",
+#                       "--min_cells_per_cell_type=100",
+#                       "--cluster_res=0.6",
+#                       "--filter_per_cell_type",
+#                       # "--plot_custom_column"
+#                       "--color_embedding_by=cell_type"
+#                     ))
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Greenleaf_pbmc_bm",
+#                       "--metadata_for_celltype_fn=intermediate_blood_bm_annotation_metadata.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--tissue=all",
+#                       "--nfrags_filter=5000",
+#                       "--tss_filter=0",
+#                       "--min_cells_per_cell_type=100",
+#                       "--cluster_res=0.6",
+#                       "--filter_per_cell_type",
+#                       # "--plot_custom_column"
+#                       "--color_embedding_by=cell_type"
+#                     ))
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Greenleaf_pbmc_bm",
+#                       "--metadata_for_celltype_fn=intermediate_blood_bm_annotation_metadata.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--tissue=all",
+#                       "--nfrags_filter=7500",
+#                       "--tss_filter=0",
+#                       "--min_cells_per_cell_type=100",
+#                       "--cluster_res=0.6",
+#                       "--filter_per_cell_type",
+#                       # "--plot_custom_column"
+#                       "--color_embedding_by=cell_type"
+#                     ))
+
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=8",
+                      "--dataset=Greenleaf_pbmc_bm",
+                      "--metadata_for_celltype_fn=intermediate_blood_bm_annotation_metadata.csv",
+                      "--sep_for_metadata=,",
+                      "--cell_type_col_in_metadata=cell_type",
+                      "--tissue=all",
+                      "--nfrags_filter=1",
+                      "--tss_filter=0",
+                      "--min_cells_per_cell_type=100",
+                      "--cluster_res=0.6",
+                      "--filter_per_cell_type",
+                      # "--plot_custom_column"
+                      "--color_embedding_by=cell_type"
+                    ))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Greenleaf_pbmc_bm",
+#                       "--metadata_for_celltype_fn=intermediate_blood_bm_annotation_metadata.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--min_cells_per_cell_type=1",
+#                       "--cluster_res=0.6",
+#                       "--filter_per_cell_type",
+#                       # "--plot_custom_column"
+#                       "--color_embedding_by="
+#                     ))
+
 # plus means other stuff as well
 add_cell_types_plus_to_cell_col_data <- function(cell_col_data, metadata,
                                                  cell_type_col_in_orig_metadata, 
                                                  dataset, plus_to_add_to_metadata) {
   if (dataset == "Shendure") {
     to_match = paste(metadata[["sample_name"]], metadata[["cell"]], sep="#")
+    rownames_archr = rownames(cell_col_data)
+  }
+  else if (dataset == "Greenleaf_pbmc_bm") {
+    to_match = paste(metadata[["sample"]], metadata[["barcode"]], sep="#")
     rownames_archr = rownames(cell_col_data)
   }
   else if (dataset == "Greenleaf_brain") {
@@ -296,12 +430,14 @@ add_cell_types_plus_to_cell_col_data <- function(cell_col_data, metadata,
   else if (dataset == "Bingren") {
     metadata = metadata[metadata["Life.stage"] == "Adult", ]
     metadata["cellID"] = gsub("\\+", "#", metadata[["cellID"]])
-    idx = str_locate(metadata[["cellID"]], "#")[, 1] 
-    to_match = unname(mapply(function(s, i, ins) {
-      paste0(substring(s, 1, i-1), ins, substring(s, i))
-    }, s = metadata[["cellID"]], i = idx-1, ins = "rep"))
-    rownames_archr = unlist(lapply(lapply(strsplit(rownames(cell_col_data), split="_"), 
-                         "[", 2:4), paste, collapse="_"))
+    # idx = str_locate(metadata[["cellID"]], "#")[, 1] 
+    # to_match = unname(mapply(function(s, i, ins) {
+    #   paste0(substring(s, 1, i-1), ins, substring(s, i))
+    # }, s = metadata[["cellID"]], i = idx-1, ins = "rep"))
+    to_match = metadata[["cellID"]]
+    rownames_archr = rownames(cell_col_data)
+    # rownames_archr = unlist(lapply(lapply(strsplit(rownames(cell_col_data), split="_"), 
+    #                      "[", 2:4), paste, collapse="_"))
   }
   else if (dataset == "Tsankov") {
     rownames_archr = rownames(cell_col_data)
@@ -412,6 +548,20 @@ filter_proj_and_add_metadata <- function(proj, nfrags_filter, tss_filter,
   print("Done!")
   ################################
   
+  if (dataset == "Greenleaf_pbmc_bm") {
+    pbmc = grepl("PBMC", rownames(cell_col_data))
+    cell_col_data[pbmc, "cell_type"] = paste("PBMC", cell_col_data[pbmc, 
+                                                                   "cell_type"])
+    not_pbmc = !grepl("PBMC", rownames(cell_col_data))
+    cell_col_data[not_pbmc, "cell_type"] = paste("Bonemarrow", cell_col_data[not_pbmc, 
+                                                                             "cell_type"])
+    proj@cellColData = cell_col_data
+  } else if (dataset == "Greenleaf_colon") {
+    cell_col_data["CellType"] = paste(cell_col_data[["GrossPathology"]], 
+                                       cell_col_data[["CellType"]])
+    proj@cellColData = cell_col_data
+  }
+  
   # Filter by cell type
   print("Filtering by cell type...")
   cell_type_filter = grepl(cell_types, cell_col_data[["cell_type"]])
@@ -482,7 +632,7 @@ filter_proj_and_add_metadata <- function(proj, nfrags_filter, tss_filter,
   return(proj)
 }
 
-reduce_dims <- function(proj, harmonize, add_tsne=F, force=F) {
+reduce_dims <- function(proj, harmonize=F, add_tsne=F, force=F) {
   print("Running iterative LSI")
   proj <- addIterativeLSI(
     ArchRProj = proj,
@@ -523,7 +673,8 @@ reduce_dims <- function(proj, harmonize, add_tsne=F, force=F) {
       ArchRProj = proj,
       reducedDims = "IterativeLSI",
       name = "Harmony",
-      groupBy = "Sample"
+      groupBy = "Sample",
+      force=force
     )
     
     proj <- addUMAP(ArchRProj = proj, 
@@ -540,7 +691,7 @@ reduce_dims <- function(proj, harmonize, add_tsne=F, force=F) {
 
 print("Collecting cmd line args")
 args = parse_args(OptionParser(option_list=option_list))
-plot_correlation_with_cancer = args$plot_correlation_with_cancer
+# plot_correlation_with_cancer = args$plot_correlation_with_cancer
 cores = args$cores
 dataset = args$dataset
 cluster = args$cluster
@@ -569,6 +720,8 @@ plus_to_add_to_metadata = args$plus_to_add_to_metadata
 plus_filters = args$plus_filters
 cancer_for_correlation_plot = args$cancer_for_correlation_plot
 harmonize = args$harmonize
+filter_doublets = args$filter_doublets
+doublet_filter = args$doublet_filter
 
 if (!is.null(args$plus_to_add_to_metadata)) {
   plus_to_add_to_metadata = unlist(strsplit(args$plus_to_add_to_metadata, 
@@ -592,29 +745,33 @@ if (dataset == "Greenleaf_brain") {
   colnames(metadata)[grepl("Iterative.LSI.Clusters", 
                            colnames(metadata))] = "cell_type"
   
-  mapping = list(
-    c("brain (c0$|c1$|c2$|c5|c6|c7|c13|c14)", "brain GluN"),
-    c("brain (c3|c4|c12|c16|c20)", "brain IN"), 
-    c("brain c8", "brain nIPC"),
-    c("brain (c9|c11)", "brain RG"),
-    c("brain c10", "brain mGPC"),
-    c("brain c15", "brain OPC/Oligo"),
-    c("brain c17", "brain Peric"),
-    c("brain c19", "brain MG"),
-    c("brain c21", "brain EC"))
+  # mapping = list(
+  #   c("brain (c0$|c1$|c2$|c5|c6|c7|c13|c14)", "brain GluN"),
+  #   c("brain (c3|c4|c12|c16|c20)", "brain IN"), 
+  #   c("brain c8", "brain nIPC"),
+  #   c("brain c11", "brain early RG"),
+  #   c("brain c9", "brain early RG"),
+  #   # c("brain (c9|c11)", "brain RG"),
+  #   c("brain c10", "brain mGPC"),
+  #   c("brain c15", "brain OPC/Oligo"),
+  #   c("brain c17", "brain Peric"),
+  #   c("brain c19", "brain MG"),
+  #   c("brain c21", "brain EC"))
   
   metadata["cell_type"] = gsub("(c0$|c1$|c2$|c5|c6|c7|c13|c14)", 
                                "GluN", metadata[["cell_type"]])
   metadata["cell_type"] = gsub("(c3|c4|c12|c16|c20)", 
                                "IN", metadata[["cell_type"]])
   metadata["cell_type"] = gsub("c8", "nIPC", metadata[["cell_type"]])
-  metadata["cell_type"] = gsub("(c9|c11)", "RG", metadata[["cell_type"]])
+  metadata["cell_type"] = gsub("c9", "late RG", metadata[["cell_type"]])
+  metadata["cell_type"] = gsub("c11", "early RG", metadata[["cell_type"]])
   metadata["cell_type"] = gsub("c10", "mGPC", metadata[["cell_type"]])
   metadata["cell_type"] = gsub("c15", "OPC/Oligo", metadata[["cell_type"]])
   metadata["cell_type"] = gsub("c17", "Peric", metadata[["cell_type"]])
   metadata["cell_type"] = gsub("c19", "MG", metadata[["cell_type"]])
   metadata["cell_type"] = gsub("c21", "EC", metadata[["cell_type"]])
-  metadata["cell_type"] = gsub("c18", "Unknown", metadata[["cell_type"]])
+  metadata = metadata[, metadata[, "cell_type"] != "c18"]
+  # metadata["cell_type"] = gsub("c18", "Unknown", metadata[["cell_type"]])
 }
 
 if (dataset == "Shendure" && tissue == "cerebrum") {
@@ -662,7 +819,8 @@ if (dir.exists(proj_dir)) {
   print("Loading existing project")
   proj <- loadArchRProject(proj_dir)
   if (filter_doublets) {
-    setting = paste0(setting, "_", "filter_doublets")
+    setting = paste0(setting, "_", "filter_doublets", "_", "doublets_filter", 
+                     "_", doublet_filter)
     if (dir.exists(proj_dir)) {
       proj_dir = paste("ArchR_projects", setting, sep="/")
       proj <- loadArchRProject(proj_dir)
@@ -680,7 +838,7 @@ if (dir.exists(proj_dir)) {
       proj <- saveArchRProject(ArchRProj = proj, 
                                outputDirectory = proj_dir,
                                load = TRUE)
-      proj = reduce_dims(proj, force=T)
+      proj = reduce_dims(proj, harmonize = harmonize, force=T)
     }
   }
 } else {
@@ -717,33 +875,34 @@ if (get_metacells) {
   barcodes = as.character(proj$cellNames)
   metaGroup_df = data.frame(barcode = barcodes, metaGroup = metaGroup)
   k = 500
-  # 
-  # n = 10
+
   KNN = lapply(unique(as.character(ccd[, metaGroupName])), function(x) {
     currentBarcodes = metaGroup_df$barcode[metaGroup_df$metaGroup == x]
-    # currentBarcodeslength = length(currentBarcodes)
-    # print(paste("Cell type:", x))
-    # print(paste("Number of cells:", currentBarcodeslength))
-    # currentKnnIteration = floor(currentBarcodeslength / k)
-    # currentKnnIteration = 10
-    # if (currentKnnIteration == 1) {
-    #   currentKnnIteration = 2
-    # }
-    # k = floor(currentBarcodeslength / n)
-  
     return(as.list(knnGen2(
       ArchRProj = proj,
       reducedDims = 'IterativeLSI',
       overlapCutoff = 0.8,
       cellsToUse = currentBarcodes,
       knnIteration = 10000,
-      # knnIteration = currentKnnIteration
       k = k,
       min_knn = 2,
       seed=10
     )))
   })
-
+  
+  # 
+  # n = 10
+  # knnIteration = currentKnnIteration
+  # currentBarcodeslength = length(currentBarcodes)
+  # print(paste("Cell type:", x))
+  # print(paste("Number of cells:", currentBarcodeslength))
+  # currentKnnIteration = floor(currentBarcodeslength / k)
+  # currentKnnIteration = 10
+  # if (currentKnnIteration == 1) {
+  #   currentKnnIteration = 2
+  # }
+  # k = floor(currentBarcodeslength / n)
+  
   # names(KNN) = unique(as.character(ccd[, metaGroupName]))
                       
   # fn = paste(cancer_for_correlation_plot,
@@ -885,6 +1044,17 @@ if (plot_doublet_scores) {
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
 }
 
+if (filter_doublets) {
+  ccd = getCellColData(proj)
+  proj = proj[ccd[["DoubletEnrichment"]] < doublet_filter]
+  setting = paste(setting, "filter_doublets", "doublet_score", doublet_filter, 
+                  sep = "_")
+  proj = saveArchRProject(ArchRProj = proj,
+                          outputDirectory = setting, 
+                          load=TRUE)
+  proj = reduce_dims(proj, harmonize, force=T)
+}
+
 if (cluster) {
   print(paste0("clustering with clustering resolution = ", cluster_res))
   proj <- addClusters(input = proj,
@@ -902,7 +1072,7 @@ if (cluster) {
     ArchRProj = proj, 
     colorBy = "cellColData", 
     name = paste("Clusters_res", cluster_res, sep="_"),
-    embedding = "UMAP",
+    embedding = "UMAPHarmony",
     quantCut = c(0.01, 0.95))
 
   fn = paste("clusters_UMAPs_cluster_res", cluster_res, setting, sep="_")
@@ -930,6 +1100,25 @@ if (reannotate) {
     proj = saveArchRProject(ArchRProj = proj, 
                             outputDirectory = setting,
                             load=T)
+  }
+  if (dataset == "Yang_kidney" && cluster_res==2.5) {
+    cell_col_data = getCellColData(proj)
+    proj = proj[cell_col_data[["Clusters_res_2.5"]] != "C9" &
+      cell_col_data[["Clusters_res_2.5"]] != "C23"]
+    setting = paste(setting, "reannotated", sep="_")
+    proj = saveArchRProject(ArchRProj = proj, 
+                            outputDirectory = proj_dir,
+                            load=T)
+    fn = paste(dataset, "nfrags_filter", nfrags_filter, "embedding.csv", sep="_")
+    fp = paste("../../data/processed_data", fn, sep="/")
+    
+    embedding = "UMAP"
+    if (harmonize) {
+      embedding = paste0(embedding, "Harmony")
+    }
+    
+    embedding = getEmbedding(proj, embedding)
+    write.csv(embedding, fp)
   }
   if (dataset == "Tsankov" && cluster_res==0.6 && cell_types=="all") {
    cell_col_data = getCellColData(proj)
@@ -960,27 +1149,27 @@ if (reannotate) {
                  "new_annotation"] = "Myeloid"
    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C2", 
                  "new_annotation"] = "Myeloid"
-    cell_col_data[cell_col_data[["cell_type"]] == "Fibroblasts", 
+   cell_col_data[cell_col_data[["cell_type"]] == "Fibroblasts", 
                   "new_annotation"] = "Fibroblast.WT1-"
-    cell_col_data[cell_col_data[["cell_type"]] == "B_cells", 
+   cell_col_data[cell_col_data[["cell_type"]] == "B_cells", 
                   "new_annotation"] = "T.cells"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C5",
+   cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C5",
                   "new_annotation"] = "T.cells"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C4", 
+   cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C4", 
                   "new_annotation"] = "B.cells"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C16",
+   cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C16",
                   "new_annotation"] = "Fibroblast.WT1+"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C17", 
+   cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C17", 
                   "new_annotation"] = "Fibroblast.WT1-"
-    cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C1",
+   cell_col_data[cell_col_data[["Clusters_res_0.6"]] == "C1",
                   "new_annotation"] = "Neuronal"
-    proj@cellColData = cell_col_data
+   proj@cellColData = cell_col_data
     
-    keep_cells = !(cell_col_data[["new_annotation"]] == "Immune" |
+   keep_cells = !(cell_col_data[["new_annotation"]] == "Immune" |
                      cell_col_data[["new_annotation"]] == "Stromal")
-    proj = proj[keep_cells, ]
-    setting = paste(setting, "reannotated", sep="_")
-    proj = saveArchRProject(ArchRProj = proj, 
+   proj = proj[keep_cells, ]
+   setting = paste(setting, "reannotated", sep="_")
+   proj = saveArchRProject(ArchRProj = proj, 
                             outputDirectory = setting,
                             load=T)
   }
@@ -1034,9 +1223,46 @@ if (plot_custom_column) {
   if (reannotate) {
     fn = paste(fn, "reannotated", sep="_")
   }
-
+  
   fn = paste0(fn, ".pdf")
   plotPDF(p, name=fn, ArchRProj = proj, addDOC = FALSE)
+  
+  p <- plotEmbedding(
+    ArchRProj = proj, 
+    colorBy = "cellColData", 
+    name = color_embedding_by, 
+    embedding = embedding,
+    quantCut = c(0, 1),
+    labelMeans=F)
+  
+  p <- p + 
+    ggtitle("") +
+          theme(legend.position="none",
+                axis.title.x=element_blank(),
+                axis.title.y=element_blank(),
+                panel.background = element_rect(fill = '#e0e0e0'))
+  
+  plotPDF(p, name="fig1.pdf", ArchRProj = proj, addDOC = FALSE)
+  
+  p <- plotEmbedding(
+    ArchRProj = proj, 
+    colorBy = "cellColData", 
+    name = color_embedding_by, 
+    embedding = embedding,
+    quantCut = c(0, 1),
+    labelMeans=F)
+  
+  p <- p + 
+    ggtitle("") +
+    theme_classic() +
+    theme(legend.position="none",
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank(),
+          axis.line.x = element_line(linewidth = 0.1),
+          axis.line.y = element_line(linewidth = 0.1))
+
+  
+  plotPDF(p, name="fig4A.pdf", ArchRProj = proj, addDOC = FALSE)
   
   if (dataset == "Tsankov") {
     refined_annotation = cell_col_data["new_annotation"]
@@ -1069,21 +1295,36 @@ if (!(is.null(marker_genes))) {
   if (length(marker_genes) == 1) {
     p = list(p)
   }
-  p2 <- lapply(p, function(x){
-    x + guides(color = FALSE, fill = FALSE) + 
-      theme_ArchR(baseSize = 10) +
-      theme(plot.margin = unit(c(0.5, 0, 0.5, 0), "cm")) +
+  p2 <- mapply(function(x, i) {
+    x +
+      theme_ArchR(baseSize = 5) +
       theme(
+        panel.border=element_blank(),
+        plot.margin = unit(c(0.5, 0, 0.5, 0), "cm"),
         axis.text.x=element_blank(), 
         axis.ticks.x=element_blank(), 
         axis.text.y=element_blank(), 
         axis.ticks.y=element_blank(),
         axis.line=element_blank(),
         axis.title.x=element_blank(), 
-        axis.title.y=element_blank()
-      ) 
-  })
-  setting = paste0(setting, "_", "marker_genes", "_", paste(marker_genes, 
+        axis.title.y=element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "right"
+        ) +
+      guides(fill = guide_colourbar(barwidth = 0.5, barheight = 2))+
+      ggtitle(marker_genes[i])
+    }, 
+    p, seq_along(p), SIMPLIFY = F)
+        # plot.title = element_text(hjust = 0.5))
+      #   legend.position = "right",
+      #   legend.text = element_text(size = 1),
+      #   legend.key.size = unit(0.1, "cm")
+      # ) +
+      # ggtitle(marker_genes[i]) +
+      # guides(fill = guide_colourbar(barwidth = 0.5, barheight = 2))
+      #guides(color = FALSE, fill = FALSE) 
+  # }, p, seq_along(p), SIMPLIFY = F)
+  setting = paste0(setting, "_", "marker_genes", "_", paste(marker_genes,
                                                             collapse = "_"))
   path = "../../figures"
   fn = paste0("gene_marker_UMAPs_", setting, ".pdf")
@@ -1093,8 +1334,8 @@ if (!(is.null(marker_genes))) {
     print(paste("Saving", fn, "to temp.pdf"))
     fp = paste(path, "temp.pdf", sep="/")
   }
-  pdf(fp, width = 50, height = 50)
-  do.call(cowplot::plot_grid, c(list(ncol = 5), p2))
+  pdf(fp, width = 10, height = 10)
+  do.call(cowplot::plot_grid, c(list(ncol = 3), p2))
   dev.off()
 }
 
