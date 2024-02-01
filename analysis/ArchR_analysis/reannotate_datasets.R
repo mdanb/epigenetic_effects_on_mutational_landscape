@@ -771,7 +771,7 @@ if (dataset == "Greenleaf_brain") {
   metadata["cell_type"] = gsub("c17", "Peric", metadata[["cell_type"]])
   metadata["cell_type"] = gsub("c19", "MG", metadata[["cell_type"]])
   metadata["cell_type"] = gsub("c21", "EC", metadata[["cell_type"]])
-  metadata = metadata[, metadata[, "cell_type"] != "c18"]
+  metadata = metadata[metadata[, "cell_type"] != "c18",]
   # metadata["cell_type"] = gsub("c18", "Unknown", metadata[["cell_type"]])
 }
 
