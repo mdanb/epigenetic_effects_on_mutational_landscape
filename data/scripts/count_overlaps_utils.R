@@ -178,9 +178,11 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
                                                                          "#")
     sample_barcodes_in_metadata = substr(sample_barcodes_in_metadata, 1, 16)
   }
-  else if (dataset == "Greenleaf_pbmc_bm" || dataset == "Yang_kidney") {
+  else if (dataset == "Yang_kidney") {
     sample_barcodes_in_metadata = 
       substr(filtered_metadata[["barcode"]], 1, 16)
+  } else if (dataset == "Greenleaf_pbmc_bm"){
+    sample_barcodes_in_metadata = filtered_metadata[["cell_barcode"]]
   }
   else if (dataset == "Greenleaf_brain") {
     sample_barcodes_in_metadata = 
@@ -312,6 +314,7 @@ get_sample_name_greenleaf_brain <- function(file) {
 get_sample_name_greenleaf_pbmc_bm <- function(file) {
   sample_name = str_remove(file, "Greenleaf_pbmc_bm_count_overlaps_")
   sample_name = str_remove(sample_name, "per_cell_")
+  sample_name = str_remove(sample_name, ".fragments.tsv.gz")
   sample_name = str_remove(sample_name, ".fragments.rds")
   sample_name = unlist(strsplit(sample_name, split="_"))
   sample_name = paste(unlist(strsplit(sample_name, split="_"))[3:4], collapse="_")
