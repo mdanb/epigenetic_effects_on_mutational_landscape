@@ -125,8 +125,16 @@ args = parse_args(OptionParser(option_list=option_list), args=
                     c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000",
                       "--dataset=Greenleaf_pbmc_bm",
                       "--cell_types=all",
-                      "--files_pattern=CD",
+                      "--files_pattern=BMMC",
                       "--cores=3",
+                      "--annotation=new_intermediate_blood_bm_annotation"))
+
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--top_tsse_fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000,1000000",
+                      "--dataset=Greenleaf_pbmc_bm",
+                      "--cell_types=all",
+                      "--files_pattern=PBMC",
+                      "--cores=5",
                       "--annotation=new_intermediate_blood_bm_annotation"))
 
 top_tsse_fragment_count_range = as.integer(unlist(strsplit(
@@ -160,13 +168,17 @@ get_fragments_from_top_cells <- function(i,
 
 create_tsse_filtered_count_overlaps_helper <- function(metadata_with_fragment_counts,
                                                        cell_types_to_consider,
-                                                       migrated_fragments,
+                                                       fragments,
                                                        sample_names,
                                                        interval_ranges,
                                                        count, 
                                                        cores) {
+  if (cell_types_to_consider != "all") {
+    metadata_with_fragment_counts = metadata_with_fragment_counts %>% 
+                                      filter(cell_type %in% 
+                                               cell_types_to_consider)
+  }
   metadata_with_fragment_counts = metadata_with_fragment_counts %>% 
-                                  filter(cell_type %in% cell_types_to_consider) %>%
                                   group_by(cell_type) %>%
                                   arrange(desc(tsse), .by_group = TRUE) %>%
                                   mutate(frag_counts_cumsum = 
@@ -193,7 +205,7 @@ create_tsse_filtered_count_overlaps_helper <- function(metadata_with_fragment_co
   fragments_from_top_cells = mclapply(seq_along(count_filtered_metadata_with_fragment_counts_per_cell_type),
                                       get_fragments_from_top_cells,
                                       count_filtered_metadata_with_fragment_counts_per_cell_type,
-                                      migrated_fragments,
+                                      fragments,
                                       sample_names, mc.cores=cores)
   set.seed(42)
   fragments_from_top_cells = mclapply(fragments_from_top_cells, sample, count,
@@ -347,9 +359,11 @@ create_tsse_filtered_count_overlaps_per_tissue <- function(files,
   #          cell_types_to_consider,
   #          mc.cores=8)
   
-  metadata_with_fragment_counts = metadata_with_fragment_counts %>% 
-                                  filter(cell_type %in% cell_types_to_consider)
-  tissue_name = get_tissue_name(files[1], "Bingren", annotation=NA)
+  if (!(cell_types_to_consider == "all")) {
+    metadata_with_fragment_counts = metadata_with_fragment_counts %>% 
+                                    filter(cell_type %in% cell_types_to_consider)
+  }
+  tissue_name = get_tissue_name(files[1], dataset, annotation=NA)
   
   # if (dataset == "Bingren") {
   #   tissue_name = get_tissue_name(files[1], "Bingren")
@@ -479,11 +493,14 @@ if (dataset == "Bingren") {
                                         pattern="IC.*[.]gz")
   }
 } else if (dataset == "Greenleaf_pbmc_bm") {
-  metadata = read.csv("../metadata/greenleaf_pbmc_bm.txt", row.names = 1)
-  colnames(metadata)[1] = "cell_barcode"
-  files = list.files("../bed_files/greenleaf_pbmc_bm_scATAC", 
-                     pattern = files_pattern,
-                     full.names = T)
+  if (annotation == "new_intermediate_blood_bm_annotation") {
+    metadata = read.csv("../metadata/new_intermediate_blood_bm_annotation_metadata.csv", 
+                        row.names = 1)
+    colnames(metadata)[1] = "cell_barcode"
+    files = list.files("../bed_files/greenleaf_pbmc_bm_scATAC", 
+                       pattern = files_pattern,
+                       full.names = T)
+  }
 }
 
 create_tsse_filtered_count_overlaps_per_tissue(files,
