@@ -167,6 +167,7 @@ for fold in fold_for_test_set_range:
 
         if tss_fragment_filter:
             command_args = command_args + " " + "--tss_fragment_filter" + " " + tss_fragment_filter
+            script_filename = script_filename + "_" + "tss_filter" + "_" + tss_fragment_filter
 
         robustness_filename = script_filename
         script_filename = "_".join([script_filename, "seed_range", seed_range, "fold_for_test_set", str(fold)])
