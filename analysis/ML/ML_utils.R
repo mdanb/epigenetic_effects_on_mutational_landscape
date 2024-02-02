@@ -63,7 +63,7 @@ construct_dir <- function(scATAC_source,
   
   dir = paste("annotation", annotation, dir, sep="_")
   if (tss_fragment_filter != -1) {
-    dir = paste(dir, "tss_fragment_filter", tss_fragment_filter, sep="_")
+    dir = paste("tss_fragment_filter", tss_fragment_filter, dir, sep="_")
   }
   
   if (tissues_to_consider != "all") {
