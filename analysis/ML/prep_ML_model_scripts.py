@@ -33,6 +33,8 @@ parser.add_argument("--cleanup", action="store_true", default=False)
 parser.add_argument('--feat_imp_min_n_robustness', type=int)
 parser.add_argument('--grid_cell_types', type=str, default=None)
 parser.add_argument('--cell_types_keep', nargs="+", type=str, default=None)
+parser.add_argument('--tss_fragment_filter', type=str,
+                    help='tss fragment filter to consider', default=None)
 
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
@@ -96,6 +98,7 @@ grid_analysis = config.grid_analysis
 grid_cell_types = config.grid_cell_types
 msi_high = config.msi_high
 cell_types_keep = config.cell_types_keep
+tss_fragment_filter = config.tss_fragment_filter
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
@@ -161,6 +164,9 @@ for fold in fold_for_test_set_range:
                            grid_cell_types + '"'
         else:
             command_args = command_args + " " + "--tissues_to_consider" + " " + " ".join(tissues_to_consider)
+
+        if tss_fragment_filter:
+            command_args = command_args + " " + "--tss_fragment_filter" + " " + tss_fragment_filter
 
         robustness_filename = script_filename
         script_filename = "_".join([script_filename, "seed_range", seed_range, "fold_for_test_set", str(fold)])
@@ -250,6 +256,9 @@ else:
 if cell_types_keep:
     cell_types_keep = ",".join(cell_types_keep)
     command_args = command_args + " " + "--cell_types_keep" + " " + f"'{cell_types_keep}'"
+
+if tss_fragment_filter:
+    command_args = command_args + " " + "--tss_fragment_filter" + " " + tss_fragment_filter
 
 Rscript_command = "Rscript /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/plot_top_features.R " + \
                   command_args
