@@ -8,10 +8,10 @@ option_list <- list(
 )
 
 args = parse_args(OptionParser(option_list=option_list))
-args = parse_args(OptionParser(option_list=option_list), args=
-                  c("--datasets=Bingren",
-                    "--annotation=Bingren_remove_same_celltype_indexing",
-                    "--fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000"))
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                   c("--datasets=Bingren",
+#                     "--annotation=Bingren_remove_same_celltype_indexing",
+#                     "--fragment_count_range=1000,10000,50000,100000,150000,250000,300000,400000,500000"))
 
 fragment_count_range = unlist(strsplit(args$fragment_count_range, ","))
 datasets = unlist(strsplit(args$datasets, split = ","))
