@@ -261,6 +261,9 @@ if cell_types_keep:
 if tss_fragment_filter:
     command_args = command_args + " " + "--tss_fragment_filter" + " " + tss_fragment_filter
 
+if hundred_kb:
+    command_args = command_args + " " + "--hundred_kb"
+
 Rscript_command = "Rscript /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/plot_top_features.R " + \
                   command_args
 
