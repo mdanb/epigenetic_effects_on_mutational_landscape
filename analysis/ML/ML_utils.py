@@ -17,7 +17,8 @@ import re
 
 ### Load Data helpers ###
 def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or_donor_id, hundred_kb,
-                                         expanded_hundred_kb, per_donor):
+                                         expanded_hundred_kb, per_donor, subsampled_mutations,
+                                         cancer_type_name_for_subsample):
     # mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
     #                               histologically_subtyped_mutations, de_novo_seurat_clustering,
     #                               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type_or_donor_id,
@@ -38,13 +39,15 @@ def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or
         mutations_df = add_na_ranges(mutations_df, hundred_kb, expanded_hundred_kb)
     scATAC_df, mutations_df = filter_agg_data(scATAC_df, mutations_df)
     if not per_donor:
+        if subsampled_mutations:
+            cancer_type_or_donor_id = cancer_type_name_for_subsample
         mutations_df = filter_mutations_by_cancer(mutations_df, cancer_type_or_donor_id)
     return scATAC_df, mutations_df
 
 
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg, histologically_subtyped_mutations, de_novo_seurat_clustering,
                    CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type, hundred_kb, expanded_hundred_kb,
-                   aggregated_per_donor, hierarchically_subtyped_mutations, mm, msi_high):
+                   aggregated_per_donor, hierarchically_subtyped_mutations, mm, msi_high, subsampled_mutations):
     if meso:
         mutations_df = load_meso()
     elif SCLC:
@@ -75,9 +78,16 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg, histologically_subtyped
         mutations_df = load_mm_mutations()
     elif msi_high:
         mutations_df = load_msi_high_mutations()
+    elif subsampled_mutations:
+        mutations_df = load_subsampled_mutations(cancer_type)
     else:
         mutations_df = load_agg_mutations()
     return mutations_df
+
+def load_susampled_mutations(cancer_type_with_n_specified):
+    df = pd.read_csv(f"../../data/processed_data/{cancer_type_with_n_specified}.csv",
+                       index_col=0)
+    return df.loc[natsorted(df.index)]
 
 def load_hierarchically_subtyped_mutations():
     df = pd.read_csv(f"../../data/processed_data/hierarchically_subtyped_mutations.csv",
