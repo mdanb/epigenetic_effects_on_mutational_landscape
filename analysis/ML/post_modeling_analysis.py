@@ -48,8 +48,11 @@ tissues_to_consider = config.tissues_to_consider
 grid_analysis = config.grid_analysis
 grid_cell_types = config.grid_cell_types
 cell_types_keep = config.cell_types_keep
+hierarchically_subtyped_mutations = config.hierarchically_subtyped_mutations
+mm = config.mm
+msi_high = config.msi_high
+
 subsampled_mutations = config.subsampled_mutations
-cancer_type_name_for_subsample = config.cancer_type_name_for_subsample
 
 def conduct_test(errors, underestimated=None, two_sided=None):
     assert not ((underestimated is not None and two_sided is not None) or
@@ -76,7 +79,8 @@ if bins_error_analysis:
         mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                       histologically_subtyped_mutations, de_novo_seurat_clustering,
                                       CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type,
-                                      hundred_kb, expanded_hundred_kb, aggregated_per_donor)
+                                      hundred_kb, expanded_hundred_kb, aggregated_per_donor,
+                                      hierarchically_subtyped_mutations, mm, msi_high, subsampled_mutations)
         scATAC_df, cancer_specific_mutations = prep_and_align_mutations_with_scatac(scATAC_df,
                                                                                     mutations_df,
                                                                                     cancer_type,
@@ -84,7 +88,7 @@ if bins_error_analysis:
                                                                                     expanded_hundred_kb,
                                                                                     per_donor,
                                                                                     subsampled_mutations,
-                                                                                    cancer_type_name_for_subsample)
+                                                                                    None)
 
         # scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
         #                                                   histologically_subtyped_mutations,
@@ -104,7 +108,7 @@ if bins_error_analysis:
             preds = []
             for fold_for_test_set in range(0, 10):
                 scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                                  hundred_kb, expanded_hundred_kb,
+                                                  hundred_kb, expanded_hundred_kb, tissues_to_consider,
                                                   seed=seed, fold_for_test_set=fold_for_test_set,
                                                   all_seeds=False)
                 model = load_n_features_backwards_elim_models(error_analysis_num_features, scATAC_df.shape[1],
@@ -176,7 +180,7 @@ if bins_error_analysis:
                            })
 
         fp = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                  hundred_kb, expanded_hundred_kb, all_seeds=True)
+                                  hundred_kb, expanded_hundred_kb, tissues_to_consider, all_seeds=True)
         # Good style / Cool pattern
         current_fp = osp.dirname(osp.realpath(__file__))
         fp = osp.join(current_fp, "..", "..", "figures", "models", ML_model,
