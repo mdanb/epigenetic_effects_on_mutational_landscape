@@ -67,6 +67,8 @@ def create_parser():
     group.add_argument("--RNA_subtyped", action="store_true", default=False)
     group.add_argument("--mm", action="store_true", default=False)
     group.add_argument("--msi_high", action="store_true", default=False)
+    group.add_argument("--subsampled_mutations", action="store_true", default=False)
+
 
     group2 = parser.add_mutually_exclusive_group()
     group2.add_argument('--grid_analysis', action="store_true", default=False)
