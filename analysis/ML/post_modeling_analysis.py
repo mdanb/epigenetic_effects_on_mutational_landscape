@@ -44,6 +44,12 @@ fold_for_test_set = config.fold_for_test_set
 bins_error_analysis = config.bins_error_analysis
 count_bin_sums = config.count_bin_sums
 aggregated_per_donor = config.aggregated_per_donor
+tissues_to_consider = config.tissues_to_consider
+grid_analysis = config.grid_analysis
+grid_cell_types = config.grid_cell_types
+cell_types_keep = config.cell_types_keep
+subsampled_mutations = config.subsampled_mutations
+cancer_type_name_for_subsample = config.cancer_type_name_for_subsample
 
 def conduct_test(errors, underestimated=None, two_sided=None):
     assert not ((underestimated is not None and two_sided is not None) or
@@ -62,7 +68,8 @@ def conduct_test(errors, underestimated=None, two_sided=None):
 if bins_error_analysis:
 #     for seed in seed_range:
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir,
-                                    hundred_kb, expanded_hundred_kb)
+                                    hundred_kb, expanded_hundred_kb, tissues_to_consider, grid_analysis,
+                                    grid_cell_types, cell_types_keep)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
 
     for cancer_type in cancer_types:
@@ -75,7 +82,9 @@ if bins_error_analysis:
                                                                                     cancer_type,
                                                                                     hundred_kb,
                                                                                     expanded_hundred_kb,
-                                                                                    per_donor)
+                                                                                    per_donor,
+                                                                                    subsampled_mutations,
+                                                                                    cancer_type_name_for_subsample)
 
         # scATAC_df, cancer_specific_mutations = load_data(meso, SCLC, lung_subtyped, woo_pcawg,
         #                                                   histologically_subtyped_mutations,
@@ -171,14 +180,16 @@ if bins_error_analysis:
         # Good style / Cool pattern
         current_fp = osp.dirname(osp.realpath(__file__))
         fp = osp.join(current_fp, "..", "..", "figures", "models", ML_model,
-                      cancer_type, fp, "errors_df.csv")
+                      cancer_type, fp)
+        multiseed_errors.to_csv(osp.join(fp, "errors_df.csv"))
+
         # df = df.sort_values(by="absolute_error_q-value")
         # if hundred_kb:
         #     ranges = pyreadr.read_r(osp.join(current_fp, "..", "..", "data", "100kb_interval_ranges.Rdata"))
         # else:
         #     ranges = pyreadr.read_r(osp.join(current_fp, "..", "..", "data", "mutation_data",
         #                                      "hg19.1Mb.ranges.Polak.Nature2015.RData"))
-        df.to_csv(fp)
+        df.to_csv(osp.join(fp, "errors_df_summary.csv"))
 
         # multiseed_preds = np.average(multiseed_preds, axis=0)
 
