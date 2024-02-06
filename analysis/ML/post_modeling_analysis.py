@@ -69,9 +69,10 @@ def conduct_test(errors, underestimated=None, two_sided=None):
     return rejected, q_values, normalized_errors, p_values
 
 if bins_error_analysis:
+    tissues_string = "_".join(tissues_to_consider)
 #     for seed in seed_range:
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir,
-                                    hundred_kb, expanded_hundred_kb, tissues_to_consider, grid_analysis,
+                                    hundred_kb, expanded_hundred_kb, tissues_string, grid_analysis,
                                     grid_cell_types, cell_types_keep)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
 
@@ -108,7 +109,7 @@ if bins_error_analysis:
             preds = []
             for fold_for_test_set in range(0, 10):
                 scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                                  hundred_kb, expanded_hundred_kb, tissues_to_consider,
+                                                  hundred_kb, expanded_hundred_kb, tissues_string,
                                                   seed=seed, fold_for_test_set=fold_for_test_set,
                                                   all_seeds=False)
                 model = load_n_features_backwards_elim_models(error_analysis_num_features, scATAC_df.shape[1],
@@ -180,7 +181,7 @@ if bins_error_analysis:
                            })
 
         fp = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_filter, annotation_dir,
-                                  hundred_kb, expanded_hundred_kb, tissues_to_consider, all_seeds=True)
+                                  hundred_kb, expanded_hundred_kb, tissues_string, all_seeds=True)
         # Good style / Cool pattern
         current_fp = osp.dirname(osp.realpath(__file__))
         fp = osp.join(current_fp, "..", "..", "figures", "models", ML_model,
