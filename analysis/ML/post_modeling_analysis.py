@@ -69,13 +69,12 @@ def conduct_test(errors, underestimated=None, two_sided=None):
     return rejected, q_values, normalized_errors, p_values
 
 if bins_error_analysis:
-    tissues_string = "_".join(tissues_to_consider)
 #     for seed in seed_range:
     scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir,
-                                    hundred_kb, expanded_hundred_kb, tissues_string, grid_analysis,
+                                    hundred_kb, expanded_hundred_kb, tissues_to_consider, grid_analysis,
                                     grid_cell_types, cell_types_keep)
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
-
+    tissues_string = "_".join(tissues_to_consider)
     for cancer_type in cancer_types:
         mutations_df = load_mutations(meso, SCLC, lung_subtyped, woo_pcawg,
                                       histologically_subtyped_mutations, de_novo_seurat_clustering,
