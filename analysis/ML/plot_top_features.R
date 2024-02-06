@@ -54,19 +54,19 @@ parser <- add_option(parser, c("--cell_types_keep"), type="character",
                      default=NULL)
 parser <- add_option(parser, c("--robustness_keep"), type="character", 
                      default=NULL)
-# args = parse_args(parser, args= c("--cancer_types=SCLC",
-#                                   "--datasets=Bingren,Rawlins_fetal_lung,Shendure,Tsankov",
+# args = parse_args(parser, args= c("--cancer_types=Myeloid-MPN",
+#                                   "--datasets=Greenleaf_pbmc_bm",
 #                                   "--cell_number_filter=100",
-#                                   "--annotation=finalized_annotation",
+#                                   "--annotation=new_intermediate_blood_bm_annotation",
 #                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot_feat_imp=5",
+#                                   "--top_features_to_plot_feat_imp=2,5,10",
+#                                   "--feat_imp_min_n_robustness=50",
 #                                   "--top_features_to_plot=10,5,2,1",
 #                                   "--feature_importance_method=permutation_importance",
 #                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=lung,fetal_lung",
+#                                   "--tissues_to_consider=all",
 #                                   "--robustness_analysis",
-#                                   "--cell_types_keep=lung Neuroendocrine-Tsankov",
-#                                   "--robustness_keep=lung Neuroendocrine TS,fetal_lung Pulmonary NE R_Fl,fetal_lung GHRL+ NE R_Fl"))
+#                                   "--tss_fragment_filter=1000000"))
 
 # args = parse_args(parser, args= c("--cancer_types=Bone-Leiomyo",
 #                                   "--datasets=Bingren,Greenleaf_pbmc_bm,Greenleaf_colon,Shendure,Tsankov,Yang_kidney",
@@ -152,19 +152,19 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--robustness_analysis",
 #                                   "--top_features_to_plot=1"))
 
-args = parse_args(parser, args= c("--cancer_types=Panc-AdenoCA,Panc-Endocrine",
-                                  "--datasets=Bingren,Shendure",
-                                  "--cell_number_filter=100",
-                                  "--annotation=finalized_annotation",
-                                  "--ML_model=XGB",
-                                  "--seed_range=1-10",
-                                  "--feat_imp_min_n_robustness=50",
-                                  "--folds_for_test_set=1-10",
-                                  "--feature_importance_method=permutation_importance",
-                                  "--folds_for_test_set=1-10",
-                                  "--robustness_analysis",
-                                  "--tissues_to_consider=pancreas,stomach",
-                                  "--top_features_to_plot=10,5,2,1"))
+# args = parse_args(parser, args= c("--cancer_types=Panc-AdenoCA,Panc-Endocrine",
+#                                   "--datasets=Bingren,Shendure",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--ML_model=XGB",
+#                                   "--seed_range=1-10",
+#                                   "--feat_imp_min_n_robustness=50",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--robustness_analysis",
+#                                   "--tissues_to_consider=pancreas,stomach",
+#                                   "--top_features_to_plot=10,5,2,1"))
 
 
 args = parse_args(parser)
@@ -381,6 +381,7 @@ rename_cell_types <- function(cell_type_names) {
                  ignore.case = T)
   renamed = gsub("GluN", "Glutamatergic Neuron", renamed)
   renamed = gsub("\\s+\\(.*\\)", "", renamed)
+  renamed = gsub("Gmp.neut", "GMP.Neut", renamed)
   # renamed = gsub("brain GluN GL_Br", "Cerebral Cortex GL_Br", renamed)
   return(renamed)
 }
