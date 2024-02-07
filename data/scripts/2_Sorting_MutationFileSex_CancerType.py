@@ -1,39 +1,43 @@
 #!/usr/bin/env python
 
 import glob 
-import re 
-import time 
-tStartTime= (time.ctime()) 
+import time
+import os
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--cancer_types', nargs="+", type=str, default=None)
+config = parser.parse_args()
+cancer_types = config.cancer_types
 
-class cVariant: 
- 
+tStartTime = (time.ctime())
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+class cVariant:
 	def __init__(self): 
-		self.sChr =     'NULL' 
-		self.nChr=	0
-		self.nStart =  0
-		self.nEnd =    0 
-		self.sStrand=        'NULL' 
+		self.sChr = 'NULL'
+		self.nChr = 0
+		self.nStart = 0
+		self.nEnd = 0
+		self.sStrand = 'NULL'
+		self.donor_id = 'NULL'
 
-	def parse_line(self,sReadLine):
-
-		sList=sReadLine.split("\t")
-		sChr=sList[1].replace("chr","") 
-		self.sChr=      sChr
-		self.nStart=     int(sList[2])
-		self.nEnd=     int(sList[3])
-		self.sGenename=      sList[0]      
-
-		
-		nChr=sChr.replace("chr","")
-		if nChr=="X":
-			nChr=23
-		elif nChr=="Y":
-			nChr=24
+	def parse_line(self, sReadLine):
+		sList = sReadLine.split("\t")
+		sChr = sList[1].replace("chr","")
+		self.sChr = sChr
+		self.nStart = int(sList[2])
+		self.nEnd = int(sList[3])
+		self.sGenename = sList[0]
+		self.donor_id = sList[42]
+		nChr = sChr.replace("chr","")
+		if nChr == "X":
+			nChr = 23
+		elif nChr == "Y":
+			nChr = 24
 		else:
-			nChr=int(nChr)
-		self.nChr=nChr
-
+			nChr = int(nChr)
+		self.nChr = nChr
 
 def SortingMutation(sPathFile):
 	fp=open(sPathFile)
@@ -48,31 +52,24 @@ def SortingMutation(sPathFile):
 		lMutationlist.append(cMutationcVariant)
 	lMutationlist.sort(key=lambda x:x.nStart)
 	lMutationlist.sort(key=lambda x:x.nChr)
-	fout=open("/ahg/regevdata/projects/ICA_Lung/Wooseung/ICGC/PCAWG/DIG/CancerGroup/Bed/"+sOutname+".bed","w")
+	fout=open(f"{current_dir}/../mutation_data/bed_files/" +
+				  sOutname +
+				  ".bed","w")
 	for cMutationcVariant in lMutationlist:
-		fout.write("{0}\t{1}\t{2}\t{3}\n".format(cMutationcVariant.sChr,cMutationcVariant.nStart,cMutationcVariant.nEnd,cMutationcVariant.sGenename))
+		fout.write("{0}\t{1}\t{2}\t{3}\t{4}\n".format(cMutationcVariant.sChr,
+													  cMutationcVariant.nStart,
+													  cMutationcVariant.nEnd,
+													  cMutationcVariant.sGenename,
+													  cMutationcVariant.donor_id))
 
-
-
-
-
-
-
-
-
-
-if __name__=="__main__":
-
-	tStartTime= (time.ctime()) 
-
-
-	lFilelist=glob.glob("/ahg/regevdata/projects/ICA_Lung/Wooseung/ICGC/PCAWG/DIG/CancerGroup/*SNV_with_SEX.txt")
-	#lFilelist=["/ahg/regevdata/projects/ICA_Lung/Wooseung/ICGC/PCAWG/DIG/BarcodeGroup/SNV_without_SEX/LAML-KR_SNV_without_SEX.txt"]
-
+if __name__ == "__main__":
+	tStartTime=(time.ctime())
+	lFilelist = []
+	for cancer_type in cancer_types:
+		pattern = current_dir + f"/../mutation_data/{cancer_type}_SNV_with_SEX.txt"
+		lFilelist = lFilelist + glob.glob(pattern)
 	for sFile in lFilelist:
 		SortingMutation(sFile)
-
-
 	print("Start Time")
 	print(tStartTime)
 	print("End Time")
