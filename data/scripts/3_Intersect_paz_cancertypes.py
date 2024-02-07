@@ -16,11 +16,13 @@ decrement_by = config.decrement_by
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-def IntersectBed(sPathFile, outPath, interval_fp):
+def IntersectBed(sPathFile, outPath, interval_fp, subsample_idx):
     sOutFile=sPathFile.split("/")[-1]
-    os.system(f"bedtools intersect -wa -a {interval_fp} -b "+sPathFile+ f" -loj > {outPath}/Intersected_"+sOutFile)
+    sOutFile = sOutFile.split(".")
+    sOutFile = f"{sOutFile[0]}_S{subsample_idx}.bed"
+    os.system(f"bedtools intersect -wa -a {interval_fp} -b "+sPathFile+ f" -loj > {outPath}/Intersected_paz_Cancergroup/Intersected_"+sOutFile)
    # sleep(1)
-    os.system(f"bedtools intersect -wa -c -a {interval_fp} -b "+sPathFile+f" -loj > {outPath}/IntersectedCount_"+sOutFile)
+    os.system(f"bedtools intersect -wa -c -a {interval_fp} -b "+sPathFile+f" -loj > {outPath}/IntersectedCount_paz_Cancergroup/IntersectedCount_"+sOutFile)
     #sleep(1)
 
 
@@ -51,9 +53,10 @@ if __name__=="__main__":
                 data_subsampled.to_bed(subsample_fp)
                 outPath=f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}"
                 os.makedirs(f"{outPath}/Intersected_paz_Cancergroup", exist_ok=True)
-                outPath = f"{outPath}/Intersected_paz_Cancergroup"
+                os.makedirs(f"{outPath}/IntersectedCount_paz_Cancergroup", exist_ok=True)
+                # outPath = f"{outPath}/Intersected_paz_Cancergroup"
                 interval_fp = f"{current_dir}/../Sorted_Interval_paz.bed"
-                IntersectBed(sPathFile, outPath, interval_fp)
+                IntersectBed(sPathFile, outPath, interval_fp, j)
             i = i - decrement_by
 
 
