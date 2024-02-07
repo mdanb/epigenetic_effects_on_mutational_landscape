@@ -28,7 +28,7 @@ def IntersectBed(sPathFile, outPath, interval_fp, subsample_idx):
 if __name__=="__main__":
     lFilelists = []
     for cancer_type in cancer_types:
-        os.makedirs(f"{current_dir}/../mutations_data/bed_files/{cancer_type}_subsampled/", exist_ok=True)
+        os.makedirs(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/", exist_ok=True)
         lFilelists = lFilelists + glob.glob(f"{current_dir}/{cancer_type}*.bed")
 
 #lFilelists=["/ahg/regevdata/projects/ICA_Lung/Wooseung/CellOrigin/Data/BarcodeGroup/LAML-KR.bed"]
