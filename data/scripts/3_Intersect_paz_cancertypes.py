@@ -25,15 +25,9 @@ def IntersectBed(sPathFile, outPath, interval_fp, subsample_idx):
     os.system(f"bedtools intersect -wa -c -a {interval_fp} -b "+sPathFile+f" -loj > {outPath}/IntersectedCount_paz_Cancergroup/IntersectedCount_"+sOutFile)
     #sleep(1)
 
-
-
-
-
-
 if __name__=="__main__":
-#    lFilelists=glob.glob("/ahg/regevdata/projects/ICA_Lung/Wooseung/CellOrigin/Data/BarcodeGroup/*.bed")
-	lFilelists = []
-	for cancer_type in cancer_types:
+    lFilelists = []
+    for cancer_type in cancer_types:
         os.makedirs(f"{current_dir}/../mutations_data/bed_files/{cancer_type}_subsampled/", exist_ok=True)
         lFilelists = lFilelists + glob.glob(f"{current_dir}/{cancer_type}*.bed")
 
