@@ -1,13 +1,26 @@
 #!/usr/bin/env python
 import glob
 import os
-from time import sleep
+import argparse
+import pyranges as pr
+import numpy as np
+import random
 
-def IntersectBed(sPathFile):
+random.seed(42)
+parser = argparse.ArgumentParser()
+parser.add_argument('--cancer_types', nargs="+", type=str, default=None)
+parser.add_argument('--decrement_by', type=int, default=None)
+config = parser.parse_args()
+cancer_types = config.cancer_types
+decrement_by = config.decrement_by
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+def IntersectBed(sPathFile, outPath, interval_fp):
     sOutFile=sPathFile.split("/")[-1]
-    os.system("bedtools intersect -wa -a /ahg/regevdata/projects/ICA_Lung/Wooseung/CellOrigin/Data/Sorted_Interval_paz.bed -b "+sPathFile+" -loj > /ahg/regevdata/projects/ICA_Lung/Wooseung/CellOrigin/Data/Intersected_paz_Cancergroup/Intersected_"+sOutFile)
+    os.system(f"bedtools intersect -wa -a {interval_fp} -b "+sPathFile+ f" -loj > {outPath}/Intersected_"+sOutFile)
    # sleep(1)
-    os.system("bedtools intersect -wa -c -a /ahg/regevdata/projects/ICA_Lung/Wooseung/CellOrigin/Data/Sorted_Interval_paz.bed -b "+sPathFile+" -loj > /ahg/regevdata/projects/ICA_Lung/Wooseung/CellOrigin/Data/IntersectedCount_paz_Cancergroup/IntersectedCount_"+sOutFile)
+    os.system(f"bedtools intersect -wa -c -a {interval_fp} -b "+sPathFile+f" -loj > {outPath}/IntersectedCount_"+sOutFile)
     #sleep(1)
 
 
@@ -17,11 +30,31 @@ def IntersectBed(sPathFile):
 
 if __name__=="__main__":
 #    lFilelists=glob.glob("/ahg/regevdata/projects/ICA_Lung/Wooseung/CellOrigin/Data/BarcodeGroup/*.bed")
-    lFilelists=glob.glob("/ahg/regevdata/projects/ICA_Lung/Wooseung/ICGC/PCAWG/DIG/CancerGroup/Bed/*.bed")
- 
+	lFilelists = []
+	for cancer_type in cancer_types:
+        os.makedirs(f"{current_dir}/../mutations_data/bed_files/{cancer_type}_subsampled/", exist_ok=True)
+        lFilelists = lFilelists + glob.glob(f"{current_dir}/{cancer_type}*.bed")
+
 #lFilelists=["/ahg/regevdata/projects/ICA_Lung/Wooseung/CellOrigin/Data/BarcodeGroup/LAML-KR.bed"]
-    for sPathFile in lFilelists:
-        IntersectBed(sPathFile)
+    for idx, sPathFile in enumerate(lFilelists):
+        data = pr.read_bed(sPathFile).df
+        donors = np.unique(data["Score"]).tolist()
+        num_donors = len(donors)
+        i = num_donors - decrement_by
+        while i > 0:
+            os.makedirs(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}", exist_ok=True)
+            for j in range(0, 100):
+                subsampled_donors = random.sample(donors, i)
+                data_subsampled = data.loc[data["Score"].isin(subsampled_donors), :]
+                data_subsampled = pr.PyRanges(data_subsampled)
+                subsample_fp = f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}/subsample_S{j}.bed"
+                data_subsampled.to_bed(subsample_fp)
+                outPath=f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}"
+                os.makedirs(f"{outPath}/Intersected_paz_Cancergroup", exist_ok=True)
+                outPath = f"{outPath}/Intersected_paz_Cancergroup"
+                interval_fp = f"{current_dir}/../Sorted_Interval_paz.bed"
+                IntersectBed(sPathFile, outPath, interval_fp)
+            i = i - decrement_by
 
 
 
