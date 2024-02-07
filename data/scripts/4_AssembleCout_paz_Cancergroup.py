@@ -56,7 +56,6 @@ if __name__=="__main__":
                     lTemporlist.append(dTumorCount[sTumor][sKey])
                 fout.write("{0}\n".format("\t".join(map(str,lTemporlist))))
 
-
     print(tStart)
     print(time.ctime())
 
