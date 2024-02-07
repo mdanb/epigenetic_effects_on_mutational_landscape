@@ -52,7 +52,7 @@ def SortingMutation(sPathFile):
 		lMutationlist.append(cMutationcVariant)
 	lMutationlist.sort(key=lambda x:x.nStart)
 	lMutationlist.sort(key=lambda x:x.nChr)
-	fout=open(f"{current_dir}/../mutation_data/bed_files/{sOutname}/.bed","w")
+	fout=open(f"{current_dir}/../mutation_data/bed_files/{sOutname}.bed","w")
 	for cMutationcVariant in lMutationlist:
 		fout.write("{0}\t{1}\t{2}\t{3}\t{4}\n".format(cMutationcVariant.sChr,
 													  cMutationcVariant.nStart,
