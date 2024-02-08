@@ -49,7 +49,7 @@ if __name__=="__main__":
                 os.makedirs(f"{outPath}/IntersectedCount_paz_Cancergroup", exist_ok=True)
                 # outPath = f"{outPath}/Intersected_paz_Cancergroup"
                 interval_fp = f"{current_dir}/../Sorted_Interval_paz.bed"
-                IntersectBed(sPathFile, outPath, interval_fp, j)
+                IntersectBed(cancer_type, outPath, interval_fp, j)
             i = i - decrement_by
 
 
