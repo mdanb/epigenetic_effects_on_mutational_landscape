@@ -16,13 +16,12 @@ decrement_by = config.decrement_by
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-def IntersectBed(sPathFile, outPath, interval_fp, subsample_idx):
-    sOutFile=sPathFile.split("/")[-1]
-    sOutFile = sOutFile.split(".")
-    sOutFile = f"{sOutFile[0]}_S{subsample_idx}.bed"
-    os.system(f"bedtools intersect -wa -a {interval_fp} -b "+sPathFile+ f" -loj > {outPath}/Intersected_paz_Cancergroup/Intersected_"+sOutFile)
+def IntersectBed(cancer_type, outPath, interval_fp, subsample_idx):
+    sOutFile = f"{cancer_type}_S{subsample_idx}.bed"
+    sInFile = f"{outPath}/subsample_S{subsample_idx}.bed"
+    os.system(f"bedtools intersect -wa -a {interval_fp} -b " + sInFile + f" -loj > {outPath}/Intersected_paz_Cancergroup/Intersected_"+sOutFile)
    # sleep(1)
-    os.system(f"bedtools intersect -wa -c -a {interval_fp} -b "+sPathFile+f" -loj > {outPath}/IntersectedCount_paz_Cancergroup/IntersectedCount_"+sOutFile)
+    os.system(f"bedtools intersect -wa -c -a {interval_fp} -b " + sInFile + f" -loj > {outPath}/IntersectedCount_paz_Cancergroup/IntersectedCount_"+sOutFile)
     #sleep(1)
 
 if __name__=="__main__":
