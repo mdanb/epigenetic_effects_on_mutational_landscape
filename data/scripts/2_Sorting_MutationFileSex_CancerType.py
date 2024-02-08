@@ -4,6 +4,7 @@ import glob
 import time
 import os
 import argparse
+import pandas as pd
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--cancer_types', nargs="+", type=str, default=None)
@@ -39,17 +40,26 @@ class cVariant:
 			nChr = int(nChr)
 		self.nChr = nChr
 
-def SortingMutation(sPathFile):
+def SortingMutation(sPathFile, cancer_type):
 	fp=open(sPathFile)
 	sFile=sPathFile.split("/")[-1]
 	sOutname=sFile.split("_")[0]
 	lMutationlist=[]
 	#fp.readline()
+	if cancer_type == "ccRCC":
+		metadata = pd.read_csv(f"{os.path.dirname(os.path.abspath(__file__))}/../processed_data/mutations_with_subtypes/kidney_all.csv")
+		ccRCC_donors = metadata.loc[metadata.loc[:, "subtype"] ==
+									"Adenocarcinoma, clear cell type",:]["donor_id"].tolist()
+
 	for sLine in fp.readlines():
 		sLine=sLine.strip()
 		cMutationcVariant=cVariant()
 		cMutationcVariant.parse_line(sLine)
-		lMutationlist.append(cMutationcVariant)
+		if cancer_type == "ccRCC":
+			if cMutationcVariant.donor_id in ccRCC_donors:
+				lMutationlist.append(cMutationcVariant)
+		else:
+			lMutationlist.append(cMutationcVariant)
 	lMutationlist.sort(key=lambda x:x.nStart)
 	lMutationlist.sort(key=lambda x:x.nChr)
 	fout = open(f"{current_dir}/../mutation_data/bed_files/{sOutname}.bed", "w")
