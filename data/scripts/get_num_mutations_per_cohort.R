@@ -77,5 +77,6 @@ sample_stats = sample_stats %>% add_row(CancerType="multiple_myeloma",
                                         NofDonor=NA,
                                         mut_counts=mm)
 
-sample_stats = sample_stats %>% arrange(desc(mut_counts))
-write.csv(sample_stats, "mutation_and_sample_counts.csv")
+sample_stats["avg_mut_per_sample"] = sample_stats["mut_counts"] / sample_stats["NofDonor"]
+sample_stats = sample_stats %>% arrange(desc(avg_mut_per_sample))
+write.csv(sample_stats, "../processed_data/mutation_and_sample_counts.csv")
