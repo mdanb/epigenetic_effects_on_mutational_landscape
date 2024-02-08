@@ -80,7 +80,7 @@ if __name__ == "__main__":
 			pattern = current_dir + f"/../mutation_data/{cancer_type}_SNV_with_SEX.txt"
 		lFilelist = lFilelist + glob.glob(pattern)
 	for sFile in lFilelist:
-		SortingMutation(sFile)
+		SortingMutation(sFile, cancer_type)
 	print("Start Time")
 	print(tStartTime)
 	print("End Time")
