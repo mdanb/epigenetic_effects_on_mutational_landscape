@@ -74,7 +74,10 @@ if __name__ == "__main__":
 	tStartTime=(time.ctime())
 	lFilelist = []
 	for cancer_type in cancer_types:
-		pattern = current_dir + f"/../mutation_data/{cancer_type}_SNV_with_SEX.txt"
+		if cancer_type == "ccRCC":
+			pattern = current_dir + f"/../mutation_data/Kidney-RCC_SNV_with_SEX.txt"
+		else:
+			pattern = current_dir + f"/../mutation_data/{cancer_type}_SNV_with_SEX.txt"
 		lFilelist = lFilelist + glob.glob(pattern)
 	for sFile in lFilelist:
 		SortingMutation(sFile)
