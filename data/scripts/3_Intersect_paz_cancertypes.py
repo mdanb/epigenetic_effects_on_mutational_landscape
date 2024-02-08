@@ -39,17 +39,18 @@ if __name__=="__main__":
         while i > 0:
             os.makedirs(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}", exist_ok=True)
             for j in range(0, 100):
-                subsampled_donors = random.sample(donors, i)
-                data_subsampled = data.loc[data["Score"].isin(subsampled_donors), :]
-                data_subsampled = pr.PyRanges(data_subsampled)
                 subsample_fp = f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}/subsample_S{j}.bed"
-                data_subsampled.to_bed(subsample_fp)
-                outPath=f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}"
-                os.makedirs(f"{outPath}/Intersected_paz_Cancergroup", exist_ok=True)
-                os.makedirs(f"{outPath}/IntersectedCount_paz_Cancergroup", exist_ok=True)
-                # outPath = f"{outPath}/Intersected_paz_Cancergroup"
-                interval_fp = f"{current_dir}/../Sorted_Interval_paz.bed"
-                IntersectBed(cancer_type, outPath, interval_fp, j)
+                if not os.path.exists(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}/subsample_S{j+1}.bed"):
+                    subsampled_donors = random.sample(donors, i)
+                    data_subsampled = data.loc[data["Score"].isin(subsampled_donors), :]
+                    data_subsampled = pr.PyRanges(data_subsampled)
+                    data_subsampled.to_bed(subsample_fp)
+                    outPath=f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}"
+                    os.makedirs(f"{outPath}/Intersected_paz_Cancergroup", exist_ok=True)
+                    os.makedirs(f"{outPath}/IntersectedCount_paz_Cancergroup", exist_ok=True)
+                    # outPath = f"{outPath}/Intersected_paz_Cancergroup"
+                    interval_fp = f"{current_dir}/../Sorted_Interval_paz.bed"
+                    IntersectBed(cancer_type, outPath, interval_fp, j)
             i = i - decrement_by
 
 
