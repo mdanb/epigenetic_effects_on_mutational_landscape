@@ -25,7 +25,7 @@ def ParsetoDict(sPathFile):
 if __name__=="__main__":
     for cancer_type in cancer_types:
         for dirname in os.listdir(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled"):
-            tStart=time.ctime()
+            # tStart=time.ctime()
             sOutname=f"{cancer_type}_{os.path.basename(dirname)}.txt"
 
             lFilelist=glob.glob(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{dirname}/IntersectedCount_paz_Cancergroup/*.bed")
@@ -56,8 +56,8 @@ if __name__=="__main__":
                     lTemporlist.append(dTumorCount[sTumor][sKey])
                 fout.write("{0}\n".format("\t".join(map(str,lTemporlist))))
 
-    print(tStart)
-    print(time.ctime())
+    # print(tStart)
+    # print(time.ctime())
 
 
 
