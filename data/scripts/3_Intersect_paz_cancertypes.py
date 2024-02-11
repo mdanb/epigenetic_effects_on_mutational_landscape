@@ -42,7 +42,9 @@ if __name__=="__main__":
         # num_donors = len(donors)
         # i = num_donors - decrement_by
         # while i > 0:
-        for i in range(1, max_samples + 1, 5):
+        for i in range(0, max_samples + 1, 5):
+            if i == 0:
+                i = 1
             os.makedirs(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}", exist_ok=True)
             for j in range(0, 100):
                 subsample_fp = f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}/subsample_S{j}.bed"

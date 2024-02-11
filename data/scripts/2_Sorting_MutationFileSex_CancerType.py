@@ -44,7 +44,7 @@ def SortingMutation(sPathFile, cancer_type):
 	fp=open(sPathFile)
 	sFile=sPathFile.split("/")[-1]
 	if cancer_type == "ccRCC":
-		sOutname="ccRCC.bed"
+		sOutname="ccRCC"
 	else:
 		sOutname=sFile.split("_")[0]
 	lMutationlist=[]
