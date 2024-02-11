@@ -43,20 +43,24 @@ class cVariant:
 def SortingMutation(sPathFile, cancer_type):
 	fp=open(sPathFile)
 	sFile=sPathFile.split("/")[-1]
-	sOutname=sFile.split("_")[0]
+	if cancer_type == "ccRCC":
+		sOutname="ccRCC.bed"
+	else:
+		sOutname=sFile.split("_")[0]
 	lMutationlist=[]
 	#fp.readline()
 	if cancer_type == "ccRCC":
 		metadata = pd.read_csv(f"{os.path.dirname(os.path.abspath(__file__))}/../processed_data/mutations_with_subtypes/kidney_all.csv")
 		ccRCC_donors = metadata.loc[metadata.loc[:, "subtype"] ==
 									"Adenocarcinoma, clear cell type",:]["donor_id"].tolist()
-
+		print(ccRCC_donors)
 	for sLine in fp.readlines():
 		sLine=sLine.strip()
 		cMutationcVariant=cVariant()
 		cMutationcVariant.parse_line(sLine)
 		if cancer_type == "ccRCC":
 			if cMutationcVariant.donor_id in ccRCC_donors:
+				#print("success")
 				lMutationlist.append(cMutationcVariant)
 		else:
 			lMutationlist.append(cMutationcVariant)
@@ -75,6 +79,7 @@ if __name__ == "__main__":
 	lFilelist = []
 	for cancer_type in cancer_types:
 		if cancer_type == "ccRCC":
+			print("loading ccRCC")
 			pattern = current_dir + f"/../mutation_data/Kidney-RCC_SNV_with_SEX.txt"
 		else:
 			pattern = current_dir + f"/../mutation_data/{cancer_type}_SNV_with_SEX.txt"
