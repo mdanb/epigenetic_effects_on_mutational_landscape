@@ -9,10 +9,15 @@ import random
 random.seed(42)
 parser = argparse.ArgumentParser()
 parser.add_argument('--cancer_types', nargs="+", type=str, default=None)
-parser.add_argument('--decrement_by', type=int, default=None)
+# parser.add_argument('--decrement_by', type=int, default=None)
+parser.add_argument('--max_samples', type=int, default=None)
+parser.add_argument('--increment_by', type=int, default=None)
+
 config = parser.parse_args()
 cancer_types = config.cancer_types
-decrement_by = config.decrement_by
+# decrement_by = config.decrement_by
+increment_by = config.increment_by
+max_samples = config.max_samples
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -34,9 +39,10 @@ if __name__=="__main__":
     for idx, sPathFile in enumerate(lFilelists):
         data = pr.read_bed(sPathFile).df
         donors = np.unique(data["Score"]).tolist()
-        num_donors = len(donors)
-        i = num_donors - decrement_by
-        while i > 0:
+        # num_donors = len(donors)
+        # i = num_donors - decrement_by
+        # while i > 0:
+        for i in range(1, max_samples + 1, 5):
             os.makedirs(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}", exist_ok=True)
             for j in range(0, 100):
                 subsample_fp = f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{i}/subsample_S{j}.bed"
@@ -51,7 +57,6 @@ if __name__=="__main__":
                 # outPath = f"{outPath}/Intersected_paz_Cancergroup"
                 interval_fp = f"{current_dir}/../Sorted_Interval_paz.bed"
                 IntersectBed(cancer_type, outPath, interval_fp, j)
-            i = i - decrement_by
 
 
 
