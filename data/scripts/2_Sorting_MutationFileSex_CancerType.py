@@ -43,7 +43,10 @@ class cVariant:
 def SortingMutation(sPathFile, cancer_type):
 	fp=open(sPathFile)
 	sFile=sPathFile.split("/")[-1]
-	sOutname=sFile.split("_")[0]
+	if cancer_type == "ccRCC":
+		sOutname="ccRCC"
+	else:
+		sOutname=sFile.split("_")[0]
 	lMutationlist=[]
 	#fp.readline()
 	if cancer_type == "ccRCC":
