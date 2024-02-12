@@ -192,6 +192,7 @@ def filter_agg_data(scATAC_df, mutations_df):
 
 
 def filter_mutations_by_cancer(mutations_df, cancer_type):
+    print(mutations_df.columns)
     cancer_type_specific_mut_idx = [i for i, s in enumerate(mutations_df.columns.values) if cancer_type == s][0]
     cancer_specific_mutations = mutations_df.iloc[:, cancer_type_specific_mut_idx]
     return cancer_specific_mutations
