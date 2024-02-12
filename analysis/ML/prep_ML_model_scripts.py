@@ -47,6 +47,8 @@ group.add_argument("--expanded_hundred_kb", action="store_true", default=False)
 group.add_argument("--mm", action="store_true", default=False)
 group.add_argument("--woo_pcawg", action="store_true", default=False)
 group.add_argument("--msi_high", action="store_true", default=False)
+group.add_argument("--subsampled_mutations", action="store_true", default=False)
+
 
 
 group2 = parser.add_mutually_exclusive_group()
@@ -99,6 +101,7 @@ grid_cell_types = config.grid_cell_types
 msi_high = config.msi_high
 cell_types_keep = config.cell_types_keep
 tss_fragment_filter = config.tss_fragment_filter
+subsampled_mutations = config.subsampled_mutations
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
@@ -158,6 +161,8 @@ for fold in fold_for_test_set_range:
         elif msi_high:
             script_filename = script_filename + "_" + "msi_high"
             command_args = command_args + " " + "--msi_high"
+        elif subsampled_mutations:
+            command_args = command_args + " " + "--subsampled_mutations"
 
         if grid_analysis:
             command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + '"' + \
