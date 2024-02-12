@@ -84,7 +84,7 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg, histologically_subtyped
         mutations_df = load_agg_mutations()
     return mutations_df
 
-def load_susampled_mutations(cancer_type_with_n_specified):
+def load_subsampled_mutations(cancer_type_with_n_specified):
     df = pd.read_csv(f"../../data/processed_data/{cancer_type_with_n_specified}.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
