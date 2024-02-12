@@ -163,7 +163,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                               hundred_kb, expanded_hundred_kb, aggregated_per_donor,
                                               hierarchically_subtyped_mutations, mm, msi_high, subsampled_mutations)
                 if subsampled_mutations:
-                    cancer_type_name_for_subsample = "_".join([cancer_type, "seed", seed, "fold", fold_for_test_set])
+                    cancer_type_name_for_subsample = "_".join([cancer_type, "seed", str(seed), "fold",
+                                                               str(fold_for_test_set)])
                 else:
                     cancer_type_name_for_subsample = None
 
