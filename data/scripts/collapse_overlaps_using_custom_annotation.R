@@ -20,8 +20,8 @@ option_list <- list(
 )
 
 # args = parse_args(parser, args =
-#                       c("--dataset=Greenleaf_pbmc_bm",
-#                         "--annotation=remove_neutro",
+#                       c("--dataset=Greenleaf_colon",
+#                         "--annotation=Greenleaf_colon_normal_only",
 #                         "--which_interval_ranges=polak"))
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -75,8 +75,14 @@ collapse_using_mapping <- function(mapping, df, df_metadata,
       collapsed_co = rep(0, length(colnames(df)))
       # collapsed_counts = 0
     }
-    
-    collapsed_counts = sum(apply(df_metadata[idxs_metadata, "num_cells"], 2, as.numeric))
+    # 
+    # if (is.data.frame(df_metadata)) {
+    #   collapsed_counts = sum(apply(df_metadata[idxs_metadata, "num_cells"], 2, 
+    #                              as.numeric))
+    # } else {
+    #   collapsed_counts = sum(df_metadata[idxs_metadata, "num_cells"] %>% pull)
+    # }
+    collapsed_counts = sum(df_metadata[idxs_metadata, "num_cells"])
     
     for (idx in idxs) {
       row_to_add = df[idx, ]
@@ -598,9 +604,6 @@ if (dataset == "Greenleaf_pbmc_bm") {
     df = df[-grep("adenocarcinoma", rownames(df)), ]
     df_metadata = df_metadata[-grep("adenocarcinoma", 
                                     df_metadata[["tissue_name"]]), ]
-    df = df[-grep("adenocarcinoma", rownames(df)), ]
-    df_metadata = df_metadata[-grep("adenocarcinoma", 
-                                    df_metadata[["tissue_name"]]), ]
     mapping = list() 
     index = 1
     for (celltype in rownames(df)) {
@@ -696,5 +699,31 @@ if (dataset == "Greenleaf_pbmc_bm") {
       
       save_collapsed_df(df, df_metadata, dataset, annotation, 
                         which_interval_ranges)
+  } else if (annotation == "Greenleaf_colon_merge_normal_unaffected") {
+    df = default_combined_count_ovs
+    df_metadata = default_combined_metadata
+    mapping = list() 
+    index = 1
+    # rownames(df) = gsub("Unaffected colon", "unaffected_colon", rownames(df))
+    # rownames(df) = gsub("Normal colon", "normal_colon", rownames(df))
+    
+    for (celltype in rownames(df)) {
+      if (grepl("unaffected", celltype)) {
+        modified_celltype = gsub("unaffected", "normal", celltype)
+        # celltype = gsub("\\+", "\\\\+", celltype)
+        # modified_celltype = gsub("\\+", "\\\\+", modified_celltype)
+        mapping[[index]] = c(celltype, modified_celltype)
+        index = index + 1
+      }
     }
+    
+    l = collapse_using_mapping(mapping, df=df,
+                               df_metadata=df_metadata,
+                               exact_match_first_mapping_arg = T)
+    df = l[[1]]
+    df_metadata = l[[2]]
+    
+    save_collapsed_df(df, df_metadata, dataset, annotation, 
+                      which_interval_ranges)
+  }
 }
