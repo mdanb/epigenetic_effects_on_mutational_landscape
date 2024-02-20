@@ -26,8 +26,8 @@ if __name__=="__main__":
     for cancer_type in cancer_types:
         for dirname in os.listdir(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled"):
             # tStart=time.ctime()
-            sOutname=f"{cancer_type}_n_{os.path.basename(dirname)}.txt"
-            print(sOutname)
+            sOutname=f"{cancer_type}_{os.path.basename(dirname)}.txt"
+
             lFilelist=glob.glob(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{dirname}/IntersectedCount_paz_Cancergroup/*.bed")
             #lFilelist=["/ahg/regevdata/projects/ICA_Lung/Wooseung/CellOrigin/Data/IntersectedCount/IntersectedCount_LAML-KR.bed"]
             dTumorCount=dict()
