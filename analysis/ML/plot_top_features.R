@@ -107,17 +107,17 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--tissues_to_consider=all",
 #                                   "--robustness_analysis"))
 
-args = parse_args(parser, args= c("--cancer_types=Lymph-BNHL,Bone-Leiomyo,Thy-AdenoCA,Uterus-AdenoCA",
-                                  "--annotation=finalized_annotation",
-                                  "--ML_model=XGB",
-                                  "--seed_range=1-10",
-                                  "--folds_for_test_set=1-10",
-                                  "--feature_importance_method=permutation_importance",
-                                  "--folds_for_test_set=1-10",
-                                  "--robustness_analysis",
-                                  "--grid_analysis",
-                                  "--top_features_to_plot=1",
-                                  "--grid_cell_types=bonemarrow B GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR,placenta PAEP_MECOM positive cells SH"))
+# args = parse_args(parser, args= c("--cancer_types=Lymph-BNHL,Bone-Leiomyo,Thy-AdenoCA,Uterus-AdenoCA",
+#                                   "--annotation=finalized_annotation",
+#                                   "--ML_model=XGB",
+#                                   "--seed_range=1-10",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--robustness_analysis",
+#                                   "--grid_analysis",
+#                                   "--top_features_to_plot=1",
+#                                   "--grid_cell_types=bonemarrow B GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR,placenta PAEP_MECOM positive cells SH"))
 
 # Breast-AdenoCa
 # Myeloid-AML
