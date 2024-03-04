@@ -10,7 +10,7 @@ for file in ${DIRECTORY}scATAC_source_Bingren_Bingren_adult_brain_Greenleaf_brai
     new_file="scATAC_source_Bingren_Bingren_adult_brain_Greenleaf_brain_Shendure_cell_number_filter_100_tissues_to_consider_adult_brain_frontal_cortex_cerebrum_brain_cerebellum_${suffix}"
     
     # Rename the file
-    #mv "$file" "$new_file"
-    echo "Renamed $file to $new_file"
+    mv "$file" "$new_file"
+    #echo "Renamed $file to $new_file"
   fi
 done
