@@ -17,6 +17,11 @@ __pycache__/
 *.pdf
 *.rds
 *.png
+*.svg
+*.tsv
+*.csv
+*xlsx
+*bgz
 build_ml_commands_non_interactive_out
 tsse_filtered_run_commands
 analysis/ML/*.sh
