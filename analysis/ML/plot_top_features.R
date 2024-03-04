@@ -187,6 +187,22 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--annotation=finalized_annotation",
 #                                   "--top_features_to_plot=1"))
 
+# Lung-SCC
+# Rawlins_fetal_lung,Tsankov
+args = parse_args(parser, args= c("--cancer_types=CNS-Medullo,Kidney-ChRCC,Liver-HCC,CNS-GBM,Skin-Melanoma",
+                                  "--cell_number_filter=100",
+                                  "--datasets=Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Greenleaf_brain,Greenleaf_colon,Shendure,Tsankov,Yang_kidney-Bingren,Greenleaf_brain,Greenleaf_colon,Shendure,Tsankov,Yang_kidney-Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Greenleaf_brain,Greenleaf_colon,Shendure,Tsankov,Yang_kidney",
+                                  "--tissues_to_consider=adult_brain,brain,frontal_cortex,cerebrum,cerebellum-all-all-adult_brain,frontal_cortex,cerebrum_brain,cerebellum-all",
+                                  "--ML_model=XGB",
+                                  "--seed_range=1-10",
+                                  "--feat_imp_min_n_robustness=50",
+                                  "--folds_for_test_set=1-10",
+                                  "--feature_importance_method=permutation_importance",
+                                  "--folds_for_test_set=1-10",
+                                  "--robustness_analysis",
+                                  "--subsampled_mutations",
+                                  "--annotation=finalized_annotation",
+                                  "--top_features_to_plot=1"))
 
 args = parse_args(parser)
 
@@ -1196,13 +1212,18 @@ if (!robustness_analysis) {
   grid_plots = list()
   i = 1
   subsampled_mutation_df = data.frame()
+  cancer_type_n = list(c(1,5,10,15,20,25,30,35,40,45),
+                    c(1,5,10,15,20,25,30,35,40),
+                    c(1,5,10,15,20,25,30,35,40,45),
+                    c(1,5,10,15,20,25,30,35),
+                    c(1,5,10,15,20,25,30,35,40,45))
   for (cancer_type in cancer_types) {
     # for (tss_filter in tss_fragment_filter) {
     print(cancer_type)
     if (subsampled_mutations) {
       # TODO: CHANGE DEPENDING ON CANCER TYPE
       cancer_type_with_n = paste(cancer_type, "n", 
-                                 c(1,5,10,15,20,25,30,35,40,45), sep="_")
+                                 cancer_type_n[[i]], sep="_")
       cancer_type = append(cancer_type_with_n, cancer_type)
     }
     if (!grid_analysis) {
@@ -1808,11 +1829,13 @@ construct_power_analysis_boxplots <- function(df, savefile, savepath,
 
   outlier_shape = 19
   # df$x_position = 100 * df$x_position
-  df$cancer_type <- factor(df$cancer_type, levels = c("CNS-Medullo", "Kidney-ChRCC", 
-                                                      "Liver-HCC", "CNS-GBM",
-                                                     "Lung-SCC", "Skin-Melanoma"))
+  # df$cancer_type <- factor(df$cancer_type, levels = c("CNS-Medullo", "Kidney-ChRCC", 
+  #                                                     "Liver-HCC", "CNS-GBM",
+  #                                                    "Lung-SCC", "Skin-Melanoma"))
+  df$cancer_type <- factor(df$cancer_type, levels = c("CNS-Medullo"))
+  
   p <- ggplot(df) +
-    geom_boxplot(aes(x = as.factor(num_samples), y = test_set_perf, 
+    geom_boxplot(aes(x = num_samples, y = test_set_perf, 
                      color=cancer_type), 
                  lwd = 2, 
                  outlier.shape = outlier_shape, outlier.size = 1) +

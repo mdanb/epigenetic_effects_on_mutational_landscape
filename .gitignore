@@ -19,6 +19,10 @@ __pycache__/
 *.png
 *.svg
 *.tsv
+*.gz
+*.odt
+*.json
+*.db
 *.csv
 *xlsx
 *bgz
