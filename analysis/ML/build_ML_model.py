@@ -29,8 +29,8 @@ def run_unclustered_data_analysis_helper(scATAC_df,
                                          cell_types_keep):
 
     tissues_string = "_".join(tissues_to_consider)
-    if cell_types_keep:
-        cell_types_keep = "_".join(cell_types_keep)
+    # if cell_types_keep:
+    #     cell_types_keep = "_".join(cell_types_keep)
     scATAC_dir = construct_scATAC_dir(scATAC_sources, scATAC_cell_number_filter, tss_fragment_filter, annotation_dir,
                                       hundred_kb, expanded_hundred_kb, tissues_string, seed=seed,
                                       fold_for_test_set=fold_for_test_set, grid_analysis=grid_analysis,
