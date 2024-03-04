@@ -185,6 +185,40 @@ option_list <- list(
 
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
+#                       "--dataset=Tsankov",
+#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
+#                       "--sep_for_metadata=,",
+#                       "--cell_type_col_in_metadata=celltypes",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--cell_types=all",
+#                       "--min_cells_per_cell_type=1",
+#                       "--de_novo_marker_discovery",
+#                       "--cluster_res=0.6",
+#                       "--filter_doublets")
+# )
+
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=8",
+                      "--dataset=Tsankov",
+                      "--metadata_for_celltype_fn=tsankov_default_annotation.csv",
+                      "--sep_for_metadata=,",
+                      "--cell_type_col_in_metadata=celltypes",
+                      "--tissue=all",
+                      "--nfrags_filter=1",
+                      "--tss_filter=0",
+                      "--cell_types=all",
+                      "--min_cells_per_cell_type=1",
+                      "--de_novo_marker_discovery",
+                      "--cluster_res=0.6",
+                      "--filter_doublets",
+                      "--filter_per_cell_type")
+)
+
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
 #                       "--dataset=Greenleaf_colon",
 #                       "--metadata_for_celltype_fn=greenleaf_colon_metadata.csv",
 #                       "--sep_for_metadata=,",
@@ -1047,7 +1081,12 @@ if (plot_doublet_scores) {
 
 if (filter_doublets) {
   ccd = getCellColData(proj)
-  proj = proj[ccd[["DoubletEnrichment"]] < doublet_filter]
+  if (dataset == "Tsankov") {
+    proj = proj[!(ccd[["DoubletEnrichment"]] >= doublet_filter &
+                  ccd[["cell_type"]] == "AT2")]
+  } else {
+    proj = proj[ccd[["DoubletEnrichment"]] < doublet_filter]
+  }
   setting = paste(setting, "filter_doublets", "doublet_score", doublet_filter, 
                   sep = "_")
   proj = saveArchRProject(ArchRProj = proj,
