@@ -166,7 +166,7 @@ for fold in fold_for_test_set_range:
 
         if grid_analysis:
             command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + \
-                           " ".join(grid_cell_types)
+                           " ".join([f'"{item}"' for item in grid_cell_types])
         else:
             command_args = command_args + " " + "--tissues_to_consider" + " " + " ".join(tissues_to_consider)
 
@@ -255,7 +255,8 @@ command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
                          "--feat_imp_min_n_robustness", str(feat_imp_min_n_robustness)])
 
 if grid_analysis:
-    command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + " ".join(grid_cell_types)
+    command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + \
+                   " ".join([f'"{item}"' for item in grid_cell_types])
 else:
     command_args = command_args + " " + "--tissues_to_consider" + " " + ",".join(tissues_to_consider)
 
