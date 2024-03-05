@@ -31,7 +31,7 @@ parser.add_argument("--make_plots", action="store_true", default=False)
 parser.add_argument("--create_bash_scripts", action="store_true", default=False)
 parser.add_argument("--cleanup", action="store_true", default=False)
 parser.add_argument('--feat_imp_min_n_robustness', type=int)
-parser.add_argument('--grid_cell_types', type=str, default=None)
+parser.add_argument('--grid_cell_types', nargs="+", type=str, default=None)
 parser.add_argument('--cell_types_keep', nargs="+", type=str, default=None)
 parser.add_argument('--tss_fragment_filter', type=str,
                     help='tss fragment filter to consider', default=None)
@@ -165,8 +165,8 @@ for fold in fold_for_test_set_range:
             command_args = command_args + " " + "--subsampled_mutations"
 
         if grid_analysis:
-            command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + '"' + \
-                           grid_cell_types + '"'
+            command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + \
+                           " ".join(grid_cell_types)
         else:
             command_args = command_args + " " + "--tissues_to_consider" + " " + " ".join(tissues_to_consider)
 
@@ -255,7 +255,7 @@ command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
                          "--feat_imp_min_n_robustness", str(feat_imp_min_n_robustness)])
 
 if grid_analysis:
-    command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + grid_cell_types
+    command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + " ".join(grid_cell_types)
 else:
     command_args = command_args + " " + "--tissues_to_consider" + " " + ",".join(tissues_to_consider)
 
