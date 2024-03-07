@@ -13,7 +13,7 @@ get_relevant_backwards_elim_dirs <- function(cancer_types,
                                              seed = "-1",
                                              accumulated_seeds=F,
                                              per_donor=F,
-                                             cell_types_keep=NULL) {
+                                             cell_types_keep=NA) {
   if (accumulated_seeds) {
     seed = "all_seeds"
   }
@@ -54,10 +54,10 @@ construct_dir <- function(scATAC_source,
                           expanded_hundred_kb=F,
                           grid_analysis=F,
                           grid_cell_type=NULL,
-                          cell_types_keep=NULL) {
+                          cell_types_keep=NA) {
   dir = paste("seed", seed, sep="_")
   
-  if (!is.null(cell_types_keep)) {
+  if (!is.na(cell_types_keep)) {
     dir = paste("ctk", cell_types_keep, dir, sep="_")
   }
   
@@ -102,7 +102,7 @@ construct_backwards_elim_dir <- function(cancer_type,
                                          per_donor=F,
                                          grid_analysis=F,
                                          grid_cell_type=NULL,
-                                         cell_types_keep=NULL) {
+                                         cell_types_keep=NA) {
   dir = construct_dir(scATAC_source=scATAC_source,
                       cell_number_filter=cell_number_filter,
                       tss_fragment_filter=tss_fragment_filter,
