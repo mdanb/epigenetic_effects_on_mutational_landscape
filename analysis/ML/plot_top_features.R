@@ -204,20 +204,20 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--annotation=finalized_annotation",
 #                                   "--top_features_to_plot=1"))
 
-args = parse_args(parser, args= c("--cancer_types=mss",
-                                  "--cell_number_filter=100",
-                                  "--datasets=Bingren,Greenleaf_colon,Shendure",
-                                  "--tissues_to_consider=colon_sigmoid,colon_transverse,intestine,normal_colon,polyp_colon",
-                                  "--ML_model=XGB",
-                                  "--seed_range=1-10",
-                                  "--feat_imp_min_n_robustness=50",
-                                  "--folds_for_test_set=1-10",
-                                  "--feature_importance_method=permutation_importance",
-                                  "--folds_for_test_set=1-10",
-                                  "--robustness_analysis",
-                                  "--annotation=Greenleaf_colon_remove_cancer_merge_normal_unaffected",
-                                  "--top_features_to_plot=1",
-                                  "--top_features_to_plot_feat_imp=1,2,5,10"))
+# args = parse_args(parser, args= c("--cancer_types=mss",
+#                                   "--cell_number_filter=100",
+#                                   "--datasets=Bingren,Greenleaf_colon,Shendure",
+#                                   "--tissues_to_consider=colon_sigmoid,colon_transverse,intestine,normal_colon,polyp_colon",
+#                                   "--ML_model=XGB",
+#                                   "--seed_range=1-10",
+#                                   "--feat_imp_min_n_robustness=50",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--robustness_analysis",
+#                                   "--annotation=Greenleaf_colon_remove_cancer_merge_normal_unaffected",
+#                                   "--top_features_to_plot=1",
+#                                   "--top_features_to_plot_feat_imp=1,2,5,10"))
 
 args = parse_args(parser)
 
