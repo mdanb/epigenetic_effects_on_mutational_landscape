@@ -10,7 +10,7 @@ library(readxl)
 source("count_overlaps_utils.R")
 
 option_list <- list( 
-  make_option("--dataset", type="character"),
+  make_option("--dataset", type="character", default=NULL),
   make_option("--dataset_subsets", type="character", default=NULL),
   make_option("--cores", type="integer"),
   make_option("--annotation", type="character"),
@@ -24,6 +24,11 @@ args = parse_args(OptionParser(option_list=option_list))
 #                    "--cores=1",
 #                    "--annotation=default_annotation",
 #                    "--which_interval_ranges=polak"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                  c("--dataset=test",
+#                    "--cores=1",
+#                    "--annotation=test_annotation",
+#                    "--which_interval_ranges=test_ranges"))
 cores = args$cores
 dataset = args$dataset
 dataset_subsets = args$dataset_subsets
@@ -185,6 +190,8 @@ if (which_interval_ranges == "polak") {
     # names(interval.ranges) = unlist(mapply(function(x,y) 
     #   paste(x, y, sep="."), names(l), lapply(l, seq)))
     save(interval.ranges, file=fp)
+  } else {
+    load(paste('..', paste(which_interval_ranges, "RData", sep="."), sep="/"))
   }
 }
 
@@ -447,6 +454,20 @@ if (dataset == "Bingren") {
   }
   files = list.files("../bed_files/ding_scATAC/migrated_to_hg19",
                      pattern = "\\.tsv\\.gz$")
+} else {
+  # Assume metadata is a csv file. Must have 
+  # "barcode", "sample", "cell_type", and "tissue"
+  
+  # Also, fragment files must be named as follows:
+  # sample_name.bed.gz
+  
+  # Fragment files must be in directory ../bed_files/dataset/migrated_to_hg19
+  
+  metadata_fname = paste0(annotation, ".csv")
+  metadata = read.csv(paste("../metadata", metadata_fname, sep="/"))
+  files = list.files(paste("../bed_files", dataset, "migrated_to_hg19", sep="/"),
+                     pattern = "\\.gz$")
+  
 }
 
 mclapply(files, create_count_overlaps_files,
