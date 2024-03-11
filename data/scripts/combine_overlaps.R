@@ -32,10 +32,10 @@ args = parse_args(OptionParser(option_list=option_list))
 #                       "--annotation=Tsankov_refined",
 #                       "--which_interval_ranges=polak",
 #                       "--overlaps_per_cell"))
-args = parse_args(OptionParser(option_list=option_list), args =
-                    c("--datasets=test",
-                      "--annotation=test_annotation",
-                      "--which_interval_ranges=test_ranges"))
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--datasets=test",
+#                       "--annotation=test_annotation",
+#                       "--which_interval_ranges=test_ranges"))
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
 datasets = unlist(strsplit(args$datasets, split = ","))
