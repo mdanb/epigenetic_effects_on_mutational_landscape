@@ -27,12 +27,15 @@ args = parse_args(OptionParser(option_list=option_list))
 #                       "--annotation=Greenleaf_brain_lowest_level_annotation",
 #                       "--which_interval_ranges=polak",
 #                       "--overlaps_per_cell"))
-  # args = parse_args(OptionParser(option_list=option_list), args =
-  #                     c("--datasets=Tsankov",
-  #                       "--annotation=Tsankov_refined",
-  #                       "--which_interval_ranges=polak",
-  #                       "--overlaps_per_cell"))
-
+# args = parse_args(OptionParser(option_list=option_list), args =
+#                     c("--datasets=Tsankov",
+#                       "--annotation=Tsankov_refined",
+#                       "--which_interval_ranges=polak",
+#                       "--overlaps_per_cell"))
+args = parse_args(OptionParser(option_list=option_list), args =
+                    c("--datasets=test",
+                      "--annotation=test_annotation",
+                      "--which_interval_ranges=test_ranges"))
 annotation = args$annotation
 # cell_number_filter = args$cell_number_filter
 datasets = unlist(strsplit(args$datasets, split = ","))
@@ -108,10 +111,10 @@ save_combined_overlaps <- function(filepaths,
     print(paste("Processing count overlaps for file: ", f, sep=""))
     count_overlaps = readRDS(f)
     tissue_name <- get_tissue_name(f, dataset, annotation)
-    print(tissue_name)
-    if (tissue_name == " colon") {
-      print(f)
-    }
+    # print(tissue_name)
+    # if (tissue_name == " colon") {
+    #   print(f)
+    # }
     if (!overlaps_per_cell) {
       cell_types = names(count_overlaps)
       cell_types = paste(tissue_name, cell_types)
