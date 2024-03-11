@@ -87,6 +87,10 @@ import_sample <- function(file, dataset, which_interval_ranges) {
   } else if (dataset == "Ding") {
     sample = import(paste("..", "bed_files",
                           "ding_scATAC", file, sep="/"), format="bed")
+  } else {
+    sample = import(paste("..", "bed_files",
+                          dataset, "migrated_to_hg19", file, 
+                          sep="/"), format="bed")
   }
   return(sample)
 }
@@ -150,6 +154,12 @@ get_sample_filename <- function(file, dataset) {
     filename = paste("Ding_count_overlaps",
                      paste(filename,
                            "rds", sep="."), sep="_")
+  } else {
+    filename = remove_extension(file)
+    filename = paste(dataset, "count_overlaps",
+                     paste(filename,
+                           "rds", sep="."), sep="_")
+    
   }
   return(filename)
 }
@@ -204,6 +214,8 @@ get_sample_barcodes_in_metadata <- function(filtered_metadata, dataset) {
   } 
   else if (dataset == "Ding") {
     sample_barcodes_in_metadata = filtered_metadata[["Barcode"]]
+  } else {
+    sample_barcodes_in_metadata = filtered_metadata[["barcode"]]
   }
   return(sample_barcodes_in_metadata)
 }
@@ -239,6 +251,8 @@ get_sample_name <- function(file, dataset) {
     sample_name = get_sample_name_wang_lung(file)
   } else if (dataset == "Ding") {
     sample_name = get_sample_name_ding(file)
+  } else {
+    sample_name = get_sample_name_other(file)
   }
   return(sample_name)
 }
@@ -360,6 +374,12 @@ get_sample_name_wang_lung <- function(file) {
   return(sample_name)
 }
 
+get_sample_name_other <- function(file) {
+  sample_name = str_remove(file, ".bed.gz")
+  sample_name = unlist(strsplit(sample_name, "-"))[2]
+  return(sample_name)
+}
+
 get_tissue_name_greenleaf_colon <- function(file, metadata) {
   sample = get_sample_name_greenleaf_colon(basename(file))
   # sample = unlist(strsplit(sample, split="_"))[2]
@@ -410,7 +430,17 @@ get_tissue_name <- function(file, dataset, annotation) {
   } 
   else if (dataset == "Ding") {
     tissue_name = "adult_brain"
+  } else {
+    tissue_name = get_tissue_name_other(file)
   }
+  return(tissue_name)
+}
+
+get_tissue_name_other <- function(filename) {
+  tissue_name = unlist(strsplit(basename(filename), split="\\."))[1]
+  tissue_name = unlist(strsplit(tissue_name, split="_"))
+  tissue_name = tissue_name[length(tissue_name)]
+  tissue_name = unlist(strsplit(tissue_name, split="-"))[1]
   return(tissue_name)
 }
 

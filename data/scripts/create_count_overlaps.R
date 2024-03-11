@@ -459,7 +459,8 @@ if (dataset == "Bingren") {
   # "barcode", "sample", "cell_type", and "tissue"
   
   # Also, fragment files must be named as follows:
-  # sample_name.bed.gz
+  # [TISSUE_TYPE]-[SAMPLE_NAME].bed.gz
+  # Names in brackets must be separated by underscores 
   
   # Fragment files must be in directory ../bed_files/dataset/migrated_to_hg19
   
