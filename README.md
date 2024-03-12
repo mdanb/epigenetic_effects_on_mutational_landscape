@@ -80,11 +80,11 @@ In our paper, for each cancer type, we ran the model 100 times to obtain robust 
 The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an example, we outline the important command line options below:
 
 <details>
-  <summary>Cancer Types [--cancer_types] </summary>
+  <summary>**Cancer Types [--cancer_types]** </summary>
   The cancer types to run the model on. Note that this is not parallelized i.e specifying mutliple cancer types will run the model sequentially on each cancer type.
 </details>
 <details>
-  <summary>scATAC Datasets [--datasets] </summary>
+  <summary>**scATAC Datasets [--datasets]** </summary>
 </details>
 
 ### Parallelized
