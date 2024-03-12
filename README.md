@@ -33,6 +33,9 @@ Now, we need a metadata file that contains cell-type annotations. This file must
 The metadata file needs to be in `data/metadata` and must be called `[ANNOTATION].csv` where `ANNOTATION` is your desired name for the cell annotations that you used. For this example, we have a file called `test_annotation.csv`. 
 
 We then create the binned scATAC profiles:
-`Rscript data/scripts/create_count_overlaps.R --dataset [DATASET_NAME] --cores [NUM_CORES] --annotation [ANNOTATION] --which_interval_ranges [INTERVAL_RANGES_NAMES]`
+
+`Rscript data/scripts/create_count_overlaps.R --dataset [DATASET_NAME] --cores [NUM_CORES] --annotation [ANNOTATION] --which_interval_ranges [INTERVAL_RANGES_NAME]`
+
+This is script is parallelized, and each core will be processing a given fragment file. Note that here, `DATASET_NAME` and `ANNOTATION` must be the ones you chose previously. `INTERVAL_RANGES_NAMES` specifies the GenomicRanges object (bins) that we will align our fragments to. For this example, we have a file called `data/test_ranges.RData`. This corresponds to the bins we used for our paper. So for `INTERVAL_RANGES_NAME`, we would specify `test_ranges`. Note that this file must be an `.RData` file. 
 
 
