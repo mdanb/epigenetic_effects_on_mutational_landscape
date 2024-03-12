@@ -11,7 +11,7 @@ option_list <- list(
 args = parse_args(OptionParser(option_list=option_list))
 
 cancer_type = args$cancer_type
-
+subsampled = args$subsampled
 
 if (subsampled) {
   for (dir in list.dirs(paste("../mutation_data/bed_files", paste(cancer_type, 
