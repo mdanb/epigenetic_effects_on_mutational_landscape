@@ -47,7 +47,8 @@ def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or
 
 def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg, histologically_subtyped_mutations, de_novo_seurat_clustering,
                    CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type, hundred_kb, expanded_hundred_kb,
-                   aggregated_per_donor, hierarchically_subtyped_mutations, mm, msi_high, subsampled_mutations):
+                   aggregated_per_donor, hierarchically_subtyped_mutations, mm, msi_high, subsampled_mutations,
+                   custom_mutations):
     if meso:
         mutations_df = load_meso()
     elif SCLC:
@@ -80,9 +81,16 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg, histologically_subtyped
         mutations_df = load_msi_high_mutations()
     elif subsampled_mutations:
         mutations_df = load_subsampled_mutations(cancer_type)
+    elif custom_mutations:
+        mutations_df = load_custom(cancer_type)
     else:
         mutations_df = load_agg_mutations()
     return mutations_df
+
+def load_custom(cancer_type):
+    df = pd.read_csv(f"../../data/processed_data/{cancer_type}.csv",
+                       index_col=0)
+    return df.loc[natsorted(df.index)]
 
 def load_subsampled_mutations(cancer_type_with_n_specified):
     df = pd.read_csv(f"../../data/processed_data/{cancer_type_with_n_specified}.csv",

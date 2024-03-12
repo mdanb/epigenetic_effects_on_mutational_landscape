@@ -134,7 +134,7 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   n_optuna_trials_backward_selection, top_features_to_plot,
                                   make_plots, feature_importance_method, sqlite, test_set_perf_num_features,
                                   debug_bfs, fold_for_test_set, tissues_to_consider, grid_analysis, grid_cell_types,
-                                  cell_types_keep, subsampled_mutations):
+                                  cell_types_keep, subsampled_mutations, custom_mutations):
     ### args used at the end for plot_top_features.R ###
     scATAC_sources = construct_scATAC_sources(datasets)
     scATAC_df = construct_scATAC_df(tss_fragment_filter, datasets, scATAC_cell_number_filter, annotation_dir,
@@ -162,7 +162,8 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                               histologically_subtyped_mutations, de_novo_seurat_clustering,
                                               CPTAC, combined_CPTAC_ICGC, RNA_subtyped, per_donor, cancer_type,
                                               hundred_kb, expanded_hundred_kb, aggregated_per_donor,
-                                              hierarchically_subtyped_mutations, mm, msi_high, subsampled_mutations)
+                                              hierarchically_subtyped_mutations, mm, msi_high, subsampled_mutations,
+                                              custom_mutations)
                 if subsampled_mutations:
                     cancer_type_name_for_subsample = "_".join([cancer_type, "seed", str(seed), "fold",
                                                                str(fold_for_test_set + 1)])
@@ -285,6 +286,7 @@ grid_cell_types = None
 if grid_analysis:
     grid_cell_types = config.grid_cell_types.split(",")
 subsampled_mutations = config.subsampled_mutations
+custom_mutations = config.custom_mutations
 
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
@@ -294,7 +296,7 @@ run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter,
                                seed_range, n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, make_plots, feature_importance_method,
                                sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set, tissues_to_consider,
-                               grid_analysis, grid_cell_types, cell_types_keep, subsampled_mutations)
+                               grid_analysis, grid_cell_types, cell_types_keep, subsampled_mutations, custom_mutations)
 
 
 
