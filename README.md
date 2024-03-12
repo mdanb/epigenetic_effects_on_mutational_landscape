@@ -21,7 +21,7 @@ We will then rename the files to match the pattern `[TISSUE_TYPE]-[SAMPLE_NAME].
 
 `cd data/bed_files/greenleaf_pbmc_bm/migrated_to_hg19`
 
-`for f in $(ls *); do echo $(echo $f | sed 's/.*_scATAC_//') | sed 's/.fragments.tsv.gz/.bed.gz/'; done`
+`for f in $(ls *); do mv $f $(echo $f | sed 's/.*_scATAC_//' | sed 's/.fragments.tsv.gz/.bed.gz/'); done`
 
 Now, we need a metadata file that contains cell-type annotations. This file must contain the following columns:
 
