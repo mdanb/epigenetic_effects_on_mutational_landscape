@@ -85,7 +85,7 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
 </details>
 <details>
   <summary><b>scATAC Datasets [--datasets]</b></summary>
-  Names of the scATAC datasets to consider. Should correspond to `DATASET_NAME` above. 
+  Names of the scATAC datasets to consider. Should correspond to <code>DATASET_NAME</code> above. 
 </details>
 <details>
   <summary><b>Cell Type Filter [--scATAC_cell_number_filter]</b></summary>
