@@ -54,5 +54,12 @@ Finally, we must combine the counts from identical cell types from different sam
 This creates an aggregated scATAC profile, which can be found at `data/processed_data/count_overlap_data/combined_count_overlaps/[ANNOTATION]/interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_combined_count_overlaps.rds`. In the same directory, another file called `interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_combined_count_overlaps_metadata.rds` will also be created, which has information about the number of cells per cell type and tissue type. 
 
 ### Mutation data (SNV) pre-processing
-To create aggregated, binned mutation profiles, we first need a [MAF file](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/)
+To create aggregated, binned mutation profiles, we first need a [MAF file](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/) with the mutation (SNV) data. For this example, we will use Non-Hodgkin lymphoma (Lymph-BNHL). We have the corresponding MAF file in `data/mutation_data/`, called `Lymph-BNHL_SNV_with_SEX.txt`. Your file should be called `[CANCER_TYPE]_SNV_with_SEX.txt`. Next, we begin by parsing the file:
+
+`python3 2_Sorting_MutationFileSex_CancerType.py --cancer_types [CANCER_TYPE]`
+
+We then intersect the mutations with the bins:
+
+`python3 3_Intersect_paz_cancertypes.py --cancer_types [CANCER_TYPE]` 
+
 
