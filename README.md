@@ -2,7 +2,7 @@
 
 This repository houses the codebase for the paper **Identifying the origin of cancer at cell-type resolution by modeling the relationship between scATAC genome accessibility and the tumor mutational landscape**. In this paper, we proposed COCOON (**C**hr**O**matin a**C**cessibility inferred **C**ell Of **O**rigi**N**), which offers a straightforward and cost-effective framework enabling cancer biologists to ascertain the COO at cell-type resolution for a given cancer mutation profile via scATAC sequencing of suspected normal tissues of origin. 
  
-In the first section below, we provide an example of how to pre-process data and prepare it as input for COCOON, in addition to then running COCOON. To reproduce paper figures, see scripts in this directory, named by figure. 
+In the first section below, we provide an example of how to pre-process data and prepare it as input for COCOON, in addition to then running COCOON. To reproduce paper figures, see section **Reproduce Figures**.
 
 # Example
 To run COCOON, we first need to create aggregated, binned scATAC and mutation profiles. 
@@ -61,5 +61,12 @@ To create aggregated, binned mutation profiles, we first need a [MAF file](https
 We then intersect the mutations with the bins:
 
 `python3 3_Intersect_paz_cancertypes.py --cancer_types [CANCER_TYPE]` 
+
+Finally, we aggregate the mutations across samples:
+
+`python3 4_AssembleCout_paz_Cancergroup.py --cancer_types [CANCER_TYPE]`
+
+This creates a file `data/processed_data/[CANCER_TYPE].txt` that has the aggregated, binned mutation profile.
+
 
 
