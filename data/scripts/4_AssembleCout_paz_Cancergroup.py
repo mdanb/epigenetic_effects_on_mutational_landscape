@@ -24,7 +24,7 @@ def ParsetoDict(sPathFile):
         dInterDict[sKey]=sCount
     return dInterDict
 
-def helper(cancer_type, current_dir, subsampled, subsample_dirname):
+def helper(cancer_type, current_dir, subsampled, subsample_dirname=None):
     if subsampled:
         sOutname=f"{cancer_type}_{os.path.basename(subsample_dirname)}.txt"
         lFilelist=glob.glob(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{subsample_dirname}/IntersectedCount_paz_Cancergroup/*.bed")
