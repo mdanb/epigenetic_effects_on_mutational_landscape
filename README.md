@@ -17,11 +17,19 @@ This will download the files to the directory `data/bed_files/greenleaf_pbmc_bm/
 
 > **Small aside**: Note that the fragments from this study are already aligned to hg19. However, if your data is not and you would like to run COCOON using the mutation data we used, you will have to align the fragments to hg19, since the mutation data we had available was aligned to hg19. To do this, make sure your fragment files are in the directory `data/bed_files/[DATASET_NAME]/`. Here, DATASET_NAME is whatever name you want to give to your dataset. Then run `Rscript data/scripts/migrate_and_save_fragments.R --dataset [DATASET_NAME] --cores [NUM_CORES]`.
 
-We will then rename the files to match the pattern [TISSUE_TYPE]-[SAMPLE_NAME].bed.gz
+We will then rename the files to match the pattern [TISSUE_TYPE]-[SAMPLE_NAME].bed.gz:
 
-`cd data/bed_files`
+`cd data/bed_files/greenleaf_pbmc_bm/migrated_to_hg19`
 
 `for f in $(ls *); do echo $(echo $f | sed 's/.*_scATAC_//') | sed 's/.fragments.tsv.gz/.bed.gz/'; done`
 
+Now, we need a metadata file that contains cell-type annotations. This file must contain the following columns:
+
+- barcode: cell barcode corresponding to the barcodes in the fragment files e.g AACTGGTTCCACTAGA
+- sample: sample name from which the cell comes from (this must correspond to SAMPLE_NAME in the name of the fragment file, see above). 
+- cell_type: cell type annotation
+- tissue: tissue name from which the cell comes from (again, must correspond to TISSUE_TYPE in the name of the fragment file, see above) 
+
+The metadata file needs to be in `data/metadata` and must be called `[ANNOTATION].csv` where `ANNOTATION` is your desired name for the particular annotation of the cells that you used.
 
 
