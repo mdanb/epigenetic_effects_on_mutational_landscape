@@ -44,8 +44,10 @@ if (subsampled) {
   }
 } else {
   mutations_df = data.frame(row.names = seq(1,2128))
-  counts = import(paste("../mutation_data/bed_files", "IntersectedCount_paz_Cancergroup",
-                        paste("IntersectedCount", cancer_type, sep="_"), 
+  counts = import(paste("../mutation_data/bed_files", cancer_type, 
+                        "IntersectedCount_paz_Cancergroup",
+                        paste("IntersectedCount", paste0(cancer_type, ".bed"), 
+                              sep="_"), 
                         sep="/"))
   mutations_df = cbind(mutations_df, counts$score)
   colnames(mutations_df)[ncol(mutations_df)] = cancer_type
