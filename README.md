@@ -9,4 +9,9 @@ To run COCOON, we first need to create aggregated, binned scATAC and mutation pr
 
 `cd data/scripts`
 
+and download the fragment files:
 
+`./get_scATAC_data_from_links.sh ../greenleaf_blood_bone_marrow/greenleaf_blood_bm_ftp_links.txt ../bed_files/greenleaf_pbmc_bm/migrated_to_hg19/ *gz`
+
+This will download the files to the directory datas/bed_files/greenleaf_pbmc_bm/migrated_to_hg19.
+Note that the fragments from this study are already aligned to hg19.
