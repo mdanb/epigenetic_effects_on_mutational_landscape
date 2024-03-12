@@ -38,4 +38,10 @@ We then create the binned scATAC profiles:
 
 This is script is parallelized, and each core will be processing a given fragment file. Note that here, `DATASET_NAME` and `ANNOTATION` must be the ones you chose previously. `INTERVAL_RANGES_NAMES` specifies the GenomicRanges object (bins) that we will align our fragments to. For this example, we have a file called `data/test_ranges.RData`. This corresponds to the bins we used for our paper. So for `INTERVAL_RANGES_NAME`, we would specify `test_ranges`. Note that this file must be an `.RData` file. 
 
+Thus, assuming we have 4 cores, in this example, we would run:
+
+`Rscript data/scripts/create_count_overlaps.R --dataset greenleaf_pbmc_bm --cores 4 --annotation test_annotation --which_interval_ranges test_ranges`
+
+This will 
+
 
