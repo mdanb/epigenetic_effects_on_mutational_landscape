@@ -81,10 +81,19 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
 
 <details>
   <summary><b>Cancer Types [--cancer_types]</b></summary>
-  The cancer types to run the model on. Note that this is not parallelized i.e specifying mutliple cancer types will run the model sequentially on each cancer type.
+  The cancer types to run the model on. Note that this is not parallelized i.e specifying mutliple cancer types will run the model sequentially on each cancer type. Should correspond to `CANCER_TYPE` above. 
 </details>
 <details>
   <summary><b>scATAC Datasets [--datasets]</b></summary>
+  Names of the scATAC datasets to consider. Should correspond to `DATASET_NAME` above. 
+</details>
+<details>
+  <summary><b>Cell Type Filter [--scATAC_cell_number_filter]</b></summary>
+  Filter for the minimum number of cells per cell type. All cells with lower than this minimum will be excluded. 
+</details>
+<details>
+  <summary><b>Name Of Annotation Used [--annotation_dir]</b></summary>
+   
 </details>
 
 ### Parallelized
