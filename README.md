@@ -13,5 +13,7 @@ and download the fragment files:
 
 `./get_scATAC_data_from_links.sh ../greenleaf_blood_bone_marrow/greenleaf_blood_bm_ftp_links.txt ../bed_files/greenleaf_pbmc_bm/migrated_to_hg19/ *gz`
 
-This will download the files to the directory datas/bed_files/greenleaf_pbmc_bm/migrated_to_hg19.
-Note that the fragments from this study are already aligned to hg19.
+This will download the files to the directory `data/bed_files/greenleaf_pbmc_bm/migrated_to_hg19`. 
+
+
+> **Small aside**: Note that the fragments from this study are already aligned to hg19. However, if your data is not and you would like to run it using the mutation data we used, you will have to align > the fragments to hg19, since the mutation data we had available was aligned to hg19. 
