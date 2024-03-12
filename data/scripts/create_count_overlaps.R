@@ -14,7 +14,7 @@ option_list <- list(
   make_option("--dataset_subsets", type="character", default=NULL),
   make_option("--cores", type="integer"),
   make_option("--annotation", type="character"),
-  make_option("--which_interval_ranges", type="character"),
+  make_option("--which_interval_ranges", type="character", default="polak"),
   make_option("--overlaps_per_cell", action="store_true", default=FALSE)
 )
 
