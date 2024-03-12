@@ -42,6 +42,11 @@ Thus, assuming we have 4 cores, in this example, we would run:
 
 `Rscript data/scripts/create_count_overlaps.R --dataset greenleaf_pbmc_bm --cores 4 --annotation test_annotation --which_interval_ranges test_ranges`
 
-This will 
+This will create our binned fragment files in `data/processed_data/count_overlap_data/ANNOTATION/` with the name `interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_count_overlaps_[TISSUE_TYPE]-[SAMPLE_NAME].rds`. In addition, we will get metadata files in `data/processed_data/cell_counts_per_sample/ANNOTATION/` with the names `cell_counts_interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_count_overlaps_[TISSUE_TYPE]-[SAMPLE_NAME].rds`. These files contain data about the number of cells per cell type. 
+
+Finally, we must then combine the counts from identical cell types from different samples. We do this by running:
+
+`Rscript data/scripts/combine_overlaps.R --datasets [DATASET_NAME] --annotation [ANNOTATION] --which_interval_ranges [INTERVAL_RANGES_NAME]`
+
 
 
