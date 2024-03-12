@@ -82,9 +82,10 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
 <details>
   <summary>Cancer Types [--cancer_types] </summary>
   The cancer types to run the model on. Note that this is not parallelized i.e specifying mutliple cancer types will run the model sequentially on each cancer type.
+</details>
+<details>
   <summary>scATAC Datasets [--datasets] </summary>
 </details>
-
 
 ### Parallelized
 The con
