@@ -30,6 +30,6 @@ Now, we need a metadata file that contains cell-type annotations. This file must
 - cell_type: cell type annotation
 - tissue: tissue name from which the cell comes from (again, must correspond to TISSUE_TYPE in the name of the fragment file, see above) 
 
-The metadata file needs to be in `data/metadata` and must be called `[ANNOTATION].csv` where `ANNOTATION` is your desired name for the particular annotation of the cells that you used.
+The metadata file needs to be in `data/metadata` and must be called `[ANNOTATION].csv` where `ANNOTATION` is your desired name for the cell annotations that you used.
 
 
