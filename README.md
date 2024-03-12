@@ -93,7 +93,7 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
 </details>
 <details>
   <summary><b>Annotation [--annotation_dir]</b></summary>
-   Name of annotation used
+   Name of annotation used. Should correspond to <code>ANNOTATION<\code> above. 
 </details>
 
 ### Parallelized
