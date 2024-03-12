@@ -27,10 +27,11 @@ def ParsetoDict(sPathFile):
 def helper(cancer_type, current_dir, dirname, subsampled):
     if subsampled:
         sOutname=f"{cancer_type}_{os.path.basename(dirname)}.txt"
+        lFilelist=glob.glob(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{dirname}/IntersectedCount_paz_Cancergroup/*.bed")
     else:
         sOutname=f"{cancer_type}.txt"
+        lFilelist=glob.glob(f"{current_dir}/../mutation_data/bed_files/{cancer_type}/{dirname}/IntersectedCount_paz_Cancergroup/*.bed")
 
-    lFilelist=glob.glob(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{dirname}/IntersectedCount_paz_Cancergroup/*.bed")
     #lFilelist=["/ahg/regevdata/projects/ICA_Lung/Wooseung/CellOrigin/Data/IntersectedCount/IntersectedCount_LAML-KR.bed"]
     dTumorCount=dict()
     for sPathFile in lFilelist:
