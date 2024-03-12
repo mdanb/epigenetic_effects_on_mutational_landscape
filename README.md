@@ -15,5 +15,15 @@ and download the fragment files:
 
 This will download the files to the directory `data/bed_files/greenleaf_pbmc_bm/migrated_to_hg19`. 
 
+> **Small aside**: Note that the fragments from this study are already aligned to hg19. However, if your data is not and you would like to run COCOON using the mutation data we used, you will have to align the fragments to hg19, since the mutation data we had available was aligned to hg19. To do this, make sure your fragment files are in the directory `data/bed_files/[DATASET_NAME]/`. Here, DATASET_NAME is whatever name you want to give to your dataset. 
 
-> **Small aside**: Note that the fragments from this study are already aligned to hg19. However, if your data is not and you would like to run it using the mutation data we used, you will have to align > the fragments to hg19, since the mutation data we had available was aligned to hg19. 
+Then run `Rscript data/scripts/migrate_and_save_fragments.R --dataset [DATASET_NAME] --cores [NUM_CORES]`.
+
+We will then rename the files to match the pattern [TISSUE_TYPE]-[SAMPLE_NAME].bed.gz
+
+`cd data/bed_files`
+
+`for f in $(ls *); do echo $(echo $f | sed 's/.*_scATAC_//') | sed 's/.fragments.tsv.gz/.bed.gz/'; done`
+
+
+
