@@ -54,5 +54,5 @@ Finally, we must combine the counts from identical cell types from different sam
 This creates an aggregated scATAC profile, which can be found at `data/processed_data/count_overlap_data/combined_count_overlaps/[ANNOTATION]/interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_combined_count_overlaps.rds`. In the same directory, another file called `interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_combined_count_overlaps_metadata.rds` will also be created, which has information about the number of cells per cell type and tissue type. 
 
 ### Mutation data (SNV) pre-processing
-To create aggregated, binned mutation profiles, we first need a (MAF file)[https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/] 
+To create aggregated, binned mutation profiles, we first need a [MAF file](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/)
 
