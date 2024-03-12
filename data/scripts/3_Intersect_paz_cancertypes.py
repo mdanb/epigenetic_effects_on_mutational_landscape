@@ -26,7 +26,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 def IntersectBed(cancer_type, outPath, interval_fp, subsample_idx=None):
     if subsample_idx is None:
         sOutFile = f"{cancer_type}.bed"
-        sInFile = f"{outPath}/.bed"
+        sInFile = f"{outPath}/../{cancer_type}.bed"
     else:
         sOutFile = f"{cancer_type}_S{subsample_idx}.bed"
         sInFile = f"{outPath}/subsample_S{subsample_idx}.bed"
