@@ -24,13 +24,13 @@ def ParsetoDict(sPathFile):
         dInterDict[sKey]=sCount
     return dInterDict
 
-def helper(cancer_type, current_dir, dirname, subsampled):
+def helper(cancer_type, current_dir, subsampled, subsample_dirname):
     if subsampled:
-        sOutname=f"{cancer_type}_{os.path.basename(dirname)}.txt"
-        lFilelist=glob.glob(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{dirname}/IntersectedCount_paz_Cancergroup/*.bed")
+        sOutname=f"{cancer_type}_{os.path.basename(subsample_dirname)}.txt"
+        lFilelist=glob.glob(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled/{subsample_dirname}/IntersectedCount_paz_Cancergroup/*.bed")
     else:
         sOutname=f"{cancer_type}.txt"
-        lFilelist=glob.glob(f"{current_dir}/../mutation_data/bed_files/{cancer_type}/{dirname}/IntersectedCount_paz_Cancergroup/*.bed")
+        lFilelist=glob.glob(f"{current_dir}/../mutation_data/bed_files/{cancer_type}/IntersectedCount_paz_Cancergroup/*.bed")
 
     #lFilelist=["/ahg/regevdata/projects/ICA_Lung/Wooseung/CellOrigin/Data/IntersectedCount/IntersectedCount_LAML-KR.bed"]
     dTumorCount=dict()
@@ -63,9 +63,9 @@ if __name__=="__main__":
     for cancer_type in cancer_types:
         if subsampled:
             for dirname in os.listdir(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled"):
-                helper(cancer_type, current_dir, dirname, subsampled)
+                helper(cancer_type, current_dir, subsampled, dirname)
         else:
-            helper(cancer_type, current_dir, f"{current_dir}/../mutation_data/bed_files/{cancer_type}", subsampled)
+            helper(cancer_type, current_dir, subsampled)
         # for dirname in os.listdir(f"{current_dir}/../mutation_data/bed_files/{cancer_type}_subsampled"):
         #     # tStart=time.ctime()
         #     sOutname=f"{cancer_type}_{os.path.basename(dirname)}.txt"
