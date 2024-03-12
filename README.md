@@ -92,8 +92,8 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
   Filter for the minimum number of cells per cell type. All cells with lower than this minimum will be excluded. 
 </details>
 <details>
-  <summary><b>Name Of Annotation Used [--annotation_dir]</b></summary>
-   
+  <summary><b>Annotation [--annotation_dir]</b></summary>
+   Name of annotation used
 </details>
 
 ### Parallelized
