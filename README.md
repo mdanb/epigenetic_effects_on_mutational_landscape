@@ -168,12 +168,12 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
   <summary><b>Which Interval Ranges [--which_interval_ranges]</b></summary>
   Which interval ranges to use. Should correspond to <code>WHICH_INTERVAL_RANGES</code> used previously. 
 </details>
-### Unparallelized
 
+### Unparallelized
 We will use the PBMC/bonemarrow + Lymph-BNHL data we generated previously as an example. Run:
 
 ```
-python3 analysis/ML/build_ML_model.py 
+python3 build_ML_model.py 
 --cancer_types Lymph-BNHL
 --datasets Greenleaf_test
 --scATAC_cell_number_filter 100
