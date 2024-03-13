@@ -305,7 +305,8 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             chr_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
             scATAC_df = load_scATAC(f"{tss_filtered_root}/{dataset}/combined/{annotation_dir}/" 
                                     f"combined_{tss_filter}_fragments.rds",
-                                    hundred_kb, expanded_hundred_kb, tissues_to_consider).T
+                                    hundred_kb, expanded_hundred_kb, tissues_to_consider,
+                                    which_interval_ranges).T
             # print("Num features", scATAC_df.shape[1])
             # print("Loaded!")
             scATAC_df.index = chr_ranges["x"].values
@@ -314,12 +315,12 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             print(f"Loading scATAC from {dataset}...")
             scATAC_df = load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
             f"/{annotation_dir}/{dataset}_combined_count_overlaps.rds", hundred_kb, expanded_hundred_kb,
-                                    tissues_to_consider)
+                                    tissues_to_consider, which_interval_ranges)
             # print("Num features", scATAC_df.shape[1])
             # print("Loaded!")
         metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
         f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb, expanded_hundred_kb,
-                                        tissues_to_consider)
+                                        tissues_to_consider, which_interval_ranges)
         df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
             # datasets_combined_count_overlaps.append(scATAC_df)
         if cell_types_keep:
