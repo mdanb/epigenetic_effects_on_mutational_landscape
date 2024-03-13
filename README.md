@@ -119,7 +119,7 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
    Number of features during BFS at which to save test set performance. This can be a list of numbers e.g 1 2 5 10 or simply "all." It is advisable to just set this option to "all", as computing test set performance requires negligeable compute. However, assuming the models trained during BFS are not deleted, these can always be calculated later (and the script does provide an option to do this by just re-running it, which won't re-train models, but load already trained models and compute the test set performance at the specified number of features). 
 </details>
 <details>
-  <summary><b> Cell Types To Keep [--cell_types_keep]</b></summary>
+  <summary><b>Cell Types To Keep [--cell_types_keep]</b></summary>
   Cell types to keep despite not meeting the cell type filter. Format: [NAME_OF_CELL_TYPE]-[DATASET]. It is possible to provide more than 1 e.g C1-D1 C2-D2
 </details>
 <details>
@@ -130,6 +130,7 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
   <summary><b>Tissues to consider [--tissues_to_consider]</b></summary>
   If you only want to use a particular subset of tissues from your scATAC data, then set this option to the name of these tissues as a list (and exactly as they are called in the metadata file created using <code>combine_overlaps.R</code> under the column "tissue")
 </details>
+
 ### Unparallelized
 ### Parallelized
 The con
