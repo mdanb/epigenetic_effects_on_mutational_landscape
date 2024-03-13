@@ -96,7 +96,7 @@ Finally, we aggregate the mutations across samples:
 python3 4_AssembleCout_paz_Cancergroup.py --cancer_types [CANCER_TYPE]
 ```
 
-This creates a file `data/processed_data/[CANCER_TYPE].txt`, or `data/processed_data/Lymph-BNHL.txt` in this case, that has the aggregated, binned mutation profile.
+This creates a file `data/processed_data/[CANCER_TYPE].txt` that has the aggregated, binned mutation profile.
 
 Finally, we add custom names to the bins, in addition to adding `CANCER_TYPE` as a column name for our data (this step could have been incorporated in the previous scripts):
 ```
