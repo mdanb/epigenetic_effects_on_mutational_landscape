@@ -10,11 +10,15 @@ To run COCOON, we first need to create aggregated, binned scATAC and mutation pr
 ## scATAC pre-processing
 We'll start with scATAC, and we'll use the data from [**Single-Cell Multiomic Analysis Identifies Regulatory Programs in Mixed-Phenotype Acute Leukemia**](https://www.nature.com/articles/s41587-019-0332-7) as an example, which comes from PBMC and bonemarrow. After cloning this repository,
 
-`cd data/scripts`
+```
+cd data/scripts
+```
 
 and download the fragment files:
 
-`./get_scATAC_data_from_links.sh ../greenleaf_blood_bone_marrow/greenleaf_blood_bm_ftp_links.txt ../bed_files/greenleaf_pbmc_bm/migrated_to_hg19/ *gz`
+```
+./get_scATAC_data_from_links.sh ../greenleaf_blood_bone_marrow/greenleaf_blood_bm_ftp_links.txt ../bed_files/greenleaf_pbmc_bm/migrated_to_hg19/ *gz
+```
 
 This will download the files to the directory `data/bed_files/greenleaf_pbmc_bm/migrated_to_hg19`. 
 
@@ -26,7 +30,9 @@ We will then rename the files to match the pattern `[TISSUE_TYPE]-[SAMPLE_NAME].
 cd data/bed_files/greenleaf_pbmc_bm/migrated_to_hg19
 ```
 
-```for f in $(ls *); do mv $f $(echo $f | sed 's/.*_scATAC_//' | sed 's/.fragments.tsv.gz/.bed.gz/'); done```
+```
+for f in $(ls *); do mv $f $(echo $f | sed 's/.*_scATAC_//' | sed 's/.fragments.tsv.gz/.bed.gz/'); done
+```
 
 Now, we need a metadata file that contains cell-type annotations. This file must contain the following columns:
 
@@ -47,28 +53,38 @@ This is script is parallelized, and each core will be processing a given fragmen
 
 Thus, assuming we have 4 cores, in this example, we would run:
 
-`Rscript data/scripts/create_count_overlaps.R --dataset Greenleaf_pbmc_bm --cores 4 --annotation test_annotation --which_interval_ranges test_ranges`
+```
+Rscript data/scripts/create_count_overlaps.R --dataset Greenleaf_pbmc_bm --cores 4 --annotation test_annotation --which_interval_ranges test_ranges
+```
 
 This will create our binned fragment files in `data/processed_data/count_overlap_data/[ANNOTATION]/` with the name `interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_count_overlaps_[TISSUE_TYPE]-[SAMPLE_NAME].rds`. In addition, we will get metadata files in `data/processed_data/cell_counts_per_sample/[ANNOTATION]/` with the names `cell_counts_interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_count_overlaps_[TISSUE_TYPE]-[SAMPLE_NAME].rds`. These files contain data about the number of cells per cell type. 
 
 Finally, we must combine the counts from identical cell types from different samples. We do this by running:
 
-`Rscript data/scripts/combine_overlaps.R --datasets [DATASET_NAME] --annotation [ANNOTATION] --which_interval_ranges [INTERVAL_RANGES_NAME]`
+```
+Rscript data/scripts/combine_overlaps.R --datasets [DATASET_NAME] --annotation [ANNOTATION] --which_interval_ranges [INTERVAL_RANGES_NAME]
+```
 
 This creates an aggregated scATAC profile, which can be found at `data/processed_data/count_overlap_data/combined_count_overlaps/[ANNOTATION]/interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_combined_count_overlaps.rds`. In the same directory, another file called `interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_combined_count_overlaps_metadata.rds` will also be created, which has information about the number of cells per cell type and tissue type. 
 
 ## Mutation data (SNV) pre-processing
 To create aggregated, binned mutation profiles, we first need a [MAF file](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/) with the mutation (SNV) data. For this example, we will use Non-Hodgkin lymphoma (Lymph-BNHL). We have the corresponding MAF file in `data/mutation_data/`, called `Lymph-BNHL_SNV_with_SEX.txt`. Your file, if using your own mutation data, should be called `[CANCER_TYPE]_SNV_with_SEX.txt`. Next, we begin by parsing the file:
 
-`python3 2_Sorting_MutationFileSex_CancerType.py --cancer_types [CANCER_TYPE]`
+```
+python3 2_Sorting_MutationFileSex_CancerType.py --cancer_types [CANCER_TYPE]
+```
 
 We then intersect the mutations with the bins:
 
-`python3 3_Intersect_paz_cancertypes.py --cancer_types [CANCER_TYPE]` 
+```
+python3 3_Intersect_paz_cancertypes.py --cancer_types [CANCER_TYPE]
+```
 
 Finally, we aggregate the mutations across samples:
 
-`python3 4_AssembleCout_paz_Cancergroup.py --cancer_types [CANCER_TYPE]`
+```
+python3 4_AssembleCout_paz_Cancergroup.py --cancer_types [CANCER_TYPE]
+```
 
 This creates a file `data/processed_data/[CANCER_TYPE].txt`, or `data/processed_data/Lymph-BNHL.txt` in this case, that has the aggregated, binned mutation profile.
 
