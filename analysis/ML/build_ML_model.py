@@ -134,12 +134,12 @@ def run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_fil
                                   n_optuna_trials_backward_selection, top_features_to_plot,
                                   make_plots, feature_importance_method, sqlite, test_set_perf_num_features,
                                   debug_bfs, fold_for_test_set, tissues_to_consider, grid_analysis, grid_cell_types,
-                                  cell_types_keep, subsampled_mutations, custom_mutations):
+                                  cell_types_keep, subsampled_mutations, custom_mutations, which_interval_ranges):
     ### args used at the end for plot_top_features.R ###
     scATAC_sources = construct_scATAC_sources(datasets)
     scATAC_df = construct_scATAC_df(tss_fragment_filter, datasets, scATAC_cell_number_filter, annotation_dir,
                                     hundred_kb, expanded_hundred_kb, tissues_to_consider,
-                                    grid_analysis, grid_cell_types, cell_types_keep)
+                                    grid_analysis, grid_cell_types, cell_types_keep, which_interval_ranges)
     if not grid_analysis:
         grouped_cell_types = [scATAC_df.columns]
     else:
@@ -287,6 +287,7 @@ if grid_analysis:
     grid_cell_types = config.grid_cell_types.split(",")
 subsampled_mutations = config.subsampled_mutations
 custom_mutations = config.custom_mutations
+which_interval_ranges = config.which_interval_ranges
 
 run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter, annotation_dir,
                                tss_fragment_filter, SCLC, lung_subtyped, woo_pcawg,
@@ -296,7 +297,8 @@ run_unclustered_data_analysis(datasets, cancer_types, scATAC_cell_number_filter,
                                seed_range, n_optuna_trials_prebackward_selection, n_optuna_trials_backward_selection,
                                top_features_to_plot, make_plots, feature_importance_method,
                                sqlite, test_set_perf_num_features, debug_bfs, fold_for_test_set, tissues_to_consider,
-                               grid_analysis, grid_cell_types, cell_types_keep, subsampled_mutations, custom_mutations)
+                               grid_analysis, grid_cell_types, cell_types_keep, subsampled_mutations, custom_mutations,
+                               which_interval_ranges)
 
 
 

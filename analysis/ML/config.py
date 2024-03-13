@@ -49,6 +49,7 @@ def create_parser():
     parser.add_argument('--cell_types_keep', nargs="+", type=str, default=None) # Keep these despite not passing cell filter
     parser.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
                         default=None)
+    parser.add_argument('--which_interval_ranges', type=str, default=None)
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--per_donor", action="store_true", default=False)

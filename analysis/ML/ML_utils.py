@@ -260,10 +260,13 @@ def add_dataset_origin_to_cell_types(list_to_add_to, dataset):
 
 
 def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb,
-                        expanded_hundred_kb, tissues_to_consider, grid_analysis, grid_cell_types, cell_types_keep):
-    def load_scATAC(scATAC_path, hundred_kb, expanded_hundred_kb, tissues_to_consider):
+                        expanded_hundred_kb, tissues_to_consider, grid_analysis, grid_cell_types, cell_types_keep,
+                        which_interval_ranges):
+    def load_scATAC(scATAC_path, hundred_kb, expanded_hundred_kb, tissues_to_consider, which_interval_ranges):
         if hundred_kb or expanded_hundred_kb:
             scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_100kb_{os.path.basename(scATAC_path)}"
+        elif which_interval_ranges is not None:
+            scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_{which_interval_ranges}_{os.path.basename(scATAC_path)}"
         scATAC_df = pyreadr.read_r(scATAC_path)
         scATAC_df = scATAC_df[None]
         scATAC_df = scATAC_df.T
@@ -278,9 +281,12 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
 
         return scATAC_df
 
-    def load_scATAC_metadata(metadata_path, hundred_kb, expanded_hundred_kb, tissues_to_consider):
+    def load_scATAC_metadata(metadata_path, hundred_kb, expanded_hundred_kb, tissues_to_consider,
+                             which_interval_ranges):
         if hundred_kb or expanded_hundred_kb:
             metadata_path = f"{os.path.dirname(metadata_path)}/interval_ranges_100kb_{os.path.basename(metadata_path)}"
+        elif which_interval_ranges:
+            metadata_path = f"{os.path.dirname(metadata_path)}/interval_ranges_{which_interval_ranges}_{os.path.basename(metadata_path)}"
         metadata = pyreadr.read_r(metadata_path)
         metadata = metadata[None]
 
