@@ -271,6 +271,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
         scATAC_df = pyreadr.read_r(scATAC_path)
         scATAC_df = scATAC_df[None]
         scATAC_df = scATAC_df.T
+        print(scATAC_df.dim)
         def check_tissue(tissue_cell_type):
             return any(tissue in tissue_cell_type for tissue in tissues_to_consider)
 
