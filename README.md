@@ -31,7 +31,7 @@ cd data/bed_files/Greenleaf_test/migrated_to_hg19
 ```
 
 ```
-for f in $(ls *); do mv $f $(echo $f | sed 's/.*_scATAC_//' | sed 's/.fragments.tsv.gz/.bed.gz/'); done
+for f in $(ls *); do mv $f $(echo $f | sed 's/.*_scATAC_//' | sed 's/.fragments.tsv.gz/.bed.gz/' | sed 's/_/-/'); done
 ```
 
 Now, we need a metadata file that contains cell-type annotations. This file must contain the following columns:
