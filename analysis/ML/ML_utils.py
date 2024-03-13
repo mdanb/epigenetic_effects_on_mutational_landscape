@@ -267,11 +267,9 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_100kb_{os.path.basename(scATAC_path)}"
         elif which_interval_ranges is not None:
             scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_{which_interval_ranges}_{os.path.basename(scATAC_path)}"
-        print(scATAC_path)
         scATAC_df = pyreadr.read_r(scATAC_path)
         scATAC_df = scATAC_df[None]
         scATAC_df = scATAC_df.T
-        print(scATAC_df)
         def check_tissue(tissue_cell_type):
             return any(tissue in tissue_cell_type for tissue in tissues_to_consider)
 
@@ -323,7 +321,9 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
         metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
         f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb, expanded_hundred_kb,
                                         tissues_to_consider, which_interval_ranges)
+        print(scATAC_df)
         df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
+        print(df)
             # datasets_combined_count_overlaps.append(scATAC_df)
         if cell_types_keep:
             ds = ""
