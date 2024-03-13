@@ -65,7 +65,17 @@ Finally, we must combine the counts from identical cell types from different sam
 Rscript data/scripts/combine_overlaps.R --datasets [DATASET_NAME] --annotation [ANNOTATION] --which_interval_ranges [INTERVAL_RANGES_NAME]
 ```
 
+In our example:
+
+```
+Rscript data/scripts/combine_overlaps.R --datasets Greenleaf_pbmc_bm --annotation test_annotation --which_interval_ranges test_ranges
+```
+
 This creates an aggregated scATAC profile, which can be found at `data/processed_data/count_overlap_data/combined_count_overlaps/[ANNOTATION]/interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_combined_count_overlaps.rds`. In the same directory, another file called `interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_combined_count_overlaps_metadata.rds` will also be created, which has information about the number of cells per cell type and tissue type. 
+
+In this example:
+`interval_ranges_test_ranges_Greenleaf_pbmc_bm_combined_count_overlaps.rds` and 
+`interval_ranges_test_ranges_Greenleaf_pbmc_bm_combined_count_overlaps_metadata.rds`
 
 ## Mutation data (SNV) pre-processing
 To create aggregated, binned mutation profiles, we first need a [MAF file](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/) with the mutation (SNV) data. For this example, we will use Non-Hodgkin lymphoma (Lymph-BNHL). We have the corresponding MAF file in `data/mutation_data/`, called `Lymph-BNHL_SNV_with_SEX.txt`. Your file, if using your own mutation data, should be called `[CANCER_TYPE]_SNV_with_SEX.txt`. Next, we begin by parsing the file:
@@ -89,9 +99,19 @@ python3 4_AssembleCout_paz_Cancergroup.py --cancer_types [CANCER_TYPE]
 This creates a file `data/processed_data/[CANCER_TYPE].txt`, or `data/processed_data/Lymph-BNHL.txt` in this case, that has the aggregated, binned mutation profile.
 
 Finally, we add custom names to the bins, in addition to adding `CANCER_TYPE` as a column name for our data (this step could have been incorporated in the previous scripts):
-`Rscript align_mutations_to_ranges --cancer_types [CANCER_TYPE]`
+```
+Rscript align_mutations_to_ranges --cancer_types [CANCER_TYPE]
+```
 
 This creates a csv file `data/processed_data/[CANCER_TYPE].csv` that is ready to be input into COCOON.
+
+Putting these together for our example:
+```
+python3 2_Sorting_MutationFileSex_CancerType.py --cancer_types Lymph-BNHL
+python3 3_Intersect_paz_cancertypes.py --cancer_types Lymph-BNHL
+python3 4_AssembleCout_paz_Cancergroup.py --cancer_types Lymph-BNHL
+Rscript align_mutations_to_ranges --cancer_types Lymph-BNHL
+```
 
 ## Running COCOON
 In our paper, for each cancer type, we ran the model 100 times to obtain robust predictions. In practice, this means we needed access to a compute cluster to parallelize the model training process. Below, we present two pipelines for obtaining predictions: an unparallelized approach and a parallelized approach. Of course, to obtain 100 predictions in a reasonable amount of time, particularly if using large feature spaces, you would want to use the parallelized option. In the case of the parallelized option, we assume you have access to a system that uses UGE as the job manager. However, even if this is not the case, it is very straighforward to modify `prep_ML_model_scripts.py`, the script which does the parallelization, to use a different job manager. 
