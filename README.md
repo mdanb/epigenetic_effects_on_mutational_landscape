@@ -107,7 +107,7 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
    Number of Optuna trials to run before running backward feature selection (i.e when using the full feature space)
 </details>
 <details>
-  <summary><b>Number Of Optuna trials During Backward Feature Selection [--n_optuna_trials_backward_selection]</b></summary>
+  <summary><b>Number of Optuna Trials During Backward Feature Selection [--n_optuna_trials_backward_selection]</b></summary>
    Number of Optuna trials to run when performing backward feature selection, for each iteration of BFS.
 </details>
 <details>
