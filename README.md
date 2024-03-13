@@ -95,7 +95,34 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
   <summary><b>Annotation [--annotation_dir]</b></summary>
    Name of annotation used. Should correspond to <code>ANNOTATION</code> above. 
 </details>
+<details>
+  <summary><b>Fold for Test Set [--fold_for_test_set]</b></summary>
+   Which fold among the 10 contiguous genome regions to use as the test set. This number must be in the range 1-10. 
+</details>
+<details>
+  <summary><b>Seed Range [--seed_range]</b></summary>
+   Range of seeds to use when training the model and computing permutation importance for a particular train/test split (i.e for a particular chosen fold for the test set). Format: [LOWEST_SEED]-[HIGHEST_SEED] e.g 3-7, where 3 and 7 are inclusive.
+</details>
+<details>
+  <summary><b>Number of Optuna trials pre-backward feature selection [--n_optuna_trials_prebackward_selection]</b></summary>
+   Number of Optuna trials to run before running backward feature selection (i.e when using the full feature space)
+</details>
+<details>
+  <summary><b>Number of Optuna trials during backward feature selection [--n_optuna_trials_backward_selection]</b></summary>
+   Number of Optuna trials to run when performing backward feature selection, for each iteration of BFS.
+</details>
+<details>
+  <summary><b>Enable SQLite [--sqlite]</b></summary>
+   If specified, this will enable the use of SQLite to store Optuna results. This is the easiest way to store results, as it requires no database configuration on your part. It is appropriate to set this option when you are not using parallelization. However, SQLite is not well suited for concurrent database access, so it should not be used when training models in parallel. 
+</details>
+<details>
+  <summary><b>Test set performance number of features[--test_set_perf_num_features]</b></summary>
+   Number of features during BFS at which to save test set performance. This can be a list of numbers e.g 1 2 5 10 or simply "all." It is advisable to just set this option to "all", as computing test set performance requires negligeable compute. However, assuming the models trained during BFS are not deleted, these can always be calculated later (and the script does provide an option to do this by just re-running it, which won't re-train models, but load already trained models and compute the test set performance at the specified number of features). 
+</details>
+<details>
+  <summary><b>Test set performance number of features[--test_set_perf_num_features]</b></summary>
 
+</details>
 ### Parallelized
 The con
 
