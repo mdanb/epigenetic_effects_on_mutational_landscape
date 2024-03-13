@@ -190,9 +190,9 @@ if (which_interval_ranges == "polak") {
     # names(interval.ranges) = unlist(mapply(function(x,y) 
     #   paste(x, y, sep="."), names(l), lapply(l, seq)))
     save(interval.ranges, file=fp)
-  } else {
-    load(paste('..', paste(which_interval_ranges, "RData", sep="."), sep="/"))
   }
+} else {
+  load(paste('..', paste(which_interval_ranges, "RData", sep="."), sep="/"))
 }
 
 dir.create("../processed_data/count_overlap_data", recursive=TRUE)   
