@@ -17,21 +17,21 @@ cd data/scripts
 and download the fragment files:
 
 ```
-./get_scATAC_data_from_links.sh ../greenleaf_blood_bone_marrow/greenleaf_blood_bm_ftp_links.txt ../bed_files/greenleaf_pbmc_bm/migrated_to_hg19/ *gz
+./get_scATAC_data_from_links.sh ../greenleaf_blood_bone_marrow/greenleaf_blood_bm_ftp_links.txt ../bed_files/Greenleaf_test/migrated_to_hg19/ *gz
 ```
 
-This will download the files to the directory `data/bed_files/greenleaf_pbmc_bm/migrated_to_hg19`. 
+This will download the files to the directory `data/bed_files/Greenleaf_test/migrated_to_hg19`. 
 
 > **Small aside**: Note that the fragments from this study are already aligned to hg19. However, if your data is not and you would like to run COCOON using the mutation data we used, you will have to align the fragments to hg19, since the mutation data we had available was aligned to hg19. To do this, make sure your fragment files are in the directory `data/bed_files/[DATASET_NAME]/`. Here, `DATASET_NAME` is whatever name you want to give to your dataset. Then run `Rscript data/scripts/migrate_and_save_fragments.R --dataset [DATASET_NAME] --cores [NUM_CORES]`. Note that this script is parallelized, so you can specify `NUM_CORES`, where each core will be migrating one of the fragment files. So if you have 16 fragment files and 4 cores, then specifying `NUM_CORES` to 4 will process 4 files at a time. 
 
 We will then rename the files to match the pattern `[TISSUE_TYPE]-[SAMPLE_NAME].bed.gz`:
 
 ```
-cd data/bed_files/greenleaf_pbmc_bm/migrated_to_hg19
+cd data/bed_files/Greenleaf_test/migrated_to_hg19
 ```
 
 ```
-for f in $(ls *); do mv $f $(echo $f | sed 's/.*_scATAC_//' | sed 's/.fragments.tsv.gz/.bed.gz/'); done
+for f in $(ls *); do mv $f $(echo $f | sed 's/.*_scATAC_//' | sed 's/.fragments.tsv.gz/.bed.gz/' | sed 's/_/-/'); done
 ```
 
 Now, we need a metadata file that contains cell-type annotations. This file must contain the following columns:
@@ -54,7 +54,7 @@ This is script is parallelized, and each core will be processing a given fragmen
 Thus, assuming we have 4 cores, in this example, we would run:
 
 ```
-Rscript data/scripts/create_count_overlaps.R --dataset Greenleaf_pbmc_bm --cores 4 --annotation test_annotation --which_interval_ranges test_ranges
+Rscript data/scripts/create_count_overlaps.R --dataset Greenleaf_test --cores 4 --annotation test_annotation --which_interval_ranges test_ranges
 ```
 
 This will create our binned fragment files in `data/processed_data/count_overlap_data/[ANNOTATION]/` with the name `interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_count_overlaps_[TISSUE_TYPE]-[SAMPLE_NAME].rds`. In addition, we will get metadata files in `data/processed_data/cell_counts_per_sample/[ANNOTATION]/` with the names `cell_counts_interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_count_overlaps_[TISSUE_TYPE]-[SAMPLE_NAME].rds`. These files contain data about the number of cells per cell type. 
@@ -65,7 +65,17 @@ Finally, we must combine the counts from identical cell types from different sam
 Rscript data/scripts/combine_overlaps.R --datasets [DATASET_NAME] --annotation [ANNOTATION] --which_interval_ranges [INTERVAL_RANGES_NAME]
 ```
 
+In our example:
+
+```
+Rscript data/scripts/combine_overlaps.R --datasets Greenleaf_test --annotation test_annotation --which_interval_ranges test_ranges
+```
+
 This creates an aggregated scATAC profile, which can be found at `data/processed_data/count_overlap_data/combined_count_overlaps/[ANNOTATION]/interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_combined_count_overlaps.rds`. In the same directory, another file called `interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_combined_count_overlaps_metadata.rds` will also be created, which has information about the number of cells per cell type and tissue type. 
+
+In this example:
+`interval_ranges_test_ranges_Greenleaf_test_combined_count_overlaps.rds` and 
+`interval_ranges_test_ranges_Greenleaf_test_combined_count_overlaps_metadata.rds`
 
 ## Mutation data (SNV) pre-processing
 To create aggregated, binned mutation profiles, we first need a [MAF file](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/) with the mutation (SNV) data. For this example, we will use Non-Hodgkin lymphoma (Lymph-BNHL). We have the corresponding MAF file in `data/mutation_data/`, called `Lymph-BNHL_SNV_with_SEX.txt`. Your file, if using your own mutation data, should be called `[CANCER_TYPE]_SNV_with_SEX.txt`. Next, we begin by parsing the file:
@@ -86,12 +96,22 @@ Finally, we aggregate the mutations across samples:
 python3 4_AssembleCout_paz_Cancergroup.py --cancer_types [CANCER_TYPE]
 ```
 
-This creates a file `data/processed_data/[CANCER_TYPE].txt`, or `data/processed_data/Lymph-BNHL.txt` in this case, that has the aggregated, binned mutation profile.
+This creates a file `data/processed_data/[CANCER_TYPE].txt` that has the aggregated, binned mutation profile.
 
 Finally, we add custom names to the bins, in addition to adding `CANCER_TYPE` as a column name for our data (this step could have been incorporated in the previous scripts):
-`Rscript align_mutations_to_ranges --cancer_types [CANCER_TYPE]`
+```
+Rscript align_mutations_to_ranges --cancer_types [CANCER_TYPE]
+```
 
 This creates a csv file `data/processed_data/[CANCER_TYPE].csv` that is ready to be input into COCOON.
+
+Putting these together for our example:
+```
+python3 2_Sorting_MutationFileSex_CancerType.py --cancer_types Lymph-BNHL
+python3 3_Intersect_paz_cancertypes.py --cancer_types Lymph-BNHL
+python3 4_AssembleCout_paz_Cancergroup.py --cancer_types Lymph-BNHL
+Rscript align_mutations_to_ranges --cancer_types Lymph-BNHL
+```
 
 ## Running COCOON
 In our paper, for each cancer type, we ran the model 100 times to obtain robust predictions. In practice, this means we needed access to a compute cluster to parallelize the model training process. Below, we present two pipelines for obtaining predictions: an unparallelized approach and a parallelized approach. Of course, to obtain 100 predictions in a reasonable amount of time, particularly if using large feature spaces, you would want to use the parallelized option. In the case of the parallelized option, we assume you have access to a system that uses UGE as the job manager. However, even if this is not the case, it is very straighforward to modify `prep_ML_model_scripts.py`, the script which does the parallelization, to use a different job manager. 
