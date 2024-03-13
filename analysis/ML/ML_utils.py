@@ -220,6 +220,8 @@ def filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_fil
         keep = [tissue.lower().replace(" ", "_") + " " + cell_type for tissue, cell_type in zip(metadata["tissue"],
                                                                                                 metadata["cell_type"])]
     print(scATAC_df.columns.isin(keep))
+    print(scATAC_df.columns)
+    print(keep)
     scATAC_df = scATAC_df.loc[:, scATAC_df.columns.isin(keep)]
     return scATAC_df
 
