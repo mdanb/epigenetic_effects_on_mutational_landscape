@@ -95,7 +95,7 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
    Name of annotation used. Should correspond to <code>ANNOTATION</code> above. 
 </details>
 <details>
-  <summary><b>Fold for Test Set [--fold_for_test_set]</b></summary>
+  <summary><b>Fold For Test Set [--fold_for_test_set]</b></summary>
    Which fold among the 10 contiguous genome regions to use as the test set. This number must be in the range 1-10. 
 </details>
 <details>
@@ -107,7 +107,7 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
    Number of Optuna trials to run before running backward feature selection (i.e when using the full feature space)
 </details>
 <details>
-  <summary><b>Number Of Optuna trials During Backward Feature Selection [--n_optuna_trials_backward_selection]</b></summary>
+  <summary><b>Number Of Optuna Trials During Backward Feature Selection [--n_optuna_trials_backward_selection]</b></summary>
    Number of Optuna trials to run when performing backward feature selection, for each iteration of BFS.
 </details>
 <details>
@@ -132,6 +132,16 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
 </details>
 
 ### Unparallelized
+
+We will use the PBMC/bonemarrow + Lymph-BNHL data we generated previously as an example. Run:
+
+```
+python3 analysis/ML/build_ML_model.py 
+--cancer_types Lymph-BNHL
+--datasets Greenleaf_pbmc_bm
+
+```
+
 ### Parallelized
 The con
 
