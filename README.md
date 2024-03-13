@@ -128,7 +128,7 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
 </details>
 <details>
   <summary><b>Tissues to consider [--tissues_to_consider]</b></summary>
-  If you only want to use a particular subset of tissues from your scATAC data, then set this option to the name of these tissues (exactly as they are in the metadata file created using <code>combine_overlaps.R</code>)
+  If you only want to use a particular subset of tissues from your scATAC data, then set this option to the name of these tissues as a list (and exactly as they are called in the metadata file created using <code>combine_overlaps.R</code> under the column "tissue")
 </details>
 ### Unparallelized
 ### Parallelized
