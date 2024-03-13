@@ -119,9 +119,18 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
    Number of features during BFS at which to save test set performance. This can be a list of numbers e.g 1 2 5 10 or simply "all." It is advisable to just set this option to "all", as computing test set performance requires negligeable compute. However, assuming the models trained during BFS are not deleted, these can always be calculated later (and the script does provide an option to do this by just re-running it, which won't re-train models, but load already trained models and compute the test set performance at the specified number of features). 
 </details>
 <details>
-  <summary><b> [--]</b></summary>
-### Unparallelized
+  <summary><b> Cell Types To Keep [--cell_types_keep]</b></summary>
+  Cell types to keep despite not meeting the cell type filter. Format: [NAME_OF_CELL_TYPE]-[DATASET]. It is possible to provide more than 1 e.g C1-D1 C2-D2
 </details>
+<details>
+  <summary><b>Enable use of custom mutations [--custom_mutations]</b></summary>
+  This is one of multiple mutually exclusive options, which specifies where to load mutations from. It should always be set when using your own mutations, and for the example below. Which options to set use when reproducing the results from the paper will be specified as needed.  
+</details>
+<details>
+  <summary><b>Tissues to consider [--tissues_to_consider]</b></summary>
+  If you only want to use a particular subset of tissues from your scATAC data, then set this option to the name of these tissues (exactly as they are in the metadata file created using <code>combine_overlaps.R</code>)
+</details>
+### Unparallelized
 ### Parallelized
 The con
 
