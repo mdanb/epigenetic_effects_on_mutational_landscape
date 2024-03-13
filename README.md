@@ -5,24 +5,18 @@ This repository houses the codebase for the paper **Identifying the origin of ca
 In the first section below, we provide an example of how to pre-process data and prepare it as input for COCOON, in addition to then running COCOON. To reproduce paper figures, see scripts in this directory, named by the corresponding figure. 
 
 # Example
-To run COCOON, we first need to create aggregated, binned scATAC and mutation profiles. 
+To run COCOON, we first need to create aggregated, binned scATAC and mutation profiles. All scripts for data processing are in `data/scripts`, and all relative paths below are relative to this directory. 
 
 ## scATAC pre-processing
-We'll start with scATAC, and we'll use the data from [**Single-Cell Multiomic Analysis Identifies Regulatory Programs in Mixed-Phenotype Acute Leukemia**](https://www.nature.com/articles/s41587-019-0332-7) as an example, which comes from PBMC and bonemarrow. After cloning this repository,
+We'll start with scATAC, and we'll use the data from [**Single-Cell Multiomic Analysis Identifies Regulatory Programs in Mixed-Phenotype Acute Leukemia**](https://www.nature.com/articles/s41587-019-0332-7) as an example, which comes from PBMC and bonemarrow. After cloning this repository, download the fragment files:
 
 ```
-cd data/scripts
-```
-
-and download the fragment files:
-
-```
-./get_scATAC_data_from_links.sh ../greenleaf_blood_bone_marrow/greenleaf_blood_bm_ftp_links.txt ../bed_files/Greenleaf_test/migrated_to_hg19/ *gz
+sh get_scATAC_data_from_links.sh ../greenleaf_blood_bone_marrow/greenleaf_blood_bm_ftp_links.txt ../bed_files/Greenleaf_test/migrated_to_hg19/ *gz
 ```
 
 This will download the files to the directory `data/bed_files/Greenleaf_test/migrated_to_hg19`. 
 
-> **Small aside**: Note that the fragments from this study are already aligned to hg19. However, if your data is not and you would like to run COCOON using the mutation data we used, you will have to align the fragments to hg19, since the mutation data we had available was aligned to hg19. To do this, make sure your fragment files are in the directory `data/bed_files/[DATASET_NAME]/`. Here, `DATASET_NAME` is whatever name you want to give to your dataset. Then run `Rscript data/scripts/migrate_and_save_fragments.R --dataset [DATASET_NAME] --cores [NUM_CORES]`. Note that this script is parallelized, so you can specify `NUM_CORES`, where each core will be migrating one of the fragment files. So if you have 16 fragment files and 4 cores, then specifying `NUM_CORES` to 4 will process 4 files at a time. 
+> **Small aside**: Note that the fragments from this study are already aligned to hg19. However, if your data is not and you would like to run COCOON using the mutation data we used, you will have to align the fragments to hg19, since the mutation data we had available was aligned to hg19. To do this, make sure your fragment files are in the directory `data/bed_files/[DATASET_NAME]/`. Here, `DATASET_NAME` is whatever name you want to give to your dataset. Then run `Rscript migrate_and_save_fragments.R --dataset [DATASET_NAME] --cores [NUM_CORES]`. Note that this script is parallelized, so you can specify `NUM_CORES`, where each core will be migrating one of the fragment files. So if you have 16 fragment files and 4 cores, then specifying `NUM_CORES` to 4 will process 4 files at a time. 
 
 We will then rename the files to match the pattern `[TISSUE_TYPE]-[SAMPLE_NAME].bed.gz`:
 
@@ -46,7 +40,7 @@ The metadata file needs to be in `data/metadata` and must be called `[ANNOTATION
 We then create the binned scATAC profiles:
 
 ```
-Rscript data/scripts/create_count_overlaps.R --dataset [DATASET_NAME] --cores [NUM_CORES] --annotation [ANNOTATION] --which_interval_ranges [INTERVAL_RANGES_NAME]
+Rscript create_count_overlaps.R --dataset [DATASET_NAME] --cores [NUM_CORES] --annotation [ANNOTATION] --which_interval_ranges [INTERVAL_RANGES_NAME]
 ```
 
 This is script is parallelized, and each core will be processing a given fragment file. Note that here, `DATASET_NAME` and `ANNOTATION` must be the ones you chose previously. `INTERVAL_RANGES_NAMES` specifies the GenomicRanges object (bins) that we will align our fragments to. For this example, we have a file called `data/test_ranges.RData`. This corresponds to the bins we used for our paper. So for `INTERVAL_RANGES_NAME`, we would specify `test_ranges`. Note that this file must be an `.RData` file. 
@@ -54,7 +48,7 @@ This is script is parallelized, and each core will be processing a given fragmen
 Thus, assuming we have 4 cores, in this example, we would run:
 
 ```
-Rscript data/scripts/create_count_overlaps.R --dataset Greenleaf_test --cores 4 --annotation test_annotation --which_interval_ranges test_ranges
+Rscript create_count_overlaps.R --dataset Greenleaf_test --cores 4 --annotation test_annotation --which_interval_ranges test_ranges
 ```
 
 This will create our binned fragment files in `data/processed_data/count_overlap_data/[ANNOTATION]/` with the name `interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_count_overlaps_[TISSUE_TYPE]-[SAMPLE_NAME].rds`. In addition, we will get metadata files in `data/processed_data/cell_counts_per_sample/[ANNOTATION]/` with the names `cell_counts_interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_count_overlaps_[TISSUE_TYPE]-[SAMPLE_NAME].rds`. These files contain data about the number of cells per cell type. 
@@ -62,13 +56,13 @@ This will create our binned fragment files in `data/processed_data/count_overlap
 Finally, we must combine the counts from identical cell types from different samples. We do this by running:
 
 ```
-Rscript data/scripts/combine_overlaps.R --datasets [DATASET_NAME] --annotation [ANNOTATION] --which_interval_ranges [INTERVAL_RANGES_NAME]
+Rscript combine_overlaps.R --datasets [DATASET_NAME] --annotation [ANNOTATION] --which_interval_ranges [INTERVAL_RANGES_NAME]
 ```
 
 In our example:
 
 ```
-Rscript data/scripts/combine_overlaps.R --datasets Greenleaf_test --annotation test_annotation --which_interval_ranges test_ranges
+Rscript combine_overlaps.R --datasets Greenleaf_test --annotation test_annotation --which_interval_ranges test_ranges
 ```
 
 This creates an aggregated scATAC profile, which can be found at `data/processed_data/count_overlap_data/combined_count_overlaps/[ANNOTATION]/interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_combined_count_overlaps.rds`. In the same directory, another file called `interval_ranges_[INTERVAL_RANGES_NAME]_[DATASET_NAME]_combined_count_overlaps_metadata.rds` will also be created, which has information about the number of cells per cell type and tissue type. 
