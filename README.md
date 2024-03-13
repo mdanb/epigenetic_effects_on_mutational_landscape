@@ -164,7 +164,10 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
   <summary><b>Tissues To Consider [--tissues_to_consider]</b></summary>
   If you only want to use a particular subset of tissues from your scATAC data, then set this option to the name of these tissues as a list (and exactly as they are called in the metadata file created using <code>combine_overlaps.R</code> under the column "tissue")
 </details>
-
+<details>
+  <summary><b>Which Interval Ranges [--which_interval_ranges]</b></summary>
+  Which interval ranges to use. Should correspond to <code>WHICH_INTERVAL_RANGES</code> used previously. 
+</details>
 ### Unparallelized
 
 We will use the PBMC/bonemarrow + Lymph-BNHL data we generated previously as an example. Run:
@@ -175,13 +178,14 @@ python3 analysis/ML/build_ML_model.py
 --datasets Greenleaf_test
 --scATAC_cell_number_filter 100
 --annotation_dir test_annotation
---seed_range=1-1
---fold_for_test_set=1 
---n_optuna_trials_prebackward_selection=50
---n_optuna_trials_backward_selection=50
+--seed_range 1-1
+--fold_for_test_set 1
+--n_optuna_trials_prebackward_selection 50
+--n_optuna_trials_backward_selection 50
 --sqlite
---test_set_perf_num_features=all
+--test_set_perf_num_features all
 --custom_mutations
+--which_interval_ranges test_ranges
 ```
 
 ### Parallelized
