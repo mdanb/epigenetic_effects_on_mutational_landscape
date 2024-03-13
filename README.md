@@ -103,11 +103,11 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
    Range of seeds to use when training the model and computing permutation importance for a particular train/test split (i.e for a particular chosen fold for the test set). Format: [LOWEST_SEED]-[HIGHEST_SEED] e.g 3-7, where 3 and 7 are inclusive.
 </details>
 <details>
-  <summary><b>Number of Optuna trials pre-backward feature selection [--n_optuna_trials_prebackward_selection]</b></summary>
+  <summary><b>Number Of Optuna Trials Pre-backward Feature Selection [--n_optuna_trials_prebackward_selection]</b></summary>
    Number of Optuna trials to run before running backward feature selection (i.e when using the full feature space)
 </details>
 <details>
-  <summary><b>Number of Optuna trials during backward feature selection [--n_optuna_trials_backward_selection]</b></summary>
+  <summary><b>Number Of Optuna trials During Backward Feature Selection [--n_optuna_trials_backward_selection]</b></summary>
    Number of Optuna trials to run when performing backward feature selection, for each iteration of BFS.
 </details>
 <details>
@@ -115,7 +115,7 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
    If specified, this will enable the use of SQLite to store Optuna results. This is the easiest way to store results, as it requires no database configuration on your part. It is only appropriate to set this option when you are not using parallelization. However, SQLite is not well suited for concurrent database access, so it should not be used when training models in parallel. 
 </details>
 <details>
-  <summary><b>Test set performance number of features [--test_set_perf_num_features]</b></summary>
+  <summary><b>Test Set Performance Number Of Features [--test_set_perf_num_features]</b></summary>
    Number of features during BFS at which to save test set performance. This can be a list of numbers e.g 1 2 5 10 or simply "all." It is advisable to just set this option to "all", as computing test set performance requires negligeable compute. However, assuming the models trained during BFS are not deleted, these can always be calculated later (and the script does provide an option to do this by just re-running it, which won't re-train models, but load already trained models and compute the test set performance at the specified number of features). 
 </details>
 <details>
@@ -123,11 +123,11 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
   Cell types to keep despite not meeting the cell type filter. Format: [NAME_OF_CELL_TYPE]-[DATASET]. It is possible to provide more than 1 e.g C1-D1 C2-D2
 </details>
 <details>
-  <summary><b>Enable use of custom mutations [--custom_mutations]</b></summary>
-  This is one of multiple mutually exclusive options, which specifies where to load mutations from. It should always be set when using your own mutations, and for the example below. Which options to set use when reproducing the results from the paper will be specified as needed.  
+  <summary><b>Enable Use Of Custom Mutations [--custom_mutations]</b></summary>
+  This is one of multiple mutually exclusive options, which specifies where to load mutations from. It should always be set when using your own mutations, and for the example below. Which options to set use when reproducing the results from the paper will be specified as needed.
 </details>
 <details>
-  <summary><b>Tissues to consider [--tissues_to_consider]</b></summary>
+  <summary><b>Tissues To Consider [--tissues_to_consider]</b></summary>
   If you only want to use a particular subset of tissues from your scATAC data, then set this option to the name of these tissues as a list (and exactly as they are called in the metadata file created using <code>combine_overlaps.R</code> under the column "tissue")
 </details>
 
