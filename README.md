@@ -158,8 +158,16 @@ We will use the PBMC/bonemarrow + Lymph-BNHL data we generated previously as an 
 ```
 python3 analysis/ML/build_ML_model.py 
 --cancer_types Lymph-BNHL
---datasets Greenleaf_pbmc_bm
-
+--datasets Greenleaf_test
+--scATAC_cell_number_filter 100
+--annotation_dir test_annotation
+--seed_range=1-1
+--fold_for_test_set=1 
+--n_optuna_trials_prebackward_selection=50
+--n_optuna_trials_backward_selection=50
+--sqlite
+--test_set_perf_num_features=all
+--custom_mutations
 ```
 
 ### Parallelized
