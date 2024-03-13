@@ -76,7 +76,6 @@ This creates a csv file `data/processed_data/[CANCER_TYPE].csv` that is ready to
 # Running COCOON
 In our paper, for each cancer type, we ran the model 100 times to obtain robust predictions. In practice, this means we needed access to a compute cluster to parallelize the model training process. Below, we present two pipelines for obtaining predictions: an unparallelized approach and a parallelized approach. Of course, to obtain 100 predictions in a reasonable amount of time, particularly if using large feature spaces, you would want to use the parallelized option. In the case of the parallelized option, we assume you have access to a system that uses UGE as the job manager. However, even if this is not the case, it is very straighforward to modify `prep_ML_model_scripts.py`, the script which does the parallelization, to use a different job manager. 
 
-### Unparallelized
 The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an example, we outline the important command line options below:
 
 <details>
@@ -113,15 +112,15 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
 </details>
 <details>
   <summary><b>Enable SQLite [--sqlite]</b></summary>
-   If specified, this will enable the use of SQLite to store Optuna results. This is the easiest way to store results, as it requires no database configuration on your part. It is appropriate to set this option when you are not using parallelization. However, SQLite is not well suited for concurrent database access, so it should not be used when training models in parallel. 
+   If specified, this will enable the use of SQLite to store Optuna results. This is the easiest way to store results, as it requires no database configuration on your part. It is only appropriate to set this option when you are not using parallelization. However, SQLite is not well suited for concurrent database access, so it should not be used when training models in parallel. 
 </details>
 <details>
-  <summary><b>Test set performance number of features[--test_set_perf_num_features]</b></summary>
+  <summary><b>Test set performance number of features [--test_set_perf_num_features]</b></summary>
    Number of features during BFS at which to save test set performance. This can be a list of numbers e.g 1 2 5 10 or simply "all." It is advisable to just set this option to "all", as computing test set performance requires negligeable compute. However, assuming the models trained during BFS are not deleted, these can always be calculated later (and the script does provide an option to do this by just re-running it, which won't re-train models, but load already trained models and compute the test set performance at the specified number of features). 
 </details>
 <details>
-  <summary><b>Test set performance number of features[--test_set_perf_num_features]</b></summary>
-
+  <summary><b> [--]</b></summary>
+### Unparallelized
 </details>
 ### Parallelized
 The con
