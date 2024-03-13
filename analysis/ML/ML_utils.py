@@ -213,15 +213,17 @@ def filter_clustered_data(scATAC_df, mutations_df):
 def filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata):
     print(metadata["num_cells"].astype(int) >= scATAC_cell_number_filter)
     metadata = metadata.loc[metadata["num_cells"].astype(int) >= scATAC_cell_number_filter, :]
-    try:
-        keep = [tissue.lower().replace(" ", "_") + " " + cell_type for tissue, cell_type in zip(metadata["tissue_name"],
-                                                                                                metadata["cell_type"])]
-    except KeyError:
-        keep = [tissue.lower().replace(" ", "_") + " " + cell_type for tissue, cell_type in zip(metadata["tissue"],
-                                                                                                metadata["cell_type"])]
-    print(scATAC_df.columns.isin(keep))
-    print(scATAC_df.columns)
-    print(keep)
+    # try:
+    #     keep = [tissue.lower().replace(" ", "_") + " " + cell_type for tissue, cell_type in zip(metadata["tissue_name"],
+    #                                                                                             metadata["cell_type"])]
+    # except KeyError:
+    #     keep = [tissue.lower().replace(" ", "_") + " " + cell_type for tissue, cell_type in zip(metadata["tissue"],
+    #                                                                                             metadata["cell_type"])]
+    keep = [tissue + " " + cell_type for tissue, cell_type in zip(metadata["tissue_name"], metadata["cell_type"])]
+
+    # print(scATAC_df.columns.isin(keep))
+    # print(scATAC_df.columns)
+    # print(keep)
     scATAC_df = scATAC_df.loc[:, scATAC_df.columns.isin(keep)]
     return scATAC_df
 
