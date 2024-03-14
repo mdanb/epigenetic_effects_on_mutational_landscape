@@ -323,4 +323,30 @@ Next, we submit multiple jobs in parallel to train our models. To do this, we wi
   Submit the jobs (useful to set off for debugging).
 </details>
 
+We start by testing things out before submitting jobs, so we will first omit `--submit_jobs`:
+
+```
+python3 prep_ML_model_scripts.py 
+--cancer_types Lymph-BNHL 
+--scATAC_cell_number_filter 100 
+--annotation_dir test_annotation 
+--datasets Greenleaf_test 
+--seed_interval=1-10 
+--n_optuna_trials_prebackward_selection 50 
+--n_optuna_trials_backward_selection 50 
+--fold_for_test_set_range 1-10 
+--test_set_perf_num_features all 
+--cores=8 
+--seed_interval_step=5 
+--custom_mutations 
+--mem_per_core 1 
+--which_interval_ranges=test_ranges
+```
+
+This creates 20 bash scripts in `analysis/ML` which correspond to the jobs that would be submitted if we were to keep `--submit_jobs`. To make sure the jobs will run, we test out one of the scripts:
+```
+sh cancer_types_Lymph-BNHL_datasets_Greenleaf_test_scATAC_cell_number_filter_100_annotation_dir_test_annotation_tissues_to_consider_all_seed_range_1-5_fold_for_test_set_1.sh
+```
+
+If this runs fine, we can stop it and re-run the above command, this time with the `--submit_jobs` option enabled. 
 
