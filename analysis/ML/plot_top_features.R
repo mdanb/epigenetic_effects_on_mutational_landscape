@@ -1216,6 +1216,7 @@ if (!robustness_analysis) {
     for (fold in folds_for_test_set) {
       for (cancer_type in cancer_types) {
         construct_bar_plots(cancer_type, 
+                            tissues_to_consider,
                             datasets,
                             cell_number_filter,
                             tss_fragment_filter,
