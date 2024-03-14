@@ -323,6 +323,7 @@ Next, we submit multiple jobs in parallel to train our models. To do this, we wi
   Submit the jobs (useful to set off for debugging).
 </details>
 
+Note that if you are not using UGE, you will need to modify lines 196-205 and 239 to reflect your job manager specifics. 
 We start by testing things out before submitting jobs, so we will first omit `--submit_jobs`:
 
 ```
@@ -348,5 +349,24 @@ This creates 20 bash scripts in `analysis/ML` which correspond to the jobs that 
 sh cancer_types_Lymph-BNHL_datasets_Greenleaf_test_scATAC_cell_number_filter_100_annotation_dir_test_annotation_tissues_to_consider_all_seed_range_1-5_fold_for_test_set_1.sh
 ```
 
-If this runs fine, we can stop it and re-run the above command, this time with the `--submit_jobs` option enabled. 
+If this runs fine, we can stop it and re-run the above command, this time with the `--submit_jobs` option enabled:
+```
+python3 prep_ML_model_scripts.py 
+--cancer_types Lymph-BNHL 
+--scATAC_cell_number_filter 100 
+--annotation_dir test_annotation 
+--datasets Greenleaf_test 
+--seed_interval=1-10 
+--n_optuna_trials_prebackward_selection 50 
+--n_optuna_trials_backward_selection 50 
+--fold_for_test_set_range 1-10 
+--test_set_perf_num_features all 
+--cores=8 
+--seed_interval_step=5 
+--custom_mutations 
+--mem_per_core 1 
+--which_interval_ranges=test_ranges
+--submit_jobs
+```
 
+Once the jobs end, we can then plot results using `plot_top_features.R`. 
