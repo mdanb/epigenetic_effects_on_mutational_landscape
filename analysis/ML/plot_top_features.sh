@@ -29,7 +29,7 @@
 
 #Rscript plot_top_features.R --cancer_types="Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multipe_myeloma,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC" --ML_model=XGB --annotation=finalized_annotation --robustness_analysis --seed_range=1-10 --feature_importance_method=permutation_importance --folds_for_test_set=1-10 --grid_analysis --top_features_to_plot=1 --grid_cell_types="skin Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,BR,bonemarrow B GL_BlBm,stomach Foveolar Cell BR,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS,mammary_tissue Basal Epithelial (Mammary) BR"
 
-Rscript plot_top_features.R --cancer_types="Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC" --ML_model=XGB --annotation=finalized_annotation --robustness_analysis --seed_range=1-10 --feature_importance_method=permutation_importance --folds_for_test_set=1-10 --grid_analysis --top_features_to_plot=1 --grid_cell_types="skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS"
+#Rscript plot_top_features.R --cancer_types="Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC" --ML_model=XGB --annotation=finalized_annotation --robustness_analysis --seed_range=1-10 --feature_importance_method=permutation_importance --folds_for_test_set=1-10 --grid_analysis --top_features_to_plot=1 --grid_cell_types="skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS"
 #Rscript plot_top_features.R --cancer_types="Breast-AdenoCa,Lymph-BNHL,Myeloid-AML,Bone-Leiomyo,Thy-AdenoCA,Uterus-AdenoCA" --ML_model=XGB --annotation=finalized_annotation --robustness_analysis --seed_range=1-10 --feature_importance_method=permutation_importance --folds_for_test_set=1-10 --grid_analysis --top_features_to_plot=1 --grid_cell_types="mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow Early.Baso GL_BlBm,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR,placenta PAEP_MECOM positive cells SH"
 
 
@@ -41,9 +41,7 @@ Rscript plot_top_features.R --cancer_types="Skin-Melanoma,Liver-HCC,ColoRect-Ade
 
 #Rscript plot_top_features.R --cancer_types="Thy-AdenoCA" --ML_model=XGB --annotation=finalized_annotation --robustness_analysis --seed_range=1-10 --feature_importance_method=permutation_importance --folds_for_test_set=1-10 --grid_analysis --top_features_to_plot=1 --grid_cell_types="mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"
 
-
-
-
+Rscript plot_top_features.R --cancer_types=Lymph-BNHL --datasets=Greenleaf_test --cell_number_filter=100 --annotation=test_annotation --seed_range=1-1 --top_features_to_plot=10,5,2,1 --folds_for_test_set=1-1 --tissues_to_consider=all 
 
 
 
