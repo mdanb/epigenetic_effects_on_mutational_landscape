@@ -300,7 +300,7 @@ Next, we submit multiple jobs in parallel to train our models. To do this, we wi
 </details>
 <details>
   <summary><b> Seed Interval Step [--seed_interval_step]</b></summary>
-  Each fold specified by `--fold_for_test_set_range` will be submitted as an individual job. This parameter determines how many seeds per fold to train for each job. So if e.g `seed_interval` is set to 1-10 and ``seed_interval_step`` is set to 2, then the jobs will train seeds 1-2, 3-4, 5-6, 7-8, and 9-10 respectively, where the seeds within a given range are trained sequentially, not in parallel (so here, if e.g we're considering fold 1, then the first job will first train a model using seed 1, then once that is done, will train the model with seed 2)
+  Each fold specified by <code>fold_for_test_set_range</code> will be submitted as an individual job. This parameter determines how many seeds per fold to train for each job. So if e.g <code>seed_interval</code> is set to 1-10 and  <code>seed_interval_step</code> is set to 2, then the jobs will train seeds 1-2, 3-4, 5-6, 7-8, and 9-10 respectively, where the seeds within a given range are trained sequentially, not in parallel (so here, if e.g we're considering fold 1, then the first job will first train a model using seed 1, then once that is done, will train the model with seed 2)
 </details>
 
 
