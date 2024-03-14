@@ -4,6 +4,24 @@ This repository houses the codebase for the paper **Identifying the origin of ca
  
 In the first section below, we provide an example of how to pre-process data and prepare it as input for COCOON, in addition to then running COCOON. To reproduce paper figures, see scripts in this directory, named by the corresponding figure. 
 
+# Setting up your conda environment
+First, we need to up our conda environment. To do this, run
+
+```
+sh setup_env.sh
+```
+Then, activate the environment:
+
+```
+conda activate coo
+```
+and run:
+```
+Rscript post_installation.R
+```
+
+You should now be ready to proceed. 
+ 
 # Example
 To run COCOON, we first need to create aggregated, binned scATAC and mutation profiles. All scripts for data processing are in `data/scripts`, and all relative paths below are relative to this directory. 
 
