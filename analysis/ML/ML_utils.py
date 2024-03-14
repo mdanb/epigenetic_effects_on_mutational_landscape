@@ -327,9 +327,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
         metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
         f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb, expanded_hundred_kb,
                                         tissues_to_consider, which_interval_ranges)
-        print(scATAC_df)
         df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
-        print(df)
             # datasets_combined_count_overlaps.append(scATAC_df)
         if cell_types_keep:
             ds = ""
