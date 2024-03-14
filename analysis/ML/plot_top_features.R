@@ -219,6 +219,16 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--top_features_to_plot=1",
 #                                   "--top_features_to_plot_feat_imp=1,2,5,10"))
 
+args = parse_args(parser, args= c("--cancer_types=Lymph-BNHL",
+                                  "--datasets=Greenleaf_test",
+                                  "--cell_number_filter=100",
+                                  "--annotation=test_annotation",
+                                  "--seed_range=1-1",
+                                  "--top_features_to_plot=10,5,2,1",
+                                  "--feature_importance_method=permutation_importance",
+                                  "--folds_for_test_set=1-1",
+                                  "--tissues_to_consider=all"))
+
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -289,6 +299,7 @@ ggplot_barplot_helper <- function(df, title, savepath, y, ylab,
 }
 
 construct_bar_plots <- function(cancer_type, 
+                                tissues_to_consider,
                                 datasets,
                                 cell_number_filter,
                                 tss_fragment_filter,
@@ -301,7 +312,8 @@ construct_bar_plots <- function(cancer_type,
                                 hundred_kb, 
                                 per_donor,
                                 n_filter=NULL) {
-  dirs = get_relevant_backwards_elim_dirs(cancer_types=cancer_type, 
+  dirs = get_relevant_backwards_elim_dirs(cancer_types=cancer_type,
+                                          tissues_to_consider=tissues_to_consider,
                                           datasets=datasets,
                                           cell_number_filter=cell_number_filter,
                                           tss_fragment_filter=tss_fragment_filter,
