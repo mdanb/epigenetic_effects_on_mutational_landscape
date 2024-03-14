@@ -283,7 +283,7 @@ Next, we submit multiple jobs in parallel to train our models. To do this, we wi
   Analogous to option from <code>build_ML_model.py</code>
 </details>
 <details>
-  <summary><b> Cell Types to Keep [--cell_types_keep]</b></summary>
+  <summary><b>Cell Types to Keep [--cell_types_keep]</b></summary>
   Analogous to option from <code>build_ML_model.py</code>
 </details>
 <details>
@@ -295,31 +295,31 @@ Next, we submit multiple jobs in parallel to train our models. To do this, we wi
   Analogous to option from <code>build_ML_model.py</code>
 </details>
 <details>
-  <summary><b> Folds For Test Set [--fold_for_test_set_range]</b></summary>
+  <summary><b>Folds For Test Set [--fold_for_test_set_range]</b></summary>
   Analogous to option from <code>plot_top_features.R</code>, <b>NOT</b> <code>build_ML_model.py</code>
 </details>
 <details>
-  <summary><b> Seeds interval [--seed_interval]</b></summary>
+  <summary><b>Seeds interval [--seed_interval]</b></summary>
   Which seeds to use for training. Format: "A-B" where A, B are integers. 
 </details>
 <details>
-  <summary><b> Seed Interval Step [--seed_interval_step]</b></summary>
+  <summary><b>Seed Interval Step [--seed_interval_step]</b></summary>
   Each fold specified by <code>fold_for_test_set_range</code> will be submitted as an individual job. This parameter determines how many seeds per fold to train for each job. So if e.g <code>seed_interval</code> is set to 1-10 and  <code>seed_interval_step</code> is set to 2, then the jobs will train seeds 1-2, 3-4, 5-6, 7-8, and 9-10 respectively, where the seeds within a given range are trained sequentially, not in parallel (so here, if e.g we're considering fold 1, then the first job will first train a model using seed 1, then once that is done, will train the model with seed 2)
 </details>
 <details>
-  <summary><b> Cores [--cores]</b></summary>
+  <summary><b>Cores [--cores]</b></summary>
   Number of cores to use per job submission 
 </details>
 <details>
-  <summary><b> Memory per Core [--mem_per_core]</b></summary>
+  <summary><b>Memory per Core [--mem_per_core]</b></summary>
   Amount of memory to use per core (in GB)
 </details>
 <details>
-  <summary><b> Time [--time]</b></summary>
+  <summary><b>Time [--time]</b></summary>
   Max time per job. Format: "hours:minutes:seconds"
 </details>
 <details>
-  <summary><b> Submit Jobs [--submit_jobs]</b></summary>
+  <summary><b>Submit Jobs [--submit_jobs]</b></summary>
   Submit the jobs (useful to set off for debugging).
 </details>
 
