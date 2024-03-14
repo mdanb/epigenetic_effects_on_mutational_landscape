@@ -369,4 +369,4 @@ python3 prep_ML_model_scripts.py
 --submit_jobs
 ```
 
-Once the jobs end, we can then plot results using `plot_top_features.R`. 
+Once the jobs end, we can then plot results using `plot_top_features.R`. Here, we introduce new command line options that are helpful for the parallelized setting. 
