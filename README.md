@@ -219,7 +219,7 @@ Once the model is done training, we can then obtain a plot of the feature import
 </details>
 <details>
   <summary><b>Folds For Test Set [--folds_for_test_set]</b></summary>
-   Unlike when building the model, this parameter is "folds" plural i.e it should be a range in the format A-B
+   Unlike when building the model, this parameter is "folds" plural i.e it should be a range in the format "A-B" where A, B are integers between 1 and 10 with A <= B
 </details>
 <details>
   <summary><b>Cell Types To Keep [--cell_types_keep]</b></summary>
@@ -249,9 +249,76 @@ in the file called `permutation_importance_bar_plot.png`. The plot is shown belo
 ![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/permutation_importance_bar_plot.png)
 
 ### Parallelized
-The con
+To obtain more confidence in our prediction, we can run the model multiple times, using different random seeds, and different test sets. This is where parallelization comes into play. SQLite, which is what we used in the unparallelized option for storing results from Optuna, is not well suited for concurrent database access. Thus, we used a PostgreSQL database.
+
+INSTRUCTIONS FOR SETTING UP POSTGRESQL
+
+Next, we submit multiple jobs in parallel to train our models. To do this, we will use the script `prep_ML_model_scripts.py`. We first go over the important command line options:
+<details>
+  <summary><b>Cancer Types [--cancer_types]</b></summary>
+  Analogous to option from <code>build_ML_model.py</code>
+</details>
+<details>
+  <summary><b>scATAC Datasets [--datasets]</b></summary>
+  Analogous to option from <code>build_ML_model.py</code>
+</details>
+<details>
+  <summary><b>Cell Type Number Filter [--scATAC_cell_number_filter]</b></summary>
+  Analogous to option from <code>build_ML_model.py</code>
+</details>
+<details>
+  <summary><b>Annotation [--annotation_dir]</b></summary>
+  Analogous to option from <code>build_ML_model.py</code>
+</details>
+<details>
+  <summary><b>Test Set Performance Number Of Features [--test_set_perf_num_features]</b></summary>
+  Analogous to option from <code>build_ML_model.py</code>
+</details>
+<details>
+  <summary><b>Number Of Optuna Trials Pre-backward Feature Selection [--n_optuna_trials_prebackward_selection]</b></summary>
+  Analogous to option from <code>build_ML_model.py</code>
+</details>
+<details>
+  <summary><b>Number of Optuna Trials During Backward Feature Selection [--n_optuna_trials_backward_selection]</b></summary>
+  Analogous to option from <code>build_ML_model.py</code>
+</details>
+<details>
+  <summary><b> Cell Types to Keep [--cell_types_keep]</b></summary>
+  Analogous to option from <code>build_ML_model.py</code>
+</details>
+<details>
+  <summary><b>Tissues To Consider [--tissues_to_consider]</b></summary>
+  Analogous to option from <code>build_ML_model.py</code>
+</details>
+<details>
+  <summary><b> Folds For Test Set [--fold_for_test_set_range]</b></summary>
+  Analogous to option from <code>plot_top_features.R</code>, <b>NOT</b> <code>build_ML_model.py</code>
+</details>
+<details>
+  <summary><b> Seeds interval [--seed_interval]</b></summary>
+  Which seeds to use for training. Format: "A-B" where A, B are integers. 
+</details>
+<details>
+  <summary><b> Seed Interval Step [--seed_interval_step]</b></summary>
+  Each fold specified by `--fold_for_test_set_range` will be submitted as an individual job. This parameter determines how many seeds per fold to train for each job. So if e.g `seed_interval` is set to 1-10 and ``seed_interval_step`` is set to 2, then the jobs will train seeds 1-2, 3-4, 5-6, 7-8, and 9-10 respectively, where the seeds within a given range are trained sequentially, not in parallel (so here, if e.g we're considering fold 1, then the first job will first train a model using seed 1, then once that is done, will train the model with seed 2)
+</details>
 
 
+
+
+
+<details>
+  <summary><b> Cores [--cores]</b></summary>
+  Number of cores to use per job submission 
+</details>
+<details>
+  <summary><b> Memory per Core [--mem_per_core]</b></summary>
+  Amount of memory to use per core (in GB)
+</details>
+<details>
+  <summary><b> Time [--time]</b></summary>
+  Max time per job. Format: "hours:minutes:seconds"
+</details>
 
 
 
