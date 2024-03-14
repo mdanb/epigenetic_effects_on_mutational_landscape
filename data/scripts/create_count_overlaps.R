@@ -25,8 +25,8 @@ args = parse_args(OptionParser(option_list=option_list))
 #                    "--annotation=default_annotation",
 #                    "--which_interval_ranges=polak"))
 # args = parse_args(OptionParser(option_list=option_list), args =
-#                  c("--dataset=test",
-#                    "--cores=1",
+#                  c("--dataset=Greenleaf_test",
+#                    "--cores=4",
 #                    "--annotation=test_annotation",
 #                    "--which_interval_ranges=test_ranges"))
 cores = args$cores
