@@ -35,6 +35,7 @@ parser.add_argument('--grid_cell_types', nargs="+", type=str, default=None)
 parser.add_argument('--cell_types_keep', nargs="+", type=str, default=None)
 parser.add_argument('--tss_fragment_filter', type=str,
                     help='tss fragment filter to consider', default=None)
+parser.add_argument('--which_interval_ranges', type=str, default=None)
 
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
@@ -49,7 +50,6 @@ group.add_argument("--woo_pcawg", action="store_true", default=False)
 group.add_argument("--msi_high", action="store_true", default=False)
 group.add_argument("--subsampled_mutations", action="store_true", default=False)
 group.add_argument("--custom_mutations", action="store_true", default=False)
-
 
 group2 = parser.add_mutually_exclusive_group()
 group2.add_argument('--grid_analysis', action="store_true", default=False)
@@ -103,6 +103,7 @@ cell_types_keep = config.cell_types_keep
 tss_fragment_filter = config.tss_fragment_filter
 subsampled_mutations = config.subsampled_mutations
 custom_mutations = config.custom_mutations
+which_interval_ranges = config.which_interval_ranges
 
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
@@ -188,6 +189,7 @@ for fold in fold_for_test_set_range:
         #     command_args = command_args + " " + "--save_test_set_perf"
         command_args = command_args + " " + "--test_set_perf_num_features" + " " + " ".join(map(str,
                                                                                     test_set_perf_num_features))
+        command_args = command_args + " " + "--which_interval_ranges" + " " + which_interval_ranges
 
         python_command = "python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py " + \
                          command_args
