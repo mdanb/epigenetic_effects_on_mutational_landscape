@@ -219,15 +219,15 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--top_features_to_plot=1",
 #                                   "--top_features_to_plot_feat_imp=1,2,5,10"))
 
-args = parse_args(parser, args= c("--cancer_types=Lymph-BNHL",
-                                  "--datasets=Greenleaf_test",
-                                  "--cell_number_filter=100",
-                                  "--annotation=test_annotation",
-                                  "--seed_range=1-1",
-                                  "--top_features_to_plot=10,5,2,1",
-                                  "--feature_importance_method=permutation_importance",
-                                  "--folds_for_test_set=1-1",
-                                  "--tissues_to_consider=all"))
+# args = parse_args(parser, args= c("--cancer_types=Lymph-BNHL",
+#                                   "--datasets=Greenleaf_test",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=test_annotation",
+#                                   "--seed_range=1-1",
+#                                   "--top_features_to_plot=10,5,2,1",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-1",
+#                                   "--tissues_to_consider=all"))
 
 args = parse_args(parser)
 
