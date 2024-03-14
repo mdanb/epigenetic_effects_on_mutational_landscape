@@ -318,6 +318,9 @@ Next, we submit multiple jobs in parallel to train our models. To do this, we wi
   <summary><b> Time [--time]</b></summary>
   Max time per job. Format: "hours:minutes:seconds"
 </details>
-
+<details>
+  <summary><b> Submit Jobs [--submit_jobs]</b></summary>
+  Submit the jobs (useful to set off for debugging).
+</details>
 
 
