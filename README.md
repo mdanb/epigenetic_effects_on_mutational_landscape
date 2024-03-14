@@ -246,7 +246,7 @@ figures/models/XGB/Lymph-BNHL/scATAC_source_Greenleaf_test_cell_number_filter_10
 
 in the file called `permutation_importance_bar_plot.png`. The plot is shown below. Note that as we would expect for Lymph-BNHL, the most important feature turns out to be bone marrow B cells, which corresponds to the putative cell of origin. 
 
-![alt text](https://github.com/mdanb/https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/permutation_importance_bar_plot.png)
+![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/permutation_importance_bar_plot.png)
 
 ### Parallelized
 The con
