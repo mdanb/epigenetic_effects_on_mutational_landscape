@@ -28,7 +28,6 @@ parser.add_argument('--mem_per_core', type=str, default="8")
 parser.add_argument('--time', type=str, default="24:00:00")
 parser.add_argument('--feature_importance_method', type=str)
 parser.add_argument("--make_plots", action="store_true", default=False)
-parser.add_argument("--create_bash_scripts", action="store_true", default=False)
 parser.add_argument("--cleanup", action="store_true", default=False)
 parser.add_argument('--feat_imp_min_n_robustness', type=int)
 parser.add_argument('--grid_cell_types', nargs="+", type=str, default=None)
@@ -70,7 +69,6 @@ seed_ranges = list(range(start - 1, end + 1, seed_interval_step))
 seed_ranges = [f"{seed_ranges[i] + 1}-{seed_ranges[i+1]}" for i in range(len(seed_ranges)-1)]
 start, end = map(int, config.fold_for_test_set_range.split('-'))
 fold_for_test_set_range = range(start, end + 1)
-create_bash_scripts = config.create_bash_scripts
 n_optuna_trials_prebackward_selection = config.n_optuna_trials_prebackward_selection
 n_optuna_trials_backward_selection = config.n_optuna_trials_backward_selection
 meso = config.meso

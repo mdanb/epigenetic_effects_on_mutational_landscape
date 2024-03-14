@@ -37,7 +37,8 @@ parser <- add_option(parser, c("--robustness_analysis"), action="store_true",
 parser <- add_option(parser, c("--robustness_accumulated_feature_importance_barplot"), 
                      action="store_true", 
                      default=F)
-parser <- add_option(parser, c("--feature_importance_method"), type="character")
+parser <- add_option(parser, c("--feature_importance_method"), type="character",
+                     default="permutation_importance")
 parser <- add_option(parser, c("--skip_seeds_robustness"), default="")
 parser <- add_option(parser, c("--folds_for_test_set"), type="character", 
                      default="1-10")
