@@ -244,7 +244,7 @@ This will generate the plot in
 figures/models/XGB/Lymph-BNHL/scATAC_source_Greenleaf_test_cell_number_filter_100_annotation_test_annotation_seed_1_fold_for_test_set_1/backwards_elimination_results/
 ```
 
-in the file called `permutation_importance_bar_plot.png`. The plot is shown below. Note that as we would expect for Lymph-BNHL, the most important feature turns out to be bone marrow B cells, which corresponds to the putative cell of origin. 
+in the file called `permutation_importance_bar_plot.png`. The plot is shown below. Note that as we would expect for Lymph-BNHL, the most important feature turns out to be bone marrow B cells (BMMC B), which corresponds to the putative cell of origin. Note that each feature in the plot is appended with the number of features being considered. Since we specified `top_features_to_plot=10,5,2,1`, we see the permutation importance of different features for each of these different number of features left. 
 
 ![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/permutation_importance_bar_plot.png)
 
