@@ -20,7 +20,7 @@ and run:
 Rscript post_installation.R
 ```
 
-You should now be ready to proceed. 
+You should now be ready to proceed.
  
 # Example
 To run COCOON, we first need to create aggregated, binned scATAC and mutation profiles. All scripts for data processing are in `data/scripts`, and all relative paths below are relative to this directory. 
@@ -267,7 +267,8 @@ in the file called `permutation_importance_bar_plot.png`. The plot is shown belo
 ![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/permutation_importance_bar_plot.png)
 
 ### Parallelized
-To obtain more confidence in our prediction, we can run the model multiple times, using different random seeds, and different test sets. This is where parallelization comes into play. SQLite, which is what we used in the unparallelized option for storing results from Optuna, is not well suited for concurrent database access. Thus, we used a PostgreSQL database.
+To obtain more confidence in our prediction, we can run the model multiple times, using different random seeds, and different test sets. This is where parallelization comes into play. SQLite, which is what we used in the unparallelized option for storing results from Optuna, is not well suited for concurrent database access. Thus, we used a PostgreSQL database. The first step in thus to set this up. Begin by creating a new database:
+
 
 INSTRUCTIONS FOR SETTING UP POSTGRESQL
 
