@@ -121,7 +121,7 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
   Names of the scATAC datasets to consider. Should correspond to <code>DATASET_NAME</code> above. 
 </details>
 <details>
-  <summary><b>Cell Type Filter [--scATAC_cell_number_filter]</b></summary>
+  <summary><b>Cell Type Number Filter [--scATAC_cell_number_filter]</b></summary>
   Filter for the minimum number of cells per cell type. All cells with lower than this minimum will be excluded. 
 </details>
 <details>
@@ -187,6 +187,66 @@ python3 build_ML_model.py
 --custom_mutations
 --which_interval_ranges test_ranges
 ```
+
+Once the model is done training, we can then obtain a plot of the feature importance of different features at a given iteration of BFS using the script `plot_top_features.R`. Before we do this, we outline the important command line options to do this:
+<details>
+  <summary><b>Cancer Types [--cancer_types]</b></summary>
+  The cancer types to plot. Should correspond to cancer type used when training the model. Should be a string, separating tissues by a comma and no space in between e.g "cancer_type1,cancer_type2,..."
+</details>
+<details>
+  <summary><b>Cell Type Number Filter [--cell_number_filter]</b></summary>
+  Should correspond to the filter used when training the model.
+</details>
+<details>
+  <summary><b>Datasets [--datasets]</b></summary>
+  Should correspond to the datasets used when training the model. Should be a string, separating datasets by a comma and no space in between.
+</details>
+<details>
+  <summary><b>Top features to plot [--top_features_to_plot]</b></summary>
+  Number of features at which to plot feature importances (assuming `robustness_analysis` is not enabled, see parallelized option below). Should be a string, separating numbers by a comma and no space in between.
+</details>
+<details>
+  <summary><b>Tissues To Consider [--tissues_to_consider]</b></summary>
+  Should correspond to tissues considered when training the model. Should be a string, separating tissues by a comma and no space in between.
+</details>
+<details>
+  <summary><b>Annotation [--annotation]</b></summary>
+  Should correspond to annotation used when training the model.
+</details>
+<details>
+  <summary><b>Seed Range [--seed_range]</b></summary>
+   Should correspond to seeds used when training the model.
+</details>
+<details>
+  <summary><b>Folds For Test Set [--folds_for_test_set]</b></summary>
+   Unlike when building the model, this parameter is "folds" plural i.e it should be a range in the format A-B
+</details>
+<details>
+  <summary><b>Cell Types To Keep [--cell_types_keep]</b></summary>
+  Should correspond to cell types kept when training the model. Should be a string, separating cell types by a comma and no space in between
+</details>
+
+For our example, we run:
+```
+Rscript plot_top_features.R
+--cancer_types=Lymph-BNHL
+--datasets=Greenleaf_test
+--cell_number_filter=100
+--annotation=test_annotation
+--seed_range=1-1
+--top_features_to_plot=10,5,2,1
+--folds_for_test_set=1-1
+--tissues_to_consider=all
+```
+
+This will generate the plot in 
+```
+figures/models/XGB/Lymph-BNHL/scATAC_source_Greenleaf_test_cell_number_filter_100_annotation_test_annotation_seed_1_fold_for_test_set_1/backwards_elimination_results/
+```
+
+in the file called `permutation_importance_bar_plot.png`. The plot is shown below. Note that as we would expect for Lymph-BNHL, the most important feature turns out to be bone marrow B cells, which corresponds to the putative cell of origin. 
+
+![alt text](https://github.com/mdanb/https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/permutation_importance_bar_plot.png)
 
 ### Parallelized
 The con
