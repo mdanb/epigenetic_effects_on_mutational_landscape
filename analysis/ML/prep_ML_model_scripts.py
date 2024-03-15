@@ -29,7 +29,7 @@ parser.add_argument('--time', type=str, default="24:00:00")
 parser.add_argument('--feature_importance_method', type=str, default="permutation_importance")
 parser.add_argument("--make_plots", action="store_true", default=False)
 parser.add_argument("--cleanup", action="store_true", default=False)
-parser.add_argument('--feat_imp_min_n_robustness', type=int)
+# parser.add_argument('--feat_imp_min_n_robustness', type=int)
 parser.add_argument('--grid_cell_types', nargs="+", type=str, default=None)
 parser.add_argument('--cell_types_keep', nargs="+", type=str, default=None)
 parser.add_argument('--tss_fragment_filter', type=str,
@@ -93,7 +93,7 @@ run_locally = config.run_locally
 expanded_hundred_kb = config.expanded_hundred_kb
 tissues_to_consider = config.tissues_to_consider
 top_features_to_plot_feat_imp = config.top_features_to_plot_feat_imp
-feat_imp_min_n_robustness = config.feat_imp_min_n_robustness
+# feat_imp_min_n_robustness = config.feat_imp_min_n_robustness
 grid_analysis = config.grid_analysis
 grid_cell_types = config.grid_cell_types
 msi_high = config.msi_high
@@ -255,8 +255,8 @@ command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
                          "--top_features_to_plot", ",".join(config.top_features_to_plot),
                          "--feature_importance_method", feature_importance_method,
                          "--folds_for_test_set 1-10",
-                         "--robustness_analysis",
-                         "--feat_imp_min_n_robustness", str(feat_imp_min_n_robustness)])
+                         "--robustness_analysis"]),
+                         #"--feat_imp_min_n_robustness", str(feat_imp_min_n_robustness)])
 
 if grid_analysis:
     command_args = command_args + " " + "--grid_analysis" + " " + "--grid_cell_types" + " " + \
