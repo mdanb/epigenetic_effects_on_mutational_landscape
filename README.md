@@ -267,11 +267,51 @@ in the file called `permutation_importance_bar_plot.png`. The plot is shown belo
 ![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/permutation_importance_bar_plot.png)
 
 ### Parallelized
-To obtain more confidence in our prediction, we can run the model multiple times, using different random seeds, and different test sets. This is where parallelization comes into play. SQLite, which is what we used in the unparallelized option for storing results from Optuna, is not well suited for concurrent database access. Thus, we used a PostgreSQL database. The first step in thus to set this up. Begin by creating a new database:
+To obtain more confidence in our prediction, we can run the model multiple times, using different random seeds, and different test sets. This is where parallelization comes into play. SQLite, which is what we used in the unparallelized option for storing results from Optuna, is not well suited for concurrent database access. Thus, we used a PostgreSQL database. The first step in thus to set this up. Begin by initializing a new PostgreSQL directory that we'll call `sqldb`:
 
 ```
-initdb -D  
+initdb -D sqldb
 ```
+
+Next, we need to start the server. We will also get the hostname of the machine that the server is running on; this is helpful later. Depending on how you do this, the hostname will change every time you start a new server. Thus, it's best to just create a mini-script that `echo`s the hostname to a file, which will then access from the script that runs the model, and then starts the server:
+
+Create a script that you can run. I'll call it `startpg` (in my case, it's in `~/.local/bin/`, which is one of the directories included in `$PATH`, so running `startpg` will run that script):
+  
+```
+echo $(hostname) > analysis/ML/postgresql_hostname.txt
+~/conda/coo/bin/pg_ctl -D analysis/ML/sqldb start
+```
+
+You will need to modify the path `~/conda/coo/bin/` depending on where your conda environment is installed.
+
+Now, run:
+```
+startpg
+```
+
+We've now started the server (and we've recorded the hostname of the machine running it). 
+
+We now create a new user for the database called `my_user` (can change to whatever you want). We will be asked for a passcode, and I'll use `password` here:
+```
+createuser -P my_user
+```
+
+We then create a database called `optuna_db` associated with this user (again, we can pick any name):
+
+```
+createdb -O my_user optuna_db
+```
+Now, change line 828 in `ML_utils.py` to reflect the name of the database, as well as the username and password that you chose for your user (note that we're writing the password in the script, which is not good practice, but for our purposes it's fine). In our case:
+
+```
+postgresql://my_user:password@{hostname}:5432/optuna_db
+```
+
+We've almost ready to run the model now. We just need to change the configurations of the database to make it less restrictive, so that our database can accept connections from other hosts (the jobs that will be running the model). To do this, edit 
+
+
+
+
 
 INSTRUCTIONS FOR SETTING UP POSTGRESQL
 
