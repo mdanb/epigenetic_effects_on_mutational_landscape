@@ -311,10 +311,6 @@ We've almost ready to run the model now. We just need to change the configuratio
 - listen_addresses = '*'
 - max_connections = 10000
 
-
-
-INSTRUCTIONS FOR SETTING UP POSTGRESQL
-
 Next, we submit multiple jobs in parallel to train our models. To do this, we will use the script `prep_ML_model_scripts.py`. We first go over the important command line options:
 <details>
   <summary><b>Cancer Types [--cancer_types]</b></summary>
