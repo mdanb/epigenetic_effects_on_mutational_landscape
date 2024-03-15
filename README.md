@@ -269,6 +269,9 @@ in the file called `permutation_importance_bar_plot.png`. The plot is shown belo
 ### Parallelized
 To obtain more confidence in our prediction, we can run the model multiple times, using different random seeds, and different test sets. This is where parallelization comes into play. SQLite, which is what we used in the unparallelized option for storing results from Optuna, is not well suited for concurrent database access. Thus, we used a PostgreSQL database. The first step in thus to set this up. Begin by creating a new database:
 
+```
+initdb -D  
+```
 
 INSTRUCTIONS FOR SETTING UP POSTGRESQL
 
