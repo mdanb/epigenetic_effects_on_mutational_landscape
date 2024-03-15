@@ -255,7 +255,7 @@ command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
                          "--top_features_to_plot", ",".join(config.top_features_to_plot),
                          "--feature_importance_method", feature_importance_method,
                          "--folds_for_test_set 1-10",
-                         "--robustness_analysis"]),
+                         "--robustness_analysis"])
                          #"--feat_imp_min_n_robustness", str(feat_imp_min_n_robustness)])
 
 if grid_analysis:
