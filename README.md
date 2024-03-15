@@ -272,8 +272,19 @@ To obtain more confidence in our prediction, we can run the model multiple times
 ```
 initdb -D sqldb
 ```
+We will change the configurations of the database to make it less restrictive so that our database can accept connections from other hosts (the jobs that will be running the model). To do this, edit the file `analysis/ML/sqldb/postgresql.conf` so that:
+- listen_addresses = '*'
+- max_connections = 10000
+Also, in `analysis/ML/sqldb/postgresql.conf`, change the lines under the comments `# IPv4 local connections:` and `# IPv6 local connections:` to:
+```
+# IPv4 local connections:
+host    all             all             0.0.0.0/0            trust
+# IPv6 local connections:
+host    all             all             ::/0                 trust
+```
 
-Next, we need to start the server. We will also get the hostname of the machine that the server is running on; this is helpful later. Depending on how you do this, the hostname will change every time you start a new server. Thus, it's best to just create a mini-script that `echo`s the hostname to a file, which will then access from the script that runs the model, and then starts the server:
+
+Next, we need to start the server. We will also get the hostname of the machine that the server is running on; this is helpful for later. Depending on how you do this, the hostname will change every time you start a new server, which you need to do every time you want to run models. Thus, it's best to just create a mini-script that `echo`s the hostname to a file, which will then access from the script that runs the model, and then starts the server:
 
 Create a script that you can run. I'll call it `startpg` (in my case, it's in `~/.local/bin/`, which is one of the directories included in `$PATH`, so running `startpg` will run that script):
   
@@ -306,10 +317,6 @@ Now, change line 828 in `ML_utils.py` to reflect the name of the database, as we
 ```
 postgresql://my_user:password@{hostname}:5432/optuna_db
 ```
-
-We've almost ready to run the model now. We just need to change the configurations of the database to make it less restrictive so that our database can accept connections from other hosts (the jobs that will be running the model). To do this, edit the file `analysis/ML/sqldb/postgresql.conf` so that:
-- listen_addresses = '*'
-- max_connections = 10000
 
 Next, we submit multiple jobs in parallel to train our models. To do this, we will use the script `prep_ML_model_scripts.py`. We first go over the important command line options:
 <details>
