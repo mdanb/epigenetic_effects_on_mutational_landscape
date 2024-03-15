@@ -307,13 +307,9 @@ Now, change line 828 in `ML_utils.py` to reflect the name of the database, as we
 postgresql://my_user:password@{hostname}:5432/optuna_db
 ```
 
-We've almost ready to run the model now. We just need to change the configurations of the database to make it less restrictive, so that our database can accept connections from other hosts (the jobs that will be running the model). To do this, edit 
-
-
-
-
-
-INSTRUCTIONS FOR SETTING UP POSTGRESQL
+We've almost ready to run the model now. We just need to change the configurations of the database to make it less restrictive so that our database can accept connections from other hosts (the jobs that will be running the model). To do this, edit the file `analysis/ML/sqldb/postgresql.conf` so that:
+- listen_addresses = '*'
+- max_connections = 10000
 
 Next, we submit multiple jobs in parallel to train our models. To do this, we will use the script `prep_ML_model_scripts.py`. We first go over the important command line options:
 <details>
