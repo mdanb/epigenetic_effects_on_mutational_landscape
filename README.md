@@ -366,7 +366,7 @@ We're now ready to submit multiple jobs in parallel to train our models. To do t
   Analogous to option from <code>plot_top_features.R</code>, <b>NOT</b> <code>build_ML_model.py</code>
 </details>
 <details>
-  <summary><b>Seeds interval [--seed_interval]</b></summary>
+  <summary><b>Seeds Interval [--seed_interval]</b></summary>
   Which seeds to use for training. Format: "A-B" where A, B are integers. 
 </details>
 <details>
@@ -437,3 +437,21 @@ python3 prep_ML_model_scripts.py
 ```
 
 Once the jobs end, we can then plot results using `plot_top_features.R`. Here, we introduce new command line options that are helpful for the parallelized setting. 
+
+<details>
+  <summary><b>Robustness Analysis [--robustness_analysis]</b></summary>
+  This specifies that we're operating in the parallelized setting, so that we obtain the correct plots. 
+</details>
+<details>
+  <summary><b>Top Features To Plot [--top_features_to_plot]</b></summary>
+  This is not a new option, but it means something different here. When <code>--robustness_analysis</code> is enabled, <code>--top_features_to_plot</code> specifies the number of features remaining at which to plot the R^2 of the model when the top appearing feature across runs is actually the top feature for that particular model e.g if Lung AT2 is the top appearing feature across 100 runs of the model, then specifying <code>--top_features_to_plot=1,2,5,10</code> will plot boxplots of the R^2 when 1, 2, 5, and 10 features remain after backward feature selection, and will only plot those models where the top feature is actually Lung AT2. For an example, see Supplementary Figure 1 of the paper, last column. 
+</details>
+<details>
+  <summary><b>Top Features To Plot For Feature Importance [--top_features_to_plot_feat_imp]</b></summary>
+  This specifies the number of features remaining at which to plot feature importances (boxplots) for various features across the runs. Only the top 5 most important features will be plotted, where importance is first measured based on the number of times the feature appears, and ties are broken by median feature importance. For an example, see Figure 1, 1D. 
+</details>
+
+We now plot:
+
+
+
