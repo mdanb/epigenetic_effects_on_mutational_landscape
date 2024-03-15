@@ -824,8 +824,8 @@ def get_storage_name(sqlite=False):
     else:
         hostname_file = open(os.path.dirname(os.path.abspath(__file__)) + "/" + "postgresql_hostname.txt", "r")
         hostname = hostname_file.readline().strip()
-        # storage_name = f"postgresql://bgiotti:bgiotti@{hostname}:5432/optuna_db"
-        storage_name = f"postgresql://my_user:password@{hostname}:5432/optuna_db"
+        storage_name = f"postgresql://bgiotti:bgiotti@{hostname}:5432/optuna_db"
+        # storage_name = f"postgresql://my_user:password@{hostname}:5432/optuna_db"
     return storage_name
 
 
