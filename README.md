@@ -17,6 +17,10 @@ conda activate coo
 ```
 and run:
 ```
+conda install postgresql=14.5
+```
+then:
+```
 Rscript post_installation.R
 ```
 
