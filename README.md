@@ -18,6 +18,7 @@ conda activate coo
 and run:
 ```
 conda install postgresql=14.5
+conda install -c conda-forge r-gert=2.0.0
 ```
 then:
 ```
