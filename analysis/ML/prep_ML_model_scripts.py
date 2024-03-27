@@ -190,7 +190,7 @@ for fold in fold_for_test_set_range:
         if which_interval_ranges:
             command_args = command_args + " " + "--which_interval_ranges" + " " + which_interval_ranges
 
-        python_command = "python3 /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/build_ML_model.py " + \
+        python_command = f"python3 {os.path.dirname(os.path.realpath(__file__))}/build_ML_model.py " + \
                          command_args
 
         job_script = "\n".join(["#!/bin/bash",
@@ -200,8 +200,8 @@ for fold in fold_for_test_set_range:
                                 f"#$ -pe smp {cores}",
                                 f"#$ -l h_vmem={mem_per_core}G",
                                 f"#$ -N {config.cancer_types[0]}_seed_range_{seed_range}_fold_for_test_{fold}",
-                                "#$ -o /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
-                                "#$ -e /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML",
+                                f"#$ -o {os.path.dirname(os.path.realpath(__file__))}",
+                                f"#$ -e {os.path.dirname(os.path.realpath(__file__))}",
                                 f"#$ -binding linear:{cores}"])
                                 # "",
                                 # "source /broad/software/scripts/useuse",
@@ -215,7 +215,7 @@ for fold in fold_for_test_set_range:
                                    "",
                                    "source /broad/software/scripts/useuse",
                                    "use Anaconda",
-                                   "source activate /ahg/regevdata/projects/ICA_Lung/Wooseung/conda/coo",
+                                   "source activate /ahg/regevdata/projects/ICA_Lung/Wooseung/conda/coosim",
                                    ""])
         job_script = '\n'.join([job_script,
                                 python_command])
