@@ -34,15 +34,15 @@ parser <- add_option(parser, c("--annotation"),
 parser <- add_option(parser, c("--seed_range"), default="42-42")
 parser <- add_option(parser, c("--robustness_analysis"), action="store_true", 
                      default=F)
-parser <- add_option(parser, c("--robustness_accumulated_feature_importance_barplot"), 
-                     action="store_true", 
-                     default=F)
+# parser <- add_option(parser, c("--robustness_accumulated_feature_importance_barplot"), 
+#                      action="store_true", 
+#                      default=F)
 parser <- add_option(parser, c("--feature_importance_method"), type="character",
                      default="permutation_importance")
 parser <- add_option(parser, c("--skip_seeds_robustness"), default="")
 parser <- add_option(parser, c("--folds_for_test_set"), type="character", 
                      default="1-10")
-parser <- add_option(parser, c("--feat_imp_min_n_robustness"), type="integer")
+# parser <- add_option(parser, c("--feat_imp_min_n_robustness"), type="integer")
 parser <- add_option(parser, c("--plot_fold_on_test_set_plot"), action="store_true", 
                      default=F)
 parser <- add_option(parser, c("--hundred_kb"), action="store_true", default=F)
@@ -220,15 +220,15 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--top_features_to_plot=1",
 #                                   "--top_features_to_plot_feat_imp=1,2,5,10"))
 
-# args = parse_args(parser, args= c("--cancer_types=Lymph-BNHL",
-#                                   "--datasets=Greenleaf_test",
-#                                   "--cell_number_filter=100",
-#                                   "--annotation=test_annotation",
-#                                   "--seed_range=1-1",
-#                                   "--top_features_to_plot=10,5,2,1",
-#                                   "--feature_importance_method=permutation_importance",
-#                                   "--folds_for_test_set=1-1",
-#                                   "--tissues_to_consider=all"))
+args = parse_args(parser, args= c("--cancer_types=Lung-AdenoCA",
+                                  "--datasets=Bingren,Rawlins_fetal_lung,Shendure,Tsankov",
+                                  "--cell_number_filter=100",
+                                  "--annotation=finalized_annotation",
+                                  "--seed_range=1-10",
+                                  "--top_features_to_plot_feat_imp=5",
+                                  "--folds_for_test_set=1-10",
+                                  "--tissues_to_consider=lung,fetal_lung",
+                                  "--robustness_analysis"))
 
 args = parse_args(parser)
 
@@ -1163,8 +1163,8 @@ ML_model = args$ML_model
 seed_range = unlist(strsplit(args$seed_range, split = "-"))
 seed_range = seq(seed_range[1], seed_range[2])
 robustness_analysis = args$robustness_analysis
-robustness_accumulated_feature_importance_barplot = 
-  args$robustness_accumulated_feature_importance_barplot
+# robustness_accumulated_feature_importance_barplot = 
+#   args$robustness_accumulated_feature_importance_barplot
 feature_importance_method = args$feature_importance_method
 if (!is.null(args$top_features_to_plot_feat_imp)) {
   top_features_to_plot_feat_imp = as.numeric(unlist(strsplit(
@@ -1192,7 +1192,7 @@ if (!grid_analysis) {
 folds_for_test_set = args$folds_for_test_set
 folds_for_test_set = unlist(strsplit(args$folds_for_test_set, split = "-"))
 folds_for_test_set = seq(folds_for_test_set[1], folds_for_test_set[2])
-feat_imp_min_n_robustness = args$feat_imp_min_n_robustness
+# feat_imp_min_n_robustness = args$feat_imp_min_n_robustness
 plot_fold_on_test_set_plot = args$plot_fold_on_test_set_plot
 hundred_kb = args$hundred_kb
 per_donor = args$per_donor
@@ -1204,6 +1204,7 @@ if (!is.null(cell_types_keep)) {
   cell_types_keep = unlist(lapply(cell_types_keep, paste, collapse="_"))
   cell_types_keep = gsub(" ", "_", cell_types_keep)
   cell_types_keep[cell_types_keep == "NULL"] <- NA
+  cell_types_keep[cell_types_keep == "NA"] <- NA
 }
 
 if (!is.null(robustness_keep)) {
