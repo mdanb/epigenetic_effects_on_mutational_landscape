@@ -243,7 +243,7 @@ for fold in fold_for_test_set_range:
         if cleanup:
             subprocess.run(["rm", f"{script_filename}"])
 
-os.makedirs("robustness_scripts", exist_ok=True)
+os.makedirs(f"{os.path.dirname(os.path.realpath(__file__))}/robustness_scripts", exist_ok=True)
 robustness_filename = f"robustness_{robustness_filename}.sh"
 robustness_fp = os.path.join("robustness_scripts", robustness_filename)
 command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
@@ -274,7 +274,7 @@ if tss_fragment_filter:
 if hundred_kb:
     command_args = command_args + " " + "--hundred_kb"
 
-Rscript_command = "Rscript /broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/plot_top_features.R " + \
+Rscript_command = f"Rscript {os.path.dirname(os.path.realpath(__file__))}/plot_top_features.R " + \
                   command_args
 
 try:
@@ -282,7 +282,7 @@ try:
         f.write(Rscript_command)
 except:
     print("exception")
-    robustness_fp = "robustness_scripts/temp.sh"
+    robustness_fp = f"{os.path.dirname(os.path.realpath(__file__))}/robustness_scripts/temp.sh"
     print(robustness_fp)
     with open(robustness_fp, "w") as f:
         f.write(Rscript_command)
