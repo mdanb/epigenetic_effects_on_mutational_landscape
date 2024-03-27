@@ -222,7 +222,7 @@ for fold in fold_for_test_set_range:
 
         try:
             print("Creating scripts...")
-            with open(script_filename, "w") as f:
+            with open(f"{os.path.dirname(os.path.realpath(__file__))}/{script_filename}", "w") as f:
                 f.write(job_script)
         except:
             if "cluster" in script_filename:
