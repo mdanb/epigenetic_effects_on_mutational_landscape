@@ -405,20 +405,20 @@ Note that if you are not using UGE, you will need to modify lines 196-205 and 23
 We start by testing things out before submitting jobs, so we will first omit `--submit_jobs`:
 
 ```
-python3 prep_ML_model_scripts.py 
---cancer_types Lymph-BNHL 
---scATAC_cell_number_filter 100 
---annotation_dir test_annotation 
---datasets Greenleaf_test 
---seed_interval=1-10 
---n_optuna_trials_prebackward_selection 50 
---n_optuna_trials_backward_selection 50 
---fold_for_test_set_range 1-10 
---test_set_perf_num_features all 
---cores=8 
---seed_interval_step=5 
---custom_mutations 
---mem_per_core 1 
+python3 prep_ML_model_scripts.py \
+--cancer_types Lymph-BNHL \
+--scATAC_cell_number_filter 100 \
+--annotation_dir test_annotation \
+--datasets Greenleaf_test \
+--seed_interval=1-10 \
+--n_optuna_trials_prebackward_selection 50 \
+--n_optuna_trials_backward_selection 50 \
+--fold_for_test_set_range 1-10 \
+--test_set_perf_num_features all \
+--cores=8 \
+--seed_interval_step=5 \
+--custom_mutations \
+--mem_per_core 1 \
 --which_interval_ranges=test_ranges
 ```
 
@@ -429,21 +429,21 @@ sh cancer_types_Lymph-BNHL_datasets_Greenleaf_test_scATAC_cell_number_filter_100
 
 If this runs fine, we can stop it and re-run the above command, this time with the `--submit_jobs` option enabled:
 ```
-python3 prep_ML_model_scripts.py 
---cancer_types Lymph-BNHL 
---scATAC_cell_number_filter 100 
---annotation_dir test_annotation 
---datasets Greenleaf_test 
---seed_interval=1-10 
---n_optuna_trials_prebackward_selection 50 
---n_optuna_trials_backward_selection 50 
---fold_for_test_set_range 1-10 
---test_set_perf_num_features all 
---cores=8 
---seed_interval_step=5 
---custom_mutations 
---mem_per_core 1 
---which_interval_ranges=test_ranges
+python3 prep_ML_model_scripts.py \
+--cancer_types Lymph-BNHL \
+--scATAC_cell_number_filter 100 \
+--annotation_dir test_annotation \
+--datasets Greenleaf_test \
+--seed_interval=1-10 \
+--n_optuna_trials_prebackward_selection 50 \
+--n_optuna_trials_backward_selection 50 \
+--fold_for_test_set_range 1-10 \
+--test_set_perf_num_features all \
+--cores=8 \
+--seed_interval_step=5 \
+--custom_mutations \
+--mem_per_core 1 \
+--which_interval_ranges=test_ranges \
 --submit_jobs
 ```
 
@@ -465,16 +465,16 @@ Once the jobs end, we can then plot results using `plot_top_features.R`. Here, w
 We now plot:
 
 ```
-Rscript plot_top_features.R 
---cancer_types Lymph-BNHL 
---datasets Greenleaf_test 
---cell_number_filter 100 
---annotation test_annotation 
---seed_range 1-10 
---top_features_to_plot_feat_imp 1,2,5,10 
---top_features_to_plot 1,2,5,10 
---folds_for_test_set 1-10 
---robustness_analysis 
+Rscript plot_top_features.R \
+--cancer_types Lymph-BNHL \
+--datasets Greenleaf_test \
+--cell_number_filter 100 \
+--annotation test_annotation \ 
+--seed_range 1-10 \
+--top_features_to_plot_feat_imp 1,2,5,10 \ 
+--top_features_to_plot 1,2,5,10 \
+--folds_for_test_set 1-10 \
+--robustness_analysis \
 --tissues_to_consider all
 ```
 
