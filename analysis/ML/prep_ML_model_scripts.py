@@ -104,19 +104,20 @@ subsampled_mutations = config.subsampled_mutations
 custom_mutations = config.custom_mutations
 which_interval_ranges = config.which_interval_ranges
 
+robustness_filename = uuid.uuid4()
 for fold in fold_for_test_set_range:
     for seed_range in seed_ranges:
         # cancer_types = config.cancer_types
         # match = re.search(r'cluster_[0-9]+', config.cancer_types[0])
         # if match:
         #     cancer_types = match.group()
-        # script_filename = "_".join(["cancer_types", "_".join(config.cancer_types),
-        #                             "datasets", "_".join(sorted(config.datasets)),
-        #                             "scATAC_cell_number_filter", scATAC_cell_number_filter,
-        #                             "annotation_dir", annotation_dir,
-        #                             "tissues_to_consider", "_".join(tissues_to_consider)])
-        #                             # "feature_importance_method", feature_importance_method])
-        #                                 # "top_features_to_plot", "_".join(config.top_features_to_plot),
+        script_filename = "_".join(["cancer_types", "_".join(config.cancer_types),
+                                    "datasets", "_".join(sorted(config.datasets)),
+                                    "scATAC_cell_number_filter", scATAC_cell_number_filter,
+                                    "annotation_dir", annotation_dir,
+                                    "tissues_to_consider", "_".join(tissues_to_consider)])
+                                    # "feature_importance_method", feature_importance_method])
+                                        # "top_features_to_plot", "_".join(config.top_features_to_plot),
 
         command_args = " ".join(["--cancer_types", " ".join(config.cancer_types),
                                  "--datasets", " ".join(sorted(config.datasets)),
@@ -134,13 +135,13 @@ for fold in fold_for_test_set_range:
             command_args = command_args + " " + "--cell_types_keep" + " " + f"'{ctk}'"
 
         if meso:
-            # script_filename = script_filename + "_" + "meso"
+            script_filename = script_filename + "_" + "meso"
             command_args = command_args + " " + "--meso"
         elif SCLC:
-            # script_filename = script_filename + "_" + "SCLC"
+            script_filename = script_filename + "_" + "SCLC"
             command_args = command_args + " " + "--SCLC"
         elif de_novo_seurat_clustering:
-            # script_filename = script_filename + "_" + "de_novo_seurat_clustering"
+            script_filename = script_filename + "_" + "de_novo_seurat_clustering"
             command_args = command_args + " " + "--de_novo_seurat_clustering"
         elif histologically_subtyped_mutations:
             # script_filename = script_filename + "_" + "histologically_subtyped_mutations"
@@ -148,19 +149,19 @@ for fold in fold_for_test_set_range:
         elif hierarchically_subtyped_mutations:
             command_args = command_args + " " + "--hierarchically_subtyped_mutations"
         elif hundred_kb:
-            # script_filename = script_filename + "_" + "hundred_kb"
+            script_filename = script_filename + "_" + "hundred_kb"
             command_args = command_args + " " + "--hundred_kb"
         elif expanded_hundred_kb:
-            # script_filename = script_filename + "_" + "expanded_hundred_kb"
+            script_filename = script_filename + "_" + "expanded_hundred_kb"
             command_args = command_args + " " + "--expanded_hundred_kb"
         elif mm:
-            # script_filename = script_filename + "_" + "mm"
+            script_filename = script_filename + "_" + "mm"
             command_args = command_args + " " + "--mm"
         elif woo_pcawg:
-            # script_filename = script_filename + "_" + "woo_pcawg"
+            script_filename = script_filename + "_" + "woo_pcawg"
             command_args = command_args + " " + "--woo_pcawg"
         elif msi_high:
-            # script_filename = script_filename + "_" + "msi_high"
+            script_filename = script_filename + "_" + "msi_high"
             command_args = command_args + " " + "--msi_high"
         elif subsampled_mutations:
             command_args = command_args + " " + "--subsampled_mutations"
@@ -175,12 +176,12 @@ for fold in fold_for_test_set_range:
 
         if tss_fragment_filter:
             command_args = command_args + " " + "--tss_fragment_filter" + " " + tss_fragment_filter
-            # script_filename = script_filename + "_" + "tss_filter" + "_" + tss_fragment_filter
+            script_filename = script_filename + "_" + "tss_filter" + "_" + tss_fragment_filter
 
         # robustness_filename = script_filename
-        # script_filename = "_".join([script_filename, "seed_range", seed_range, "fold_for_test_set", str(fold)])
+        script_filename = "_".join([script_filename, "seed_range", seed_range, "fold_for_test_set", str(fold)])
 
-        # script_filename = f"{script_filename}.sh"
+        script_filename = f"{script_filename}.sh"
 
         if make_plots:
             command_args = command_args + " " + "--make_plots"
@@ -221,8 +222,6 @@ for fold in fold_for_test_set_range:
         job_script = '\n'.join([job_script,
                                 python_command])
 
-        script_filename = f"{uuid.uuid4()}.sh"
-        print(f"Script filename: {script_filename}")
         try:
             print("Creating scripts...")
             with open(f"{os.path.dirname(os.path.realpath(__file__))}/{script_filename}", "w") as f:
@@ -248,6 +247,7 @@ for fold in fold_for_test_set_range:
 
 os.makedirs(f"{os.path.dirname(os.path.realpath(__file__))}/robustness_scripts", exist_ok=True)
 robustness_filename = f"robustness_{robustness_filename}.sh"
+print(f"Robustness filename: {robustness_filename}")
 robustness_fp = os.path.join("robustness_scripts", robustness_filename)
 command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
                          "--datasets", ",".join(sorted(config.datasets)),
