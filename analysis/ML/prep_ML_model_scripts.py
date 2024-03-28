@@ -280,15 +280,15 @@ if hundred_kb:
 Rscript_command = f"Rscript {os.path.dirname(os.path.realpath(__file__))}/plot_top_features.R " + \
                   command_args
 
-try:
-    with open(robustness_fp, "w") as f:
-        f.write(Rscript_command)
-except:
-    print("exception")
-    robustness_fp = f"{os.path.dirname(os.path.realpath(__file__))}/robustness_scripts/temp.sh"
-    print(robustness_fp)
-    with open(robustness_fp, "w") as f:
-        f.write(Rscript_command)
+# try:
+with open(robustness_fp, "w") as f:
+    f.write(Rscript_command)
+# except:
+#     print("exception")
+#     robustness_fp = f"{os.path.dirname(os.path.realpath(__file__))}/robustness_scripts/temp.sh"
+#     print(robustness_fp)
+#     with open(robustness_fp, "w") as f:
+#         f.write(Rscript_command)
 
 
 
