@@ -925,7 +925,7 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                         grid_cell_type=NULL,
                                         cell_types_keep=NULL,
                                         manually_supplied_dirs=NULL) {
-  print(getwd("."))
+  print(getwd())
   patient_counts = read_excel(paste(file_path_as_absolute("."), 
     "../../paper/supplementary_files/Supplementary_File_S1.xlsx", sep="/"))
   add_test_perf_to_df <- function(df, test_dir, feature_importance_method, 
