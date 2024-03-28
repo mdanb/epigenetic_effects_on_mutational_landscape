@@ -485,4 +485,4 @@ This creates multiple figures in `figures/models/XGB/Lymph-BNHL/scATAC_source_Gr
 
 ![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/Lymph-BNHL_top_feature_appearances.png)
 ![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/Lymph-BNHL_feature_importance_with_2_5_10_features_top_5_features.png)
-![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/Lymph-BNHL_top_feature_test_set_perf_with_10_5_2_1_features.png)
+![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/Lymph-BNHL_top_feature_test_set_perf_with_1_2_5_10_features.png)
