@@ -41,7 +41,7 @@
 
 #Rscript plot_top_features.R --cancer_types="Thy-AdenoCA" --ML_model=XGB --annotation=finalized_annotation --robustness_analysis --seed_range=1-10 --feature_importance_method=permutation_importance --folds_for_test_set=1-10 --grid_analysis --top_features_to_plot=1 --grid_cell_types="mammary_tissue Basal Epithelial (Mammary) BR,bonemarrow B GL_BlBm,bonemarrow,stomach Stromal cells SH,thyroid Thyroid Follicular Cell BR"
 
-Rscript plot_top_features.R --cancer_types=Lymph-BNHL --datasets=Greenleaf_test --cell_number_filter=100 --annotation=test_annotation --seed_range=1-1 --top_features_to_plot=10,5,2,1 --folds_for_test_set=1-1 --tissues_to_consider=all 
+Rscript plot_top_features.R --cancer_types=Lymph-BNHL --datasets=Greenleaf_test --cell_number_filter=100 --annotation=test_annotation --seed_range=1-10 --top_features_to_plot=10,5,2,1 --top_features_to_plot_feat_imp=2,5,10 --folds_for_test_set=1-10 --tissues_to_consider=all --robustness_analysis
 
 
 
