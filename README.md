@@ -201,18 +201,18 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
 We will use the PBMC/bonemarrow + Lymph-BNHL data we generated previously as an example. Run:
 
 ```
-python3 build_ML_model.py 
---cancer_types Lymph-BNHL
---datasets Greenleaf_test
---scATAC_cell_number_filter 100
---annotation_dir test_annotation
---seed_range 1-1
---fold_for_test_set 1
---n_optuna_trials_prebackward_selection 50
---n_optuna_trials_backward_selection 50
---sqlite
---test_set_perf_num_features all
---custom_mutations
+python3 build_ML_model.py \
+--cancer_types Lymph-BNHL \
+--datasets Greenleaf_test \
+--scATAC_cell_number_filter 100 \
+--annotation_dir test_annotation \
+--seed_range 1-1 \
+--fold_for_test_set 1 \
+--n_optuna_trials_prebackward_selection 50 \
+--n_optuna_trials_backward_selection 50 \
+--sqlite \
+--test_set_perf_num_features all \
+--custom_mutations \
 --which_interval_ranges test_ranges
 ```
 
@@ -256,14 +256,14 @@ Once the model is done training, we can then obtain a plot of the feature import
 
 For our example, we run:
 ```
-Rscript plot_top_features.R
---cancer_types=Lymph-BNHL
---datasets=Greenleaf_test
---cell_number_filter=100
---annotation=test_annotation
---seed_range=1-1
---top_features_to_plot=10,5,2,1
---folds_for_test_set=1-1
+Rscript plot_top_features.R \
+--cancer_types=Lymph-BNHL \
+--datasets=Greenleaf_test \
+--cell_number_filter=100 \
+--annotation=test_annotation \
+--seed_range=1-1 \
+--top_features_to_plot=10,5,2,1 \
+--folds_for_test_set=1-1 \
 --tissues_to_consider=all
 ```
 
