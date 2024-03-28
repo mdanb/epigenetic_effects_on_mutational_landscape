@@ -471,12 +471,18 @@ Rscript plot_top_features.R \
 --cell_number_filter 100 \
 --annotation test_annotation \
 --seed_range 1-10 \
---top_features_to_plot_feat_imp 1,2,5,10 \
+--top_features_to_plot_feat_imp 2,5,10 \
 --top_features_to_plot 1,2,5,10 \
 --folds_for_test_set 1-10 \
 --robustness_analysis \
 --tissues_to_consider all
 ```
 
-This creates multiple figures in `figures/models/XGB/Lymph-BNHL/scATAC_source_Greenleaf_pbmc_bm_cell_number_filter_100_annotation_test_annotation_seed_all_seeds/`:
-- dsd
+This creates multiple figures in `figures/models/XGB/Lymph-BNHL/scATAC_source_Greenleaf_pbmc_bm_cell_number_filter_100_annotation_test_annotation_seed_all_seeds/` (displayed below, respectively):
+- `Lymph-BNHL_top_feature_appearances.pdf`: this has the number of times different features appeared as the top feature across 100 runs of the model
+- `Lymph-BNHL_feature_importance_with_2_5_10_features_top_5_features.pdf`: this has the feature importances of the top 5 features across 100 runs of the model, where top 5 features is defined as the features that appeared the most after 15 iterations of BFS, with ties broken by median feature importance
+- `Lymph-BNHL_top_feature_test_set_perf_with_10_5_2_1_features.pdf`: this has the test set performance of the models with 10, 5, 2, and 1 features where the top feature corresponded to the eventual predicted COO.
+
+![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/Lymph-BNHL_top_feature_appearances.pdf)
+![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/Lymph-BNHL_feature_importance_with_2_5_10_features_top_5_features.pdf)
+![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/Lymph-BNHL_top_feature_test_set_perf_with_10_5_2_1_features.pdf)
