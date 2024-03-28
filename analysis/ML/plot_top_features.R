@@ -232,6 +232,19 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--robustness_analysis",
 #                                   "--feature_importance_method=permutation_importance"))
 
+# args = parse_args(parser, args= c("--cancer_types=Lung-AdenoCA",
+#                                   "--datasets=Bingren,Rawlins_fetal_lung,Shendure,Tsankov",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--seed_range=1-10",
+#                                   "--top_features_to_plot_feat_imp=5",
+#                                   "--top_features_to_plot=1,2,5,10",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=lung,fetal_lung",
+#                                   "--robustness_analysis",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--cell_types_keep=lung Neuroendocrine-Tsankov"))
+
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -1264,7 +1277,6 @@ if (!robustness_analysis) {
   for (cancer_type in cancer_types) {
     # for (tss_filter in tss_fragment_filter) {
     print(cancer_type)
-    print(i)
     if (subsampled_mutations) {
       # TODO: CHANGE DEPENDING ON CANCER TYPE
       cancer_type_with_n = paste(cancer_type, "n", 

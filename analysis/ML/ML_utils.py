@@ -237,7 +237,7 @@ def add_na_ranges(mutations_df, hundred_kb, expanded_hundred_kb):
     return mutations_df.loc[natsorted(mutations_df.index)]
 
 
-def add_dataset_origin_to_cell_types(list_to_add_to, dataset):
+def add_dataset_origin_to_cell_types(list_to_add_to, dataset, dataset_abbrev=None):
     if dataset == "Bingren":
         list_to_add_to = [c + " BR" for c in list_to_add_to]
     elif dataset == "Shendure":
@@ -260,13 +260,14 @@ def add_dataset_origin_to_cell_types(list_to_add_to, dataset):
         list_to_add_to = [c + " BR_Br" for c in list_to_add_to]
     elif dataset == "Ding":
         list_to_add_to = [c + " DI_Br" for c in list_to_add_to]
-
+    else:
+        list_to_add_to = [c + f" {dataset_abbrev}" for c in list_to_add_to]
     return list_to_add_to
 
 
 def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb,
                         expanded_hundred_kb, tissues_to_consider, grid_analysis, grid_cell_types, cell_types_keep,
-                        which_interval_ranges):
+                        which_interval_ranges, dataset_abbrev):
     def load_scATAC(scATAC_path, hundred_kb, expanded_hundred_kb, tissues_to_consider, which_interval_ranges):
         if hundred_kb or expanded_hundred_kb:
             scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_100kb_{os.path.basename(scATAC_path)}"
@@ -348,7 +349,7 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
 
     for idx, dataset in enumerate(datasets):
         list_to_add_to = datasets_combined_count_overlaps[idx].columns.tolist()
-        list_to_add_to = add_dataset_origin_to_cell_types(list_to_add_to, dataset)
+        list_to_add_to = add_dataset_origin_to_cell_types(list_to_add_to, dataset, dataset_abbrev)
         datasets_combined_count_overlaps[idx].columns = list_to_add_to
         datasets_combined_count_overlaps[idx] = [datasets_combined_count_overlaps[idx]]
     scATAC_df = pd.concat(chain(*datasets_combined_count_overlaps), axis=1)

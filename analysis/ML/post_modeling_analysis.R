@@ -47,11 +47,9 @@ args = parse_args(parser, args =
                       "--cancer_types=Lung-SCC",
                       "--cell_number_filter=100",
                       "--ML_model=XGB",
-                      "--annotation=Tsankov_refined",
+                      "--annotation=test_annotation",
                       "--feature_importance_method=permutation_importance",
-                      "--folds_for_test_set=1-10",
-                      "--hundred_kb",
-                      "--plot_bins_volcano"))
+                      "--folds_for_test_set=1-10"))
 cancer_types = args$cancer_types
 cancer_types = unlist(strsplit(cancer_types, split = ","))
 datasets = unlist(strsplit(args$datasets, split = ","))

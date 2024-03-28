@@ -33,7 +33,6 @@ def create_parser():
     parser.add_argument('--tss_fragment_filter', type=str,
                         help='tss fragment filters to consider', default=None)
     parser.add_argument("--ML_model", type=str, default="XGB")
-    parser.add_argument('--test_backward_selection_iters', type=int, nargs="+", default=None)
     parser.add_argument('--seed_range', type=str)
     parser.add_argument('--fold_for_test_set', type=int)
     parser.add_argument('--n_optuna_trials_prebackward_selection', type=int, default=None)
@@ -50,6 +49,7 @@ def create_parser():
     parser.add_argument('--donor_range', type=range_type, help='Specify a range in the format start-end',
                         default=None)
     parser.add_argument('--which_interval_ranges', type=str, default=None)
+    parser.add_argument('--dataset_abbrev', type=str, default=None)
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--per_donor", action="store_true", default=False)

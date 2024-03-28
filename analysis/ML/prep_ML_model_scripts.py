@@ -16,8 +16,8 @@ parser.add_argument('--annotation_dir', type=str,
 parser.add_argument('--seed_interval', type=str)
 parser.add_argument('--seed_interval_step', type=int)
 parser.add_argument('--top_features_to_plot', nargs="+", type=str,
-                    default=["18"])
-parser.add_argument('--top_features_to_plot_feat_imp', nargs="+", type=str, default="18")
+                    default=["1,2,5,10"])
+parser.add_argument('--top_features_to_plot_feat_imp', nargs="+", type=str, default="2,5,10")
 parser.add_argument('--fold_for_test_set_range', type=str)
 parser.add_argument('--n_optuna_trials_prebackward_selection', type=str)
 parser.add_argument('--n_optuna_trials_backward_selection', type=str)
