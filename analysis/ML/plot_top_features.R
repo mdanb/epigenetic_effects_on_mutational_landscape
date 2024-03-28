@@ -11,6 +11,7 @@ library(patchwork)
 library(hash)
 library(readxl)
 library(paletteer)
+library(tools)
 source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
 source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
 
@@ -924,7 +925,8 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                         grid_cell_type=NULL,
                                         cell_types_keep=NULL,
                                         manually_supplied_dirs=NULL) {
-  patient_counts = read_excel("../../paper/supplementary_files/Supplementary_File_S1.xlsx")
+  patient_counts = read_excel(paste(file_path_as_absolute("."), 
+    "../../paper/supplementary_files/Supplementary_File_S1.xlsx", sep="/"))
   add_test_perf_to_df <- function(df, test_dir, feature_importance_method, 
                                   grid_analysis, top_features_to_plot, 
                                   grid_cell_type, fold, seed) {
@@ -1052,7 +1054,9 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                 seed = integer(0),
                 fold = integer(0),
                 num_samples=integer(0))
-    manually_supplied_dirs = gsub("../../figures/", "", manually_supplied_dirs)
+    manually_supplied_dirs = gsub(paste(file_path_as_absolute("."), 
+                                        "../../figures/", sep="/"), 
+                                  "", manually_supplied_dirs)
     manually_supplied_dirs = paste(manually_supplied_dirs, 
                                    "backwards_elimination_results", sep="/")
     for (test_dir in manually_supplied_dirs) {
@@ -1329,17 +1333,21 @@ if (!robustness_analysis) {
                                                   hundred_kb=hundred_kb,
                                                   accumulated_seeds=T,
                                                   cell_types_keep=cell_types_keep[i])
-      savepath = paste("../../figures", savepath, sep="/")
+      savepath = paste(file_path_as_absolute("."), "../../figures", savepath, sep="/")
       # savepath = paste("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/figures", savepath, sep="/")
       
       lapply(savepath, dir.create, recursive=T)
-      dirs = list.dirs(paste("../../figures", "models", ML_model, cancer_type,
+      dirs = list.dirs(paste(file_path_as_absolute("."), 
+                             "../../figures", "models", ML_model, cancer_type,
                              sep="/"), recursive = F)
     } else {
       dirs = c()
       for (cell_type in grid_cell_types) {
-        dirs = append(dirs, list.dirs(paste("../../figures", "models", 
-                                            ML_model, paste(cancer_type, cell_type, sep="_"), sep="/"),
+        dirs = append(dirs, list.dirs(paste(file_path_as_absolute("."), 
+                                            "../../figures", "models", 
+                                            ML_model, paste(cancer_type, 
+                                                            cell_type, 
+                                                            sep="_"), sep="/"),
                                       recursive = F))
       }
     } 
@@ -1596,7 +1604,7 @@ if (grid_analysis) {
     plot_annotation(caption = "Test Set Variance Explained (%)",
                     theme = theme(plot.caption = element_text(size = 40, 
                                                               hjust=0.5)))
-  ggsave("../../figures/grid_analysis.pdf", 
+  ggsave(paste(file_path_as_absolute("."), "../../figures/grid_analysis.pdf", sep="/"), 
          width = 6 * length(cancer_types), height = 10, limitsize = FALSE)
 }
 
@@ -1660,7 +1668,7 @@ if (subsampled_mutations) {
            limitsize = FALSE)
   }
   
-  savepath = "../../figures/"
+  savepath = paste(file_path_as_absolute("."), "../../figures/", sep="/")
   savefile = "power_analysis.pdf"
   construct_power_analysis_boxplots(df=subsampled_mutation_df, 
                                     savefile=savefile, 
@@ -1729,7 +1737,9 @@ if (subsampled_mutations) {
     group_by(num_samples, top_feature, cancer_type) %>%
     count()
   
-  construct_power_analysis_barplots(df, savepath="../../figures", savefile="barplots.pdf",
+  construct_power_analysis_barplots(df, savepath=paste(file_path_as_absolute("."),
+                                                       "../../figures", sep="/"), 
+                                    savefile="barplots.pdf",
                                     width=40, height=20)
 }
 
