@@ -35,4 +35,3 @@ dependencies:
     - scanpy==1.9.6
   # bash
   - entrez-direct=16.2
-  - p7zip
