@@ -220,15 +220,17 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--top_features_to_plot=1",
 #                                   "--top_features_to_plot_feat_imp=1,2,5,10"))
 
-# args = parse_args(parser, args= c("--cancer_types=Lung-AdenoCA",
-#                                   "--datasets=Bingren,Rawlins_fetal_lung,Shendure,Tsankov",
+# args = parse_args(parser, args= c("--cancer_types=Lymph-BNHL",
+#                                   "--datasets=Greenleaf_test",
 #                                   "--cell_number_filter=100",
-#                                   "--annotation=finalized_annotation",
+#                                   "--annotation=test_annotation",
 #                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot_feat_imp=5",
+#                                   "--top_features_to_plot_feat_imp=2,5,10 ",
+#                                   "--top_features_to_plot=1,2,5,10",
 #                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=lung,fetal_lung",
-#                                   "--robustness_analysis"))
+#                                   "--tissues_to_consider=all",
+#                                   "--robustness_analysis",
+#                                   "--feature_importance_method=permutation_importance"))
 
 args = parse_args(parser)
 
@@ -556,7 +558,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     p <- ggplot(df_filtered) +
       geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = lwd, 
                    outlier.shape = outlier_shape, outlier.size=outlier_size) +
-      geom_text(aes(x = x_position + x_position / 30,
+      geom_text(aes(x = x_position + x_position / 10,
                     y = y_reordered),
                 label = paste0("n=", df_filtered[[n_name]]),
                 size=text_size) +
