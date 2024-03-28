@@ -469,9 +469,9 @@ Rscript plot_top_features.R \
 --cancer_types Lymph-BNHL \
 --datasets Greenleaf_test \
 --cell_number_filter 100 \
---annotation test_annotation \ 
+--annotation test_annotation \
 --seed_range 1-10 \
---top_features_to_plot_feat_imp 1,2,5,10 \ 
+--top_features_to_plot_feat_imp 1,2,5,10 \
 --top_features_to_plot 1,2,5,10 \
 --folds_for_test_set 1-10 \
 --robustness_analysis \
