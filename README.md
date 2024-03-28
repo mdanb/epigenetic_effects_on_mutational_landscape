@@ -192,6 +192,10 @@ The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an exa
   <summary><b>Which Interval Ranges [--which_interval_ranges]</b></summary>
   Which interval ranges to use. Should correspond to <code>WHICH_INTERVAL_RANGES</code> used previously. 
 </details>
+<details>
+  <summary><b>Dataset Abbreviation [--dataset_abbrev]</b></summary>
+  Abbreviation for the name of the dataset being used. This abbreviation will be appended to feature names. Should be specified if not using one of the datasets we used in the paper. 
+</details>
 
 ### Unparallelized
 We will use the PBMC/bonemarrow + Lymph-BNHL data we generated previously as an example. Run:
