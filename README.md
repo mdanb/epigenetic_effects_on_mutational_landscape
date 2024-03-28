@@ -458,6 +458,7 @@ Once the jobs end, we can then plot results using `plot_top_features.R`. Here, w
 </details>
 
 We now plot:
+
 ```
 Rscript plot_top_features.R 
 --cancer_types Lymph-BNHL 
