@@ -248,7 +248,7 @@ for fold in fold_for_test_set_range:
 os.makedirs(f"{os.path.dirname(os.path.realpath(__file__))}/robustness_scripts", exist_ok=True)
 robustness_filename = f"robustness_{robustness_filename}.sh"
 print(f"Robustness filename: {robustness_filename}")
-robustness_fp = os.path.join("robustness_scripts", robustness_filename)
+robustness_fp = os.path.join(f"{os.path.dirname(os.path.realpath(__file__))}/robustness_scripts", robustness_filename)
 command_args = " ".join(["--cancer_types", ",".join(config.cancer_types),
                          "--datasets", ",".join(sorted(config.datasets)),
                          "--cell_number_filter", scATAC_cell_number_filter,
