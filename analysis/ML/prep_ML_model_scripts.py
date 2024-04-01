@@ -222,20 +222,20 @@ for fold in fold_for_test_set_range:
         job_script = '\n'.join([job_script,
                                 python_command])
 
-        try:
-            print("Creating scripts...")
-            with open(f"{os.path.dirname(os.path.realpath(__file__))}/{script_filename}", "w") as f:
-                f.write(job_script)
-        except:
-            if "cluster" in script_filename:
-                name = re.search("cluster_[0-9]+", script_filename).group()
-                script_filename = name + "_" + re.search("seed_range_.*", script_filename).group()
-            else:
-            	script_filename = "temp.sh"
-
-            with open(script_filename, "w") as f:
-                 print("Creating scripts...")
-                 f.write(job_script)
+        # try:
+        print("Creating scripts...")
+        with open(f"{os.path.dirname(os.path.realpath(__file__))}/{script_filename}", "w") as f:
+            f.write(job_script)
+        # except:
+        #     if "cluster" in script_filename:
+        #         name = re.search("cluster_[0-9]+", script_filename).group()
+        #         script_filename = name + "_" + re.search("seed_range_.*", script_filename).group()
+        #     else:
+        #     	script_filename = "temp.sh"
+        #
+        #     with open(script_filename, "w") as f:
+        #          print("Creating scripts...")
+        #          f.write(job_script)
 
         if submit_jobs:
             subprocess.run(["qsub", f"{script_filename}"])
