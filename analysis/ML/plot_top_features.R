@@ -490,6 +490,7 @@ rename_cell_types <- function(cell_type_names) {
   renamed = gsub("GL_Br", "D7", renamed) 
   renamed = gsub("BR_Br", "D8", renamed) 
   renamed = gsub("R_Fl", "D9", renamed)
+  renamed = gsub("Cd34pos", "CD34+", renamed)
   return(renamed)
 }
 
