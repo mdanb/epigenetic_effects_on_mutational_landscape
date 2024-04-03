@@ -1539,13 +1539,14 @@ if (!robustness_analysis) {
         #                                  height=35)
         
         if (1 %in% top_features_to_plot) {
-          savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
-          construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
-                                     width=50, height=50)
           df_test = df %>% 
             group_by(top_n, top_feature) %>%
             mutate(n_top_feature = n(), x_position = max(test_set_perf)) %>%
             ungroup()
+          
+          savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
+          construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
+                                     width=50, height=50)
           
           # construct_top_feat_barplot(df_test, savefile="temp_test.pdf", 
           #                            savepath=savepath, 
