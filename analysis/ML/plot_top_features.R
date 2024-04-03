@@ -1525,50 +1525,6 @@ if (!robustness_analysis) {
         #                               height=35,
         #                               keep=robustness_keep)
         # 
-        df_test = df %>% 
-          group_by(top_n, top_feature) %>%
-          mutate(n_top_feature = n(), x_position = max(test_set_perf)) %>%
-          ungroup()
-        
-        # construct_top_feat_barplot(df_test, savefile="temp_test.pdf", 
-        #                            savepath=savepath, 
-        #                            width=50, height=35)
-        # savefile = paste(cancer_type, "top_feature_appearances.svg", sep="_")
-        # construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
-        #                            width=50, height=35)
-        
-        top_appearing_feature = unique(df_test %>% 
-                                         filter(top_n == 1) %>%
-                                         filter(n_top_feature == max(n_top_feature)) %>%
-                                         pull(top_feature))
-        if (length(top_appearing_feature) > 1) {
-          print("MORE THAN ONE TOP FEATURE!")
-          exit()
-        }
-        
-        df_test = df_test %>% filter(top_feature == top_appearing_feature)
-        savefile = paste(cancer_type, "top_feature_test_set_perf_with", 
-                         paste(top_features_to_plot, collapse="_"), 
-                         "features.pdf", sep="_")
-        
-        perf_savefile = "models/XGB/feature_cancer_median_performances.txt"
-        if (file.exists(perf_savefile)) {
-          df_perf = read.csv(perf_savefile, row.names = 1)
-          colnames(df_perf) = gsub("\\.","-", colnames(df_perf))
-        } else {
-          df_perf = data.frame()
-        }
-        
-        construct_test_set_perf_boxplots(df=df_test, 
-                                         feature=top_appearing_feature,
-                                         savefile=savefile, 
-                                         savepath=savepath,
-                                         df_perf=df_perf,
-                                         cancer_type=cancer_type,
-                                         perf_savefile=perf_savefile,
-                                         width=50,
-                                         height=35)
-        
         # savefile = paste(cancer_type, "top_feature_test_set_perf_with", 
         #                  paste(top_features_to_plot, collapse="_"), 
         #                  "features.svg", sep="_")
@@ -1586,6 +1542,49 @@ if (!robustness_analysis) {
           savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
           construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
                                      width=50, height=50)
+          df_test = df %>% 
+            group_by(top_n, top_feature) %>%
+            mutate(n_top_feature = n(), x_position = max(test_set_perf)) %>%
+            ungroup()
+          
+          # construct_top_feat_barplot(df_test, savefile="temp_test.pdf", 
+          #                            savepath=savepath, 
+          #                            width=50, height=35)
+          # savefile = paste(cancer_type, "top_feature_appearances.svg", sep="_")
+          # construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
+          #                            width=50, height=35)
+          
+          top_appearing_feature = unique(df_test %>% 
+                                           filter(top_n == 1) %>%
+                                           filter(n_top_feature == max(n_top_feature)) %>%
+                                           pull(top_feature))
+          if (length(top_appearing_feature) > 1) {
+            print("MORE THAN ONE TOP FEATURE!")
+            exit()
+          }
+          
+          df_test = df_test %>% filter(top_feature == top_appearing_feature)
+          savefile = paste(cancer_type, "top_feature_test_set_perf_with", 
+                           paste(top_features_to_plot, collapse="_"), 
+                           "features.pdf", sep="_")
+          
+          perf_savefile = "models/XGB/feature_cancer_median_performances.txt"
+          if (file.exists(perf_savefile)) {
+            df_perf = read.csv(perf_savefile, row.names = 1)
+            colnames(df_perf) = gsub("\\.","-", colnames(df_perf))
+          } else {
+            df_perf = data.frame()
+          }
+          
+          construct_test_set_perf_boxplots(df=df_test, 
+                                           feature=top_appearing_feature,
+                                           savefile=savefile, 
+                                           savepath=savepath,
+                                           df_perf=df_perf,
+                                           cancer_type=cancer_type,
+                                           perf_savefile=perf_savefile,
+                                           width=50,
+                                           height=35)
         }
         
         if (plot_fold_on_test_set_plot) {
