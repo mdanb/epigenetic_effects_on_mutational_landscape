@@ -584,7 +584,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     p <- ggplot(df_filtered) +
       geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = lwd, 
                    outlier.shape = outlier_shape, outlier.size=outlier_size) +
-      geom_text(aes(x = x_position + 0.05,
+      geom_text(aes(x = x_position + 0.08,
                     y = y_reordered),
                 label = paste0("n=", df_filtered[[n_name]]),
                 size=text_size) +
