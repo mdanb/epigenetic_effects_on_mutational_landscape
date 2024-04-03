@@ -489,7 +489,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           n_name=NULL, width=12, height=8,
                                           keep=NULL) {
   #df = df_feat_imp
-  lwd = 1
+  lwd = 2
   str_wrap_width = 15
   outlier_size = 20
   text_size = 60
