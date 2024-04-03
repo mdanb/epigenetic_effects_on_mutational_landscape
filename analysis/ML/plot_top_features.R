@@ -706,7 +706,8 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath,
     ) 
   print(p)
   ggsave(paste(savepath, savefile, sep="/"), 
-         width = width, height = height, limitsize = FALSE)
+         width = width, height = height, units = "mm", 
+         limitsize = FALSE)
 }
 
 construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
@@ -807,7 +808,7 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
                     perf_savefile=perf_savefile)
   
   ggplot(df) +
-    geom_boxplot(aes(x = top_n, y = test_set_perf), lwd = 2, 
+    geom_boxplot(aes(x = top_n, y = test_set_perf), lwd = 1, 
                  outlier.shape = outlier_shape, outlier.size = 30) +
     scale_x_discrete(limits = levels(df$top_n)) +
     geom_text(aes(x = top_n,
@@ -833,6 +834,7 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
   ggsave(paste(savepath, savefile, sep="/"), 
          width = width, 
          height = height,
+         units="mm",
          limitsize=F)
 }
 
@@ -1546,7 +1548,7 @@ if (!robustness_analysis) {
           
           savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
           construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
-                                     width=50, height=50)
+                                     width=25.5, height=24)
           
           # construct_top_feat_barplot(df_test, savefile="temp_test.pdf", 
           #                            savepath=savepath, 
@@ -1584,8 +1586,8 @@ if (!robustness_analysis) {
                                            df_perf=df_perf,
                                            cancer_type=cancer_type,
                                            perf_savefile=perf_savefile,
-                                           width=50,
-                                           height=35)
+                                           width=25.5,
+                                           height=24)
         }
         
         if (plot_fold_on_test_set_plot) {
