@@ -809,12 +809,12 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
   
   ggplot(df) +
     geom_boxplot(aes(x = top_n, y = test_set_perf), lwd = 0.1, 
-                 outlier.shape = outlier_shape, outlier.size = 0.01) +
+                 outlier.shape = outlier_shape, outlier.size = 0.0001) +
     scale_x_discrete(limits = levels(df$top_n)) +
     geom_text(aes(x = top_n,
                   y = x_position + 3),
                   label = paste0("n=", df[["n_top_feature"]]), 
-              size=1) +
+              size=0.7) +
     ggtitle(feature) +
     # theme_bw() +
     theme(
