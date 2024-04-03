@@ -808,8 +808,8 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
                     perf_savefile=perf_savefile)
   
   ggplot(df) +
-    geom_boxplot(aes(x = top_n, y = test_set_perf), lwd = 0.1, 
-                 outlier.shape = outlier_shape, outlier.size = 0.0001) +
+    geom_boxplot(aes(x = top_n, y = test_set_perf), lwd = 0.02, 
+                 outlier.shape = outlier_shape, outlier.size = 0.01) +
     scale_x_discrete(limits = levels(df$top_n)) +
     geom_text(aes(x = top_n,
                   y = x_position + 3),
@@ -828,7 +828,7 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
       axis.title.y=element_blank(),
       axis.ticks = element_line(size=0.5),
       axis.ticks.length = unit(0.001, "cm"),
-      axis.line = element_line(linewidth=0.1),
+      axis.line = element_line(linewidth=0.03),
       panel.grid = element_line(size = 0.01)
     )
   
