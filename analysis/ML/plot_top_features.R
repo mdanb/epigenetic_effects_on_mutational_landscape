@@ -489,7 +489,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           n_name=NULL, width=12, height=8,
                                           keep=NULL) {
   #df = df_feat_imp
-  lwd = 0.5
+  lwd = 1.5
   str_wrap_width = 15
   outlier_size = 20
   text_size = 60
@@ -497,7 +497,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   tick_length = 1
   title_size = 150
   axis_text_size = 150
-  axis_tick_size = 5
+  axis_tick_size = 2
   print(length(unique(df[[facet_var]])) == 1)
   #if (length(unique(df[[facet_var]]) == 1)) {
   #  print(unique(df[[facet_var]]))
