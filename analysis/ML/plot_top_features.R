@@ -682,7 +682,7 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath,
                  fill=color), lwd=1.2) +
     geom_text(aes(x = n_top_feature + 7,
                   y = top_feature),
-              label = paste0("n=", num_appearances), size=50) +
+              label = paste0("n=", num_appearances), size=60) +
     scale_fill_manual(values = c("highlight" = "#EE4B2B", "other" = "#A9A9A9")) +
     ylab("") +
     xlab("") +
@@ -694,8 +694,8 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath,
       strip.background = element_blank(),
       strip.text.x = element_blank(),
       # plot.title = element_text(hjust = 0.5, size = 40),
-      axis.text.x = element_text(vjust = 0.5, hjust=1, size=150),
-      axis.text.y = element_text(size=170, colour = color),
+      axis.text.x = element_text(vjust = 0.5, hjust=1, size=200),
+      axis.text.y = element_text(size=200, colour = color),
       axis.title = element_text(size=170),
       panel.grid.major.y=element_blank(),
       panel.grid.minor.x=element_blank(),
