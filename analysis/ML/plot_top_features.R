@@ -699,7 +699,7 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath,
       axis.title = element_text(size=150),
       panel.grid.major.y=element_blank(),
       panel.grid.minor.x=element_blank(),
-      axis.ticks = element_line(size=7),
+      axis.ticks = element_line(size=0.5),
       axis.ticks.length = unit(1, "cm"),
       panel.grid.major.x = element_line(size = 1)
       # plot.margin = margin(t=0,r=1,b=0,l=0, unit = "cm")
