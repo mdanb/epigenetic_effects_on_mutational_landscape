@@ -812,7 +812,7 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
                  outlier.shape = outlier_shape, outlier.size = 0.1) +
     scale_x_discrete(limits = levels(df$top_n)) +
     geom_text(aes(x = top_n,
-                  y = x_position + x_position / 30),
+                  y = x_position + 0.1),
               label = paste0("n=", df[["n_top_feature"]]), 
               size=0.1) +
     ggtitle(feature) +
@@ -829,7 +829,7 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
       axis.ticks = element_line(size=0.5),
       axis.ticks.length = unit(0.001, "cm"),
       axis.line = element_line(linewidth=0.1),
-      panel.grid = element_line(size = 0.1)
+      panel.grid = element_line(size = 0.01)
     )
   
   ggsave(paste(savepath, savefile, sep="/"), 
