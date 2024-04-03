@@ -584,7 +584,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     p <- ggplot(df_filtered) +
       geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = lwd, 
                    outlier.shape = outlier_shape, outlier.size=outlier_size) +
-      geom_text(aes(x = x_position + 0.08,
+      geom_text(aes(x = x_position + x_position / 5,
                     y = y_reordered),
                 label = paste0("n=", df_filtered[[n_name]]),
                 size=text_size) +
@@ -706,8 +706,7 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath,
     ) 
   print(p)
   ggsave(paste(savepath, savefile, sep="/"), 
-         width = width, height = height, units = "mm", 
-         limitsize = FALSE)
+         width = width, height = height, limitsize = FALSE)
 }
 
 construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
@@ -808,34 +807,32 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
                     perf_savefile=perf_savefile)
   
   ggplot(df) +
-    geom_boxplot(aes(x = top_n, y = test_set_perf), lwd = 0.02, 
-                 outlier.shape = outlier_shape, outlier.size = 0.01) +
+    geom_boxplot(aes(x = top_n, y = test_set_perf), lwd = 2, 
+                 outlier.shape = outlier_shape, outlier.size = 30) +
     scale_x_discrete(limits = levels(df$top_n)) +
     geom_text(aes(x = top_n,
-                  y = x_position + 3),
-                  label = paste0("n=", df[["n_top_feature"]]), 
-              size=0.7) +
+                  y = x_position + x_position / 30),
+              label = paste0("n=", df[["n_top_feature"]]), 
+              size=40) +
     ggtitle(feature) +
     # theme_bw() +
     theme(
       # legend.position="none",
       # strip.background = element_blank(),
       strip.text.x = element_blank(),
-      plot.title = element_text(hjust = 0.5, size=3),
-      axis.text.y = element_text(size = 3),
-      axis.text.x = element_text(size = 3),
+      plot.title = element_text(hjust = 0.5, size=150),
+      axis.text.y = element_text(size = 150),
+      axis.text.x = element_text(size = 150),
       axis.title.x=element_blank(),
       axis.title.y=element_blank(),
-      axis.ticks = element_line(size=0.5),
-      axis.ticks.length = unit(0.001, "cm"),
-      axis.line = element_line(linewidth=0.03),
-      panel.grid = element_line(size = 0.01)
+      axis.ticks = element_line(size=30),
+      # axis.ticks.length = unit(1, "cm"),
+      axis.line = element_line(linewidth=1)
     )
   
   ggsave(paste(savepath, savefile, sep="/"), 
          width = width, 
          height = height,
-         units="mm",
          limitsize=F)
 }
 
@@ -1549,7 +1546,7 @@ if (!robustness_analysis) {
           
           savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
           construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
-                                     width=25.5, height=24)
+                                     width=50, height=50)
           
           # construct_top_feat_barplot(df_test, savefile="temp_test.pdf", 
           #                            savepath=savepath, 
@@ -1587,8 +1584,8 @@ if (!robustness_analysis) {
                                            df_perf=df_perf,
                                            cancer_type=cancer_type,
                                            perf_savefile=perf_savefile,
-                                           width=25.5,
-                                           height=24)
+                                           width=50,
+                                           height=35)
         }
         
         if (plot_fold_on_test_set_plot) {
