@@ -1546,7 +1546,7 @@ if (!robustness_analysis) {
           
           savefile = paste(cancer_type, "top_feature_appearances.pdf", sep="_")
           construct_top_feat_barplot(df_test, savefile=savefile, savepath=savepath,
-                                     width=50, height=50)
+                                     width=70, height=50)
           
           # construct_top_feat_barplot(df_test, savefile="temp_test.pdf", 
           #                            savepath=savepath, 
