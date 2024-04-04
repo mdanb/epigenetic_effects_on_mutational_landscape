@@ -497,7 +497,7 @@ rename_cell_types <- function(cell_type_names) {
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
                                           n_name=NULL, width=12, height=8,
-                                          keep=NULL) {
+                                          keep=NULL, add_to_pos=0.07) {
   #df = df_feat_imp
   lwd = 1.5
   str_wrap_width = 15
@@ -594,7 +594,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     p <- ggplot(df_filtered) +
       geom_boxplot(aes(x = !!sym(x), y_reordered, fill=color), lwd = lwd, 
                    outlier.shape = outlier_shape, outlier.size=outlier_size) +
-      geom_text(aes(x = x_position + 0.07,
+      geom_text(aes(x = x_position + add_to_pos,
                     y = y_reordered),
                 label = paste0("n=", df_filtered[[n_name]]),
                 size=text_size) +
@@ -1468,6 +1468,19 @@ if (!robustness_analysis) {
                                       width=50,
                                       height=35,
                                       keep = robustness_keep)
+        construct_robustness_boxplots(df=df_feat_imp, 
+                                      x="permutation_importance", 
+                                      y="features", 
+                                      title=cancer_names[[cancer_type]], 
+                                      savepath=savepath,
+                                      savefile="temp_robustness.pdf", 
+                                      n_name="n_feature", 
+                                      facet_var="num_features",
+                                      xlabel="Feature Importance",
+                                      width=50,
+                                      height=35,
+                                      keep = robustness_keep)
+        
         # construct_robustness_boxplots(df=df_feat_imp, 
         #                               x="permutation_importance", 
         #                               y="features", 
