@@ -258,6 +258,19 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--robustness_analysis",
 #                                   "--feature_importance_method=permutation_importance"))
 
+# args = parse_args(parser, args= c("--cancer_types=Lung-AdenoCA",
+#                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--seed_range=1-10",
+#                                   "--top_features_to_plot_feat_imp=2,5,10",
+#                                   "--top_features_to_plot=1,2,5,10",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=all",
+#                                   "--robustness_analysis",
+#                                   "--feature_importance_method=permutation_importance"))
+
+
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -277,29 +290,29 @@ cancer_names = hash("Skin-Melanoma"="Melanoma",
                     "Uterus-AdenoCA" = "Uterus adenocarcinoma")
 
 
-cell_types = c("brain OPC/Oligo GL_Br" = "OPC/Oligo, Cerebral Cortex GL_Br",
-               "cerebrum Astrocytes/Oligodendrocytes SH" = "Astrocytes/Oligo, Cerebrum SH",
-               "colon_transverse Macrophage (General) BR" = "Macrophage, Transverse Colon BR",
-               "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Transverse Colon BR",
-               "colon_transverse Plasma Cell BR" = "Plasma Cell, Transverse Colon BR",
-               "colon_transverse T Lymphocyte (CD8+) BR" = "T Lymphocyte, Transverse Colon BR",
-               "fetal_lung Ciliated R_Fl" = "Ciliated, Fetal Lung",
-               "fetal_lung Late airway progenitor R_Fl" = "Late Airway Progenitor, Fetal Lung",
-               "heart_atrial_appendage Cardiac Pericyte BR" = "Pericyte, Atrial Appendage BR",
-          		 "lung Ciliated epithelial cells SH"="Ciliated, Lung SH",
-               "lung Tuft.like TS" = "Tuft-like, Lung TS",
-          		 "lung distal_lung Secretory TS" = "Secretory, Lung",
-          		 "lung AT2 TS" = "AT2, Lung",
-               "lung Bronchiolar and alveolar epithelial cells SH" = "Bronchiolar/alveolar, Lung SH",
-               "lung proximal Ciliated TS" = "Ciliated, Proximal Lung TS",
-               "lung B.cells TS" = "B, Lung TS",
-          		 "lung SmoothMuscle TS" = "Smooth Muscle, Lung TS",
-          		 "lung Club Cell BR" = "Club, Lung",
-          		 "muscle Type II Skeletal Myocyte BR" = "Skeletal Myocyte, Muscle Type II BR",
-          		 "nerve_tibial Fibroblast (Peripheral Nerve) BR" = "Fibroblast Tibial Nerve BR",
-               "nerve_tibial Schwann Cell (General) BR" = "Schwann Cell, Tibial Nerve BR",
-          		 "pancreas Pancreatic Alpha Cell BR" = "Alpha Cell, Pancreas BR",
-          		 "pancreas Pancreatic Acinar Cell BR" = "Acinar, Pancreas BR")
+# cell_types = c("brain OPC/Oligo GL_Br" = "OPC/Oligo, Cerebral Cortex GL_Br",
+#                "cerebrum Astrocytes/Oligodendrocytes SH" = "Astrocytes/Oligo, Cerebrum SH",
+#                "colon_transverse Macrophage (General) BR" = "Macrophage, Transverse Colon BR",
+#                "colon_transverse Small Intestinal Enterocyte BR" = "Enterocyte, Transverse Colon BR",
+#                "colon_transverse Plasma Cell BR" = "Plasma Cell, Transverse Colon BR",
+#                "colon_transverse T Lymphocyte (CD8+) BR" = "T Lymphocyte, Transverse Colon BR",
+#                "fetal_lung Ciliated R_Fl" = "Ciliated, Fetal Lung",
+#                "fetal_lung Late airway progenitor R_Fl" = "Late Airway Progenitor, Fetal Lung",
+#                "heart_atrial_appendage Cardiac Pericyte BR" = "Pericyte, Atrial Appendage BR",
+#           		 "lung Ciliated epithelial cells SH"="Ciliated, Lung SH",
+#                "lung Tuft.like TS" = "Tuft-like, Lung TS",
+#           		 "lung distal_lung Secretory TS" = "Secretory, Lung",
+#           		 "lung AT2 TS" = "AT2, Lung",
+#                "lung Bronchiolar and alveolar epithelial cells SH" = "Bronchiolar/alveolar, Lung SH",
+#                "lung proximal Ciliated TS" = "Ciliated, Proximal Lung TS",
+#                "lung B.cells TS" = "B, Lung TS",
+#           		 "lung SmoothMuscle TS" = "Smooth Muscle, Lung TS",
+#           		 "lung Club Cell BR" = "Club, Lung",
+#           		 "muscle Type II Skeletal Myocyte BR" = "Skeletal Myocyte, Muscle Type II BR",
+#           		 "nerve_tibial Fibroblast (Peripheral Nerve) BR" = "Fibroblast Tibial Nerve BR",
+#                "nerve_tibial Schwann Cell (General) BR" = "Schwann Cell, Tibial Nerve BR",
+#           		 "pancreas Pancreatic Alpha Cell BR" = "Alpha Cell, Pancreas BR",
+#           		 "pancreas Pancreatic Acinar Cell BR" = "Acinar, Pancreas BR")
 
 ggplot_barplot_helper <- function(df, title, savepath, y, ylab, 
                                   accumulated_imp=F) {
@@ -463,9 +476,9 @@ rename_cell_types <- function(cell_type_names) {
   renamed[idx] = unlist(lapply(renamed[idx], to_custom_title))
   
   renamed = paste(renamed, dataset)
-  renamed = ifelse(cell_type_names %in% names(cell_types), 
-                   unname(cell_types[cell_type_names]), 
-                   renamed)
+  # renamed = ifelse(cell_type_names %in% names(cell_types), 
+  #                  unname(cell_types[cell_type_names]), 
+  #                  renamed)
   
   idx <- lapply(renamed, function(x) {
     matches_colon_gl_co <- grep("Colon GL_Co", x)
