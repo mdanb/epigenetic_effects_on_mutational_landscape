@@ -1479,7 +1479,8 @@ if (!robustness_analysis) {
                                       xlabel="Feature Importance",
                                       width=50,
                                       height=35,
-                                      keep = robustness_keep)
+                                      keep = robustness_keep,
+                                      add_to_pos = 0)
         
         # construct_robustness_boxplots(df=df_feat_imp, 
         #                               x="permutation_importance", 
