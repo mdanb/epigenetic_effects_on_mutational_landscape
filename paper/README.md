@@ -17,10 +17,13 @@ from within `analysis/ML`.
 See Jupyter notebook `analysis/ML/paper_umaps.ipynb`
 
 ### 1F
-ADD HOW DATA WAS OBTAINED
-
 `cd data/scripts` and run 
 
 ```
 Rscript plot_prolif_rate.R
 ```
+
+## Figure 2
+### 2A
+
+
