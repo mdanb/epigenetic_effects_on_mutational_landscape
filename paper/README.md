@@ -6,9 +6,12 @@ To build the models for that were used to obtain the COO predictions for Figure 
 
 ### 1C
 To build the models for that were used to obtain the COO predictions for Figure 1C, run lines 23-29. These will also create bash scripts containing commands for plotting the results (in `analysis/ML/robustness_scripts`). Each script will be named with a unique ID. Run these from `analysis/ML` e.g assuming the unique ID is `robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7`, run 
-```sh robustness_scripts/robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7.sh``` 
+
+```
+sh robustness_scripts/robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7.sh
+``` 
 
 from within `analysis/ML`. 
 
 ### 1D
-
+See Jupyter notebook `analysis/ML/paper_umaps.ipynb`
