@@ -20,4 +20,7 @@ See Jupyter notebook `analysis/ML/paper_umaps.ipynb`
 ADD HOW DATA WAS OBTAINED
 
 `cd data/scripts` and run 
-```Rscript plot_prolif_rate.R```
+
+```
+Rscript plot_prolif_rate.R
+```
