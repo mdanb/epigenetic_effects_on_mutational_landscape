@@ -50,8 +50,13 @@ if (!requireNamespace("hash", quietly = TRUE)) {
 }
 
 if (!requireNamespace("svglite", quietly = TRUE)) {
-  install.packages("svglite", version="2.1.2)
+  install.packages("svglite", version="2.1.2")
 }
+
+if (!requireNamespace("this.path", quietly = TRUE)) {
+  install.packages("this.path", version="2.4.0")
+}
+
 
 library(devtools)
 
