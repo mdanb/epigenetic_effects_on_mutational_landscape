@@ -1,4 +1,5 @@
 # Reproducing paper figures
+The instructions for each figure refer to the lines in the correspondingly named bash script. 
 ## Figure 1 
 ### 1B
 To build the models for that were used to obtain the COO predictions for Figure 1B, run lines 2-16 (note that you will need to set things up to run jobs in parallel, as explained in the README of the homepage of this repo). To plot the results after building the models, run line 18. This will create a PDF in `figures` called `grid_analysis.pdf`.
