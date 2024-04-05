@@ -15,7 +15,7 @@
 
 #python3 ../analysis/ML/prep_ML_model_scripts.py --cancer_types Lung-SCC --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Shendure Greenleaf_colon Greenleaf_pbmc_bm Tsankov --seed_interval=1-10 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --woo_pcawg --mem_per_core 1 --grid_analysis --grid_cell_types "skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes/Oligodendrocytes SH,lung AT2 TS,lung Basal TS" --submit_jobs
 
-Rscript ../analysis/ML/plot_top_features.R --cancer_types="Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC" --ML_model=XGB --annotation=new_intermediate_blood_bm_annotation --robustness_analysis --seed_range=1-10 --feature_importance_method=permutation_importance --folds_for_test_set=1-10 --grid_analysis --top_features_to_plot=1 --grid_cell_types="skin Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Foveolar Cell BR,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS,mammary_tissue Basal Epithelial (Mammary) BR"
+#Rscript ../analysis/ML/plot_top_features.R --cancer_types="Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC" --ML_model=XGB --annotation=new_intermediate_blood_bm_annotation --robustness_analysis --seed_range=1-10 --feature_importance_method=permutation_importance --folds_for_test_set=1-10 --grid_analysis --top_features_to_plot=1 --grid_cell_types="skin Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Foveolar Cell BR,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS,mammary_tissue Basal Epithelial (Mammary) BR"
 
 ############
 
@@ -26,6 +26,9 @@ Rscript ../analysis/ML/plot_top_features.R --cancer_types="Skin-Melanoma,Liver-H
 
 #python3 ../analysis/ML/prep_ML_model_scripts.py --cancer_types waddell_combined --datasets Bingren Shendure Rawlins_fetal_lung Tsankov --scATAC_cell_number_filter=100 --annotation_dir=finalized_annotation --seed_interval=1-10 --fold_for_test_set_range=1-10 --seed_interval_step=5 --n_optuna_trials_prebackward_selection=50 --n_optuna_trials_backward_selection=50 --cores=8 --feature_importance_method=permutation_importance --test_set_perf_num_features all --top_features_to_plot_feat_imp 5 --cell_types_keep="lung Neuroendocrine-Tsankov" --tissues_to_consider "lung" "fetal_lung" --mm --submit_jobs
 
-#python3 ../analysis/ML/prep_ML_model_scripts.py --cancer_types SCLC --datasets Bingren Shendure Rawlins_fetal_lung Tsankov --scATAC_cell_number_filter=100 --annotation_dir=finalized_annotation --seed_interval=1-10 --fold_for_test_set_range=1-10 --seed_interval_step=5 --n_optuna_trials_prebackward_selection=50 --n_optuna_trials_backward_selection=50 --cores=8 --feature_importance_method=permutation_importance --test_set_perf_num_features all --top_features_to_plot_feat_imp 5 --cell_types_keep="lung Neuroendocrine-Tsankov" --tissues_to_consider "lung" "fetal_lung" --SCLC --submit_jobs
+#python3 ../analysis/ML/prep_ML_model_scripts.py --cancer_types SCLC --datasets Bingren Shendure Rawlins_fetal_lung Tsankov --scATAC_cell_number_filter=100 --annotation_dir=finalized_annotation --seed_interval=1-10 --fold_for_test_set_range=1-10 --seed_interval_step=5 --n_optuna_trials_prebackward_selection=50 --n_optuna_trials_backward_selection=50 --cores=8 --feature_importance_method=permutation_importance --test_set_perf_num_features all --top_features_to_plot_feat_imp 5 --cell_types_keep="lung Neuroendocrine-Tsankov" --tissues_to_consider "lung" "fetal_lung" --SCLC 
+
+### Fig 1D ###
+
 
 
