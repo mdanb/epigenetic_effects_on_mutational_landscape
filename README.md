@@ -489,7 +489,7 @@ This creates multiple figures in `figures/models/XGB/Lymph-BNHL/scATAC_source_Gr
 
 
 # Complete dataset download
-To download the data associated with this paper:
+To download all data associated with this paper:
 ```
 cd data/scripts
 sh download_all_scatac_data.sh
