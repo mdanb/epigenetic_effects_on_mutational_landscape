@@ -27,7 +27,7 @@ Rscript post_installation.R
 ```
 
 You should now be ready to proceed.
- 
+
 # Example
 To run COCOON, we first need to create aggregated, binned scATAC and mutation profiles. All scripts for data processing are in `data/scripts`, and all relative paths below are relative to this directory. 
 
@@ -486,3 +486,12 @@ This creates multiple figures in `figures/models/XGB/Lymph-BNHL/scATAC_source_Gr
 ![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/Lymph-BNHL_top_feature_appearances.png)
 ![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/Lymph-BNHL_feature_importance_with_2_5_10_features_top_5_features.png)
 ![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/Lymph-BNHL_top_feature_test_set_perf_with_1_2_5_10_features.png)
+
+
+# Complete dataset download
+To download all data associated with this paper:
+```
+cd data/scripts
+sh download_all_scatac_data.sh
+```
+
