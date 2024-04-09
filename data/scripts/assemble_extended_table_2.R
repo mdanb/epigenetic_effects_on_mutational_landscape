@@ -357,5 +357,103 @@ with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "CTXMIX"
                            & with_polyp_and_other_blood["dataset"] == "D8",
                            "Abbreviation Meaning"] = "Dopaminergic neurons from midbrain mixed with cell from cerebral nuclei"
 
+
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "AT1/AT2"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Alveolar type I/type II"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Adventitial fibro"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Adventitial fibroblast"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Airway SMC"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Airway Smooth Muscle Cells"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Airway fibro"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Airway fibroblasts"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Alveolar fibro"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Alveolar fibroblasts"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Arterial endo"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Arterial endothelial cells"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "CD16+ NK"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "CD16+ Natural Killer Cells"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "CD56bright NK"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "CD56bright Natural Killer Cells"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "CX3CR1+ Mac"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "CX3CR1+ Macrophages"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "DC1"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Dendritic cells 1"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "DC2"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Dendritic cells 2"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Def. ery."
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Definitive Erythrocytes"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Early fibro"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Early fibroblasts"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "GHRL+ NE"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "GHRL+ Neuroendocrine"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "ILC2"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Type 2 Innate Lymphoid Cells"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "ILC3/Th17"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "IL-17 producing innate lymphoid cells 3"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "ILCP"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Innate lymphoid cells (progenitors)"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Interm fibro"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Intermediate fibroblasts"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Interm lymphatic endo"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Intermediate lymphatic endothelial cells"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Lymphatic endo"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Lymphatic endothelial cells"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Megk"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Megakaryocytes"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Mid/late meso"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Mid/late mesothelial cells"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Myofibro"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Myofibroblasts"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "NKT"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Natural killer T cells"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Pri. ery."
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Primary Erythrocytes"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Pulmonary NE"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Pulmonary Neuroendocrine"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "SCG3+ lymphatic endo"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "SCG3+ lymphatic endothelial cells"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "SPP1+ Mac"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "SPP1+ Macrophages"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Secretory 1/2"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Secretory cells (subtypes 1 and 2)"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Treg"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Regulatory T cells"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Vascular SMC"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Vascular smooth muscle cells"
+with_polyp_and_other_blood[with_polyp_and_other_blood["cell_type"] == "Venous endo"
+                           & with_polyp_and_other_blood["dataset"] == "D9",
+                           "Abbreviation Meaning"] = "Venous endothelial cells"
+
 write.csv(with_polyp_and_other_blood, "extended_data_table_2.csv")
 write.csv(gl_blood_other, "extended_data_table_3.csv")
