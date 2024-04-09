@@ -54,6 +54,8 @@ parser <- add_option(parser, c("--cell_types_keep"), type="character",
                      default=NA)
 parser <- add_option(parser, c("--subsampled_mutations"), action="store_true",
                      default=F)
+parser <- add_option(parser, c("--fig1b"), action="store_true",
+                     default=F)
 parser <- add_option(parser, c("--robustness_keep"), type="character", 
                      default=NULL)
 
@@ -135,17 +137,17 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                  "--top_features_to_plot=1",
 #                                  "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes/Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
 #
-args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC",
-                                  "--annotation=finalized_annotation",
-                                  "--ML_model=XGB",
-                                  "--seed_range=1-10",
-                                  "--folds_for_test_set=1-10",
-                                  "--feature_importance_method=permutation_importance",
-                                  "--folds_for_test_set=1-10",
-                                  "--robustness_analysis",
-                                  "--grid_analysis",
-                                  "--top_features_to_plot=1",
-                                  "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
+# args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC",
+#                                   "--annotation=finalized_annotation",
+#                                   "--ML_model=XGB",
+#                                   "--seed_range=1-10",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--robustness_analysis",
+#                                   "--grid_analysis",
+#                                   "--top_features_to_plot=1",
+#                                   "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
 
 # args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma",
 #                                   "--datasets=Bingren,Greenleaf_pbmc_bm,Greenleaf_colon,Shendure,Tsankov,Yang_kidney",
@@ -732,7 +734,7 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath,
          width = width, height = height, limitsize = FALSE)
 }
 
-construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
+construct_robustness_barplots <- function(df, x, y, title, add_to_pos, fig1b=T) {
   df[x] = 100 * df[x]
   df = df %>% 
     group_by(!!sym(y)) %>%
@@ -742,28 +744,35 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
   xlim_lower = min(df[["ymin"]])
   xlim_upper = max(df[["ymax"]])
   x_breaks <- pretty(df$y, n = 3)
-  plot <- ggplot(df) +
-    geom_col(aes(x = y, y = factor(top_feature,
-                                    levels=rev(c("skin_sun_exposed-Melanocyte-BR",
-                                                "liver-Hepatoblasts-SH",
-                                                "normal_colon-Stem-GL_Co",
-                                                "bonemarrow-B-GL_BlBm",
-                                                "stomach-Goblet-cells-SH",
-                                                "cerebrum-Astrocytes-Oligodendrocytes-SH",
-                                                "lung-AT2-TS",
-                                                "lung-Basal-TS"
-                                                ))),
-    #geom_col(aes(x = y, y = factor(top_feature,
-  #                               levels=rev(c("mammary_tissue-Basal-Epithelial-(Mammary)-BR",
-  #                                            "bonemarrow-B-GL_BlBm",
-  #                                            "bonemarrow-Early.Baso-GL_BlBm",
-  #                                            "stomach-Stromal-cells-SH",
-  #                                            "thyroid-Thyroid-Follicular-Cell-BR",
-  #                                            "placenta-PAEP_MECOM-positive-cells-SH"
-  #                               ))),
+  
+  plot <- ggplot(df)
+  if (fig1b) { 
+    plot = plot + 
+      geom_col(aes(x = y, y = factor(top_feature,
+                                     levels=rev(c("skin_sun_exposed-Melanocyte-BR",
+                                                  "liver-Hepatoblasts-SH",
+                                                  "normal_colon-Stem-GL_Co",
+                                                  "bonemarrow-B-GL_BlBm",
+                                                  "stomach-Goblet-cells-SH",
+                                                  "cerebrum-Astrocytes-Oligodendrocytes-SH",
+                                                  "lung-AT2-TS",
+                                                  "lung-Basal-TS"
+                                     ))),
+                   fill=color), lwd=1.2)
+      
+  } else {
+    plot = plot + 
+      geom_col(aes(x = y, y = factor(top_feature,
+                                 levels=rev(c("bonemarrow-B-GL_BlBm",
+                                              "stomach-Stromal-cells-SH",
+                                              "thyroid-Thyroid-Follicular-Cell-BR",
+                                              "placenta-PAEP_MECOM-positive-cells-SH"
+                                     ))),
+                   fill=color), lwd=1.2)
+    
+  }
   # geom_col(aes(x = y, y = factor(top_feature,
   #                                levels=rev(c("bonemarrow-B-GL_BlBm",
-  #                                             # "bonemarrow-Early.Baso-GL_BlBm",
   #                                             "stomach-Stromal-cells-SH",
   #                                             "thyroid-Thyroid-Follicular-Cell-BR",
   #                                             "placenta-PAEP_MECOM-positive-cells-SH"
@@ -776,7 +785,7 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos) {
                #                                             "thyroid-Thyroid-Follicular-Cell-BR",
                #                                             "placenta-PAEP_MECOM-positive-cells-SH"
                #                                ))),
-               fill=color), lwd=1.2) +
+    plot <- plot +
     geom_errorbarh(aes(y = top_feature, xmin = ymin, xmax = ymax), linewidth=2) +  
     coord_cartesian(xlim = c(xlim_lower, xlim_upper)) +
     scale_fill_manual(values = c("highlight" = "#EE4B2B", "other" = "#A9A9A9")) +
@@ -1269,7 +1278,7 @@ if (!is.null(cell_types_keep)) {
 if (!is.null(robustness_keep)) {
   robustness_keep = unlist(strsplit(robustness_keep, split=","))
 }
-
+fig1b = args$fig1b
 manually_supplied_dirs = NULL
 
 if (!robustness_analysis) {
@@ -1428,7 +1437,8 @@ if (!robustness_analysis) {
       }
       plot = construct_robustness_barplots(df, x="test_set_perf", 
                                            y="top_feature",
-                                           title=cancer_names[[cancer_type]])
+                                           title=cancer_names[[cancer_type]],
+                                           fig1b=fig1b)
       grid_plots[[i]] = plot
       j = j + 1
     } else {
