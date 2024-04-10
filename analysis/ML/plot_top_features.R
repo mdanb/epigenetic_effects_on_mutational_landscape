@@ -58,7 +58,8 @@ parser <- add_option(parser, c("--fig1b"), action="store_true",
                      default=F)
 parser <- add_option(parser, c("--robustness_keep"), type="character", 
                      default=NULL)
-parser <- add_option(parser, c("--add_perf_to_file"), action="store_true")
+parser <- add_option(parser, c("--add_perf_to_file"), action="store_true", 
+                     default=F)
 # args = parse_args(parser, args= c("--cancer_types=Myeloid-MPN",
 #                                   "--datasets=Greenleaf_pbmc_bm",
 #                                   "--cell_number_filter=100",
