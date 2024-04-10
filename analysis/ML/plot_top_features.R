@@ -523,7 +523,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   axis_tick_size = 2
   # print(length(unique(df[[facet_var]])) == 1)
   if (length(unique(df[[facet_var]]) == 1)) {
-   outlier_size = 20
+   outlier_size = 7
    text_size = 20
    axis_lwd = 0.2
    tick_length = 0.3
