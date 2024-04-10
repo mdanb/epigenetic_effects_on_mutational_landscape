@@ -189,24 +189,22 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
 #                                   "--annotation=finalized_annotation",
 #                                   "--top_features_to_plot=1"))
 
-# Kidney-ChRCC
+args = parse_args(parser, args= c("--cancer_types=CNS-Medullo,Liver-HCC,CNS-GBM,Skin-Melanoma,Lung-SCC,Kidney-ChRCC",
+                                  "--cell_number_filter=100",
+                                  "--datasets=Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney-Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney-Bingren,Shendure,Rawlins_fetal_lung,Tsankov-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+                                  "--tissues_to_consider=adult_brain,brain,frontal_cortex,cerebrum,cerebellum-all-adult_brain,frontal_cortex,cerebrum,brain,cerebellum-all-lung,fetal_lung-all",
+                                  "--ML_model=XGB",
+                                  "--seed_range=1-10",
+                                  "--folds_for_test_set=1-10",
+                                  "--feature_importance_method=permutation_importance",
+                                  "--folds_for_test_set=1-10",
+                                  "--robustness_analysis",
+                                  "--subsampled_mutations",
+                                  "--annotation=finalized_annotation",
+                                  "--top_features_to_plot=1",
+                                  "--cell_types_keep=NULL,NULL,NULL,NULL,lung Neuroendocrine-Tsankov,NULL"))
 
-# Lung-SCC
-# Rawlins_fetal_lung,Tsankov
-# args = parse_args(parser, args= c("--cancer_types=CNS-Medullo,Liver-HCC,CNS-GBM,Skin-Melanoma",
-#                                   "--cell_number_filter=100",
-#                                   "--datasets=Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney-Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
-#                                   "--tissues_to_consider=adult_brain,brain,frontal_cortex,cerebrum,cerebellum-all-adult_brain,frontal_cortex,cerebrum,brain,cerebellum-all",
-#                                   "--ML_model=XGB",
-#                                   "--seed_range=1-10",
-#                                   "--feat_imp_min_n_robustness=50",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--feature_importance_method=permutation_importance",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--robustness_analysis",
-#                                   "--subsampled_mutations",
-#                                   "--annotation=finalized_annotation",
-#                                   "--top_features_to_plot=1"))
+# "--feat_imp_min_n_robustness=50",
 
 # args = parse_args(parser, args= c("--cancer_types=mss",
 #                                   "--cell_number_filter=100",
@@ -523,20 +521,18 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   title_size = 150
   axis_text_size = 150
   axis_tick_size = 2
-  print(length(unique(df[[facet_var]])) == 1)
-  #if (length(unique(df[[facet_var]]) == 1)) {
-  #  print(unique(df[[facet_var]]))
-  #  print('a')
-  #  outlier_size = 10
-  #  text_size = 10
-  #  axis_lwd = 0.1
-  #  tick_length = 0.1
-  #  title_size = 150
-  #  axis_text_size = 40
-  #  axis_tick_size = 1
-  #  width = 12
-  #  height = 8
-  #}
+  # print(length(unique(df[[facet_var]])) == 1)
+  if (length(unique(df[[facet_var]]) == 1)) {
+   outlier_size = 20
+   text_size = 20
+   axis_lwd = 0.2
+   tick_length = 0.3
+   title_size = 50
+   axis_text_size = 50
+   axis_tick_size = 0.8
+   width = 18
+   height = 10
+  }
   
   renamed_y = rename_cell_types(df %>% pull(!!sym(y)))
   
@@ -1803,6 +1799,18 @@ if (subsampled_mutations) {
                                                        "../../figures", sep="/"), 
                                     savefile="barplots.pdf",
                                     width=40, height=20)
+  df = df %>% filter(cancer_type %in% c("Liver-HCC", "CNS-GBM", 
+                                        "Lung-SCC", "Skin-Melanoma"))
+  num_samples_5 = subsampled_mutation_df %>% filter(num_samples == 5, 
+                                                    cancer_type %in% 
+                                                    c("Liver-HCC", "CNS-GBM", 
+                                                      "Lung-SCC", "Skin-Melanoma"))
+  unique(num_samples_5 %>% 
+    group_by(cancer_type) %>% 
+    mutate(med=median(test_set_perf)) %>%
+    select(cancer_type, med))
+  
+  
 }
 
 
