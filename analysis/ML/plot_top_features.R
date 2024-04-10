@@ -58,7 +58,7 @@ parser <- add_option(parser, c("--fig1b"), action="store_true",
                      default=F)
 parser <- add_option(parser, c("--robustness_keep"), type="character", 
                      default=NULL)
-
+parser <- add_option(parser, c("--add_perf_to_file"), action="store_true")
 # args = parse_args(parser, args= c("--cancer_types=Myeloid-MPN",
 #                                   "--datasets=Greenleaf_pbmc_bm",
 #                                   "--cell_number_filter=100",
@@ -818,7 +818,7 @@ save_perf_to_file <- function(df_save, feature, cancer_type,
 
 construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath, 
                                              df_perf, perf_savefile, cancer_type, 
-                                             width=9, height=7) {
+                                             add_perf_to_file, width=9, height=7) {
   df["test_set_perf"] = 100 * df[["test_set_perf"]]
   feature = rename_cell_types(feature)
   outlier_shape = 19
@@ -829,11 +829,13 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
   df$top_n = factor(df$top_n, levels = rev(levels(df$top_n)))
   df$x_position = 100 * df$x_position
   # ggplot2 plot
-  save_perf_to_file(df_perf, feature=feature, 
-                    cancer_type=cancer_type,
-                    perf = median(df[["test_set_perf"]]),
-                    perf_savefile=perf_savefile)
-  
+  if (add_perf_to_file) {
+    save_perf_to_file(df_perf, feature=feature, 
+                      cancer_type=cancer_type,
+                      perf = median(df[["test_set_perf"]]),
+                      perf_savefile=perf_savefile)
+  }
+
   ggplot(df) +
     geom_boxplot(aes(x = top_n, y = test_set_perf), lwd = 0.5, 
                  outlier.shape = outlier_shape, outlier.size = 30) +
@@ -1262,6 +1264,7 @@ hundred_kb = args$hundred_kb
 per_donor = args$per_donor
 cell_types_keep = args$cell_types_keep
 robustness_keep = args$robustness_keep
+add_perf_to_file = args$add_perf_to_file
 
 if (!is.null(cell_types_keep)) {
   cell_types_keep = unlist(lapply(args$cell_types_keep, strsplit, split=","))
@@ -1627,6 +1630,7 @@ if (!robustness_analysis) {
                                            df_perf=df_perf,
                                            cancer_type=cancer_type,
                                            perf_savefile=perf_savefile,
+                                           add_perf_to_file = add_perf_to_file,
                                            width=50,
                                            height=35)
         }
