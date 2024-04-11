@@ -809,14 +809,14 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos, fig1b=T) 
 
 save_perf_to_file <- function(df_save, feature, cancer_type, 
                               perf, perf_savefile) {
-  if (cancer_type %in% colnames(df_save)) {
-    num_times = length(grep(cancer_type, colnames(df_save)))
-    cancer_type = paste(cancer_type, num_times + 1)
-  }
-  if (feature %in% rownames(df_save)) {
+  if (cancer_type %in% colnames(df_save) && feature %in% rownames(df_save)) {
     num_times = length(grep(feature, colnames(df_save)))
     feature = paste(feature, num_times + 1)
   }
+  # if (feature %in% rownames(df_save)) {
+  #   num_times = length(grep(feature, colnames(df_save)))
+  #   feature = paste(feature, num_times + 1)
+  # }
   df_save[feature, cancer_type] = perf
   write.csv(df_save, perf_savefile)
 }
