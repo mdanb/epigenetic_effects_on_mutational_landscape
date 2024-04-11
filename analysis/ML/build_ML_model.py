@@ -45,6 +45,7 @@ def run_unclustered_data_analysis_helper(scATAC_df,
     else:
         backwards_elim_dir=f"models/{ML_model}/{cancer_type_or_donor_id}/{scATAC_dir}/backwards_elimination_results"
 
+    backwards_elim_dir = f"{os.path.dirname(os.path.realpath(__file__))}/{backwards_elim_dir}"
     os.makedirs(f"{backwards_elim_dir}", exist_ok=True)
 
     # if tissues_to_consider == "all":

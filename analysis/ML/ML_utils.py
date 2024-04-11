@@ -27,11 +27,11 @@ def prep_and_align_mutations_with_scatac(scATAC_df, mutations_df, cancer_type_or
     # scATAC_df = construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotation_dir, hundred_kb)
     # scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
     if hundred_kb:
-        chr_keep = pd.read_csv("../../data/processed_data/chr_keep_100kb.csv", index_col=0)
+        chr_keep = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/chr_keep_100kb.csv", index_col=0)
     elif expanded_hundred_kb:
-        chr_keep = pd.read_csv("../../data/processed_data/expanded_chr_keep_100kb.csv")
+        chr_keep = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/expanded_chr_keep_100kb.csv")
     else:
-        chr_keep = pd.read_csv("../../data/processed_data/chr_keep.csv", index_col=0)
+        chr_keep = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/chr_keep.csv", index_col=0)
 
     mutations_df = mutations_df.loc[chr_keep["chr"]]
     if not pd.isna(mutations_df).any().any():
@@ -88,23 +88,23 @@ def load_mutations(meso, SCLC, lung_subtyped, woo_pcawg, histologically_subtyped
     return mutations_df
 
 def load_custom(cancer_type):
-    df = pd.read_csv(f"../../data/processed_data/{cancer_type}.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/{cancer_type}.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
 def load_subsampled_mutations(cancer_type_with_n_specified):
-    df = pd.read_csv(f"../../data/processed_data/{cancer_type_with_n_specified}.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/{cancer_type_with_n_specified}.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
 def load_hierarchically_subtyped_mutations():
-    df = pd.read_csv(f"../../data/processed_data/hierarchically_subtyped_mutations.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/hierarchically_subtyped_mutations.csv",
                      index_col=0)
     return df.loc[natsorted(df.index)]
 
 
 def load_per_donor_mutations(cancer_type):
-    df = pd.read_csv(f"../../data/processed_data/per_patient_mutations/{cancer_type}_per_donor.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/per_patient_mutations/{cancer_type}_per_donor.csv",
                      index_col=0)
     return df.loc[natsorted(df.index)]
 
@@ -112,73 +112,73 @@ def load_aggregated_per_donor_mutations(cancer_type):
     cancer_type = cancer_type.split("_")
     major_type = cancer_type[0]
     subtype = cancer_type[1]
-    df = pd.read_csv(f"../../data/processed_data/{major_type}/{major_type}_{subtype}.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/{major_type}/{major_type}_{subtype}.csv",
                      index_col=0)
     return df.loc[natsorted(df.index)]
 
 def load_CPTAC():
-    df = pd.read_csv(f"../../data/processed_data/CPTAC_mutations.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/CPTAC_mutations.csv",
                      index_col=0)
     return df.loc[natsorted(df.index)]
 
 
 def load_combined_CPTAC_ICGC():
-    df = pd.read_csv(f"../../data/processed_data/combined_CPTAC_ICGC_mutations.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/combined_CPTAC_ICGC_mutations.csv",
                      index_col=0)
     return df.loc[natsorted(df.index)]
 
 
 def load_agg_mutations():
-    df = pd.read_csv("../../data/processed_data/mut_count_data.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/mut_count_data.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
 
 def load_woo_pcawg_mutations():
-    df = pd.read_csv("../../data/processed_data/pcawg_agg_woo.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/pcawg_agg_woo.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
 
 def load_RNA_subtyped_mutations():
-    df = pd.read_csv("../../data/processed_data/RNA_subtyped_cancers.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/RNA_subtyped_cancers.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
 
 def load_meso():
-    df = pd.read_csv("../../data/processed_data/mesothelioma.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/mesothelioma.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
 def load_msi_high_mutations():
-    df = pd.read_csv("../../data/processed_data/msi_high.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/msi_high.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
 def load_sclc_mutations():
-    df = pd.read_csv("../../data/processed_data/sclc_count_overlaps.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/sclc_count_overlaps.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
 def load_mm_mutations():
-    df = pd.read_csv("../../data/processed_data/multiple_myeloma.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/multiple_myeloma.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
 def load_subtyped_lung_mutations():
-    df = pd.read_csv("../../data/processed_data/lung_subtyped_mutation.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/lung_subtyped_mutation.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
 
 def load_histologically_subtyped_mutations():
-    df = pd.read_csv("../../data/processed_data/histologically_subtyped_mutations.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/histologically_subtyped_mutations.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
 def load_100kb():
-    df = pd.read_csv("../../data/processed_data/mut_count_data_100kb.csv",
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/mut_count_data_100kb.csv",
                        index_col=0)
     return df.loc[natsorted(df.index)]
 
@@ -186,7 +186,7 @@ def load_de_novo_seurat_clustered_cancers(cancer_type):
     print("Loading De Novo Seurat clustered cancers")
     seurat_cluster_settings = cancer_type.split("x")[1]
     cancer_type = cancer_type.split("x")[0]
-    df = pd.read_csv(f"../../data/processed_data/de_novo_seurat_clustered_mutations/{cancer_type}/"
+    df = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/de_novo_seurat_clustered_mutations/{cancer_type}/"
                      f"{seurat_cluster_settings}.csv", index_col=0)
     return df.loc[natsorted(df.index)]
 
@@ -229,9 +229,9 @@ def filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_fil
 #### Dataframe curation helpers ####
 def add_na_ranges(mutations_df, hundred_kb, expanded_hundred_kb):
     if hundred_kb or expanded_hundred_kb:
-        full_ranges = pd.read_csv("../../data/processed_data/chr_ranges_100kb.csv")
+        full_ranges = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/chr_ranges_100kb.csv")
     else:
-        full_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
+        full_ranges = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/chr_ranges.csv")
     mutations_df = pd.merge(full_ranges, mutations_df, left_on="x", right_index=True,
                             how="outer").set_index("x")
     return mutations_df.loc[natsorted(mutations_df.index)]
@@ -270,9 +270,9 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
                         which_interval_ranges, dataset_abbrev):
     def load_scATAC(scATAC_path, hundred_kb, expanded_hundred_kb, tissues_to_consider, which_interval_ranges):
         if hundred_kb or expanded_hundred_kb:
-            scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_100kb_{os.path.basename(scATAC_path)}"
+            scATAC_path = f"{os.path.dirname(os.path.realpath(__file__))}/{os.path.dirname(scATAC_path)}/interval_ranges_100kb_{os.path.basename(scATAC_path)}"
         elif which_interval_ranges is not None:
-            scATAC_path = f"{os.path.dirname(scATAC_path)}/interval_ranges_{which_interval_ranges}_{os.path.basename(scATAC_path)}"
+            scATAC_path = f"{os.path.dirname(os.path.realpath(__file__))}/{os.path.dirname(scATAC_path)}/interval_ranges_{which_interval_ranges}_{os.path.basename(scATAC_path)}"
         scATAC_df = pyreadr.read_r(scATAC_path)
         scATAC_df = scATAC_df[None]
         scATAC_df = scATAC_df.T
@@ -290,9 +290,9 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
     def load_scATAC_metadata(metadata_path, hundred_kb, expanded_hundred_kb, tissues_to_consider,
                              which_interval_ranges):
         if hundred_kb or expanded_hundred_kb:
-            metadata_path = f"{os.path.dirname(metadata_path)}/interval_ranges_100kb_{os.path.basename(metadata_path)}"
+            metadata_path = f"{os.path.dirname(os.path.realpath(__file__))}/{os.path.dirname(metadata_path)}/interval_ranges_100kb_{os.path.basename(metadata_path)}"
         elif which_interval_ranges:
-            metadata_path = f"{os.path.dirname(metadata_path)}/interval_ranges_{which_interval_ranges}_{os.path.basename(metadata_path)}"
+            metadata_path = f"{os.path.dirname(os.path.realpath(__file__))}/{os.path.dirname(metadata_path)}/interval_ranges_{which_interval_ranges}_{os.path.basename(metadata_path)}"
         metadata = pyreadr.read_r(metadata_path)
         metadata = metadata[None]
 
@@ -307,9 +307,9 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
     for dataset in datasets:
         if tss_filter:
             print(f"Loading TSS filtered scATAC from {dataset}...")
-            tss_filtered_root = "../../data/processed_data/count_overlap_data/tsse_filtered"
-            chr_ranges = pd.read_csv("../../data/processed_data/chr_ranges.csv")
-            scATAC_df = load_scATAC(f"{tss_filtered_root}/{dataset}/combined/{annotation_dir}/" 
+            tss_filtered_root = f"{os.path.dirname(os.path.realpath(__file__))}/{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/count_overlap_data/tsse_filtered"
+            chr_ranges = pd.read_csv(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/chr_ranges.csv")
+            scATAC_df = load_scATAC(f"{os.path.dirname(os.path.realpath(__file__))}/{tss_filtered_root}/{dataset}/combined/{annotation_dir}/" 
                                     f"combined_{tss_filter}_fragments.rds",
                                     hundred_kb, expanded_hundred_kb, tissues_to_consider,
                                     which_interval_ranges).T
@@ -319,12 +319,12 @@ def construct_scATAC_df(tss_filter, datasets, scATAC_cell_number_filter, annotat
             # datasets_combined_count_overlaps.append(scATAC_df)
         else:
             print(f"Loading scATAC from {dataset}...")
-            scATAC_df = load_scATAC("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
+            scATAC_df = load_scATAC(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/count_overlap_data/combined_count_overlaps" 
             f"/{annotation_dir}/{dataset}_combined_count_overlaps.rds", hundred_kb, expanded_hundred_kb,
                                     tissues_to_consider, which_interval_ranges)
             # print("Num features", scATAC_df.shape[1])
             # print("Loaded!")
-        metadata = load_scATAC_metadata("../../data/processed_data/count_overlap_data/combined_count_overlaps" 
+        metadata = load_scATAC_metadata(f"{os.path.dirname(os.path.realpath(__file__))}/../../data/processed_data/count_overlap_data/combined_count_overlaps" 
         f"/{annotation_dir}/{dataset}_combined_count_overlaps_metadata.rds", hundred_kb, expanded_hundred_kb,
                                         tissues_to_consider, which_interval_ranges)
         df = filter_scATAC_df_by_num_cell_per_cell_type(scATAC_df, scATAC_cell_number_filter, metadata)
@@ -441,7 +441,7 @@ def backward_eliminate_features(X_train, y_train, backwards_elim_dir,
                                 n_optuna_trials_backward_selection, feature_importance_method, sqlite,
                                 best_model_fulldatatrained, best_model_perfoldtrained,
                                 starting_n, hundred_kb):
-    figure_path = os.path.join("../../figures/models",
+    figure_path = os.path.join(f"{os.path.dirname(os.path.realpath(__file__))}/../../figures/models",
                                ML_model,
                                cancer_type_or_donor_id,
                                scATAC_dir,
@@ -709,7 +709,7 @@ def save_model_with_n_features_test_performance(scATAC_df, mutations_df, scATAC_
     scATAC_df = scATAC_df.loc[:, model.feature_names_in_]
     scATAC_df = scATAC_df.loc[natsorted(scATAC_df.index)]
     _, X_test, _, y_test = get_train_test_split(scATAC_df, mutations_df, 10, fold_for_test_set)
-    test_set_perf_filepath = f"models/{ML_model}/" \
+    test_set_perf_filepath = f"{os.path.dirname(os.path.realpath(__file__))}/models/{ML_model}/" \
                              f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/" \
                              f"model_iteration_{model_iteration}"
     if feature_importance_method != "default_importance":
@@ -822,7 +822,7 @@ def get_storage_name(sqlite=False):
     if sqlite:
         storage_name = "sqlite:///temp.db"
     else:
-        hostname_file = open(os.path.dirname(os.path.abspath(__file__)) + "/" + "postgresql_hostname.txt", "r")
+        hostname_file = open(os.path.dirname(os.path.realpath(__file__)) + "/" + "postgresql_hostname.txt", "r")
         hostname = hostname_file.readline().strip()
         storage_name = f"postgresql://bgiotti:bgiotti@{hostname}:5432/optuna_db"
         # storage_name = f"postgresql://my_user:password@{hostname}:5432/optuna_db"
@@ -844,7 +844,7 @@ def load_n_features_backwards_elim_models(n, total_num_features, cancer_type, ML
         filename = filename + f"_feature_importance_{feature_importance_method}"
     filename = filename + ".pkl"
 
-    backwards_elim_model_file = f"models/{ML_model}/" \
+    backwards_elim_model_file = f"{os.path.dirname(os.path.realpath(__file__))}/models/{ML_model}/" \
                                 f"{cancer_type}/{scATAC_dir}/backwards_elimination_results/{filename}"
     model = pickle.load(open(backwards_elim_model_file, "rb"))
     return model
