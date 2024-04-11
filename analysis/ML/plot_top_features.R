@@ -973,6 +973,7 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                         grid_cell_type=NULL,
                                         cell_types_keep=NULL,
                                         manually_supplied_dirs=NULL) {
+  print(getwd())
   if ("paper" %in% getwd()) {
     patient_counts = read_excel("supplementary_files/Supplementary_File_S1.xlsx")
   } else {
