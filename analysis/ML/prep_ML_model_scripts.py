@@ -240,12 +240,12 @@ for fold in fold_for_test_set_range:
                  f.write(job_script)
 
         if submit_jobs:
-            subprocess.run(["qsub", f"{script_filename}"])
+            subprocess.run(["qsub", f"{os.path.dirname(os.path.realpath(__file__))}/{script_filename}"])
         elif run_locally:
-            subprocess.run(["sh", f"{script_filename}"])
+            subprocess.run(["sh", f"{os.path.dirname(os.path.realpath(__file__))}/{script_filename}"])
 
         if cleanup:
-            subprocess.run(["rm", f"{script_filename}"])
+            subprocess.run(["rm", f"{os.path.dirname(os.path.realpath(__file__))}/{script_filename}"])
 
 os.makedirs(f"{os.path.dirname(os.path.realpath(__file__))}/robustness_scripts", exist_ok=True)
 robustness_filename = f"robustness_{robustness_filename}.sh"
