@@ -1,5 +1,6 @@
 # Reproducing paper figures
-The instructions for each figure refer to the lines in the correspondingly named bash script. 
+The instructions for each figure refer to the lines in the correspondingly named bash script. All data was pre-processed as explained in the README in the homepage of this repo. 
+
 ## Figure 1 
 ### 1B
 To build the models for that were used to obtain the COO predictions for Figure 1B, run lines 2-16 (note that you will need to set things up to run jobs in parallel, as explained in the README of the homepage of this repo). To plot the results after building the models, run line 18. This will create a PDF in `figures` called `grid_analysis.pdf`.
@@ -17,13 +18,25 @@ from within `analysis/ML`.
 See Jupyter notebook `analysis/ML/paper_umaps.ipynb`
 
 ### 1F
-`cd data/scripts` and run 
+See bash script
 
-```
-Rscript plot_prolif_rate.R
-```
 
 ## Figure 2
 ### 2A
+NOTE: TODO
+Note: The following steps require quite a bit of memory, so if it doesn't work when you first run it, increase the amount of memory till it works. Alternatively, we've shared the R object associated with these steps. 
+
+```
+cd ../data/scripts/
+Rscript create_arrow_files_and_tss.R --dataset=Greenleaf_colon --cores=1
+Rscript create_arrow_files_and_tss.R --dataset=Shendure --cores=1
+Rscript create_arrow_files_and_tss.R --dataset=Greenleaf_brain --cores=1
+Rscript create_ArchR_project.R --cores=8
+```
+
+### 2C
+NOTE: TODO
+
+### 2D
 
 
