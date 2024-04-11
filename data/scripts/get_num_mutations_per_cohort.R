@@ -38,10 +38,10 @@ sample_stats = sample_stats %>% filter(!(CancerType %in% c("Adenocarcinoma",
                                                            "Squamous",
                                                            "Kidney-RCC")))
 
-meso = read.csv("../processed_data/mesothelioma.csv")[["waddell_combined"]]
+meso = read.csv("../processed_data/mesothelioma.csv")[["epithelioid_waddell"]]
 meso = sum(meso, na.rm=T)
 sample_stats = sample_stats %>% add_row(CancerType="mesothelioma", 
-                                        NofDonor=58,
+                                        NofDonor=42,
                                         mut_counts=meso)
 
 sclc = read.csv("../processed_data/sclc_count_overlaps.csv", row.names=1)
@@ -74,7 +74,7 @@ sample_stats = sample_stats %>% add_row(CancerType="msi_high",
 mm = read.csv("../processed_data/multiple_myeloma.csv", row.names=1)
 mm = sum(mm)
 sample_stats = sample_stats %>% add_row(CancerType="multiple_myeloma", 
-                                        NofDonor=NA,
+                                        NofDonor=23,
                                         mut_counts=mm)
 
 sample_stats["avg_mut_per_sample"] = sample_stats["mut_counts"] / sample_stats["NofDonor"]

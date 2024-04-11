@@ -25,6 +25,6 @@ ggplot(df) +
   xlab("") +
   ylab("% of cells cycling") +
   guides(fill="none")
-ggsave("prolif_rate.pdf", width = 20, height=12)
+ggsave("../../figures/prolif_rate.pdf", width = 20, height=12)
 
 
