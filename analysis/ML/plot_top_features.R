@@ -973,8 +973,11 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                                         grid_cell_type=NULL,
                                         cell_types_keep=NULL,
                                         manually_supplied_dirs=NULL) {
-  patient_counts = read_excel(paste(normalizePath(sys.frame(1)$ofile), 
-    "../../paper/supplementary_files/Supplementary_File_S1.xlsx", sep="/"))
+  if ("paper" %in% getwd()) {
+    patient_counts = read_excel("supplementary_files/Supplementary_File_S1.xlsx")
+  } else {
+    patient_counts = read_excel("../../paper/supplementary_files/Supplementary_File_S1.xlsx")
+  }
   add_test_perf_to_df <- function(df, test_dir, feature_importance_method, 
                                   grid_analysis, top_features_to_plot, 
                                   grid_cell_type, fold, seed) {
