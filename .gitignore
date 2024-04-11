@@ -36,7 +36,7 @@ analysis/ML/robustness_scripts/
 scATAC_dataset/
 yang_pub_link.txt
 yang_kidney_git_repo/data
-paper
+paper/*/
 analysis/ML/seed_range*
 analysis/ML/cancer_types_*
 analysis/ML/db.sqlite3
