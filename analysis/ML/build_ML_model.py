@@ -50,12 +50,12 @@ def run_unclustered_data_analysis_helper(scATAC_df,
 
     # if tissues_to_consider == "all":
     if grid_analysis:
-        test_set_perf_filepath = f"models/{ML_model}/" \
+        test_set_perf_filepath = f"{os.path.dirname(os.path.realpath(__file__))}/models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}_{grid_cell_type[0].replace(' ', '-')}/{scATAC_dir}/" \
                                  f"test_set_performance.txt"
         cancer_type_or_donor_id = f"{cancer_type_or_donor_id}_{grid_cell_type[0].replace(' ', '-')}"
     else:
-        test_set_perf_filepath = f"models/{ML_model}/" \
+        test_set_perf_filepath = f"{os.path.dirname(os.path.realpath(__file__))}/models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance.txt"
 
     start = time.time()
