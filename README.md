@@ -489,9 +489,18 @@ This creates multiple figures in `figures/models/XGB/Lymph-BNHL/scATAC_source_Gr
 
 
 # Complete dataset download
-To download all data associated with this paper:
+To download all raw scATAC fragment files associated with this paper:
 ```
 cd data/scripts
 sh download_all_scatac_data.sh
 ```
 
+TODO: Add Lung and Kidney
+This will download the different scATAC datasets used in their respective directories in `data/bed_files`. 
+
+We also provide the processed scATAC (ready for input into ML models) in the following directories:
+- `data/processed_data/count_overlap_data/combined_count_overlaps/finalized_annotation/`: Contains the most common annotations used across the paper
+- `data/processed_data/count_overlap_data/combined_count_overlaps/Greenleaf_colon_remove_cancer_merge_normal_unaffected/`: In addition to normal colon scATAC data, this also contains data from polyp tissue for colon. 
+- `data/processed_data/count_overlap_data/combined_count_overlaps/new_intermediate_blood_bm_annotation/`: Contains the data from Granja et. al separated by CD34+ and CD34- tissue. 
+
+If you want to run the model with the data from one of the latter two directories, but would also like to include other data, make sure to copy over the data from the first directory to one of the latter two. e.g if you want to run the model with fetal brain data from [Trevino et. al (2021)](https://www.sciencedirect.com/science/article/pii/S0092867421009429?via%3Dihub) and PBMC/bone marrow separated by CD34+ and CD34- (the third directory), you need to copy `Greenleaf_brain_combined_count_overlaps.rds` and `Greenleaf_brain_combined_count_overlaps_metadata.rds` from `finalized_annotation` to `new_intermediate_blood_bm_annotation.`
