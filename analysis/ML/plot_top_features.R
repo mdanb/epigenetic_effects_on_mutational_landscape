@@ -1335,7 +1335,6 @@ if (!robustness_analysis) {
     # for (tss_filter in tss_fragment_filter) {
     print(cancer_type)
     if (subsampled_mutations) {
-      # TODO: CHANGE DEPENDING ON CANCER TYPE
       cancer_type_with_n = paste(cancer_type, "n", 
                                  cancer_type_n[[i]], sep="_")
       cancer_type = append(cancer_type_with_n, cancer_type)
@@ -1681,9 +1680,11 @@ if (grid_analysis) {
                     theme = theme(plot.caption = element_text(size = 40, 
                                                               hjust=0.5)))
   p = "../figures/grid_analysis.pdf"
-  if (grepl("paper", getwd())) {
+  
+  if (!grepl("paper", getwd())) {
     p = paste("..", p, sep="/")
   }
+  
   ggsave(p, width = 6 * length(cancer_types), height = 10, limitsize = FALSE)
 }
 
@@ -1747,7 +1748,10 @@ if (subsampled_mutations) {
            limitsize = FALSE)
   }
   
-  savepath = paste(file_path_as_absolute("."), "../../figures/", sep="/")
+  savepath = "../figures"
+  if (!grepl("paper", getwd())) {
+    savepath = paste("..", savepath, sep="/")
+  }
   savefile = "power_analysis.pdf"
   construct_power_analysis_boxplots(df=subsampled_mutation_df, 
                                     savefile=savefile, 
@@ -1816,8 +1820,11 @@ if (subsampled_mutations) {
     group_by(num_samples, top_feature, cancer_type) %>%
     count()
   
-  construct_power_analysis_barplots(df, savepath=paste(file_path_as_absolute("."),
-                                                       "../../figures", sep="/"), 
+  savepath = "../figures"
+  if (!grepl("paper", getwd())) {
+    savepath = paste("..", savepath, sep="/")
+  }
+  construct_power_analysis_barplots(df, savepath=savepath, 
                                     savefile="barplots.pdf",
                                     width=40, height=20)
   df = df %>% filter(cancer_type %in% c("Liver-HCC", "CNS-GBM", 
