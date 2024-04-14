@@ -1105,9 +1105,10 @@ construct_all_seeds_test_df <- function(top_features_to_plot,
                 seed = integer(0),
                 fold = integer(0),
                 num_samples=integer(0))
-    manually_supplied_dirs = gsub(paste(file_path_as_absolute("."), 
-                                        "../../figures/", sep="/"), 
-                                  "", manually_supplied_dirs)
+    manually_supplied_dirs = gsub("../figures/", "", manually_supplied_dirs)
+    if (!grepl("paper", getwd())) {
+      manually_supplied_dirs = paste("..", manually_supplied_dirs, sep="/")
+    } 
     manually_supplied_dirs = paste(manually_supplied_dirs, 
                                    "backwards_elimination_results", sep="/")
     for (test_dir in manually_supplied_dirs) {
@@ -1385,22 +1386,26 @@ if (!robustness_analysis) {
                                                   hundred_kb=hundred_kb,
                                                   accumulated_seeds=T,
                                                   cell_types_keep=cell_types_keep[i])
-      savepath = paste(file_path_as_absolute("."), "../../figures", savepath, sep="/")
+      savepath = paste("../figures", savepath, sep="/")
+      p = paste("../figures", "models", ML_model, cancer_type, sep="/")
+      
+      if (!grepl("paper", getwd())) {
+        savepath = paste("..", savepath, sep="/")
+        p = paste("..", p, sep="/")
+      }
       # savepath = paste("/home/mdanb/research/mount_sinai/epigenetic_effects_on_mutational_landscape/figures", savepath, sep="/")
       
       lapply(savepath, dir.create, recursive=T)
-      dirs = list.dirs(paste(file_path_as_absolute("."), 
-                             "../../figures", "models", ML_model, cancer_type,
-                             sep="/"), recursive = F)
+      dirs = list.dirs(p, recursive = F)
     } else {
       dirs = c()
       for (cell_type in grid_cell_types) {
-        dirs = append(dirs, list.dirs(paste(file_path_as_absolute("."), 
-                                            "../../figures", "models", 
-                                            ML_model, paste(cancer_type, 
-                                                            cell_type, 
-                                                            sep="_"), sep="/"),
-                                      recursive = F))
+        p = paste("../figures", "models", ML_model, paste(cancer_type, 
+                  cell_type, sep="_"), sep="/")
+        if (!grepl("paper", getwd())) {
+          p = paste("..", p, sep="/")
+        }
+        dirs = append(dirs, list.dirs(p, recursive = F))
       }
     } 
     
@@ -1675,8 +1680,11 @@ if (grid_analysis) {
     plot_annotation(caption = "Test Set Variance Explained (%)",
                     theme = theme(plot.caption = element_text(size = 40, 
                                                               hjust=0.5)))
-  ggsave(paste(file_path_as_absolute("."), "../../figures/grid_analysis.pdf", sep="/"), 
-         width = 6 * length(cancer_types), height = 10, limitsize = FALSE)
+  p = "../figures/grid_analysis.pdf"
+  if (grepl("paper", getwd())) {
+    p = paste("..", p, sep="/")
+  }
+  ggsave(p, width = 6 * length(cancer_types), height = 10, limitsize = FALSE)
 }
 
 if (subsampled_mutations) {
