@@ -85,7 +85,12 @@ construct_dir <- function(scATAC_source,
     dir = paste("expanded_interval_ranges_100kb", dir, sep="_")
   }
   
-  return(paste("models", ML_model, cancer_type, dir, sep="/"))
+  if (grepl("paper", getwd())) {
+    return(paste("..", "analysis", "ML",
+                 "models", ML_model, cancer_type, dir, sep="/"))
+  } else {
+    return(paste("models", ML_model, cancer_type, dir, sep="/"))
+  }
 }
 
 construct_backwards_elim_dir <- function(cancer_type, 
