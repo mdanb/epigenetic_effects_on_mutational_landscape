@@ -1232,6 +1232,7 @@ top_features_to_plot = as.integer(unlist(strsplit(top_features_to_plot,
 cell_number_filter = args$cell_number_filter
 tss_fragment_filter = unlist(strsplit(args$tss_fragment_filter, split = ","))
 annotation = args$annotation
+annotation = unlist(strsplit(annotation, split = ","))
 tissues_to_consider = unlist(strsplit(args$tissues_to_consider, split = "-"))
 tissues_to_consider = strsplit(tissues_to_consider, split=",")
 tissues_to_consider = unlist(lapply(tissues_to_consider, paste, collapse="_"))
@@ -1332,6 +1333,11 @@ if (!robustness_analysis) {
                        c(1,5,10,15,20,25,30,35))
   
   for (cancer_type in cancer_types) {
+    if (length(annotation) > 1) {
+      current_annotation = annotation[i]
+    } else {
+      current_annotation = annotation
+    }
     # for (tss_filter in tss_fragment_filter) {
     print(cancer_type)
     if (subsampled_mutations) {
@@ -1363,9 +1369,9 @@ if (!robustness_analysis) {
                             sep="_")
     }
     if (scATAC_source[1] == "") {
-      scATAC_source = paste("annotation", annotation, sep="_")
+      scATAC_source = paste("annotation", current_annotation, sep="_")
     } else {
-      scATAC_source = paste(scATAC_source, "annotation", annotation, sep="_")
+      scATAC_source = paste(scATAC_source, "annotation", current_annotation, sep="_")
     }
     
     if (!is.na(cell_types_keep[i])) {
@@ -1380,7 +1386,7 @@ if (!robustness_analysis) {
                                                   datasets=unlist(datasets[i]),
                                                   cell_number_filter=cell_number_filter,
                                                   tss_fragment_filter=tss_fragment_filter,
-                                                  annotation=annotation,
+                                                  annotation=current_annotation,
                                                   ML_model=ML_model,
                                                   hundred_kb=hundred_kb,
                                                   accumulated_seeds=T,
@@ -1437,7 +1443,7 @@ if (!robustness_analysis) {
                                                    datasets=datasets,
                                                    cell_number_filter=cell_number_filter,
                                                    tss_fragment_filter=tss_fragment_filter, 
-                                                   annotation=annotation,
+                                                   annotation=current_annotation,
                                                    tissues_to_consider=tissues_to_consider,
                                                    ML_model=ML_model,
                                                    folds_for_test_set=folds_for_test_set,
@@ -1462,7 +1468,7 @@ if (!robustness_analysis) {
                                        datasets=unlist(datasets[i]),
                                        cell_number_filter=cell_number_filter,
                                        tss_fragment_filter=tss_fragment_filter, 
-                                       annotation=annotation,
+                                       annotation=current_annotation,
                                        tissues_to_consider=tissues_to_consider[i],
                                        ML_model=ML_model,
                                        folds_for_test_set=folds_for_test_set,
@@ -1654,7 +1660,7 @@ if (!robustness_analysis) {
                                                                datasets,
                                                                cell_number_filter,
                                                                tss_fragment_filter,
-                                                               annotation, 
+                                                               current_annotation, 
                                                                ML_model,
                                                                hundred_kb,
                                                                tissues_to_consider)
