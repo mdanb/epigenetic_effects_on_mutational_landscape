@@ -2,6 +2,7 @@ library(ggplot2)
 library(magrittr)
 library(readxl)
 library(dplyr)
+
 df = read_excel("../data/figure_1f_data.xlsx", sheet = 2)
 df = df %>% arrange(prop)
 df = df %>% 
@@ -25,6 +26,6 @@ ggplot(df) +
   xlab("") +
   ylab("% of cells cycling") +
   guides(fill="none")
-ggsave("../../figures/prolif_rate.pdf", width = 20, height=12)
+ggsave("../figures/prolif_rate.pdf", width = 20, height=12)
 
 
