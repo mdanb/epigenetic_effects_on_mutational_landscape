@@ -849,11 +849,11 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos, fig1b=T) 
 }
 
 save_perf_to_file <- function(df_save, feature, cancer_type, 
-                              perf, perf_savefile) {
+                              perf, perf_savefile, grid_names=F) {
   print(cancer_type)
   print(colnames(df_save))
   print(cancer_type %in% colnames(df_save))
-  feature = rename_cell_types(feature)
+  feature = rename_cell_types(feature, grid_names)
   if (cancer_type %in% colnames(df_save) && feature %in% rownames(df_save) &&
       !is.na(df_save[feature, cancer_type])) {
     num_times = length(grep(feature, colnames(df_save)))
@@ -1527,7 +1527,8 @@ if (!robustness_analysis) {
           save_perf_to_file(df_perf, feature=grid_cell_type, 
                             cancer_type=cancer_type, 
                             perf = perf,
-                            perf_savefile=perf_savefile)
+                            perf_savefile=perf_savefile,
+                            grid_names = T)
         }
       }
       plot = construct_robustness_barplots(df, x="test_set_perf", 
