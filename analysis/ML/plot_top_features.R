@@ -285,17 +285,17 @@ parser <- add_option(parser, c("--add_perf_to_file_grid"), action="store_true",
 #                                   "--robustness_analysis",
 #                                   "--feature_importance_method=permutation_importance"))
 
-args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCa,CNS-GBM,Lung-AdenoCA,Lung-SCC",
-                                  "--datasets=Bingren,Shendure,Greenleaf_colon,Greenleaf_blood_bm,Tsankov",
-                                  "--cell_number_filter=100",
-                                  "--annotation=finalized_annotation,finalized_annotation,finalized_annotation,new_intermediate_blood_bm_annotation,finalized_annotation,finalized_annotation,finalized_annotation,finalized_annotation",
-                                  "--seed_range=1-10",
-                                  "--folds_for_test_set=1-10",
-                                  "--tissues_to_consider=all",
-                                  "--robustness_analysis",
-                                  "--feature_importance_method=permutation_importance",
-                                  "--grid_analysis",
-                                  "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
+# args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCa,CNS-GBM,Lung-AdenoCA,Lung-SCC",
+#                                   "--datasets=Bingren,Shendure,Greenleaf_colon,Greenleaf_blood_bm,Tsankov",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation,finalized_annotation,finalized_annotation,new_intermediate_blood_bm_annotation,finalized_annotation,finalized_annotation,finalized_annotation,finalized_annotation",
+#                                   "--seed_range=1-10",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=all",
+#                                   "--robustness_analysis",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--grid_analysis",
+#                                   "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
 
 # args = parse_args(parser, args= c("--cancer_types=CNS-Medullo,Kidney-ChRCC,Liver-HCC,CNS-GBM,Lung-SCC,Skin-Melanoma",
 #                                   "--datasets=Bingren,Shendure,Greenleaf_colon,Greenleaf_blood_bm,Tsankov",
