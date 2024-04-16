@@ -69,6 +69,9 @@ parser <- add_option(parser, c("--robustness_keep"), type="character",
                      default=NULL)
 parser <- add_option(parser, c("--add_perf_to_file"), action="store_true", 
                      default=F)
+parser <- add_option(parser, c("--add_perf_to_file_grid"), action="store_true", 
+                     default=F)
+
 # args = parse_args(parser, args= c("--cancer_types=Myeloid-MPN",
 #                                   "--datasets=Greenleaf_pbmc_bm",
 #                                   "--cell_number_filter=100",
@@ -860,7 +863,8 @@ save_perf_to_file <- function(df_save, feature, cancer_type,
 
 construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath, 
                                              df_perf, perf_savefile, cancer_type, 
-                                             add_perf_to_file, width=9, height=7) {
+                                             add_perf_to_file, add_perf_to_file_grid,
+                                             width=9, height=7) {
   df["test_set_perf"] = 100 * df[["test_set_perf"]]
   feature = rename_cell_types(feature)
   outlier_shape = 19
@@ -871,7 +875,7 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
   df$top_n = factor(df$top_n, levels = rev(levels(df$top_n)))
   df$x_position = 100 * df$x_position
   # ggplot2 plot
-  if (add_perf_to_file) {
+  if (add_perf_to_file && !add_perf_to_file_grid) {
     save_perf_to_file(df_perf, feature=feature, 
                       cancer_type=cancer_type,
                       perf = median(df[["test_set_perf"]]),
@@ -1312,6 +1316,7 @@ per_donor = args$per_donor
 cell_types_keep = args$cell_types_keep
 robustness_keep = args$robustness_keep
 add_perf_to_file = args$add_perf_to_file
+add_perf_to_file_grid = args$add_perf_to_file_grid
 
 if (!is.null(cell_types_keep)) {
   cell_types_keep = unlist(lapply(args$cell_types_keep, strsplit, split=","))
@@ -1466,7 +1471,10 @@ if (!robustness_analysis) {
                                               sep = "_")
     }
     all_seeds_dirs = dirs[basename(dirs) %in% seed_fold_for_test_combinations]
-    
+    perf_savefile = "models/XGB/feature_cancer_median_performances.txt"
+    if (grepl("paper", getwd())) {
+      perf_savefile = paste("..", "analysis", "ML", perf_savefile, sep="/")
+    } 
     if (grid_analysis) {
       j = 1
       df = data.frame()
@@ -1488,6 +1496,13 @@ if (!robustness_analysis) {
                                                    grid_analysis=grid_analysis,
                                                    grid_cell_type=grid_cell_type,
                                                    cell_types_keep = cell_types_keep))
+        df_save = df %>% filter(feature == grid_cell_type)
+        if (add_perf_to_file_grid) {
+          save_perf_to_file(df_save=df_save, feature=grid_cell_type, 
+                            cancer_type=cancer_type, 
+                            perf = median(df_save[["test_set_perf"]]),
+                            perf_savefile=perf_savefile)
+        }
       }
       plot = construct_robustness_barplots(df, x="test_set_perf", 
                                            y="top_feature",
@@ -1686,6 +1701,7 @@ if (!robustness_analysis) {
                                            cancer_type=cancer_type,
                                            perf_savefile=perf_savefile,
                                            add_perf_to_file = add_perf_to_file,
+                                           add_perf_to_file_grid = add_perf_to_file_grid,
                                            width=50,
                                            height=35)
         }
