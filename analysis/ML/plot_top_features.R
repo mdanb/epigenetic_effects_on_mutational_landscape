@@ -12,8 +12,17 @@ library(hash)
 library(readxl)
 library(paletteer)
 library(tools)
-source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
-source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
+
+if (grepl("paper", getwd())) {
+  source("../utils.R")
+  source("../analysis/ML/ML_utils.R")
+} else {
+  source("../../utils.R")
+  source("ML_utils.R")
+}
+
+# source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/utils.R")
+# source("/broad/hptmp/bgiotti/BingRen_scATAC_atlas/analysis/ML/ML_utils.R")
 
 parser <- OptionParser()
 parser <- add_option(parser, c("--datasets"), type="character",
@@ -205,6 +214,20 @@ parser <- add_option(parser, c("--add_perf_to_file"), action="store_true",
 #                                   "--top_features_to_plot=1",
 #                                   "--cell_types_keep=NULL,NULL,NULL,NULL,lung Neuroendocrine-Tsankov,NULL"))
 
+
+args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCa,CNS-GBM,Lung-AdenoCA,Lung-SCC",
+                                  "--cell_number_filter=100",
+                                  "--datasets=Bingren,Shendure,Greenleaf_colon,Greenleaf_blood_bm,Tsankov",
+                                  "--ML_model=XGB",
+                                  "--seed_range=1-10",
+                                  "--folds_for_test_set=1-10",
+                                  "--feature_importance_method=permutation_importance",
+                                  "--folds_for_test_set=1-10",
+                                  "--robustness_analysis",
+                                  "--grid_analysis",
+                                  "--annotation=finalized_annotation",
+                                  "--top_features_to_plot=1",
+                                  "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
 # "--feat_imp_min_n_robustness=50",
 
 # args = parse_args(parser, args= c("--cancer_types=mss",
@@ -259,8 +282,22 @@ parser <- add_option(parser, c("--add_perf_to_file"), action="store_true",
 #                                   "--robustness_analysis",
 #                                   "--feature_importance_method=permutation_importance"))
 
-# args = parse_args(parser, args= c("--cancer_types=Lung-AdenoCA",
-#                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Rawlins_fetal_lung,Shendure,Tsankov,Yang_kidney",
+# args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCa,CNS-GBM,Lung-AdenoCA,Lung-SCC",
+#                                   "--datasets=Bingren,Shendure,Greenleaf_colon,Greenleaf_blood_bm,Tsankov",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation,finalized_annotation,finalized_annotation,new_intermediate_blood_bm_annotation,finalized_annotation,finalized_annotation,finalized_annotation,finalized_annotation",
+#                                   "--seed_range=1-10",
+#                                   "--top_features_to_plot_feat_imp=2,5,10",
+#                                   "--top_features_to_plot=1,2,5,10",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=all",
+#                                   "--robustness_analysis",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--grid_analysis",
+#                                   "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
+
+# args = parse_args(parser, args= c("--cancer_types=CNS-Medullo,Kidney-ChRCC,Liver-HCC,CNS-GBM,Lung-SCC,Skin-Melanoma",
+#                                   "--datasets=Bingren,Shendure,Greenleaf_colon,Greenleaf_blood_bm,Tsankov",
 #                                   "--cell_number_filter=100",
 #                                   "--annotation=finalized_annotation",
 #                                   "--seed_range=1-10",
@@ -270,7 +307,6 @@ parser <- add_option(parser, c("--add_perf_to_file"), action="store_true",
 #                                   "--tissues_to_consider=all",
 #                                   "--robustness_analysis",
 #                                   "--feature_importance_method=permutation_importance"))
-
 
 args = parse_args(parser)
 
@@ -783,7 +819,7 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos, fig1b=T) 
                #                                             "placenta-PAEP_MECOM-positive-cells-SH"
                #                                ))),
     plot <- plot +
-    geom_errorbarh(aes(y = top_feature, xmin = ymin, xmax = ymax), linewidth=2) +  
+    geom_errorbarh(aes(y = top_feature, xmin = ymin, xmax = ymax), linewidth=1) +  
     coord_cartesian(xlim = c(xlim_lower, xlim_upper)) +
     scale_fill_manual(values = c("highlight" = "#EE4B2B", "other" = "#A9A9A9")) +
     ylab("") +
