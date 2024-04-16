@@ -285,19 +285,17 @@ parser <- add_option(parser, c("--add_perf_to_file_grid"), action="store_true",
 #                                   "--robustness_analysis",
 #                                   "--feature_importance_method=permutation_importance"))
 
-# args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCa,CNS-GBM,Lung-AdenoCA,Lung-SCC",
-#                                   "--datasets=Bingren,Shendure,Greenleaf_colon,Greenleaf_blood_bm,Tsankov",
-#                                   "--cell_number_filter=100",
-#                                   "--annotation=finalized_annotation,finalized_annotation,finalized_annotation,new_intermediate_blood_bm_annotation,finalized_annotation,finalized_annotation,finalized_annotation,finalized_annotation",
-#                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot_feat_imp=2,5,10",
-#                                   "--top_features_to_plot=1,2,5,10",
-#                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=all",
-#                                   "--robustness_analysis",
-#                                   "--feature_importance_method=permutation_importance",
-#                                   "--grid_analysis",
-#                                   "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
+args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCa,CNS-GBM,Lung-AdenoCA,Lung-SCC",
+                                  "--datasets=Bingren,Shendure,Greenleaf_colon,Greenleaf_blood_bm,Tsankov",
+                                  "--cell_number_filter=100",
+                                  "--annotation=finalized_annotation,finalized_annotation,finalized_annotation,new_intermediate_blood_bm_annotation,finalized_annotation,finalized_annotation,finalized_annotation,finalized_annotation",
+                                  "--seed_range=1-10",
+                                  "--folds_for_test_set=1-10",
+                                  "--tissues_to_consider=all",
+                                  "--robustness_analysis",
+                                  "--feature_importance_method=permutation_importance",
+                                  "--grid_analysis",
+                                  "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
 
 # args = parse_args(parser, args= c("--cancer_types=CNS-Medullo,Kidney-ChRCC,Liver-HCC,CNS-GBM,Lung-SCC,Skin-Melanoma",
 #                                   "--datasets=Bingren,Shendure,Greenleaf_colon,Greenleaf_blood_bm,Tsankov",
@@ -487,8 +485,12 @@ construct_bar_plots <- function(cancer_type,
   }
 }
 
-rename_cell_types <- function(cell_type_names) {
-  renamed = strsplit(cell_type_names, split=" ")
+rename_cell_types <- function(cell_type_names, grid_names=F) {
+  if (grid_names) {
+    renamed = strsplit(cell_type_names, split="-")
+  } else {
+    renamed = strsplit(cell_type_names, split=" ")
+  }
   tissue = lapply(renamed, "[", 1)
   dataset = lapply(renamed, function(x) x[length(x)])
   cell_type = lapply(renamed, function(x) paste(x[2:(length(x)-1)], 
@@ -848,7 +850,12 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos, fig1b=T) 
 
 save_perf_to_file <- function(df_save, feature, cancer_type, 
                               perf, perf_savefile) {
-  if (cancer_type %in% colnames(df_save) && feature %in% rownames(df_save)) {
+  print(cancer_type)
+  print(colnames(df_save))
+  print(cancer_type %in% colnames(df_save))
+  feature = rename_cell_types(feature)
+  if (cancer_type %in% colnames(df_save) && feature %in% rownames(df_save) &&
+      !is.na(df_save[feature, cancer_type])) {
     num_times = length(grep(feature, colnames(df_save)))
     feature = paste(feature, num_times + 1)
   }
@@ -1471,10 +1478,18 @@ if (!robustness_analysis) {
                                               sep = "_")
     }
     all_seeds_dirs = dirs[basename(dirs) %in% seed_fold_for_test_combinations]
+    
     perf_savefile = "models/XGB/feature_cancer_median_performances.txt"
     if (grepl("paper", getwd())) {
       perf_savefile = paste("..", "analysis", "ML", perf_savefile, sep="/")
     } 
+    
+    perf_savefile = "models/XGB/feature_cancer_median_performances.txt"
+    
+    if (grepl("paper", getwd())) {
+      perf_savefile = paste("../analysis/ML", perf_savefile, sep="/")
+    }
+    
     if (grid_analysis) {
       j = 1
       df = data.frame()
@@ -1496,11 +1511,22 @@ if (!robustness_analysis) {
                                                    grid_analysis=grid_analysis,
                                                    grid_cell_type=grid_cell_type,
                                                    cell_types_keep = cell_types_keep))
-        df_save = df %>% filter(feature == grid_cell_type)
+        if (file.exists(perf_savefile)) {
+          df_perf = read.csv(perf_savefile, row.names = 1)
+          colnames(df_perf) = gsub("\\.","-", colnames(df_perf))
+        } else {
+          df_perf = data.frame()
+        }
+        
+        perf = df %>% 
+          filter(top_feature == grid_cell_type) %>%
+          select(test_set_perf) %>%
+          pull %>%
+          median
         if (add_perf_to_file_grid) {
-          save_perf_to_file(df_save=df_save, feature=grid_cell_type, 
+          save_perf_to_file(df_perf, feature=grid_cell_type, 
                             cancer_type=cancer_type, 
-                            perf = median(df_save[["test_set_perf"]]),
+                            perf = perf,
                             perf_savefile=perf_savefile)
         }
       }
@@ -1686,6 +1712,11 @@ if (!robustness_analysis) {
                            "features.pdf", sep="_")
           
           perf_savefile = "models/XGB/feature_cancer_median_performances.txt"
+          
+          if (grepl("paper", getwd())) {
+            perf_savefile = paste("../analysis/ML", perf_savefile, sep="/")
+          }
+          
           if (file.exists(perf_savefile)) {
             df_perf = read.csv(perf_savefile, row.names = 1)
             colnames(df_perf) = gsub("\\.","-", colnames(df_perf))
