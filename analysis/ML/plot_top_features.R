@@ -340,7 +340,7 @@ cell_types = c("brain OPC/Oligo GL_Br" = "OPC/Oligo, Cerebral Cortex GL_Br",
           		 "lung Ciliated epithelial cells SH"="Ciliated, Lung SH",
                "lung Tuft.like TS" = "Tuft-like, Lung TS",
           		 "lung distal_lung Secretory TS" = "Secretory, Lung TS",
-          		 "lung AT2 TS" = "AT2, Lung TS",
+          		 # "lung AT2 TS" = "AT2, Lung TS",
                "lung Bronchiolar and alveolar epithelial cells SH" = "Bronchiolar/alveolar, Lung SH",
                "lung proximal Ciliated TS" = "Ciliated, Proximal Lung TS",
                "lung B.cells TS" = "B, Lung TS",
@@ -488,6 +488,7 @@ construct_bar_plots <- function(cancer_type,
 rename_cell_types <- function(cell_type_names, grid_names=F) {
   if (grid_names) {
     renamed = strsplit(cell_type_names, split="-")
+    renamed = list(renamed[], renamed[], renamed[])
   } else {
     renamed = strsplit(cell_type_names, split=" ")
   }
