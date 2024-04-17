@@ -488,7 +488,6 @@ construct_bar_plots <- function(cancer_type,
 rename_cell_types <- function(cell_type_names, grid_names=F) {
   if (grid_names) {
     renamed = strsplit(cell_type_names, split="-")
-    renamed = list(renamed[], renamed[], renamed[])
   } else {
     renamed = strsplit(cell_type_names, split=" ")
   }
