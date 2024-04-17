@@ -873,7 +873,7 @@ construct_test_set_perf_boxplots <- function(df, feature, savefile, savepath,
                                              add_perf_to_file, add_perf_to_file_grid,
                                              width=9, height=7) {
   df["test_set_perf"] = 100 * df[["test_set_perf"]]
-  feature = rename_cell_types(feature)
+  # feature = rename_cell_types(feature)
   outlier_shape = 19
   n_top_feature = unique(df %>% select(top_n, n_top_feature)) %>%
     arrange(desc(top_n))
