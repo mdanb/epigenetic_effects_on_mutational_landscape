@@ -309,6 +309,18 @@ parser <- add_option(parser, c("--add_perf_to_file_grid"), action="store_true",
 #                                   "--robustness_analysis",
 #                                   "--feature_importance_method=permutation_importance"))
 
+# args = parse_args(parser, args= c("--cancer_types=CNS-GBM",
+#                                   "--datasets=Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--seed_range=1-10",
+#                                   "--top_features_to_plot=1,2,5,10",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=adult_brain,frontal_cortex,cerebrum,brain,cerebellum",
+#                                   "--robustness_analysis",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--add_perf_to_file"))
+
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -549,6 +561,23 @@ rename_cell_types <- function(cell_type_names, grid_names=F) {
   return(renamed)
 }
 
+conduct_test <- function(df, top, second, cancer_type, p, df_save,
+                         perf_savefile) {
+  df_top = df %>% filter(features == top)
+  df_second = df %>% filter(features == second)
+  p=wilcox.test(df_top[["permutation_importance"]], 
+                df_second[["permutation_importance"]],
+                alternative="greater")[3]$p.value
+  
+  if (cancer_type %in% colnames(df_save) && top %in% rownames(df_save) &&
+      !is.na(df_save[top, cancer_type])) {
+    num_times = length(grep(top, colnames(df_save)))
+    top = paste(top, num_times + 1)
+  }
+  df_save[top, cancer_type] = p
+  write.csv(df_save, perf_savefile)
+}
+
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
                                           n_name=NULL, width=12, height=8,
@@ -618,8 +647,11 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     df_filtered = df_filtered %>% 
       left_join(df_compressed) %>%
       arrange(!!sym(n_name), med_x)
-    top = unique(df_filtered %>% pull(!!sym(y)))
-    top = top[length(top)]
+    top_sorted = unique(df_filtered %>% pull(!!sym(y)))
+    top = top_sorted[length(top_sorted)]
+    second = top_sorted[length(top_sorted) - 1]
+    
+    conduct_test(df_filtered, gsub("\n", " ", top), gsub("\n", " ", second))
     
     df_filtered = df_filtered %>% 
       ungroup() %>%
@@ -850,9 +882,9 @@ construct_robustness_barplots <- function(df, x, y, title, add_to_pos, fig1b=T) 
 
 save_perf_to_file <- function(df_save, feature, cancer_type, 
                               perf, perf_savefile, grid_names=F) {
-  print(cancer_type)
-  print(colnames(df_save))
-  print(cancer_type %in% colnames(df_save))
+  # print(cancer_type)
+  # print(colnames(df_save))
+  # print(cancer_type %in% colnames(df_save))
   feature = rename_cell_types(feature, grid_names)
   if (cancer_type %in% colnames(df_save) && feature %in% rownames(df_save) &&
       !is.na(df_save[feature, cancer_type])) {
