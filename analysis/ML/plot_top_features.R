@@ -561,8 +561,8 @@ rename_cell_types <- function(cell_type_names, grid_names=F) {
   return(renamed)
 }
 
-conduct_test <- function(df, top, second, cancer_type, p, df_save,
-                         perf_savefile) {
+conduct_test <- function(df, top, second, cancer_type, df_save, 
+                         p_values_savefile) {
   df_top = df %>% filter(features == top)
   df_second = df %>% filter(features == second)
   p=wilcox.test(df_top[["permutation_importance"]], 
@@ -575,7 +575,7 @@ conduct_test <- function(df, top, second, cancer_type, p, df_save,
     top = paste(top, num_times + 1)
   }
   df_save[top, cancer_type] = p
-  write.csv(df_save, perf_savefile)
+  write.csv(df_save, p_values_savefile)
 }
 
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
@@ -623,6 +623,17 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   }
   
   plots <- list()
+  p_values_savefile = "models/XGB/p_values_feat_imp.csv"
+  if (grepl("paper", getwd())) {
+    p_values_savefile = paste("../analysis/ML", p_values_savefile, sep="/")
+  } 
+  
+  if (file.exists(p_values_savefile)) {
+    df_save = read.csv(p_values_savefile, row.names = 1)
+    colnames(df_save) = gsub("\\.","-", colnames(df_save))
+  } else {
+    df_save = data.frame()
+  }
   
   for (level in unique(df[[facet_var]])) {
     df_filtered <- df %>% 
@@ -651,8 +662,11 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     top = top_sorted[length(top_sorted)]
     second = top_sorted[length(top_sorted) - 1]
     
-    conduct_test(df_filtered, gsub("\n", " ", top), gsub("\n", " ", second))
-    
+    if (level == "5") {
+      conduct_test(df_filtered, gsub("\n", " ", top), gsub("\n", " ", second),
+                   cancer_type, df_save, p_values_savefile)
+    }
+
     df_filtered = df_filtered %>% 
       ungroup() %>%
       mutate(color=ifelse(!!sym(y)==top, "highlight", "other"))
