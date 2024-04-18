@@ -663,8 +663,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     second = top_sorted[length(top_sorted) - 1]
     
     if (level == "5") {
-      conduct_test(df_filtered, gsub("\n", " ", top), gsub("\n", " ", second),
-                   cancer_type, df_save, p_values_savefile)
+      conduct_test(df_filtered, top, second, cancer_type, 
+                   df_save, p_values_savefile)
     }
 
     df_filtered = df_filtered %>% 
