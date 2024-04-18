@@ -675,8 +675,8 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
       if (add_p_to_file) {
           conduct_test(df_filtered, top, second, cancer_type, 
                        df_save, p_values_savefile)
-        if (cancer_type == "Myeloid-AML") {
-          third = top_sorted[length(top_sorted) - 1]
+        if (cancer_type == "Myeloi-AML") {
+          third = top_sorted[length(top_sorted) - 2]
           conduct_test(df_filtered, top, third, cancer_type, df_save, 
                        p_values_savefile, print_only=T)
           
