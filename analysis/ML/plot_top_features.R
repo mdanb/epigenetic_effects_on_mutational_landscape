@@ -71,6 +71,8 @@ parser <- add_option(parser, c("--add_perf_to_file"), action="store_true",
                      default=F)
 parser <- add_option(parser, c("--add_perf_to_file_grid"), action="store_true", 
                      default=F)
+parser <- add_option(parser, c("--add_p_to_file"), action="store_true", 
+                     default=F)
 
 # args = parse_args(parser, args= c("--cancer_types=Myeloid-MPN",
 #                                   "--datasets=Greenleaf_pbmc_bm",
@@ -581,7 +583,8 @@ conduct_test <- function(df, top, second, cancer_type, df_save,
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
                                           facet_var, xlabel="", plot_fold=F, 
                                           n_name=NULL, width=12, height=8,
-                                          keep=NULL, add_to_pos=0.07) {
+                                          keep=NULL, add_to_pos=0.07,
+                                          add_p_to_file=F) {
   #df = df_feat_imp
   lwd = 1.5
   str_wrap_width = 15
@@ -663,8 +666,10 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     second = top_sorted[length(top_sorted) - 1]
     
     if (level == "5") {
-      conduct_test(df_filtered, top, second, cancer_type, 
-                   df_save, p_values_savefile)
+      if (add_p_to_file) {
+        conduct_test(df_filtered, top, second, cancer_type, 
+                     df_save, p_values_savefile)
+        }
     }
 
     df_filtered = df_filtered %>% 
@@ -1370,7 +1375,8 @@ cell_types_keep = args$cell_types_keep
 robustness_keep = args$robustness_keep
 add_perf_to_file = args$add_perf_to_file
 add_perf_to_file_grid = args$add_perf_to_file_grid
-
+add_p_to_file = args$add_p_to_file
+  
 if (!is.null(cell_types_keep)) {
   cell_types_keep = unlist(lapply(args$cell_types_keep, strsplit, split=","))
   cell_types_keep = unlist(lapply(cell_types_keep, paste, collapse="_"))
@@ -1632,7 +1638,8 @@ if (!robustness_analysis) {
                                       xlabel="Feature Importance",
                                       width=50,
                                       height=35,
-                                      keep = robustness_keep)
+                                      keep = robustness_keep,
+                                      add_p_to_file=add_p_to_file)
         construct_robustness_boxplots(df=df_feat_imp, 
                                       x="permutation_importance", 
                                       y="features", 
@@ -1645,7 +1652,8 @@ if (!robustness_analysis) {
                                       width=50,
                                       height=35,
                                       keep = robustness_keep,
-                                      add_to_pos = 0)
+                                      add_to_pos = 0,
+                                      add_p_to_file=add_p_to_file)
         
         # construct_robustness_boxplots(df=df_feat_imp, 
         #                               x="permutation_importance", 
@@ -1697,7 +1705,8 @@ if (!robustness_analysis) {
                                       xlabel="Feature Importance",
                                       width=70,
                                       height=50,
-                                      keep=robustness_keep)
+                                      keep=robustness_keep,
+                                      add_p_to_file=add_p_to_file)
         # savefile = paste0(cancer_type, "_feature_importance_with_",
         #                   paste(c(1,2,5,10), collapse="_"),
         #                   "_features_", "top_5_features.svg")
