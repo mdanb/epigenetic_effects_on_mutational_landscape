@@ -1654,7 +1654,7 @@ if (!robustness_analysis) {
                                       height=35,
                                       keep = robustness_keep,
                                       add_to_pos = 0,
-                                      add_p_to_file=add_p_to_file)
+                                      add_p_to_file=F)
         
         # construct_robustness_boxplots(df=df_feat_imp, 
         #                               x="permutation_importance", 
