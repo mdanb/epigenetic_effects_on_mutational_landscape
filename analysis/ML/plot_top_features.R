@@ -1707,7 +1707,7 @@ if (!robustness_analysis) {
                                       width=70,
                                       height=50,
                                       keep=robustness_keep,
-                                      add_p_to_file=add_p_to_file)
+                                      add_p_to_file=F)
         # savefile = paste0(cancer_type, "_feature_importance_with_",
         #                   paste(c(1,2,5,10), collapse="_"),
         #                   "_features_", "top_5_features.svg")
