@@ -73,6 +73,8 @@ parser <- add_option(parser, c("--add_perf_to_file_grid"), action="store_true",
                      default=F)
 parser <- add_option(parser, c("--add_p_to_file"), action="store_true", 
                      default=F)
+# parser <- add_option(parser, c("--compare_extra"), type="character", 
+#                      default=NULL)
 
 # args = parse_args(parser, args= c("--cancer_types=Myeloid-MPN",
 #                                   "--datasets=Greenleaf_pbmc_bm",
@@ -564,7 +566,7 @@ rename_cell_types <- function(cell_type_names, grid_names=F) {
 }
 
 conduct_test <- function(df, top, second, cancer_type, df_save, 
-                         p_values_savefile) {
+                         p_values_savefile, print_only=F) {
   df_top = df %>% filter(features == top)
   df_second = df %>% filter(features == second)
   p=wilcox.test(df_top[["permutation_importance"]], 
@@ -576,8 +578,12 @@ conduct_test <- function(df, top, second, cancer_type, df_save,
     num_times = length(grep(top, colnames(df_save)))
     top = paste(top, num_times + 1)
   }
-  df_save[top, cancer_type] = p
-  write.csv(df_save, p_values_savefile)
+  if (print_only) {
+     print(p)
+  } else {
+    df_save[top, cancer_type] = p
+    write.csv(df_save, p_values_savefile)
+  }
 }
 
 construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
@@ -667,9 +673,15 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     
     if (level == "5") {
       if (add_p_to_file) {
-        conduct_test(df_filtered, top, second, cancer_type, 
-                     df_save, p_values_savefile)
+          conduct_test(df_filtered, top, second, cancer_type, 
+                       df_save, p_values_savefile)
+        if (cancer_type == "Myeloid-AML") {
+          third = top_sorted[length(top_sorted) - 1]
+          conduct_test(df_filtered, top, third, cancer_type, df_save, 
+                       p_values_savefile, print_only=T)
+          
         }
+      }
     }
 
     df_filtered = df_filtered %>% 
