@@ -37,6 +37,7 @@ parser.add_argument('--tss_fragment_filter', type=str,
                     help='tss fragment filter to consider', default=None)
 parser.add_argument('--which_interval_ranges', type=str, default=None)
 parser.add_argument("--add_perf_to_file", action="store_true", default=False)
+parser.add_argument("--add_p_to_file", action="store_true", default=False)
 
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--meso", action="store_true", default=False)
@@ -105,6 +106,7 @@ subsampled_mutations = config.subsampled_mutations
 custom_mutations = config.custom_mutations
 which_interval_ranges = config.which_interval_ranges
 add_perf_to_file = config.add_perf_to_file
+add_p_to_file = config.add_p_to_file
 
 robustness_filename = uuid.uuid4()
 for fold in fold_for_test_set_range:
@@ -281,6 +283,9 @@ if hundred_kb:
 
 if add_perf_to_file:
     command_args = command_args + " " + "--add_perf_to_file"
+
+if add_p_to_file:
+    command_args = command_args + " " + "--add_p_to_file"
 
 Rscript_command = f"Rscript {os.path.dirname(os.path.realpath(__file__))}/plot_top_features.R " + \
                    command_args

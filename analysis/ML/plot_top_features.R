@@ -1471,7 +1471,8 @@ if (!robustness_analysis) {
     if (scATAC_source[1] == "") {
       scATAC_source = paste("annotation", current_annotation, sep="_")
     } else {
-      scATAC_source = paste(scATAC_source, "annotation", current_annotation, sep="_")
+      scATAC_source = paste(scATAC_source, "annotation", current_annotation, 
+                            sep="_")
     }
     
     if (!is.na(cell_types_keep[i])) {
