@@ -633,18 +633,23 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   }
   
   plots <- list()
-  if (grepl("paper", getwd())) {
-    p_values_savefile = paste("../analysis/ML", p_values_savefile, sep="/")
-  } 
-  
-  if (file.exists(p_values_savefile)) {
-    df_save = read.csv(p_values_savefile, row.names = 1)
-    colnames(df_save) = gsub("\\.","-", colnames(df_save))
-  } else {
-    df_save = data.frame()
-  }
-  
+
   for (level in unique(df[[facet_var]])) {
+    p_values_savefile = "models/XGB/p_values_feat_imp"
+    p_values_savefile = paste(p_values_savefile, level, "feats", sep="_")
+    p_values_savefile = paste0(p_values_savefile, ".csv")
+    
+    if (grepl("paper", getwd())) {
+      p_values_savefile = paste("../analysis/ML", p_values_savefile, sep="/")
+    } 
+    
+    if (file.exists(p_values_savefile)) {
+      df_save = read.csv(p_values_savefile, row.names = 1)
+      colnames(df_save) = gsub("\\.","-", colnames(df_save))
+    } else {
+      df_save = data.frame()
+    }
+    
     df_filtered <- df %>% 
       filter(!!sym(facet_var) == level)
     
@@ -671,9 +676,6 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     top = top_sorted[length(top_sorted)]
     second = top_sorted[length(top_sorted) - 1]
     
-    p_values_savefile = "models/XGB/p_values_feat_imp"
-    p_values_savefile = paste(p_values_savefile, level, "feats", sep="_")
-    p_values_savefile = paste0(p_values_savefile, ".csv")
     # if (level == "5") {
     if (add_p_to_file) {
         conduct_test(df_filtered, top, second, cancer_type, 
