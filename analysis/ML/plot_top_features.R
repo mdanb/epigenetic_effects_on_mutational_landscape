@@ -633,7 +633,6 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   }
   
   plots <- list()
-  p_values_savefile = "models/XGB/p_values_feat_imp"
   if (grepl("paper", getwd())) {
     p_values_savefile = paste("../analysis/ML", p_values_savefile, sep="/")
   } 
@@ -672,6 +671,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     top = top_sorted[length(top_sorted)]
     second = top_sorted[length(top_sorted) - 1]
     
+    p_values_savefile = "models/XGB/p_values_feat_imp"
     p_values_savefile = paste(p_values_savefile, level, "feats", sep="_")
     p_values_savefile = paste0(p_values_savefile, ".csv")
     # if (level == "5") {
