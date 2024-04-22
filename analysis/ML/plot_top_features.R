@@ -313,17 +313,18 @@ parser <- add_option(parser, c("--add_p_to_file"), action="store_true",
 #                                   "--robustness_analysis",
 #                                   "--feature_importance_method=permutation_importance"))
 
-# args = parse_args(parser, args= c("--cancer_types=CNS-GBM",
-#                                   "--datasets=Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure",
+# args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma",
+#                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
 #                                   "--cell_number_filter=100",
 #                                   "--annotation=finalized_annotation",
 #                                   "--seed_range=1-10",
-#                                   "--top_features_to_plot=1,2,5,10",
+#                                   "--top_features_to_plot_feat_imp=5",
 #                                   "--folds_for_test_set=1-10",
 #                                   "--tissues_to_consider=adult_brain,frontal_cortex,cerebrum,brain,cerebellum",
 #                                   "--robustness_analysis",
 #                                   "--feature_importance_method=permutation_importance",
-#                                   "--add_perf_to_file"))
+#                                   "--add_p_to_file"))
+
 
 args = parse_args(parser)
 
@@ -632,7 +633,7 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
   }
   
   plots <- list()
-  p_values_savefile = "models/XGB/p_values_feat_imp.csv"
+  p_values_savefile = "models/XGB/p_values_feat_imp"
   if (grepl("paper", getwd())) {
     p_values_savefile = paste("../analysis/ML", p_values_savefile, sep="/")
   } 
@@ -671,17 +672,19 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     top = top_sorted[length(top_sorted)]
     second = top_sorted[length(top_sorted) - 1]
     
-    if (level == "5") {
-      if (add_p_to_file) {
-          conduct_test(df_filtered, top, second, cancer_type, 
-                       df_save, p_values_savefile)
-        if (cancer_type == "Myeloid-AML") {
-          third = top_sorted[length(top_sorted) - 2]
-          conduct_test(df_filtered, top, third, cancer_type, df_save, 
-                       p_values_savefile, print_only=T)
-          
-        }
+    p_values_savefile = paste(p_values_savefile, level, "feats", sep="_")
+    p_values_savefile = paste0(p_values_savefile, ".csv")
+    # if (level == "5") {
+    if (add_p_to_file) {
+        conduct_test(df_filtered, top, second, cancer_type, 
+                     df_save, p_values_savefile)
+      if (cancer_type == "Myeloid-AML") {
+        third = top_sorted[length(top_sorted) - 2]
+        conduct_test(df_filtered, top, third, cancer_type, df_save, 
+                     p_values_savefile, print_only=T)
+        
       }
+      # }
     }
 
     df_filtered = df_filtered %>% 
