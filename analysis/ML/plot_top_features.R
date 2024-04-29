@@ -593,8 +593,8 @@ conduct_test <- function(df, top, second, cancer_type, df_save,
   } else {
     df_top = df %>% filter(top_feature == top)
     df_second = df %>% filter(top_feature == second)
-    x = nrow(df_top) + nrow(df_second)
-    n = nrow(df_top)
+    x = nrow(df_top)
+    n = nrow(df_top) + nrow(df_second)
     p=binom.test(x, n, alternative="greater")[3]$p.value
   }
   
