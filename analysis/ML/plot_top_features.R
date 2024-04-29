@@ -152,7 +152,7 @@ parser <- add_option(parser, c("--add_p_to_file"), action="store_true",
 #                                  "--robustness_analysis",
 #                                  "--grid_analysis",
 #                                  "--top_features_to_plot=1",
-#                                  "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes/Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
+#                                  "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS"))
 #
 # args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCA,CNS-GBM,Lung-AdenoCA,Lung-SCC",
 #                                   "--annotation=finalized_annotation",
@@ -177,6 +177,21 @@ parser <- add_option(parser, c("--add_p_to_file"), action="store_true",
 #                                   "--folds_for_test_set=1-10",
 #                                   "--robustness_analysis",
 #                                   "--top_features_to_plot=1"))
+
+# args = parse_args(parser, args= c("--cancer_types=Eso-AdenoCa",
+#                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+#                                   "--cell_number_filter=100",
+#                                   "--annotation=finalized_annotation",
+#                                   "--top_features_to_plot_feat_imp=10,5,2",
+#                                   "--top_features_to_plot=1,2,5,10",
+#                                   "--ML_model=XGB",
+#                                   "--seed_range=1-10",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--tissues_to_consider=all",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--robustness_analysis",
+#                                   "--add_perf_to_file"))
 
 #args = parse_args(parser, args= c("--cancer_types=Panc-AdenoCA,Panc-Endocrine",
 #                                  "--datasets=Bingren,Shendure",
@@ -567,12 +582,21 @@ rename_cell_types <- function(cell_type_names, grid_names=F) {
 }
 
 conduct_test <- function(df, top, second, cancer_type, df_save, 
-                         p_values_savefile, print_only=F) {
-  df_top = df %>% filter(features == top)
-  df_second = df %>% filter(features == second)
-  p=wilcox.test(df_top[["permutation_importance"]], 
+                         p_values_savefile, permutation_importance=T,
+                         print_only=F) {
+  if (permutation_importance) {
+    df_top = df %>% filter(features == top)
+    df_second = df %>% filter(features == second)
+    p=wilcox.test(df_top[["permutation_importance"]], 
                 df_second[["permutation_importance"]],
                 alternative="greater")[3]$p.value
+  } else {
+    df_top = df %>% filter(top_feature == top)
+    df_second = df %>% filter(top_feature == second)
+    x = nrow(df_top) + nrow(df_second)
+    n = nrow(df_top)
+    p=binom.test(x, n, alternative="greater")[3]$p.value
+  }
   
   if (cancer_type %in% colnames(df_save) && top %in% rownames(df_save) &&
       !is.na(df_save[top, cancer_type])) {
@@ -1775,6 +1799,51 @@ if (!robustness_analysis) {
                                            filter(top_n == 1) %>%
                                            filter(n_top_feature == max(n_top_feature)) %>%
                                            pull(top_feature))
+          counts = df_test %>% 
+            filter(top_n == 1) %>%
+            pull(top_feature) %>%
+            table 
+          
+          counts = names(counts)[counts %>% order]
+          second_top_appearing_feature = counts[length(counts) - 1] 
+
+          p_values_savefile = "models/XGB/p_values_top_feature.csv"
+
+          if (grepl("paper", getwd())) {
+            p_values_savefile = paste("../analysis/ML", p_values_savefile, sep="/")
+          } 
+          
+          if (file.exists(p_values_savefile)) {
+            df_save = read.csv(p_values_savefile, row.names = 1)
+            colnames(df_save) = gsub("\\.","-", colnames(df_save))
+          } else {
+            df_save = data.frame()
+          }
+          
+          conduct_test(df_test %>% filter(top_n == 1),
+                       top_appearing_feature, second_top_appearing_feature,
+                       cancer_type, df_save, p_values_savefile, 
+                       permutation_importance=F)
+          
+          third_top_appearing_feature = counts[length(counts) - 2] 
+          
+          p_values_savefile = "models/XGB/p_values_top_feature_third_top.csv"
+          if (grepl("paper", getwd())) {
+            p_values_savefile = paste("../analysis/ML", p_values_savefile, sep="/")
+          } 
+          
+          if (file.exists(p_values_savefile)) {
+            df_save = read.csv(p_values_savefile, row.names = 1)
+            colnames(df_save) = gsub("\\.","-", colnames(df_save))
+          } else {
+            df_save = data.frame()
+          }
+          
+          conduct_test(df_test %>% filter(top_n == 1),
+                       top_appearing_feature, third_top_appearing_feature,
+                       cancer_type, df_save, p_values_savefile, 
+                       permutation_importance=F)
+          
           if (length(top_appearing_feature) > 1) {
             print("MORE THAN ONE TOP FEATURE!")
             exit()
