@@ -592,6 +592,7 @@ conduct_test <- function(df, top, second, cancer_type, df_save,
                 alternative="greater")[3]$p.value
   } else {
     df_top = df %>% filter(top_feature == top)
+    print(second)
     if (!is.null(second)) {
       df_second = df %>% filter(top_feature == second)
     } else {
