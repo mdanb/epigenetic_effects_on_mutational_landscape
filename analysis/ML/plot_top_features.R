@@ -335,12 +335,25 @@ parser <- add_option(parser, c("--add_p_to_file"), action="store_true",
 #                                   "--seed_range=1-10",
 #                                   "--top_features_to_plot_feat_imp=5",
 #                                   "--folds_for_test_set=1-10",
-#                                   "--tissues_to_consider=adult_brain,frontal_cortex,cerebrum,brain,cerebellum",
+#                                   "--tissues_to_consider=all",
 #                                   "--robustness_analysis",
 #                                   "--feature_importance_method=permutation_importance",
 #                                   "--add_p_to_file"))
 
-
+# args = parse_args(parser, args= c("--cancer_types=CNS-Medullo,Liver-HCC,CNS-GBM,Skin-Melanoma,Lung-SCC,Kidney-ChRCC",
+#                                   "--cell_number_filter=100",
+#                                   "--datasets=Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney-Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney-Bingren,Shendure,Rawlins_fetal_lung,Tsankov-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
+#                                   "--tissues_to_consider=adult_brain,brain,frontal_cortex,cerebrum,cerebellum-all-adult_brain,frontal_cortex,cerebrum,brain,cerebellum-all-lung,fetal_lung-all",
+#                                   "--ML_model=XGB",
+#                                   "--seed_range=1-10",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--robustness_analysis",
+#                                   "--subsampled_mutations",
+#                                   "--annotation=finalized_annotation",
+#                                   "--top_features_to_plot=1",
+#                                   "--cell_types_keep=NULL,NULL,NULL,NULL,lung Neuroendocrine-Tsankov,NULL"))
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -708,12 +721,28 @@ construct_robustness_boxplots <- function(df, x, y, title, savepath, savefile,
     if (add_p_to_file) {
         conduct_test(df_filtered, top, second, cancer_type, 
                      df_save, p_values_savefile)
-      if (cancer_type == "Myeloid-AML") {
+      # if (cancer_type == "Myeloid-AML") {
         third = top_sorted[length(top_sorted) - 2]
-        conduct_test(df_filtered, top, third, cancer_type, df_save, 
-                     p_values_savefile, print_only=T)
         
-      }
+        p_values_savefile = "models/XGB/p_values_feat_imp_third"
+        p_values_savefile = paste(p_values_savefile, level, "feats", sep="_")
+        p_values_savefile = paste0(p_values_savefile, ".csv")
+        
+        if (grepl("paper", getwd())) {
+          p_values_savefile = paste("../analysis/ML", p_values_savefile, sep="/")
+        } 
+        
+        if (file.exists(p_values_savefile)) {
+          df_save = read.csv(p_values_savefile, row.names = 1)
+          colnames(df_save) = gsub("\\.","-", colnames(df_save))
+        } else {
+          df_save = data.frame()
+        }
+        
+        conduct_test(df_filtered, top, third, cancer_type, df_save, 
+                     p_values_savefile, print_only=F)
+        
+      # }
       # }
     }
 
