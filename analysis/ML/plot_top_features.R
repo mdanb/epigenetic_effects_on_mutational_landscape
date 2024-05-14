@@ -328,7 +328,7 @@ parser <- add_option(parser, c("--add_p_to_file"), action="store_true",
 #                                   "--robustness_analysis",
 #                                   "--feature_importance_method=permutation_importance"))
 
-# args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma",
+# args = parse_args(parser, args= c("--cancer_types=Bladder-TCC",
 #                                   "--datasets=Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney",
 #                                   "--cell_number_filter=100",
 #                                   "--annotation=finalized_annotation",
@@ -354,6 +354,22 @@ parser <- add_option(parser, c("--add_p_to_file"), action="store_true",
 #                                   "--annotation=finalized_annotation",
 #                                   "--top_features_to_plot=1",
 #                                   "--cell_types_keep=NULL,NULL,NULL,NULL,lung Neuroendocrine-Tsankov,NULL"))
+
+# args = parse_args(parser, args= c("--cancer_types=Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCa,CNS-GBM,Lung-AdenoCA,Lung-SCC",
+#                                   "--cell_number_filter=100",
+#                                   "--datasets=Bingren,Shendure,Greenleaf_colon,Greenleaf_blood_bm,Tsankov",
+#                                   "--ML_model=XGB",
+#                                   "--seed_range=1-10",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--robustness_analysis",
+#                                   "--annotation=finalized_annotation,finalized_annotation,finalized_annotation,new_intermediate_blood_bm_annotation,finalized_annotation,finalized_annotation,finalized_annotation,finalized_annotation",
+#                                   "--top_features_to_plot=1",
+#                                   "--grid_analysis",
+#                                   "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes Oligodendrocytes SH,lung AT2 TS,lung Basal TS",
+#                                   "--fig1b"))
+
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -899,10 +915,30 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath,
 
 construct_robustness_barplots <- function(df, x, y, title, add_to_pos, fig1b=T) {
   df[x] = 100 * df[x]
-  df = df %>% 
+  ordered_feats = df %>% 
     group_by(!!sym(y)) %>%
     summarise(mean_se(test_set_perf)) %>%
-    mutate(color=ifelse(y == max(y), "highlight","other"))
+    arrange(y) %>% 
+    pull(!!sym(y))
+    
+  best_feat = ordered_feats[length(ordered_feats)]
+  second = ordered_feats[length(ordered_feats) - 1]
+  
+  best_feat_vals = df %>% 
+                    filter(top_feature==best_feat) %>%
+                    pull(test_set_perf)
+  second_best_feat_vals = df %>% 
+    filter(top_feature==second) %>%
+    pull(test_set_perf)
+  
+  print(wilcox.test(best_feat_vals, 
+              second_best_feat_vals,
+              alternative="greater")[3]$p.value)
+  
+  df = df %>% 
+        group_by(!!sym(y)) %>%
+        summarise(mean_se(test_set_perf)) %>%
+        mutate(color=ifelse(y == max(y), "highlight", "other"))
   
   xlim_lower = min(df[["ymin"]])
   xlim_upper = max(df[["ymax"]])
