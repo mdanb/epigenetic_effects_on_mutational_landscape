@@ -38,7 +38,7 @@ def run_unclustered_data_analysis_helper(scATAC_df,
 
     print(grid_cell_type)
     if grid_analysis:
-        if grid_cell_type[0] == "cerebrum Astrocytes/Oligodendrocytes SH":
+        if grid_cell_type[0] == "cerebrum Astrocytes/Oligodendrocy/tes SH":
            grid_cell_type[0] = "cerebrum Astrocytes-Oligodendrocytes SH"
         backwards_elim_dir=f"models/{ML_model}/{cancer_type_or_donor_id}_{grid_cell_type[0].replace(' ', '-')}/" \
                            f"{scATAC_dir}/backwards_elimination_results"
@@ -53,7 +53,7 @@ def run_unclustered_data_analysis_helper(scATAC_df,
         test_set_perf_filepath = f"{os.path.dirname(os.path.realpath(__file__))}/models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}_{grid_cell_type[0].replace(' ', '-')}/{scATAC_dir}/" \
                                  f"test_set_performance.txt"
-        cancer_type_or_donor_id = f"{cancer_type_or_donor_id}_{grid_cell_type[0].replace(' ', '-')}"
+        cancer_type_or_donor_id = f"{cancer_type_or_donor_id}_{grid_cell_type[0].replace(' ', '-')}"/
     else:
         test_set_perf_filepath = f"{os.path.dirname(os.path.realpath(__file__))}/models/{ML_model}/" \
                                  f"{cancer_type_or_donor_id}/{scATAC_dir}/test_set_performance.txt"
