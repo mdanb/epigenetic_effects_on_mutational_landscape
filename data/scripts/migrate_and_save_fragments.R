@@ -168,6 +168,12 @@ if (dataset == "Bingren") {
   files = list.files("../bed_files/ding_scATAC",
                      pattern="gz",
                      full.names=TRUE)
+} else if (dataset == "Shendure") {
+  dir_path = "../bed_files/JShendure_scATAC/migrated_to_hg38"
+  dir.create(dir_path)
+  files = list.files("../bed_files/",
+                     pattern="gz",
+                     full.names=TRUE)
 }
 
 if (tissue == "all") {
