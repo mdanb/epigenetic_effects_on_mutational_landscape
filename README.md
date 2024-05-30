@@ -288,7 +288,7 @@ We will change the configurations of the database to make it less restrictive so
 - max_connections = 10000
 
 Make sure `listen_addresses` is uncommented. 
-Also, in `analysis/ML/sqldb/postgresql.conf`, change the lines under the comments `# IPv4 local connections:` and `# IPv6 local connections:` to:
+Also, in `analysis/ML/sqldb/pg_hba.conf`, change the lines under the comments `# IPv4 local connections:` and `# IPv6 local connections:` to:
 ```
 # IPv4 local connections:
 host    all             all             0.0.0.0/0            trust
