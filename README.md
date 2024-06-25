@@ -489,14 +489,13 @@ This creates multiple figures in `figures/models/XGB/Lymph-BNHL/scATAC_source_Gr
 
 
 # Complete dataset download
-To download all raw scATAC fragment files associated with this paper:
+To download all raw scATAC fragment files associated with this paper (except lung and kidney):
 ```
 cd data/scripts
 sh download_all_scatac_data.sh
 ```
 
-TODO: Add Lung and Kidney
-This will download the different scATAC datasets used in their respective directories in `data/bed_files`. 
+This will download the different scATAC datasets used in their respective directories in `data/bed_files`. Lung and Kidney data can be downloaded at https://drive.google.com/drive/u/0/folders/1EwYbwtKSI3Am6Q4FYBtffaNvnVPcPqFa. 
 
 We also provide the processed scATAC (ready for input into ML models) in the following directories:
 - `data/processed_data/count_overlap_data/combined_count_overlaps/finalized_annotation/`: Contains the most common annotations used across the paper
