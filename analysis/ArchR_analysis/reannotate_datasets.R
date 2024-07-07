@@ -252,7 +252,7 @@ option_list <- list(
 #                       "--plot_custom_column",
 #                       "--plus_to_add_to_metadata=GrossPathology,CellType",
 #                       "--plus_filters=Normal|Unaffected",
-#                       "--color_embedding_by=GrossPathology",
+#                       "--color_embedding_by=Cell",
 #                       # "--marker_genes=CLDN2,CD44,AXIN2,RNF43,TGFBI,EPHB2,TEAD2,CDX2,LGR5,OLFM4,ASCL2",
 #                       "--harmonize"
 #                     ))
@@ -326,22 +326,21 @@ option_list <- list(
 #                       "--color_embedding_by=cell_type"
 #                     ))
 
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=4",
-#                       "--dataset=Bingren",
-#                       "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
-#                       "--sep_for_metadata=\t",
-#                       "--cell_type_col_in_metadata=celltype",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--min_cells_per_cell_type=1",
-#                       "--cluster_res=0.6",
-#                       "--filter_per_cell_type",
-#                       "--plot_custom_column",
-#                       "--color_embedding_by=batch"
-#                     ))
-# 
+args = parse_args(OptionParser(option_list=option_list), args=
+                    c("--cores=4",
+                      "--dataset=Bingren",
+                      "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
+                      "--sep_for_metadata=\t",
+                      "--cell_type_col_in_metadata=cell.type",
+                      "--tissue=all",
+                      "--nfrags_filter=1",
+                      "--tss_filter=0",
+                      "--min_cells_per_cell_type=1",
+                      "--cluster_res=0.6",
+                      "--filter_per_cell_type",
+                      "--plot_custom_column"
+                    ))
+
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
 #                       "--dataset=Shendure",

@@ -66,10 +66,14 @@ sample_stats = sample_stats %>% add_row(CancerType="ccRCC",
                                         mut_counts=ccRCC)
 
 msi_high = read.csv("../processed_data/msi_high.csv", row.names=1)
-msi_high = sum(msi_high[chr_keep, ])
+msi_high_counts = sum(msi_high[chr_keep, "msi_high"])
 sample_stats = sample_stats %>% add_row(CancerType="msi_high", 
                                         NofDonor=7,
-                                        mut_counts=msi_high)
+                                        mut_counts=msi_high_counts)
+mss_counts = sum(msi_high[chr_keep, "mss"])
+sample_stats = sample_stats %>% add_row(CancerType="mss", 
+                                        NofDonor=51,
+                                        mut_counts=mss_counts)
 
 mm = read.csv("../processed_data/multiple_myeloma.csv", row.names=1)
 mm = sum(mm)

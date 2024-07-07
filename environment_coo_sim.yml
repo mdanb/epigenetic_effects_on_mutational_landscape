@@ -1,6 +1,6 @@
 name: coosim
 channels:
-  - conda-forge 
+  - conda-forge
   - defaults
   - bioconda
   - r
