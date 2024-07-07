@@ -1,8 +1,8 @@
-# Identifying the origin of cancer at cell-type resolution by modeling the relationship between scATAC genome accessibility and the tumor mutational landscape
+# Learning the cellular origins of cancer using single-cell chromatin landscapes
 
-This repository houses the codebase for the paper **Identifying the origin of cancer at cell-type resolution by modeling the relationship between scATAC genome accessibility and the tumor mutational landscape**. In this paper, we proposed COCOON (**C**hr**O**matin a**C**cessibility inferred **C**ell **O**f **O**rigi**N**), which offers a straightforward and cost-effective framework enabling cancer biologists to ascertain the COO at cell-type resolution for a given cancer mutation profile via scATAC sequencing of suspected normal tissues of origin. 
+This repository houses the codebase for the paper **Learning the cellular origins of cancer using single-cell chromatin landscapes**. In this paper, we proposed SCOTI (**S**ingle-cell **C**ell **O**f **T**ransformation **I**dentification), which offers a straightforward and cost-effective framework enabling cancer biologists to ascertain the COT at cell-type resolution for a given cancer mutation profile via scATAC sequencing of suspected normal tissues of origin. 
  
-In the first section below, we provide an example of how to pre-process data and prepare it as input for COCOON, in addition to then running COCOON. To reproduce paper figures, see scripts in this directory, named by the corresponding figure. 
+In the first section below, we provide an example of how to pre-process data and prepare it as input for SCOTI, in addition to then running SCOTI. To reproduce paper figures, see scripts in this directory, named by the corresponding figure. 
 
 # Setting up your conda environment
 First, we need to up our conda environment. To do this, run
@@ -29,7 +29,7 @@ Rscript post_installation.R
 You should now be ready to proceed.
 
 # Example
-To run COCOON, we first need to create aggregated, binned scATAC and mutation profiles. All scripts for data processing are in `data/scripts`, and all relative paths below are relative to this directory. 
+To run SCOTI, we first need to create aggregated, binned scATAC and mutation profiles. All scripts for data processing are in `data/scripts`, and all relative paths below are relative to this directory. 
 
 ## scATAC pre-processing
 We'll start with scATAC, and we'll use the data from [**Single-Cell Multiomic Analysis Identifies Regulatory Programs in Mixed-Phenotype Acute Leukemia**](https://www.nature.com/articles/s41587-019-0332-7) as an example, which comes from PBMC and bonemarrow. After cloning this repository, download the fragment files:
@@ -40,7 +40,7 @@ sh get_scATAC_data_from_links.sh ../greenleaf_blood_bone_marrow/greenleaf_blood_
 
 This will download the files to the directory `data/bed_files/Greenleaf_test/migrated_to_hg19`. 
 
-> **Small aside**: Note that the fragments from this study are already aligned to hg19. However, if your data is not and you would like to run COCOON using the mutation data we used, you will have to align the fragments to hg19, since the mutation data we had available was aligned to hg19. To do this, make sure your fragment files are in the directory `data/bed_files/[DATASET_NAME]/`. Here, `DATASET_NAME` is whatever name you want to give to your dataset. Then run `Rscript migrate_and_save_fragments.R --dataset [DATASET_NAME] --cores [NUM_CORES]`. Note that this script is parallelized, so you can specify `NUM_CORES`, where each core will be migrating one of the fragment files. So if you have 16 fragment files and 4 cores, then specifying `NUM_CORES` to 4 will process 4 files at a time. 
+> **Small aside**: Note that the fragments from this study are already aligned to hg19. However, if your data is not and you would like to run SCOTI using the mutation data we used, you will have to align the fragments to hg19, since the mutation data we had available was aligned to hg19. To do this, make sure your fragment files are in the directory `data/bed_files/[DATASET_NAME]/`. Here, `DATASET_NAME` is whatever name you want to give to your dataset. Then run `Rscript migrate_and_save_fragments.R --dataset [DATASET_NAME] --cores [NUM_CORES]`. Note that this script is parallelized, so you can specify `NUM_CORES`, where each core will be migrating one of the fragment files. So if you have 16 fragment files and 4 cores, then specifying `NUM_CORES` to 4 will process 4 files at a time. 
 
 We will then rename the files to match the pattern `[TISSUE_TYPE]-[SAMPLE_NAME].bed.gz`:
 
@@ -121,7 +121,7 @@ Finally, we add custom names to the bins, in addition to adding `CANCER_TYPE` as
 Rscript align_mutations_to_ranges --cancer_types [CANCER_TYPE]
 ```
 
-This creates a csv file `data/processed_data/[CANCER_TYPE].csv` that is ready to be input into COCOON.
+This creates a csv file `data/processed_data/[CANCER_TYPE].csv` that is ready to be input into SCOTI.
 
 Putting these together for our example:
 ```
@@ -131,10 +131,10 @@ python3 4_AssembleCout_paz_Cancergroup.py --cancer_types Lymph-BNHL
 Rscript align_mutations_to_ranges --cancer_types Lymph-BNHL
 ```
 
-## Running COCOON
+## Running SCOTI
 In our paper, for each cancer type, we ran the model 100 times to obtain robust predictions. In practice, this means we needed access to a compute cluster to parallelize the model training process. Below, we present two pipelines for obtaining predictions: an unparallelized approach and a parallelized approach. Of course, to obtain 100 predictions in a reasonable amount of time, particularly if using large feature spaces, you would want to use the parallelized option. In the case of the parallelized option, we assume you have access to a system that uses UGE as the job manager. However, even if this is not the case, it is very straighforward to modify `prep_ML_model_scripts.py`, the script which does the parallelization, to use a different job manager. 
 
-The script `analysis/ML/build_ML_model.py` runs COCOON. Before looking at an example, we outline the important command line options below:
+The script `analysis/ML/build_ML_model.py` runs SCOTI. Before looking at an example, we outline the important command line options below:
 
 <details>
   <summary><b>Cancer Types [--cancer_types]</b></summary>
@@ -273,7 +273,7 @@ This will generate the plot in
 figures/models/XGB/Lymph-BNHL/scATAC_source_Greenleaf_test_cell_number_filter_100_annotation_test_annotation_seed_1_fold_for_test_set_1/backwards_elimination_results/
 ```
 
-in the file called `permutation_importance_bar_plot.png`. The plot is shown below. Note that as we would expect for Lymph-BNHL, the most important feature turns out to be bone marrow B cells (BMMC B), which corresponds to the putative cell of origin. Note that each feature in the plot is appended with the number of features being considered. Since we specified `top_features_to_plot=10,5,2,1`, we see the permutation importance of different features for each of these different number of features left. 
+in the file called `permutation_importance_bar_plot.png`. The plot is shown below. Note that as we would expect for Lymph-BNHL, the most important feature turns out to be bone marrow B cells (BMMC B), which corresponds to the putative cell of transformation. Note that each feature in the plot is appended with the number of features being considered. Since we specified `top_features_to_plot=10,5,2,1`, we see the permutation importance of different features for each of these different number of features left. 
 
 ![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/permutation_importance_bar_plot.png)
 
@@ -481,7 +481,7 @@ Rscript plot_top_features.R \
 This creates multiple figures in `figures/models/XGB/Lymph-BNHL/scATAC_source_Greenleaf_pbmc_bm_cell_number_filter_100_annotation_test_annotation_seed_all_seeds/` (displayed below, respectively):
 - `Lymph-BNHL_top_feature_appearances.pdf`: this has the number of times different features appeared as the top feature across 100 runs of the model
 - `Lymph-BNHL_feature_importance_with_2_5_10_features_top_5_features.pdf`: this has the feature importances of the top 5 features across 100 runs of the model, where top 5 features is defined as the features that appeared the most after 15 iterations of BFS, with ties broken by median feature importance
-- `Lymph-BNHL_top_feature_test_set_perf_with_10_5_2_1_features.pdf`: this has the test set performance of the models with 10, 5, 2, and 1 features where the top feature corresponded to the eventual predicted COO.
+- `Lymph-BNHL_top_feature_test_set_perf_with_10_5_2_1_features.pdf`: this has the test set performance of the models with 10, 5, 2, and 1 features where the top feature corresponded to the eventual predicted COT.
 
 ![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/Lymph-BNHL_top_feature_appearances.png)
 ![alt text](https://github.com/mdanb/epigenetic_effects_on_mutational_landscape/blob/main/Lymph-BNHL_feature_importance_with_2_5_10_features_top_5_features.png)
@@ -489,14 +489,13 @@ This creates multiple figures in `figures/models/XGB/Lymph-BNHL/scATAC_source_Gr
 
 
 # Complete dataset download
-To download all raw scATAC fragment files associated with this paper:
+To download all raw scATAC fragment files associated with this paper (except lung and kidney):
 ```
 cd data/scripts
 sh download_all_scatac_data.sh
 ```
 
-TODO: Add Lung and Kidney
-This will download the different scATAC datasets used in their respective directories in `data/bed_files`. 
+This will download the different scATAC datasets used in their respective directories in `data/bed_files`. Lung and Kidney data can be downloaded at https://drive.google.com/drive/u/0/folders/1EwYbwtKSI3Am6Q4FYBtffaNvnVPcPqFa. 
 
 We also provide the processed scATAC (ready for input into ML models) in the following directories:
 - `data/processed_data/count_overlap_data/combined_count_overlaps/finalized_annotation/`: Contains the most common annotations used across the paper
