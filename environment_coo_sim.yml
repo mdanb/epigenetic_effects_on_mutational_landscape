@@ -1,6 +1,6 @@
 name: coosim
 channels:
-  - conda-forge 
+  - conda-forge
   - defaults
   - bioconda
   - r
@@ -13,9 +13,16 @@ dependencies:
   #- postgresql=14.5
   - pkg-config=0.29.2
   # R dependencies
-  - r-base=4.3.1
+  - r-base=4.3.0
   - libiconv=1.17
-  - libxml2=2.12.6
+  - libxml2=2.11.5
+  - r-gert=2.0.1
+  - fftw=3.3.10
+  #- libgcc-ng=9.1.0
+  #- libstdcxx-ng=9.1.0
+  #- libcxx=12.0.1
+  #- libcxxabi=12.0.1
+
   #- r-tidyverse=2.0.0
   #- r-data.table=1.14.8
   #- r-optparse=1.7.3
@@ -37,4 +44,4 @@ dependencies:
     - scanpy==1.9.6
     - gdown==5.1.0
   # bash
-  - entrez-direct=16.2
+ - entrez-direct=16.2
