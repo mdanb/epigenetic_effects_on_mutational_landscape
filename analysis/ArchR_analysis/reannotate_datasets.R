@@ -899,6 +899,7 @@ if (dir.exists(proj_dir)) {
 }
 
 if (get_metacells) {
+  print("Getting Metacells...")
   ccd = getCellColData(proj)
   
   ccd["dummy"] = 1
@@ -1055,6 +1056,7 @@ if (get_metacells) {
 
 
 if (plot_doublet_scores) {
+  print("Plotting doublet scores...")
   proj <- addDoubletScores(
     input = proj,
     useMatrix = "TileMatrix"
@@ -1078,6 +1080,7 @@ if (plot_doublet_scores) {
 }
 
 if (filter_doublets) {
+  print("Filtering doublets...")
   ccd = getCellColData(proj)
   if (dataset == "Tsankov") {
     proj = proj[!(ccd[["DoubletEnrichment"]] >= doublet_filter &
@@ -1094,7 +1097,7 @@ if (filter_doublets) {
 }
 
 if (cluster) {
-  print(paste0("clustering with clustering resolution = ", cluster_res))
+  print(paste0("Clustering with clustering resolution = ", cluster_res))
   proj <- addClusters(input = proj,
                       reducedDims = "IterativeLSI",
                       method = "Seurat",
@@ -1123,6 +1126,7 @@ if (cluster) {
 }
 
 if (reannotate) {
+  print("Re-annotating...")
   if (dataset == "Tsankov" && cluster_res==0.6 && cell_types=="Basal") {
     cell_col_data = getCellColData(proj)
     cell_col_data["new_annotation"] = cell_col_data["cell_type"]
@@ -1214,6 +1218,8 @@ if (reannotate) {
 }
 
 if (plot_custom_column) {
+  print("Plotting custom column...")
+  
   embedding = "UMAP"
   
   if (harmonize) {
