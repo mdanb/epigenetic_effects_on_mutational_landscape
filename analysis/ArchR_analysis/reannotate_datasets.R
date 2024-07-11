@@ -39,7 +39,9 @@ option_list <- list(
   # make_option("--cancer_for_correlation_plot", type="character"),
   make_option("--harmonize", action="store_true", default=FALSE),
   make_option("--doublet_filter", type="double", default=FALSE),
-  make_option("--get_metacells", action="store_true", default=FALSE)
+  make_option("--get_metacells", action="store_true", default=FALSE),
+  make_option("--fig1", action="store_true", default=FALSE),
+  make_option("--fig4", action="store_true", default=FALSE)
 )
 
 # args = parse_args(OptionParser(option_list=option_list), args=
@@ -755,6 +757,8 @@ harmonize = args$harmonize
 filter_doublets = args$filter_doublets
 doublet_filter = args$doublet_filter
 get_metacells = args$get_metacells 
+fig1 = args$fig1
+fig4 = args$fig4
 
 if (!is.null(args$plus_to_add_to_metadata)) {
   plus_to_add_to_metadata = unlist(strsplit(args$plus_to_add_to_metadata, 
@@ -1284,35 +1288,37 @@ if (plot_custom_column) {
     embedding = embedding,
     quantCut = c(0, 1),
     labelMeans=F)
+  if (fig1) {
+    p <- p + 
+      ggtitle("") +
+            theme(legend.position="none",
+                  axis.title.x=element_blank(),
+                  axis.title.y=element_blank(),
+                  panel.background = element_rect(fill = '#e0e0e0'))
+    
+    plotPDF(p, name="fig1.pdf", ArchRProj = proj, addDOC = FALSE)
+  }
+  if (fig4) {
+    p <- plotEmbedding(
+      ArchRProj = proj, 
+      colorBy = "cellColData", 
+      name = color_embedding_by, 
+      embedding = embedding,
+      quantCut = c(0, 1),
+      labelMeans=F)
+    
+    p <- p + 
+      ggtitle("") +
+      theme_classic() +
+      theme(legend.position="none",
+            axis.title.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line.x = element_line(linewidth = 0.1),
+            axis.line.y = element_line(linewidth = 0.1))
   
-  p <- p + 
-    ggtitle("") +
-          theme(legend.position="none",
-                axis.title.x=element_blank(),
-                axis.title.y=element_blank(),
-                panel.background = element_rect(fill = '#e0e0e0'))
-  
-  plotPDF(p, name="fig1.pdf", ArchRProj = proj, addDOC = FALSE)
-  
-  p <- plotEmbedding(
-    ArchRProj = proj, 
-    colorBy = "cellColData", 
-    name = color_embedding_by, 
-    embedding = embedding,
-    quantCut = c(0, 1),
-    labelMeans=F)
-  
-  p <- p + 
-    ggtitle("") +
-    theme_classic() +
-    theme(legend.position="none",
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank(),
-          axis.line.x = element_line(linewidth = 0.1),
-          axis.line.y = element_line(linewidth = 0.1))
-
-  
-  plotPDF(p, name="fig4A.pdf", ArchRProj = proj, addDOC = FALSE)
+    
+    plotPDF(p, name="fig4A.pdf", ArchRProj = proj, addDOC = FALSE)
+  }
   
   if (dataset == "Tsankov") {
     refined_annotation = cell_col_data["new_annotation"]
