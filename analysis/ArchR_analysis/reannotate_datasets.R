@@ -41,6 +41,7 @@ option_list <- list(
   make_option("--doublet_filter", type="double", default=FALSE),
   make_option("--get_metacells", action="store_true", default=FALSE),
   make_option("--fig1", action="store_true", default=FALSE),
+  make_option("--fig2", action="store_true", default=FALSE),
   make_option("--fig4", action="store_true", default=FALSE)
 )
 
@@ -424,6 +425,7 @@ doublet_filter = args$doublet_filter
 get_metacells = args$get_metacells 
 fig1 = args$fig1
 fig4 = args$fig4
+fig2 = args$fig2
 
 if (!is.null(args$plus_to_add_to_metadata)) {
   plus_to_add_to_metadata = unlist(strsplit(args$plus_to_add_to_metadata, 
@@ -964,7 +966,7 @@ if (plot_custom_column) {
     plotPDF(p, name="fig1.pdf", ArchRProj = proj, addDOC = FALSE)
   }
   
-  if (fig2_blood) {
+  if (fig2) {
     cols <- c("#000075", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
               "#FF0000", "#42d4f4", "#000000", "#bfef45", "#fabed4",
               "#469990", "#dcbeff", "#9A6324", "#7F00FF", "#800000",
