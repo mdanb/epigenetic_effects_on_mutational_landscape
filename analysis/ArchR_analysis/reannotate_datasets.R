@@ -45,200 +45,6 @@ option_list <- list(
 )
 
 # args = parse_args(OptionParser(option_list=option_list), args=
-#                    c("--cores=8",
-#                      "--dataset=Tsankov",
-#                      "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                      "--sep_for_metadata=,",
-#                      "--cell_type_col_in_metadata=celltypes",
-#                      "--cluster",
-#                      "--cluster_res=0.5",
-#                      "--tissue=RPL",
-#                      "--nfrags_filter=1",
-#                      "--tss_filter=0",
-#                      "--cell_types=all",
-#                      "--min_cells_per_cell_type=1",
-#                      "--filter_per_cell_type",
-#                      "--filter_doublets", 
-#                      "--marker_genes=MMP10,KRT5,DLK2,IL33,TSLP,TP63,MKI67,TOP2A,SCGB1A1,SCGB3A1,FOXJ1,FOXN4,TMEM190,GSTA1,GSTA2,ASCL1,CHGA,FOXI1,POU2F3,ASCL2,ENO1,ANXA2,KRT17,AGER,EMP2,SFTPA1,KRT5,KRT17,KRT15,FOXJ1,CAPS,BPIFB1,PIGR,MUC5B,ASCL1,FOXI1,ITLN1,MYH11,COL1A1,COL1A2,ASPN,EPCAM,CALB2,MSLN,MUC1,KRT6A,PECAM1,PTPRC,CD163,LYZ,FCER1G,C1QA,C1QB,C1QC,APOC1,APOE,CD79B,CD3E,CD3D,IL32,CD2,CXCR4,NKG7,GATA4,GATA6,WT1")
-# )
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--cluster",
-#                       "--cluster_res=0.5",
-#                       "--tissue=IC",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--marker_genes=MMP10,KRT5,DLK2,IL33,TSLP,TP63,MKI67,TOP2A,SCGB1A1,SCGB3A1,FOXJ1,FOXN4,TMEM190,GSTA1,GSTA2,ASCL1,CHGA,FOXI1,POU2F3,ASCL2,ENO1,ANXA2,KRT17,AGER,EMP2,SFTPA1,KRT5,KRT17,KRT15,FOXJ1,CAPS,BPIFB1,PIGR,MUC5B,ASCL1,FOXI1,ITLN1,MYH11,COL1A1,COL1A2,ASPN,EPCAM,CALB2,MSLN,MUC1,KRT6A,PECAM1,PTPRC,CD163,LYZ,FCER1G,C1QA,C1QB,C1QC,APOC1,APOE,CD79B,CD3E,CD3D,IL32,CD2,CXCR4,NKG7,GATA4,GATA6,WT1")
-# )
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--cluster",
-#                       "--cluster_res=0.5",
-#                       "--tissue=IC",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--marker_genes=ACTA2,COL1A1,COL1A2,VIM,CD44,CD73,CD90,CD105")
-# )
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--cluster",
-#                       "--cluster_res=0.5",
-#                       "--tissue=IC",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--marker_genes=CD3D,CD3E,CD3G,CD247,CD4,CD8A,CD8B,IL2RA,FOXP3,IL7R,PTPRC,MS4A1,CD19,NCAM1,ITGAM,CD14,FCGR3A,FCGR3B,FCGR2A,FCGR2B")
-# )
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=4",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=tsankov_refined_annotation.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--filter_doublets",
-#                       "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,MUC5B,SCGB1A1,SCGB3A1,SCGB3A2")
-# )
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=4",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=tsankov_refined_annotation.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=Basal",
-#                       "--min_cells_per_cell_type=1",
-#                       "--filter_doublets",
-#                       "--marker_genes=KRT15,KRT17,KRT5,S100A2,EPCAM,KRT4,KRT13,TP63,SOX2,HES2,FOXA1,SOX4,NKX2-1,MUC5B,SCGB1A1,SCGB3A1,SCGB3A2")
-# )
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--marker_genes=CD3D,CD3E,CD3G,CD247,CD4,CD8A,CD8B,IL2RA,FOXP3,IL7R,PTPRC,MS4A1,CD19,NCAM1,ITGAM,CD14,FCGR3A,FCGR3B,FCGR2A,FCGR2B")
-# )
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--marker_genes=KIT,FCER1A,TPSAB1,TPSB2,CPA3,CMA1,HNMT,HRH1")
-# )
-# 
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--de_novo_marker_discovery",
-#                       "--cluster_res=0.6",
-#                       "--filter_doublets")
-# )
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=combined_distal_proximal.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--de_novo_marker_discovery",
-#                       "--cluster_res=0.6",
-#                       "--filter_doublets")
-# )
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Tsankov",
-#                       "--metadata_for_celltype_fn=tsankov_default_annotation.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltypes",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--de_novo_marker_discovery",
-#                       "--cluster_res=0.6",
-#                       "--filter_doublets",
-#                       "--filter_per_cell_type")
-# )
-
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Greenleaf_colon",
-#                       "--metadata_for_celltype_fn=greenleaf_colon_metadata.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=general_cell_type",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=epithelial",
-#                       "--min_cells_per_cell_type=1",
-#                       "--cluster_res=0.6",
-#                       "--filter_per_cell_type",
-#                       "--plot_custom_column",
-#                       "--plus_to_add_to_metadata=GrossPathology,CellType",
-#                       "--color_embedding_by=GrossPathology",
-#                       "--marker_genes=MSLN,AQP5,TACSTD2,FSCN1,TFF2,ANXA1,ANXA10,REG4,MUC17,S100P,GSDMB,GSDMD,IL18,RELB,MDK,AHR,PDX1"
-# ))
-
-# args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
 #                       "--dataset=Greenleaf_colon",
 #                       "--metadata_for_celltype_fn=greenleaf_colon_metadata.csv",
@@ -249,7 +55,6 @@ option_list <- list(
 #                       "--tss_filter=0",
 #                       "--cell_types=epithelial",
 #                       "--min_cells_per_cell_type=1",
-#                       "--cluster_res=0.6",
 #                       "--filter_per_cell_type",
 #                       "--plot_custom_column",
 #                       "--plus_to_add_to_metadata=GrossPathology,CellType",
@@ -257,24 +62,7 @@ option_list <- list(
 #                       "--color_embedding_by=CellType",
 #                       "--harmonize"
 #                     ))
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=4",
-#                       "--dataset=Yang_kidney",
-#                       "--metadata_for_celltype_fn=41467_2021_27660_MOESM4_ESM.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=celltype",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--min_cells_per_cell_type=1",
-#                       "--cluster_res=0.6",
-#                       "--filter_per_cell_type",
-#                       "--plot_custom_column",
-#                       "--color_embedding_by=batch",
-#                       "--filter_doublets",
-#                       "--doublet_filter=5"
-#                     ))
-
+# 
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
 #                       "--dataset=Greenleaf_brain",
@@ -285,128 +73,11 @@ option_list <- list(
 #                       "--nfrags_filter=1",
 #                       "--tss_filter=0",
 #                       "--min_cells_per_cell_type=1",
-#                       "--cluster_res=0.6",
 #                       "--filter_per_cell_type",
-#                       "--get_metacells"
+#                       "--get_metacells",
+#                       "--harmonize"
 #                     ))
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Greenleaf_colon",
-#                       "--metadata_for_celltype_fn=greenleaf_colon_metadata.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=general_cell_type",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=epithelial",
-#                       "--min_cells_per_cell_type=1",
-#                       "--cluster_res=0.6",
-#                       "--filter_per_cell_type",
-#                       "--plot_custom_column",
-#                       "--plus_to_add_to_metadata=GrossPathology,CellType",
-#                       "--color_embedding_by=GrossPathology",
-#                       "--marker_genes=MDK,ELF3,MSLN,RAB15,CXCL16,ADAM9,HES4,HES1,AQP5,ABHD4,AHNAK,AK1,AKR1B10,ANXA1,ANXA3,BMP8B,BOK,CD55,CLIC3,CRIP2,EPS8L1,DAPK1,DCXR,ECM1,FOSL1,GJB3,GSN,HSPB1,HYAL1,IL1RN,ITGB4,KIFC3,LMNA,PHLDA2,PHLDA3,PDLIM7,P2RY2,PDZK1IP1,PLAUR,PRSS22,CAVIN3,PLCD3,PSCA,RHOD,S100A11,S100A14,S100A16,S100A4,SERPINB5,SLC45A3,TACSTD2,TIMP2,TTC9,VAMP5,VNN1,VSIG1,WWC2"
-#                     ))
-# general_cell_type
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Rawlins_fetal_lung",
-#                       "--metadata_for_celltype_fn=rawlins_fetal_lung_metadata.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=cell_type",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--cell_types=all",
-#                       "--min_cells_per_cell_type=1",
-#                       "--cluster_res=0.6",
-#                       "--filter_per_cell_type",
-#                       "--plot_custom_column",
-#                       "--color_embedding_by=cell_type"
-#                     ))
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=4",
-#                       "--dataset=Bingren",
-#                       "--metadata_for_celltype_fn=GSE184462_metadata.tsv",
-#                       "--sep_for_metadata=\t",
-#                       "--cell_type_col_in_metadata=cell.type",
-#                       "--tissue=esophagus_mucosa",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--min_cells_per_cell_type=1",
-#                       "--cluster_res=0.6",
-#                       "--filter_per_cell_type",
-#                       "--plot_custom_column"
-#                     ))
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Shendure",
-#                       "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
-#                       "--sep_for_metadata=\t",
-#                       "--cell_type_col_in_metadata=cell_type",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--min_cells_per_cell_type=1",
-#                       "--cluster_res=0.6",
-#                       "--filter_per_cell_type",
-#                       "--plot_custom_column",
-#                       "--color_embedding_by=batch",
-#                       "--marker_genes=ACTA2,TAGLN,MYH11"
-#                     ))
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Greenleaf_pbmc_bm",
-#                       "--metadata_for_celltype_fn=intermediate_blood_bm_annotation_metadata.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=cell_type",
-#                       "--tissue=all",
-#                       "--nfrags_filter=10000",
-#                       "--tss_filter=0",
-#                       "--min_cells_per_cell_type=100",
-#                       "--cluster_res=0.6",
-#                       "--filter_per_cell_type",
-#                       # "--plot_custom_column"
-#                       "--color_embedding_by=cell_type"
-#                     ))
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Greenleaf_pbmc_bm",
-#                       "--metadata_for_celltype_fn=intermediate_blood_bm_annotation_metadata.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=cell_type",
-#                       "--tissue=all",
-#                       "--nfrags_filter=5000",
-#                       "--tss_filter=0",
-#                       "--min_cells_per_cell_type=100",
-#                       "--cluster_res=0.6",
-#                       "--filter_per_cell_type",
-#                       # "--plot_custom_column"
-#                       "--color_embedding_by=cell_type"
-#                     ))
-
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Greenleaf_pbmc_bm",
-#                       "--metadata_for_celltype_fn=intermediate_blood_bm_annotation_metadata.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=cell_type",
-#                       "--tissue=all",
-#                       "--nfrags_filter=7500",
-#                       "--tss_filter=0",
-#                       "--min_cells_per_cell_type=100",
-#                       "--cluster_res=0.6",
-#                       "--filter_per_cell_type",
-#                       # "--plot_custom_column"
-#                       "--color_embedding_by=cell_type"
-#                     ))
-
+# 
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
 #                       "--dataset=Greenleaf_pbmc_bm",
@@ -417,26 +88,10 @@ option_list <- list(
 #                       "--nfrags_filter=1",
 #                       "--tss_filter=0",
 #                       "--min_cells_per_cell_type=100",
-#                       "--cluster_res=0.6",
 #                       "--filter_per_cell_type",
-#                       # "--plot_custom_column"
 #                       "--color_embedding_by=cell_type"
 #                     ))
-# args = parse_args(OptionParser(option_list=option_list), args=
-#                     c("--cores=8",
-#                       "--dataset=Greenleaf_pbmc_bm",
-#                       "--metadata_for_celltype_fn=intermediate_blood_bm_annotation_metadata.csv",
-#                       "--sep_for_metadata=,",
-#                       "--cell_type_col_in_metadata=cell_type",
-#                       "--tissue=all",
-#                       "--nfrags_filter=1",
-#                       "--tss_filter=0",
-#                       "--min_cells_per_cell_type=1",
-#                       "--cluster_res=0.6",
-#                       "--filter_per_cell_type",
-#                       # "--plot_custom_column"
-#                       "--color_embedding_by="
-#                     ))
+
 
 # plus means other stuff as well
 add_cell_types_plus_to_cell_col_data <- function(cell_col_data, metadata,
@@ -584,11 +239,21 @@ filter_proj_and_add_metadata <- function(proj, nfrags_filter, tss_filter,
   
   if (dataset == "Greenleaf_pbmc_bm") {
     pbmc = grepl("PBMC", rownames(cell_col_data))
-    cell_col_data[pbmc, "cell_type"] = paste("PBMC", cell_col_data[pbmc, 
-                                                                   "cell_type"])
-    not_pbmc = !grepl("PBMC", rownames(cell_col_data))
-    cell_col_data[not_pbmc, "cell_type"] = paste("Bonemarrow", cell_col_data[not_pbmc, 
-                                                                             "cell_type"])
+    cell_col_data[pbmc, "cell_type"] = paste(cell_col_data[pbmc, "cell_type"],
+                                             "PBMC")
+    cd34 = grepl("CD34", rownames(cell_col_data))
+    
+    # not_pbmc = !grepl("PBMC", rownames(cell_col_data))
+    cell_col_data[cd34, "cell_type"] = paste(cell_col_data[cd34, 
+                                                           "cell_type"], 
+                                             "CDBM")
+    bmmc = grepl("BMMC", rownames(cell_col_data))
+    
+    # not_pbmc = !grepl("PBMC", rownames(cell_col_data))
+    cell_col_data[bmmc, "cell_type"] = paste(cell_col_data[bmmc, 
+                                                           "cell_type"], 
+                                             "BM")
+    
     proj@cellColData = cell_col_data
   } else if (dataset == "Greenleaf_colon") {
     cell_col_data["CellType"] = paste(cell_col_data[["GrossPathology"]], 
@@ -1298,6 +963,40 @@ if (plot_custom_column) {
     
     plotPDF(p, name="fig1.pdf", ArchRProj = proj, addDOC = FALSE)
   }
+  
+  if (fig2_blood) {
+    cols <- c("#000075", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
+              "#FF0000", "#42d4f4", "#000000", "#bfef45", "#fabed4",
+              "#469990", "#dcbeff", "#9A6324", "#7F00FF", "#800000",
+              "#aaffc3", "#808000", "#ffd8b1", "#f032e6", "#911EB4",
+              "#9DC0E1", "#006400", "#60646E", "#2020FD", "#D2C13F",
+              "#735751", "#A9A9A9", "#A9FEC2")
+    
+    p <- plotEmbedding(
+      ArchRProj = proj, 
+      colorBy = "cellColData", 
+      name = color_embedding_by, 
+      embedding = embedding,
+      quantCut = c(0, 1),
+      labelMeans=F)
+    
+    p <- p + 
+      scale_color_manual(values = cols,
+                         guide = guide_legend(override.aes = 
+                                                list(shape = 15)))
+    
+    p <- p + 
+      ggtitle("") +
+      theme_classic() +
+      theme(legend.position="none",
+            axis.title.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line.x = element_line(linewidth = 0.1),
+            axis.line.y = element_line(linewidth = 0.1))
+    plotPDF(p, name="fig2_blood.pdf", ArchRProj = proj, addDOC = FALSE)
+    
+  }
+  
   if (fig4) {
     p <- plotEmbedding(
       ArchRProj = proj, 
