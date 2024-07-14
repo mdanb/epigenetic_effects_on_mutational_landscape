@@ -139,6 +139,104 @@ brain = read.csv("../data/processed_data/mutations_with_subtypes/brain.csv",
 # colnames(cors) = c("correlation")
 # write.csv(cors, "../data/processed_data/brain_per_cell_correlations.csv")
 
+if (fig2_mss) {
+    print("MSS")
+    colon = read.csv("../data/processed_data/mutations_with_subtypes/all_colorectal.csv")
+    colon = colon[, chr_keep]
+    agg_colon=colSums(colon)
+    agg_colon=data.frame(agg_colon[mixedsort(names(agg_colon))])
+    
+    scatac_df_GL_colon = readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/default_annotation/per_cell_Greenleaf_colon_combined_count_overlaps.rds")
+    scatac_df_GL_colon = scatac_df_GL_colon[, chr_keep]
+    scatac_df_GL_colon = scatac_df_GL_colon[, mixedsort(chr_keep)]
+    
+    # colon = colon[, 2:2129]
+    # agg_oligo=colSums(oligo)
+    # agg_oligo=data.frame(agg_oligo[mixedsort(names(agg_oligo))])
+    load("../data/processed_data/Greenleaf_colon_cell_type_independent_nfrags_filter_10000_k_500_knnIteration_10000_metacells.Rdata")
+    metacells = KNN
+    
+    perform_and_plot_metacell_correlation(metacells, 
+                                          agg_colon, 
+                                          scatac_df_GL_colon,
+                                          metacell_correlations_fname="mss_nfrags_10000_500k_n_100_metacell_correlations_per_cell_type.rds",
+                                          cells_to_metacorrelation_fname="mss_nfrags_10000_500k_cell_metacorrelations.csv", 
+                                          embedding_fname="Greenleaf_colon_nfrags_filter_10000_embedding.csv", 
+                                          save_fig_fname="mss")
+}
+
+if (fig2_cll || fig2_aml) {
+  df = read.csv("../data/processed_data/mut_count_data.csv", row.names=1)
+  df = df[chr_keep, ]
+  load("../data/processed_data/Greenleaf_pbmc_bm_cell_type_independent_nfrags_filter_1_k_500_knnIteration_10000_metacells.Rdata")
+  
+  metacells = KNN
+  scatac_df_blood = readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/default_annotation/per_cell_Greenleaf_pbmc_bm_combined_count_overlaps.rds")
+  scatac_df_blood = scatac_df_blood[, chr_keep]
+  scatac_df_blood = scatac_df_blood[, mixedsort(chr_keep)]
+  
+  if (fig2_cll) {
+    cll = df["Lymph.CLL"]
+    cll = cll[mixedsort(rownames(cll)), ]
+    perform_and_plot_metacell_correlation(metacells, cll, 
+                                          scatac_df_blood,
+                                          metacell_correlations_fname="cll_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
+                                          cells_to_metacorrelation_fname="cll_nfrags_1_500k_cell_metacorrelations.csv", 
+                                          embedding_fname="Greenleaf_pbmc_bm_nfrags_filter_1_embedding.csv", 
+                                          save_fig_fname="cll")
+  }
+  
+  if (fig2_aml) {
+    aml = df["Myeloid.AML"]
+    aml = aml[mixedsort(rownames(aml))]
+    perform_and_plot_metacell_correlation(metacells, aml, 
+                                          scatac_df_blood,
+                                          metacell_correlations_fname="aml_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
+                                          cells_to_metacorrelation_fname="aml_nfrags_1_500k_cell_metacorrelations.csv", 
+                                          embedding_fname="Greenleaf_pbmc_bm_nfrags_filter_1_embedding.csv", 
+                                          save_fig_fname="aml")
+  }
+
+}
+
+if (fig3_adeno || fig3_neuro) {
+  load("../data/processed_data/Shendure_cell_type_independent_nfrags_filter_1_k_500_knnIteration_10000_metacells.Rdata")
+  metacells = KNN
+  
+  scatac_df_shendure = readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/default_annotation/per_cell_Shendure_combined_count_overlaps.rds")
+  scatac_df_shendure = scatac_df_shendure[, chr_keep]
+  scatac_df_shendure = scatac_df_shendure[, mixedsort(chr_keep)]
+  
+  pancreas = read.csv("../data/processed_data/mutations_with_subtypes/pancreas_all.csv")
+  if (fig3_neuro) {
+    print("Neuroendocrine")
+    neuroendocrine = pancreas[pancreas[["subtype"]] == "Neoroendocrine carcinoma", chr_keep]
+    agg_neuroendocrine=colSums(neuroendocrine)
+    agg_neuroendocrine=data.frame(agg_neuroendocrine[mixedsort(names(agg_neuroendocrine))])
+    
+    perform_and_plot_metacell_correlation(metacells, 
+                                          agg_neuroendocrine, 
+                                          scatac_df_shendure,
+                                          metacell_correlations_fname="neuroendocrine_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
+                                          cells_to_metacorrelation_fname="neuroendocrine_nfrags_1_500k_cell_metacorrelations.csv", 
+                                          embedding_fname="Shendure_nfrags_filter_1_embedding.csv", 
+                                          save_fig_fname="neuroendocrine")
+  }
+  if (fig3_adeno) {
+    print("Panc Adeno")
+    panc_adenoca = pancreas[pancreas[["subtype"]] != "Neoroendocrine carcinoma", chr_keep]
+    agg_panc_adenoca=colSums(panc_adenoca)
+    agg_panc_adenoca=data.frame(agg_panc_adenoca[mixedsort(names(agg_panc_adenoca))])
+    
+    perform_and_plot_metacell_correlation(metacells, 
+                                          agg_panc_adenoca, 
+                                          scatac_df_shendure,
+                                          metacell_correlations_fname="panc_adenoca_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
+                                          cells_to_metacorrelation_fname="panc_adenoca_nfrags_1_500k_cell_metacorrelations.csv", 
+                                          embedding_fname="Shendure_nfrags_filter_1_embedding.csv", 
+                                          save_fig_fname="panc_adenoca")
+  }
+}
 
 if (fig4_gbm || fig4_astro || fig4_oligo) {
   scatac_df_GL_brain = readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/Greenleaf_brain_lowest_level_annotation/per_cell_Greenleaf_brain_combined_count_overlaps.rds")
@@ -195,106 +293,6 @@ if (fig4_gbm || fig4_astro || fig4_oligo) {
                                           save_fig_fname="oligo")
   }
 }
-
-if (fig2_mss) {
-    print("MSS")
-    colon = read.csv("../data/processed_data/mutations_with_subtypes/all_colorectal.csv")
-    colon = colon[, chr_keep]
-    agg_colon=colSums(colon)
-    agg_colon=data.frame(agg_colon[mixedsort(names(agg_colon))])
-    
-    scatac_df_GL_colon = readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/default_annotation/per_cell_Greenleaf_colon_combined_count_overlaps.rds")
-    scatac_df_GL_colon = scatac_df_GL_colon[, chr_keep]
-    scatac_df_GL_colon = scatac_df_GL_colon[, mixedsort(chr_keep)]
-    
-    # colon = colon[, 2:2129]
-    # agg_oligo=colSums(oligo)
-    # agg_oligo=data.frame(agg_oligo[mixedsort(names(agg_oligo))])
-    load("../data/processed_data/Greenleaf_colon_cell_type_independent_nfrags_filter_10000_k_500_knnIteration_10000_metacells.Rdata")
-    metacells = KNN
-    
-    perform_and_plot_metacell_correlation(metacells, 
-                                          agg_colon, 
-                                          scatac_df_GL_colon,
-                                          metacell_correlations_fname="mss_nfrags_10000_500k_n_100_metacell_correlations_per_cell_type.rds",
-                                          cells_to_metacorrelation_fname="mss_nfrags_10000_500k_cell_metacorrelations.csv", 
-                                          embedding_fname="Greenleaf_colon_nfrags_filter_10000_embedding.csv", 
-                                          save_fig_fname="mss")
-}
-
-if (fig2_cll || fig2_aml) {
-  df = read.csv("../data/processed_data/mut_count_data.csv", row.names=1)
-  df = df[chr_keep, ]
-  load("../data/processed_data/Greenleaf_pbmc_bm_cell_type_independent_nfrags_filter_1_k_500_knnIteration_10000_metacells.Rdata")
-  
-  metacells = KNN
-  scatac_df_blood = readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/default_annotation/per_cell_Greenleaf_pbmc_bm_combined_count_overlaps.rds")
-  scatac_df_blood = scatac_df_blood[, chr_keep]
-  scatac_df_blood = scatac_df_blood[, mixedsort(chr_keep)]
-  
-  if (fig2_cll) {
-    cll = df["Lymph.CLL"]
-    cll = cll[mixedsort(names(cll))]
-    perform_and_plot_metacell_correlation(metacells, cll, 
-                                          scatac_df_blood,
-                                          metacell_correlations_fname="cll_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
-                                          cells_to_metacorrelation_fname="cll_nfrags_1_500k_cell_metacorrelations.csv", 
-                                          embedding_fname="Greenleaf_pbmc_bm_nfrags_filter_1_embedding.csv", 
-                                          save_fig_fname="cll")
-  }
-  
-  if (fig2_aml) {
-    aml = df["Myeloid.AML"]
-    aml = aml[mixedsort(names(aml))]
-    perform_and_plot_metacell_correlation(metacells, aml, 
-                                          scatac_df_blood,
-                                          metacell_correlations_fname="aml_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
-                                          cells_to_metacorrelation_fname="aml_nfrags_1_500k_cell_metacorrelations.csv", 
-                                          embedding_fname="Greenleaf_pbmc_bm_nfrags_filter_1_embedding.csv", 
-                                          save_fig_fname="aml")
-  }
-
-}
-
-if (fig3_adeno || fig3_neuro) {
-  load("../data/processed_data/Shendure_cell_type_independent_nfrags_filter_1_k_500_knnIteration_10000_metacells.Rdata")
-  metacells = KNN
-  
-  scatac_df_shendure = readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/default_annotation/per_cell_Shendure_combined_count_overlaps.rds")
-  scatac_df_shendure = scatac_df_shendure[, chr_keep]
-  scatac_df_shendure = scatac_df_shendure[, mixedsort(chr_keep)]
-  
-  pancreas = read.csv("../data/processed_data/mutations_with_subtypes/pancreas_all.csv")
-  if (fig3_neuro) {
-    print("Neuroendocrine")
-    neuroendocrine = pancreas[pancreas[["subtype"]] == "Neoroendocrine carcinoma", chr_keep]
-    agg_neuroendocrine=colSums(neuroendocrine)
-    agg_neuroendocrine=data.frame(agg_neuroendocrine[mixedsort(names(agg_neuroendocrine))])
-    
-    perform_and_plot_metacell_correlation(metacells, 
-                                          agg_neuroendocrine, 
-                                          scatac_df_shendure,
-                                          metacell_correlations_fname="neuroendocrine_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
-                                          cells_to_metacorrelation_fname="neuroendocrine_nfrags_1_500k_cell_metacorrelations.csv", 
-                                          embedding_fname="Shendure_nfrags_filter_1_embedding.csv", 
-                                          save_fig_fname="neuroendocrine")
-  }
-  if (fig3_adeno) {
-    print("Panc Adeno")
-    panc_adenoca = pancreas[pancreas[["subtype"]] != "Neoroendocrine carcinoma", chr_keep]
-    agg_panc_adenoca=colSums(panc_adenoca)
-    agg_panc_adenoca=data.frame(agg_panc_adenoca[mixedsort(names(agg_panc_adenoca))])
-    
-    perform_and_plot_metacell_correlation(metacells, 
-                                          agg_panc_adenoca, 
-                                          scatac_df_shendure,
-                                          metacell_correlations_fname="panc_adenoca_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
-                                          cells_to_metacorrelation_fname="panc_adenoca_nfrags_1_500k_cell_metacorrelations.csv", 
-                                          embedding_fname="Shendure_nfrags_filter_1_embedding.csv", 
-                                          save_fig_fname="panc_adenoca")
-  }
-}
-
 
 
 # metacell_correlations = lapply(lapply(metacells_per_cell_type, helper, agg_astro), 
