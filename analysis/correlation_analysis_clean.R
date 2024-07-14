@@ -222,6 +222,40 @@ if (fig2_mss) {
                                           save_fig_fname="mss")
 }
 
+if (fig2_cll || fig2_aml) {
+  df = read.csv("../data/processed_data/mut_count_data.csv", row.names=1)
+  df = df[chr_keep, ]
+  load("../data/processed_data/Greenleaf_pbmc_bm_cell_type_independent_nfrags_filter_1_k_500_knnIteration_10000_metacells.Rdata")
+  
+  metacells = KNN
+  scatac_df_blood = readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/default_annotation/per_cell_Greenleaf_pbmc_bm_combined_count_overlaps.rds")
+  scatac_df_blood = scatac_df_blood[, chr_keep]
+  scatac_df_blood = scatac_df_blood[, mixedsort(chr_keep)]
+  
+  if (fig2_cll) {
+    cll = df["Lymph.CLL"]
+    cll = cll[mixedsort(names(cll))]
+    perform_and_plot_metacell_correlation(metacells, cll, 
+                                          scatac_df_blood,
+                                          metacell_correlations_fname="cll_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
+                                          cells_to_metacorrelation_fname="cll_nfrags_1_500k_cell_metacorrelations.csv", 
+                                          embedding_fname="Greenleaf_pbmc_bm_nfrags_filter_1_embedding.csv", 
+                                          save_fig_fname="cll")
+  }
+  
+  if (fig2_aml) {
+    aml = df["Myeloid.AML"]
+    aml = aml[mixedsort(names(aml))]
+    perform_and_plot_metacell_correlation(metacells, aml, 
+                                          scatac_df_blood,
+                                          metacell_correlations_fname="aml_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
+                                          cells_to_metacorrelation_fname="aml_nfrags_1_500k_cell_metacorrelations.csv", 
+                                          embedding_fname="Greenleaf_pbmc_bm_nfrags_filter_1_embedding.csv", 
+                                          save_fig_fname="aml")
+  }
+
+}
+
 if (fig3_adeno || fig3_neuro) {
   load("../data/processed_data/Shendure_cell_type_independent_nfrags_filter_1_k_500_knnIteration_10000_metacells.Rdata")
   metacells = KNN
