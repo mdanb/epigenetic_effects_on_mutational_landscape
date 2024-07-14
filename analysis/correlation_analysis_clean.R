@@ -102,9 +102,9 @@ perform_and_plot_metacell_correlation <- function(metacells,
       plot.background = element_blank()  # Remove plot background if desired
     )
   ggsave(filename=paste("../figures", paste0(save_fig_fname, ".png"), sep="/"),
-         width = 20, height = 18)
+         width = 10, height = 9)
   ggsave(filename=paste("../figures", paste0(save_fig_fname, ".pdf"), sep="/"), 
-         width = 20, height = 18)
+         width = 10, height = 9)
   
 }
 
