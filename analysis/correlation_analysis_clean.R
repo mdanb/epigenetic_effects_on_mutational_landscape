@@ -145,6 +145,7 @@ if (fig4_gbm || fig4_astro || fig4_oligo) {
   metacells = KNN
   
   if (fig4_astro) {
+    print("Astrocytoma")
     astro = brain[brain[["subtype"]] == "Astrocytoma", ]
     astro = astro[, 2:2129]
     agg_astro=colSums(astro)
@@ -159,6 +160,7 @@ if (fig4_gbm || fig4_astro || fig4_oligo) {
   }
   
   if (fig4_gbm) {
+    print("GBM")
     gbm = brain[brain[["subtype"]] == "GBM", ]
     gbm = gbm[, 2:2129]
     agg_gbm=colSums(gbm)
@@ -173,6 +175,7 @@ if (fig4_gbm || fig4_astro || fig4_oligo) {
   }
   
   if (fig4_oligo) {
+    print("Oligo")
     oligo = brain[brain[["subtype"]] == "Oligo", ]
     oligo = oligo[, 2:2129]
     agg_oligo=colSums(oligo)
@@ -189,6 +192,7 @@ if (fig4_gbm || fig4_astro || fig4_oligo) {
 }
 
 if (fig2_mss) {
+    print("MSS")
     colon = read.csv("../data/processed_data/mutations_with_subtypes/all_colorectal.csv")
     colon = colon[, chr_keep]
     agg_colon=colSums(colon)
@@ -223,6 +227,7 @@ if (fig3_adeno || fig3_neuro) {
   
   pancreas = read.csv("../data/processed_data/mutations_with_subtypes/pancreas_all.csv")
   if (fig3_neuro) {
+    print("Neuroendocrine")
     neuroendocrine = pancreas[pancreas[["subtype"]] == "Neoroendocrine carcinoma", chr_keep]
     agg_neuroendocrine=colSums(neuroendocrine)
     agg_neuroendocrine=data.frame(agg_neuroendocrine[mixedsort(names(agg_neuroendocrine))])
@@ -236,6 +241,7 @@ if (fig3_adeno || fig3_neuro) {
                                           save_fig_fname="neuroendocrine.png")
   }
   if (fig3_adeno) {
+    print("Panc Adeno")
     panc_adenoca = pancreas[pancreas[["subtype"]] != "Neoroendocrine carcinoma", chr_keep]
     agg_panc_adenoca=colSums(panc_adenoca)
     agg_panc_adenoca=data.frame(agg_panc_adenoca[mixedsort(names(agg_panc_adenoca))])
