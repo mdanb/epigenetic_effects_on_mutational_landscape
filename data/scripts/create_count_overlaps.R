@@ -237,8 +237,16 @@ if (dataset == "Bingren") {
 } else if (dataset == "Shendure") {
   metadata = read.table("../metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
                         sep="\t", header=TRUE)
-  files = list.files("../bed_files/JShendure_scATAC/", 
-                     pattern = ".*fragments\\.txt\\.gz")
+  if (overlaps_per_cell) {
+    files_pancreas = list.files("../bed_files/JShendure_scATAC/", 
+                       pattern = "pancreas.*fragments\\.txt\\.gz")
+    files_stomach = list.files("../bed_files/JShendure_scATAC/", 
+                                pattern = "stomach.*fragments\\.txt\\.gz")
+    files = unlist(c(files_pancreas, files_stomach))
+  } else {
+    files = list.files("../bed_files/JShendure_scATAC/", 
+                       pattern = ".*fragments\\.txt\\.gz")
+  }
 } else if (dataset == "Tsankov") {
   # metadata_tsankov_proximal = 
   #   read.csv("../metadata/tsankov_lung_proximal_barcode_annotation.csv")
