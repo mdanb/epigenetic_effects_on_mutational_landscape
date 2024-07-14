@@ -101,8 +101,8 @@ perform_and_plot_metacell_correlation <- function(metacells,
       axis.line = element_line(colour = "black"),  # Add axis lines
       plot.background = element_blank()  # Remove plot background if desired
     )
-  # ggsave(filename=paste("../figures", paste0(save_fig_fname, ".png"), sep="/"), 
-  #        width = 20, height = 18)
+  ggsave(filename=paste("../figures", paste0(save_fig_fname, ".png"), sep="/"),
+         width = 20, height = 18)
   ggsave(filename=paste("../figures", paste0(save_fig_fname, ".pdf"), sep="/"), 
          width = 20, height = 18)
   
