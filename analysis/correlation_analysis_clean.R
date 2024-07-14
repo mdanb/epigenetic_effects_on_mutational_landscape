@@ -99,8 +99,11 @@ perform_and_plot_metacell_correlation <- function(metacells,
       axis.line = element_line(colour = "black"),  # Add axis lines
       plot.background = element_blank()  # Remove plot background if desired
     )
-  ggsave(filename=paste("../figures", save_fig_fname, sep="/"), 
+  # ggsave(filename=paste("../figures", paste0(save_fig_fname, ".png"), sep="/"), 
+  #        width = 20, height = 18)
+  ggsave(filename=paste("../figures", paste0(save_fig_fname, ".pdf"), sep="/"), 
          width = 20, height = 18)
+  
 }
 
 args = parse_args(OptionParser(option_list=option_list))
@@ -156,7 +159,7 @@ if (fig4_gbm || fig4_astro || fig4_oligo) {
                                           metacell_correlations_fname="astro_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
                                           cells_to_metacorrelation_fname="astro_nfrags_1_500k_cell_metacorrelations.csv", 
                                           embedding_fname="Greenleaf_brain_nfrags_filter_1_embedding.csv", 
-                                          save_fig_fname="astro.png")
+                                          save_fig_fname="astro")
   }
   
   if (fig4_gbm) {
@@ -171,7 +174,7 @@ if (fig4_gbm || fig4_astro || fig4_oligo) {
                                           metacell_correlations_fname="gbm_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
                                           cells_to_metacorrelation_fname="gbm_nfrags_1_500k_cell_metacorrelations.csv", 
                                           embedding_fname="Greenleaf_brain_nfrags_filter_1_embedding.csv", 
-                                          save_fig_fname="gbm.png")
+                                          save_fig_fname="gbm")
   }
   
   if (fig4_oligo) {
@@ -187,7 +190,7 @@ if (fig4_gbm || fig4_astro || fig4_oligo) {
                                           metacell_correlations_fname="oligo_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
                                           cells_to_metacorrelation_fname="oligo_nfrags_1_500k_cell_metacorrelations.csv", 
                                           embedding_fname="Greenleaf_brain_nfrags_filter_1_embedding.csv", 
-                                          save_fig_fname="oligo.png")
+                                          save_fig_fname="oligo")
   }
 }
 
@@ -214,7 +217,7 @@ if (fig2_mss) {
                                           metacell_correlations_fname="mss_nfrags_10000_500k_n_100_metacell_correlations_per_cell_type.rds",
                                           cells_to_metacorrelation_fname="mss_nfrags_10000_500k_cell_metacorrelations.csv", 
                                           embedding_fname="Greenleaf_colon_nfrags_filter_10000_embedding.csv", 
-                                          save_fig_fname="mss.png")
+                                          save_fig_fname="mss")
 }
 
 if (fig3_adeno || fig3_neuro) {
@@ -238,7 +241,7 @@ if (fig3_adeno || fig3_neuro) {
                                           metacell_correlations_fname="neuroendocrine_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
                                           cells_to_metacorrelation_fname="neuroendocrine_nfrags_1_500k_cell_metacorrelations.csv", 
                                           embedding_fname="Shendure_nfrags_filter_1_embedding.csv", 
-                                          save_fig_fname="neuroendocrine.png")
+                                          save_fig_fname="neuroendocrine")
   }
   if (fig3_adeno) {
     print("Panc Adeno")
@@ -252,7 +255,7 @@ if (fig3_adeno || fig3_neuro) {
                                           metacell_correlations_fname="panc_adenoca_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
                                           cells_to_metacorrelation_fname="panc_adenoca_nfrags_1_500k_cell_metacorrelations.csv", 
                                           embedding_fname="Shendure_nfrags_filter_1_embedding.csv", 
-                                          save_fig_fname="panc_adenoca.png")
+                                          save_fig_fname="panc_adenoca")
   }
 }
 
