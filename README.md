@@ -16,12 +16,7 @@ Then, activate the environment:
 conda activate coo
 ```
 and run:
-```
-conda install postgresql=14.5
-conda install -c conda-forge r-gert=2.0.0
-conda install -c conda-forge gsl=2.7
-```
-then:
+
 ```
 Rscript post_installation.R
 ```
