@@ -45,26 +45,29 @@ perform_and_plot_metacell_correlation <- function(metacells,
     saveRDS(metacell_correlations, metacell_correlations_path)
   }
   
-  metacell_correlations = readRDS(metacell_correlations_path)
-  unique_cells = lapply(lapply(metacells, unlist),
-                                      unique)
-  print("Getting metacell correlations 2...")
+  if (!file.exists(cells_to_metacorrelation_path)) {
+    metacell_correlations = readRDS(metacell_correlations_path)
+    unique_cells = lapply(lapply(metacells, unlist),
+                          unique)
+    print("Getting metacell correlations 2...")
+    
+    idxs = mclapply(unlist(unique_cells), function(x) {
+      which(unlist(lapply(metacells[[1]], function(l) {x %in% l})))
+    }, mc.cores=8)
+    cell_metacorrelations = unlist(lapply(idxs, function(idx_list) 
+      mean(metacell_correlations[idx_list])))
+    
+    # cell_metacorrelations = mapply(compute_cell_metacorrelation, 
+    #                                unique_cells_per_cell_type[[1]],
+    #                                metacells[[1]],
+    #                                metacell_correlations)
+    cells_to_metacorrelation = data.frame(cell_barcode=unname(unlist(unique_cells)),
+                                          cell_metacorrelation=unname(unlist(cell_metacorrelations)))
+    cells_to_metacorrelation_path = paste("../data/processed_data", cells_to_metacorrelation_fname,
+                                          sep = "/")
+    write.csv(cells_to_metacorrelation, cells_to_metacorrelation_path)
+  }
   
-  idxs = mclapply(unlist(unique_cells), function(x) {
-    which(unlist(lapply(metacells[[1]], function(l) {x %in% l})))
-  }, mc.cores=8)
-  cell_metacorrelations = unlist(lapply(idxs, function(idx_list) 
-    mean(metacell_correlations[idx_list])))
-  
-  # cell_metacorrelations = mapply(compute_cell_metacorrelation, 
-  #                                unique_cells_per_cell_type[[1]],
-  #                                metacells[[1]],
-  #                                metacell_correlations)
-  cells_to_metacorrelation = data.frame(cell_barcode=unname(unlist(unique_cells)),
-                                        cell_metacorrelation=unname(unlist(cell_metacorrelations)))
-  cells_to_metacorrelation_path = paste("../data/processed_data", cells_to_metacorrelation_fname,
-                                        sep = "/")
-  write.csv(cells_to_metacorrelation, cells_to_metacorrelation_path)
   cells_to_metacorrelation = read.csv(cells_to_metacorrelation_path,
                                       row.names = 1)
   embedding_path = paste("../data/processed_data", 
