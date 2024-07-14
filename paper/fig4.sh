@@ -13,8 +13,7 @@
 ## run robustness plotting as explained in README
 
 ### Fig 4B ###
-cd ../data/scripts/
-Rscript create_count_overlaps.R --dataset=Greenleaf_brain --cores=4 --annotation=Greenleaf_brain_lowest_level_annotation --overlaps_per_cell
+#Rscript ../data/scripts/create_count_overlaps.R --dataset=Greenleaf_brain --cores=4 --annotation=Greenleaf_brain_lowest_level_annotation --overlaps_per_cell
 
 #cd ../analysis/ArchR_analysis
 #Rscript reannotate_datasets.R --cores=4 --dataset=Greenleaf_brain --metadata_for_celltype_fn=GSE162170_atac_cell_metadata.txt.gz --sep_for_metadata=\t --cell_type_col_in_metadata=cell_type --tissue=all --nfrags_filter=1 --tss_filter=0 --min_cells_per_cell_type=1 --filter_per_cell_type --harmonize --fig4 --plot_custom_column --get_metacells
