@@ -188,7 +188,7 @@ if (fig2_cll || fig2_aml) {
   
   if (fig2_aml) {
     aml = df["Myeloid.AML"]
-    aml = aml[mixedsort(rownames(aml))]
+    aml = aml[mixedsort(rownames(aml)), ]
     perform_and_plot_metacell_correlation(metacells, aml, 
                                           scatac_df_blood,
                                           metacell_correlations_fname="aml_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
