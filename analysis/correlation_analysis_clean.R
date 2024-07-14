@@ -4,6 +4,7 @@ library(preprocessCore)
 library(gtools)
 source("color.R")
 library(parallel)
+library(gtools)
 
 chr_keep = read.csv("../data/processed_data/chr_keep.csv")[["chr"]]
 chr_ranges = unlist(read.csv("../data/processed_data/chr_ranges.csv"))
@@ -18,16 +19,16 @@ scatac_df_GL_brain = readRDS("../data/processed_data/count_overlap_data/combined
 scatac_df_GL_brain = scatac_df_GL_brain[, chr_keep]
 scatac_df_GL_brain = scatac_df_GL_brain[, mixedsort(chr_keep)]
 rownames(scatac_df_GL_brain) = paste0(rownames(scatac_df_GL_brain), "-1")
-cors = cor(t(scatac_df_GL_brain), agg_astro)
-colnames(cors) = c("correlation")
-write.csv(cors, "../data/processed_data/brain_per_cell_correlations.csv")
+# cors = cor(t(scatac_df_GL_brain), agg_astro)
+# colnames(cors) = c("correlation")
+# write.csv(cors, "../data/processed_data/brain_per_cell_correlations.csv")
 load("../data/processed_data/Greenleaf_brain_cell_type_independent_nfrags_filter_1_k_500_knnIteration_10000_metacells.Rdata")
 
-metacells_per_cell_type = KNN
-cell_types = names(metacells_per_cell_type)
+metacells = KNN
+# cell_types = names(metacells_per_cell_type)
 
-helper <- function(metacells, agg_cancer, scatac_df) {
-  corrs = mclapply(metacells, function(x) {
+helper <- function(metacell, agg_cancer, scatac_df) {
+  corrs = mclapply(metacell, function(x) {
     cor(
       colSums(scatac_df[x, ]),
       agg_cancer)}, mc.cores=8
@@ -35,38 +36,51 @@ helper <- function(metacells, agg_cancer, scatac_df) {
   return(corrs)
 }
 
-compute_cell_metacorrelation <- function(unique_cells, metacells, 
-                                         correlations_per_metacell) {
-  idxs = mclapply(unique_cells, function(x) {
-    which(unlist(lapply(metacells, function(l) {x %in% l})))
-  }, mc.cores=8)
-  return(unlist(lapply(idxs, function(idx_list) 
-    mean(correlations_per_metacell[idx_list]))))
-}
+# compute_cell_metacorrelation <- function(unique_cells, metacells, 
+#                                          correlations_per_metacell) {
+#   idxs = mclapply(unique_cells, function(x) {
+#     which(unlist(lapply(metacells, function(l) {x %in% l})))
+#   }, mc.cores=8)
+#   return(unlist(lapply(idxs, function(idx_list) 
+#     mean(correlations_per_metacell[idx_list]))))
+# }
 
-perform_and_plot_metacell_correlation <- function(metacells_per_cell_type,
+perform_and_plot_metacell_correlation <- function(metacells,
                                                   agg_df, 
                                                   scatac_df,
                                                   metacell_correlations_fname,
                                                   cells_to_metacorrelation_fname, 
                                                   embedding_fname, save_fig_fname) {
   print("Getting metacell correlations 1...")
-  metacell_correlations = lapply(mapply(helper,
-                                        metacells_per_cell_type,
-                                        agg_df,
-                                        scatac_df), 
-                                 unlist)
+  helper_function <- function(metacell, agg_df, scatac_df) {
+    helper(metacell, agg_df, scatac_df)
+  }
+  metacell_correlations <- unlist(lapply(metacells, helper_function, 
+                                         agg_df, scatac_df))
+  
+  # metacell_correlations = lapply(mapply(helper,
+  #                                       metacells[[1]],
+  #                                       agg_df,
+  #                                       scatac_df), 
+  #                                unlist)
   metacell_correlations_path = paste("../data/processed_data", metacell_correlations_fname,
                                     sep="/")
   saveRDS(metacell_correlations, metacell_correlations_path)
   metacell_correlations = readRDS(metacell_correlations_path)
-  unique_cells_per_cell_type = lapply(lapply(metacells_per_cell_type, unlist),
+  unique_cells_per_cell_type = lapply(lapply(metacells, unlist),
                                       unique)
   print("Getting metacell correlations 2...")
-  cell_metacorrelations = mapply(compute_cell_metacorrelation, 
-                                 unique_cells_per_cell_type,
-                                 metacells_per_cell_type,
-                                 metacell_correlations)
+  
+  idxs = mclapply(unlist(unique_cells_per_cell_type), function(x) {
+    which(unlist(lapply(metacells[[1]], function(l) {x %in% l})))
+  }, mc.cores=8)
+  cell_metacorrelations = unlist(lapply(idxs, function(idx_list) 
+                                mean(metacell_correlations[idx_list])))
+  
+  # cell_metacorrelations = mapply(compute_cell_metacorrelation, 
+  #                                unique_cells_per_cell_type[[1]],
+  #                                metacells[[1]],
+  #                                metacell_correlations)
   cells_to_metacorrelation = data.frame(cell_barcode=unname(unlist(unique_cells_per_cell_type)),
                                         cell_metacorrelation=unname(unlist(cell_metacorrelations)))
   cells_to_metacorrelation_path = paste("../data/processed_data", cells_to_metacorrelation_fname,
@@ -107,7 +121,7 @@ perform_and_plot_metacell_correlation <- function(metacells_per_cell_type,
          width = 20, height = 18)
 }
 
-perform_and_plot_metacell_correlation(metacells_per_cell_type, agg_astro, 
+perform_and_plot_metacell_correlation(metacells, agg_astro, 
                                       scatac_df_GL_brain,
                                       metacell_correlations_fname="astro_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
                                       cells_to_metacorrelation_fname="astro_nfrags_1_500k_cell_metacorrelations.csv", 
@@ -169,10 +183,84 @@ gbm = brain[brain[["subtype"]] == "GBM", ]
 gbm = gbm[, 2:2129]
 agg_gbm=colSums(gbm)
 agg_gbm=data.frame(agg_gbm[mixedsort(names(agg_gbm))])
+# perform_and_plot_metacell_correlation(metacells, agg_astro, 
+#                                       scatac_df_GL_brain,
+#                                       metacell_correlations_fname="astro_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
+#                                       cells_to_metacorrelation_fname="astro_nfrags_1_500k_cell_metacorrelations.csv", 
+#                                       embedding_fname="Greenleaf_brain_nfrags_filter_1_embedding.csv", 
+#                                       save_fig_fname="astro.png")
 
-perform_and_plot_metacell_correlation(metacells_per_cell_type, agg_gbm, 
+perform_and_plot_metacell_correlation(metacells, agg_gbm, 
                                       scatac_df_GL_brain,
                                       metacell_correlations_fname="gbm_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
                                       cells_to_metacorrelation_fname="gbm_nfrags_1_500k_cell_metacorrelations.csv", 
                                       embedding_fname="Greenleaf_brain_nfrags_filter_1_embedding.csv", 
                                       save_fig_fname="gbm.png")
+
+oligo = brain[brain[["subtype"]] == "Oligo", ]
+oligo = oligo[, 2:2129]
+agg_oligo=colSums(oligo)
+agg_oligo=data.frame(agg_oligo[mixedsort(names(agg_oligo))])
+
+perform_and_plot_metacell_correlation(metacells, 
+                                      agg_oligo, 
+                                      scatac_df_GL_brain,
+                                      metacell_correlations_fname="oligo_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
+                                      cells_to_metacorrelation_fname="oligo_nfrags_1_500k_cell_metacorrelations.csv", 
+                                      embedding_fname="Greenleaf_brain_nfrags_filter_1_embedding.csv", 
+                                      save_fig_fname="oligo.png")
+
+colon = read.csv("../data/processed_data/mutations_with_subtypes/all_colorectal.csv")
+colon = colon[, chr_keep]
+agg_colon=colSums(colon)
+agg_colon=data.frame(agg_colon[mixedsort(names(agg_colon))])
+
+scatac_df_GL_colon = readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/default_annotation/per_cell_Greenleaf_colon_combined_count_overlaps.rds")
+scatac_df_GL_colon = scatac_df_GL_colon[, chr_keep]
+scatac_df_GL_colon = scatac_df_GL_colon[, mixedsort(chr_keep)]
+
+# colon = colon[, 2:2129]
+# agg_oligo=colSums(oligo)
+# agg_oligo=data.frame(agg_oligo[mixedsort(names(agg_oligo))])
+load("../data/processed_data/Greenleaf_colon_cell_type_independent_nfrags_filter_10000_k_500_knnIteration_10000_metacells.Rdata")
+metacells = KNN
+
+perform_and_plot_metacell_correlation(metacells, 
+                                      agg_colon, 
+                                      scatac_df_GL_colon,
+                                      metacell_correlations_fname="mss_nfrags_10000_500k_n_100_metacell_correlations_per_cell_type.rds",
+                                      cells_to_metacorrelation_fname="mss_nfrags_10000_500k_cell_metacorrelations.csv", 
+                                      embedding_fname="Greenleaf_colon_nfrags_filter_10000_embedding.csv", 
+                                      save_fig_fname="mss.png")
+
+load("../data/processed_data/Shendure_cell_type_independent_nfrags_filter_1_k_500_knnIteration_10000_metacells.Rdata")
+metacells = KNN
+
+scatac_df_shendure = readRDS("../data/processed_data/count_overlap_data/combined_count_overlaps/default_annotation/per_cell_Shendure_combined_count_overlaps.rds")
+scatac_df_shendure = scatac_df_shendure[, chr_keep]
+scatac_df_shendure = scatac_df_shendure[, mixedsort(chr_keep)]
+
+pancreas = read.csv("../data/processed_data/mutations_with_subtypes/pancreas_all.csv")
+neuroendocrine = pancreas[pancreas[["subtype"]] == "Neoroendocrine carcinoma", chr_keep]
+agg_neuroendocrine=colSums(neuroendocrine)
+agg_neuroendocrine=data.frame(agg_neuroendocrine[mixedsort(names(agg_neuroendocrine))])
+
+perform_and_plot_metacell_correlation(metacells, 
+                                      agg_neuroendocrine, 
+                                      scatac_df_shendure,
+                                      metacell_correlations_fname="neuroendocrine_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
+                                      cells_to_metacorrelation_fname="neuroendocrine_nfrags_1_500k_cell_metacorrelations.csv", 
+                                      embedding_fname="Shendure_nfrags_filter_1_embedding.csv", 
+                                      save_fig_fname="neuroendocrine.png")
+
+panc_adenoca = pancreas[pancreas[["subtype"]] != "Neoroendocrine carcinoma", chr_keep]
+agg_panc_adenoca=colSums(panc_adenoca)
+agg_panc_adenoca=data.frame(agg_panc_adenoca[mixedsort(names(agg_panc_adenoca))])
+
+perform_and_plot_metacell_correlation(metacells, 
+                                      agg_panc_adenoca, 
+                                      scatac_df_shendure,
+                                      metacell_correlations_fname="panc_adenoca_nfrags_1_500k_n_100_metacell_correlations_per_cell_type.rds",
+                                      cells_to_metacorrelation_fname="panc_adenoca_nfrags_1_500k_cell_metacorrelations.csv", 
+                                      embedding_fname="Shendure_nfrags_filter_1_embedding.csv", 
+                                      save_fig_fname="panc_adenoca.png")

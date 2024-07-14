@@ -64,7 +64,7 @@ option_list <- list(
 #                       "--color_embedding_by=CellType",
 #                       "--harmonize"
 #                     ))
-# 
+
 # args = parse_args(OptionParser(option_list=option_list), args=
 #                     c("--cores=8",
 #                       "--dataset=Greenleaf_brain",
@@ -94,6 +94,33 @@ option_list <- list(
 #                       "--color_embedding_by=cell_type"
 #                     ))
 
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Shendure",
+#                       "--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+#                       "--sep_for_metadata=\t",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--min_cells_per_cell_type=1",
+#                       "--filter_per_cell_type",
+#                       "--color_embedding_by=cell_type"
+#                     ))
+
+# args = parse_args(OptionParser(option_list=option_list), args=
+#                     c("--cores=8",
+#                       "--dataset=Bingren,Shendure",
+#                       "--metadata_for_celltype_fn=GSE184462_metadata.tsv,GSE149683_File_S2.Metadata_of_high_quality_cells.txt",
+#                       "--sep_for_metadata=\t,\t",
+#                       "--cell_type_col_in_metadata=cell_type",
+#                       "--tissue=all",
+#                       "--nfrags_filter=1",
+#                       "--tss_filter=0",
+#                       "--min_cells_per_cell_type=100",
+#                       "--filter_per_cell_type",
+#                       "--color_embedding_by=cell_type"
+#                     ))
 
 # plus means other stuff as well
 add_cell_types_plus_to_cell_col_data <- function(cell_col_data, metadata,
@@ -155,27 +182,28 @@ add_cell_types_plus_to_cell_col_data <- function(cell_col_data, metadata,
              paste(x[1], unlist(strsplit(x[2], "#"))[2], sep="#")))
     to_match = metadata[["Cell"]]
     rownames_archr = unlist(rownames_archr)
-  } else if (dataset == "Rawlins_fetal_lung") {
-      WSSS_F_idx = grep("WSSS_F", rownames(cell_col_data))
-      WSSS_F_names = lapply(strsplit(rownames(cell_col_data)[WSSS_F_idx], 
-                                     split="_"), "[", 4:6)
-      WSSS_F_names = unlist(lapply(WSSS_F_names, paste, collapse="_"))
-      other = strsplit(rownames(cell_col_data)[-WSSS_F_idx], split="_")
-      length_other = lapply(other, length)
-      l_6_idx = length_other == 6
-      l_6_names = unlist(lapply(other[l_6_idx], "[", 3))
-      l_8_idx = length_other == 8
-      l_8_names = unlist(lapply(other[l_8_idx], "[", 4))
-      other[l_6_idx] = l_6_names
-      other[l_8_idx] = l_8_names
-      other = unlist(other)
-      cell_ids = unlist(lapply(strsplit(rownames(cell_col_data), "#"), "[", 2))
-      rownames_archr = unlist(lapply(strsplit(rownames(cell_col_data), "#"), "[", 1))
-      rownames_archr[WSSS_F_idx] = WSSS_F_names
-      rownames_archr[-WSSS_F_idx] = other
-      rownames_archr = paste(rownames_archr, cell_ids, sep="#")
-      to_match = metadata[["X"]]
+} else if (dataset == "Rawlins_fetal_lung") {
+    WSSS_F_idx = grep("WSSS_F", rownames(cell_col_data))
+    WSSS_F_names = lapply(strsplit(rownames(cell_col_data)[WSSS_F_idx], 
+                                   split="_"), "[", 4:6)
+    WSSS_F_names = unlist(lapply(WSSS_F_names, paste, collapse="_"))
+    other = strsplit(rownames(cell_col_data)[-WSSS_F_idx], split="_")
+    length_other = lapply(other, length)
+    l_6_idx = length_other == 6
+    l_6_names = unlist(lapply(other[l_6_idx], "[", 3))
+    l_8_idx = length_other == 8
+    l_8_names = unlist(lapply(other[l_8_idx], "[", 4))
+    other[l_6_idx] = l_6_names
+    other[l_8_idx] = l_8_names
+    other = unlist(other)
+    cell_ids = unlist(lapply(strsplit(rownames(cell_col_data), "#"), "[", 2))
+    rownames_archr = unlist(lapply(strsplit(rownames(cell_col_data), "#"), "[", 1))
+    rownames_archr[WSSS_F_idx] = WSSS_F_names
+    rownames_archr[-WSSS_F_idx] = other
+    rownames_archr = paste(rownames_archr, cell_ids, sep="#")
+    to_match = metadata[["X"]]
   }
+  
   idx_cell_id = match(rownames_archr, to_match)
   cell_types = metadata[[cell_type_col_in_orig_metadata]][idx_cell_id]
   cell_col_data$cell_type = cell_types
@@ -197,140 +225,169 @@ filter_proj_and_add_metadata <- function(proj, nfrags_filter, tss_filter,
                                          metadata, 
                                          plus_to_add_to_metadata=NULL,
                                          plus_filters = NULL) {
-  cell_col_data = getCellColData(proj)
-  
-  if (tissue == "all") {
-    tissue = "*"
-  }
-  if (dataset == "all") {
-    dataset = "*"
-  }
-  if (cell_types == "all") {
-    cell_types = "*"
-  }
-
-  # Filter by Dataset
-  print("Filtering by Dataset...")
-  dataset_filter = grepl(dataset, cell_col_data[["dataset_per_cell"]])
-  proj = proj[dataset_filter]
-  cell_col_data = getCellColData(proj)
-  print("Done!")
-  ##################
-  
-  # Filter by Tissue
-  print("Filtering by tissue...")
-  sample_names = unlist(lapply(strsplit(rownames(cell_col_data), split="#"), 
-                               "[", 1))
-  tissue_filter = grepl(tissue, sample_names)
-  proj = proj[tissue_filter]
-  cell_col_data = getCellColData(proj)
-  print("Done!")
-  #################
-  
-  # Add cell types to cell_col_data
-  print("Adding cell types to cell_col_data...")
-  cell_col_data = add_cell_types_plus_to_cell_col_data(cell_col_data, metadata, 
-                                                  cell_type_col_in_metadata,
-                                                  dataset, plus_to_add_to_metadata)
-  proj = proj[!is.na(cell_col_data[["cell_type"]])]
-  cell_col_data_with_celltypes = cell_col_data[!is.na(cell_col_data[["cell_type"]]), ]
-  proj@cellColData = cell_col_data_with_celltypes
-  cell_col_data = cell_col_data_with_celltypes
-  print("Done!")
-  ################################
-  
-  if (dataset == "Greenleaf_pbmc_bm") {
-    pbmc = grepl("PBMC", rownames(cell_col_data))
-    cell_col_data[pbmc, "cell_type"] = paste(cell_col_data[pbmc, "cell_type"],
-                                             "PBMC")
-    cd34 = grepl("CD34", rownames(cell_col_data))
+  if (length(dataset) > 1) {
+    cell_col_data = getCellColData(proj)
+    dataset_filter = grepl("Bingren|Shendure", cell_col_data[["dataset_per_cell"]])
+    proj = proj[dataset_filter]
+    cell_col_data = getCellColData(proj)
     
-    # not_pbmc = !grepl("PBMC", rownames(cell_col_data))
-    cell_col_data[cd34, "cell_type"] = paste(cell_col_data[cd34, 
-                                                           "cell_type"], 
-                                             "CDBM")
-    bmmc = grepl("BMMC", rownames(cell_col_data))
+    br_metadata = read.csv("../../data/metadata/GSE184462_metadata.tsv", sep="\t")
+    br_metadata = br_metadata[br_metadata[["Life.stage"]] != "Fetal", ]
+    shendure_metadata = read.csv("../../data/metadata/GSE149683_File_S2.Metadata_of_high_quality_cells.txt", 
+                                 sep="\t")
     
-    # not_pbmc = !grepl("PBMC", rownames(cell_col_data))
-    cell_col_data[bmmc, "cell_type"] = paste(cell_col_data[bmmc, 
-                                                           "cell_type"], 
-                                             "BM")
-    
+    cell_col_data = add_cell_types_plus_to_cell_col_data(cell_col_data, br_metadata, 
+                                                         cell_type_col_in_orig_metadata="cell.type",
+                                                         dataset="Bingren", 
+                                                         plus_to_add_to_metadata=NULL)
+    current_celltypes = cell_col_data[["cell_type"]]
+    cell_col_data = add_cell_types_plus_to_cell_col_data(cell_col_data, shendure_metadata, 
+                                                         cell_type_col_in_orig_metadata="cell_type",
+                                                         dataset="Shendure", 
+                                                         plus_to_add_to_metadata=NULL)
+    current_celltypes_2 = cell_col_data[["cell_type"]]
+    current_celltypes = unname(mapply(function(x, y) ifelse(is.na(x), y,
+                                      ifelse(is.na(y), x, x)), current_celltypes,
+                                      current_celltypes_2))
+    cell_col_data["cell_type"] = current_celltypes
     proj@cellColData = cell_col_data
-  } else if (dataset == "Greenleaf_colon") {
-    cell_col_data["CellType"] = paste(cell_col_data[["GrossPathology"]], 
-                                       cell_col_data[["CellType"]])
-    proj@cellColData = cell_col_data
-  }
-  
-  # Filter by cell type
-  print("Filtering by cell type...")
-  cell_type_filter = grepl(cell_types, cell_col_data[["cell_type"]])
-  proj = proj[cell_type_filter]
-  cell_col_data = getCellColData(proj)
-  print("Done!")
-  #####################
-  
-  # Filter by plus filters
-  print("Filtering by additional custom filters...")
-  idx = 1
-  for (filter in plus_filters) {
-    if (!(filter == "NULL")) {
-      filter = grepl(filter, cell_col_data[[plus_to_add_to_metadata[idx]]])
-      proj = proj[filter]
-      cell_col_data = getCellColData(proj)
+    return(proj)
+  } else {
+    cell_col_data = getCellColData(proj)
+    
+    if (tissue == "all") {
+      tissue = "*"
     }
-    idx = idx + 1
+    if (dataset == "all") {
+      dataset = "*"
+    }
+    if (cell_types == "all") {
+      cell_types = "*"
+    }
+  
+    # Filter by Dataset
+    print("Filtering by Dataset...")
+    dataset_filter = grepl(dataset, cell_col_data[["dataset_per_cell"]])
+    proj = proj[dataset_filter]
+    cell_col_data = getCellColData(proj)
+    print("Done!")
+    ##################
+    
+    # Filter by Tissue
+    print("Filtering by tissue...")
+    sample_names = unlist(lapply(strsplit(rownames(cell_col_data), split="#"), 
+                                 "[", 1))
+    tissue_filter = grepl(tissue, sample_names)
+    proj = proj[tissue_filter]
+    cell_col_data = getCellColData(proj)
+    print("Done!")
+    #################
+    
+    # Add cell types to cell_col_data
+    print("Adding cell types to cell_col_data...")
+    cell_col_data = add_cell_types_plus_to_cell_col_data(cell_col_data, metadata, 
+                                                    cell_type_col_in_metadata,
+                                                    dataset, plus_to_add_to_metadata)
+    proj = proj[!is.na(cell_col_data[["cell_type"]])]
+    cell_col_data_with_celltypes = cell_col_data[!is.na(cell_col_data[["cell_type"]]), ]
+    proj@cellColData = cell_col_data_with_celltypes
+    cell_col_data = cell_col_data_with_celltypes
+    print("Done!")
+    ################################
+    
+    if (dataset == "Greenleaf_pbmc_bm") {
+      pbmc = grepl("PBMC", rownames(cell_col_data))
+      cell_col_data[pbmc, "cell_type"] = paste(cell_col_data[pbmc, "cell_type"],
+                                               "PBMC")
+      cd34 = grepl("CD34", rownames(cell_col_data))
+      
+      # not_pbmc = !grepl("PBMC", rownames(cell_col_data))
+      cell_col_data[cd34, "cell_type"] = paste(cell_col_data[cd34, 
+                                                             "cell_type"], 
+                                               "CDBM")
+      bmmc = grepl("BMMC", rownames(cell_col_data))
+      
+      # not_pbmc = !grepl("PBMC", rownames(cell_col_data))
+      cell_col_data[bmmc, "cell_type"] = paste(cell_col_data[bmmc, 
+                                                             "cell_type"], 
+                                               "BM")
+      
+      proj@cellColData = cell_col_data
+    } else if (dataset == "Greenleaf_colon") {
+      cell_col_data["CellType"] = paste(cell_col_data[["GrossPathology"]], 
+                                         cell_col_data[["CellType"]])
+      proj@cellColData = cell_col_data
+    }
+    
+    # Filter by cell type
+    print("Filtering by cell type...")
+    cell_type_filter = grepl(cell_types, cell_col_data[["cell_type"]])
+    proj = proj[cell_type_filter]
+    cell_col_data = getCellColData(proj)
+    print("Done!")
+    #####################
+    
+    # Filter by plus filters
+    print("Filtering by additional custom filters...")
+    idx = 1
+    for (filter in plus_filters) {
+      if (!(filter == "NULL")) {
+        filter = grepl(filter, cell_col_data[[plus_to_add_to_metadata[idx]]])
+        proj = proj[filter]
+        cell_col_data = getCellColData(proj)
+      }
+      idx = idx + 1
+    }
+    
+    #####################
+    # Filter by cell number, and TSS/nFrags 
+    print("Filtering by TSS/nFrags...")
+    counts_per_cell_type = table(cell_col_data[["cell_type"]])
+    counts_per_cell_type_filter = counts_per_cell_type >= min_cells_per_cell_type
+    cell_types_to_keep = names(counts_per_cell_type)[counts_per_cell_type_filter]
+    proj = proj[cell_col_data[["cell_type"]] %in% cell_types_to_keep]
+    cell_col_data = getCellColData(proj)
+    counts_per_cell_type = table(cell_col_data[["cell_type"]])
+    cell_col_data = as.data.frame(cell_col_data)
+    if (filter_per_cell_type) {
+      cell_col_data = group_by(cell_col_data, cell_type)
+    }
+    if (!is.null(nfrags_percentile)) {
+      temp1 = cell_col_data %>% 
+                mutate(throw_away = nFrags < quantile(nFrags, nfrags_percentile))
+    } else {
+      temp1 = cell_col_data %>% 
+        mutate(throw_away = nFrags < nfrags_filter)
+    }
+    
+    temp_frag_filter = temp1[c("throw_away", "cell_type")]
+    temp1 = select(temp1, -throw_away)
+    temp1 = temp1[!temp_frag_filter[["throw_away"]], ]
+    
+    if (!is.null(tss_percentile)) {
+      temp2 = cell_col_data %>% 
+                mutate(throw_away = 
+                       TSSEnrichment < quantile(TSSEnrichment, tss_percentile))
+    } else {
+      temp2 = cell_col_data %>% 
+                mutate(throw_away = TSSEnrichment < tss_filter)
+    }
+    
+    temp_tss_filter = temp2[c("throw_away", "cell_type")]
+    temp2 = select(temp2, -throw_away)
+    temp2 = temp2[!temp_tss_filter[["throw_away"]], ]
+    
+    temp3 = merge(temp1, temp2)
+    
+    counts_per_cell_type_after_filtering = table(temp3[["cell_type"]])
+    enough_cells = counts_per_cell_type_after_filtering >= min_cells_per_cell_type
+    cells_to_filter = names(enough_cells)[enough_cells]
+    proj_filter = !(temp_frag_filter["throw_away"] | temp_tss_filter["throw_away"] & 
+                   (cell_col_data[["cell_type"]] %in% cells_to_filter))
+    
+    proj = proj[proj_filter]
+    return(proj)
   }
-  
-  #####################
-  # Filter by cell number, and TSS/nFrags 
-  print("Filtering by TSS/nFrags...")
-  counts_per_cell_type = table(cell_col_data[["cell_type"]])
-  counts_per_cell_type_filter = counts_per_cell_type >= min_cells_per_cell_type
-  cell_types_to_keep = names(counts_per_cell_type)[counts_per_cell_type_filter]
-  proj = proj[cell_col_data[["cell_type"]] %in% cell_types_to_keep]
-  cell_col_data = getCellColData(proj)
-  counts_per_cell_type = table(cell_col_data[["cell_type"]])
-  cell_col_data = as.data.frame(cell_col_data)
-  if (filter_per_cell_type) {
-    cell_col_data = group_by(cell_col_data, cell_type)
-  }
-  if (!is.null(nfrags_percentile)) {
-    temp1 = cell_col_data %>% 
-              mutate(throw_away = nFrags < quantile(nFrags, nfrags_percentile))
-  } else {
-    temp1 = cell_col_data %>% 
-      mutate(throw_away = nFrags < nfrags_filter)
-  }
-  
-  temp_frag_filter = temp1[c("throw_away", "cell_type")]
-  temp1 = select(temp1, -throw_away)
-  temp1 = temp1[!temp_frag_filter[["throw_away"]], ]
-  
-  if (!is.null(tss_percentile)) {
-    temp2 = cell_col_data %>% 
-              mutate(throw_away = 
-                     TSSEnrichment < quantile(TSSEnrichment, tss_percentile))
-  } else {
-    temp2 = cell_col_data %>% 
-              mutate(throw_away = TSSEnrichment < tss_filter)
-  }
-  
-  temp_tss_filter = temp2[c("throw_away", "cell_type")]
-  temp2 = select(temp2, -throw_away)
-  temp2 = temp2[!temp_tss_filter[["throw_away"]], ]
-  
-  temp3 = merge(temp1, temp2)
-  
-  counts_per_cell_type_after_filtering = table(temp3[["cell_type"]])
-  enough_cells = counts_per_cell_type_after_filtering >= min_cells_per_cell_type
-  cells_to_filter = names(enough_cells)[enough_cells]
-  proj_filter = !(temp_frag_filter["throw_away"] | temp_tss_filter["throw_away"] & 
-                 (cell_col_data[["cell_type"]] %in% cells_to_filter))
-  
-  proj = proj[proj_filter]
-  return(proj)
 }
 
 reduce_dims <- function(proj, harmonize=F, add_tsne=F, force=F) {
@@ -395,6 +452,7 @@ args = parse_args(OptionParser(option_list=option_list))
 # plot_correlation_with_cancer = args$plot_correlation_with_cancer
 cores = args$cores
 dataset = args$dataset
+dataset = unlist(strsplit(dataset, ","))
 cluster = args$cluster
 cluster_res = args$cluster_res
 marker_genes = args$marker_genes
@@ -443,10 +501,14 @@ print("Done collecting cmd line args")
 addArchRThreads(threads = cores)
 addArchRGenome("hg19")
 set.seed(42)
-metadata_root = "../../data/metadata"
-metadata_filepath = paste(metadata_root, metadata_for_celltype_fn, sep="/")
-metadata = read.csv(metadata_filepath, sep=sep_for_metadata)
 
+if (length(dataset) == 1) {
+  metadata_root = "../../data/metadata"
+  metadata_filepath = paste(metadata_root, metadata_for_celltype_fn, sep="/")
+  metadata = read.csv(metadata_filepath, sep=sep_for_metadata)
+} else {
+  metadata = NULL
+}
 if (dataset == "Greenleaf_brain") {
   colnames(metadata)[grepl("Iterative.LSI.Clusters", 
                            colnames(metadata))] = "cell_type"
@@ -489,32 +551,35 @@ if (dataset == "Bingren" && tissue == "frontal_cortex") {
   metadata["cellID"] = gsub("Human_brain", "snATAC_frontal_cortex", metadata[["cellID"]])
 }
 
-setting = paste0("ArchR", "_", "dataset", "_", dataset, "_", "tissue", "_",
-                 tissue, "_", "cell_types", "_", cell_types, "_", 
-                 "nfrags_filter", "_", nfrags_filter, "_", 
-                 "tss_filter", "_", tss_filter, "_", "min_cells_per_cell_type", 
-                 "_", min_cells_per_cell_type, "_", "metadata_file", "_", 
-                 metadata_for_celltype_fn)
-
-if (!is.null(tss_percentile)) {
-  setting = paste0(setting, "_", "tss_percentile", "_", tss_percentile)
-}
-if (!is.null(nfrags_percentile)) {
-  setting = paste0(setting, "_", "nfrags_percentile", "_", nfrags_percentile)
-}
-
-if (filter_per_cell_type) {
-  setting = paste0(setting, "_", "filter_per_cell_type")
-}
-
-
-idx = 1
-for (filter in plus_filters) {
-  if (!(filter == "NULL")) {
-    setting = paste0(setting, "_", "filter_by_", plus_to_add_to_metadata[idx],
-                     "_", filter)
+if (length(dataset) == 1) {
+  setting = paste0("ArchR", "_", "dataset", "_", dataset, "_", "tissue", "_",
+                   tissue, "_", "cell_types", "_", cell_types, "_", 
+                   "nfrags_filter", "_", nfrags_filter, "_", 
+                   "tss_filter", "_", tss_filter, "_", "min_cells_per_cell_type", 
+                   "_", min_cells_per_cell_type, "_", "metadata_file", "_", 
+                   metadata_for_celltype_fn)
+  if (!is.null(tss_percentile)) {
+    setting = paste0(setting, "_", "tss_percentile", "_", tss_percentile)
   }
-  idx = idx + 1
+  if (!is.null(nfrags_percentile)) {
+    setting = paste0(setting, "_", "nfrags_percentile", "_", nfrags_percentile)
+  }
+  
+  if (filter_per_cell_type) {
+    setting = paste0(setting, "_", "filter_per_cell_type")
+  }
+  
+  
+  idx = 1
+  for (filter in plus_filters) {
+    if (!(filter == "NULL")) {
+      setting = paste0(setting, "_", "filter_by_", plus_to_add_to_metadata[idx],
+                       "_", filter)
+    }
+    idx = idx + 1
+  }
+} else {
+  setting = "ArchR_dataset_Bingren_Shendure_tissue_pancreas_stomach_cell_types_all_nfrags_filter_1_tss_filter_0_min_cells_per_cell_type_1_filter_per_cell_type"
 }
 
 proj_dir = paste("ArchR_projects", setting, sep="/")
@@ -553,16 +618,15 @@ if (dir.exists(proj_dir)) {
   ArchR_proj <- loadArchRProject(dir)
   print("Creating new project")
   proj <- filter_proj_and_add_metadata(proj=ArchR_proj, nfrags_filter = nfrags_filter, 
-                      tss_filter = tss_filter, tss_percentile = tss_percentile,
-                      nfrags_percentile = nfrags_percentile, 
-                      filter_per_cell_type = filter_per_cell_type,
-                      dataset = dataset, 
-                      tissue = tissue, cell_types = cell_types,
-                      min_cells_per_cell_type = min_cells_per_cell_type, 
-                      metadata = metadata, 
-                      plus_to_add_to_metadata = plus_to_add_to_metadata,
-                      plus_filters = plus_filters)
-  
+                                       tss_filter = tss_filter, tss_percentile = tss_percentile,
+                                       nfrags_percentile = nfrags_percentile, 
+                                       filter_per_cell_type = filter_per_cell_type,
+                                       dataset = dataset, 
+                                       tissue = tissue, cell_types = cell_types,
+                                       min_cells_per_cell_type = min_cells_per_cell_type, 
+                                       metadata = metadata, 
+                                       plus_to_add_to_metadata = plus_to_add_to_metadata,
+                                       plus_filters = plus_filters)
   print("Saving new project")
   proj <- saveArchRProject(ArchRProj = proj, 
                            outputDirectory = proj_dir,
@@ -893,7 +957,7 @@ if (reannotate) {
 if (plot_custom_column) {
   print("Plotting custom column...")
   
-  embedding = "UMAP"
+    embedding = "UMAP"
   
   if (harmonize) {
     embedding = paste0(embedding, "Harmony")
@@ -974,7 +1038,7 @@ if (plot_custom_column) {
               "#469990", "#dcbeff", "#9A6324", "#7F00FF", "#800000",
               "#aaffc3", "#808000", "#ffd8b1", "#f032e6", "#911EB4",
               "#9DC0E1", "#006400", "#60646E", "#2020FD", "#D2C13F",
-              "#735751", "#A9A9A9", "#A9FEC2")
+              "#735751", "#A9A9A9", "#00FFFF")
     
     p <- plotEmbedding(
       ArchRProj = proj, 
@@ -1023,7 +1087,7 @@ if (plot_custom_column) {
     plotPDF(p, name="fig4B.pdf", ArchRProj = proj, addDOC = FALSE)
   }
   
-  if (fig2_colon) {
+  if (fig2_colon || fig3) {
     p <- plotEmbedding(
       ArchRProj = proj, 
       colorBy = "cellColData", 
@@ -1041,8 +1105,11 @@ if (plot_custom_column) {
             axis.line.x = element_line(linewidth = 0.1),
             axis.line.y = element_line(linewidth = 0.1))
     
-    
-    plotPDF(p, name="fig4_colon.pdf", ArchRProj = proj, addDOC = FALSE)
+    if (fig2_colon) {
+      plotPDF(p, name="fig2_colon.pdf", ArchRProj = proj, addDOC = FALSE)
+    } else {
+      plotPDF(p, name="fig3.pdf", ArchRProj = proj, addDOC = FALSE)
+    }
   }
   
   if (dataset == "Tsankov") {
