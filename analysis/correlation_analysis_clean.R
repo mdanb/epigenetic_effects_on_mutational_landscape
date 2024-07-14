@@ -103,7 +103,7 @@ perform_and_plot_metacell_correlation <- function(metacells,
          width = 20, height = 18)
 }
 
-
+args = parse_args(OptionParser(option_list=option_list))
 fig2_mss = args$fig2_mss
 fig2_cll = args$fig2_cll
 fig2_aml = args$fig2_aml
