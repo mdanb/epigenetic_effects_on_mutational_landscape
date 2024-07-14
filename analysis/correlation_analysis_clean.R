@@ -37,13 +37,17 @@ perform_and_plot_metacell_correlation <- function(metacells,
   helper_function <- function(metacell, agg_df, scatac_df) {
     helper(metacell, agg_df, scatac_df)
   }
+  
+  metacell_correlations_path = paste("../data/processed_data", metacell_correlations_fname,
+                                     sep="/")
+  
   if (!file.exists(metacell_correlations_path)) {
     metacell_correlations <- unlist(lapply(metacells, helper_function, 
                                            agg_df, scatac_df))
-    metacell_correlations_path = paste("../data/processed_data", metacell_correlations_fname,
-                                       sep="/")
     saveRDS(metacell_correlations, metacell_correlations_path)
   }
+  cells_to_metacorrelation_path = paste("../data/processed_data", cells_to_metacorrelation_fname,
+                                        sep = "/")
   
   if (!file.exists(cells_to_metacorrelation_path)) {
     metacell_correlations = readRDS(metacell_correlations_path)
@@ -63,8 +67,6 @@ perform_and_plot_metacell_correlation <- function(metacells,
     #                                metacell_correlations)
     cells_to_metacorrelation = data.frame(cell_barcode=unname(unlist(unique_cells)),
                                           cell_metacorrelation=unname(unlist(cell_metacorrelations)))
-    cells_to_metacorrelation_path = paste("../data/processed_data", cells_to_metacorrelation_fname,
-                                          sep = "/")
     write.csv(cells_to_metacorrelation, cells_to_metacorrelation_path)
   }
   
