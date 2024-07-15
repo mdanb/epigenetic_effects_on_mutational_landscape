@@ -132,7 +132,10 @@ Instructions analogous to those for 1C.
 Instructions analogous to those for 1C. 
 
 ## Supplementary Fig 6
-For 6A, instructions analogous to those for 1C. For 6B, 
+### Sup Fig 6A
+Instructions analogous to those for 1C. 
+
+### Sup Fig 6B
 
 ## Supplementary Fig 7
 Instructions analogous to those for 1C. 
