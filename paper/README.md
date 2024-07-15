@@ -87,6 +87,7 @@ Start by running `../data/scripts/create_subsampled_data.sh` (uncomment the line
 
 ## Supplementary Fig 1
 Instructions analogous to those for 1C. Note that the extra figures (top feature appearances and test set performance boxplots) can be found in the folder 
+
 ```../figures/models/XGB/<CANCER_TYPE>/scATAC_source_<DATASETS>_cell_number_filter_<CELL_NUMBER_FILTER>_annotation_<ANNOTATION>_seed_all_seeds/backwards_elimination_results/```
 as
 
