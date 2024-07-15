@@ -121,7 +121,7 @@ respectively.
 Instructions analogous to those for 1C. 
 
 ### Sup Fig 2B
-Run the command below the Supplementary Fig2B comment. This will create a figure in ../figures called `oncoplot.pdf`. 
+Run the command below the Supplementary Fig2B comment. This will create a figure in `../figures` called `oncoplot.pdf`. 
 
 ## Supplementary Fig 3
 Instructions analogous to those for 1C. 
@@ -137,6 +137,7 @@ Instructions analogous to those for 1C.
 Instructions analogous to those for 1C. 
 
 ### Sup Fig 6B
+Run the command below the Supplementary Fig6B comment. This will create the marker gene feature plots in `../figures` as `temp.pdf`.  
 
 ## Supplementary Fig 7
 Instructions analogous to those for 1C. 
