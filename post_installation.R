@@ -156,6 +156,10 @@ if (!requireNamespace("plyranges", quietly = TRUE)) {
 }
 
 if (!requireNamespace("colorRamps", quietly = TRUE)) {
-        BiocManager::install("colorRamps", version="2.3.4")
+        BiocManager::install("colorRamps", version="3.14")
+}
+
+if (!requireNamespace("maftools", quietly = TRUE)) {
+        BiocManager::install("maftools", version="3.14")
 }
 
