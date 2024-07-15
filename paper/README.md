@@ -20,18 +20,30 @@ See Jupyter notebook `analysis/ML/paper_umaps.ipynb`
 ### 1F
 See bash script
 
+## Aside
+The next figures require a shared ArchR object. To create this object, we first create Arrow files (can increase number of cores depending on available resources):
+```
+Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_colon --cores=1
+Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Shendure --cores=1
+Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_brain --cores=1
+```
+
+Once the Arrow files are created, we create a shared ArchR object:
+```
+Rscript ../data/scripts/create_ArchR_project
+```
 
 ## Figure 2
 ### 2A
 NOTE: TODO
-Note: The following steps require quite a bit of memory, so if it doesn't work when you first run it, increase the amount of memory till it works. Alternatively, we've shared the R object associated with these steps. 
+Note: The following steps require quite a bit of memory, so if it doesn't work when you first run it, increase the amount of memory till it works.
+
 
 ```
-cd ../data/scripts/
-Rscript create_arrow_files_and_tss.R --dataset=Greenleaf_colon --cores=1
-Rscript create_arrow_files_and_tss.R --dataset=Shendure --cores=1
-Rscript create_arrow_files_and_tss.R --dataset=Greenleaf_brain --cores=1
-Rscript create_ArchR_project.R --cores=8
+Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_colon --cores=1
+Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Shendure --cores=1
+Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_brain --cores=1
+Rscript ../data/scripts/create_ArchR_project.R --cores=8
 ```
 
 ### 2C
