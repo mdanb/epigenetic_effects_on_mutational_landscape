@@ -77,3 +77,4 @@
 #        python3 prep_ML_model_scripts.py --tissues_to_consider all --cancer_types Liver-HCC_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Greenleaf_pbmc_bm Greenleaf_colon Shendure Tsankov Yang_kidney --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --submit_jobs
 #done
 
+
