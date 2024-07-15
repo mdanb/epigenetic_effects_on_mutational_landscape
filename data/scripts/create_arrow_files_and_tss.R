@@ -80,7 +80,7 @@ setwd(output_dir)
 files_dir = paste("..", files_dir, sep="/")
 files = list.files(files_dir, full.names=T, pattern = "bgz$")
 if (dataset == "Yang_kidney" || dataset == "Shendure" ||
-    dataset == "Greenleaf_pbmc_bm") {
+    dataset == "Greenleaf_pbmc_bm" || dataset = "Greenleaf_colon") {
   files = list.files(files_dir, full.names=T, pattern = "gz$")
 }
 
