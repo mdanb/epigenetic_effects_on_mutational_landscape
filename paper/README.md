@@ -14,6 +14,8 @@ sh robustness_scripts/robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7.sh
 
 from within `../analysis/ML`. 
 
+This will create the figures in `../figures/models/XGB/<CANCER_TYPE>/scATAC_source_<DATASETS>_cell_number_filter_<CELL_NUMBER_FILTER>_annotation_<ANNOTATION>_seed_all_seeds/backwards_elimination_results/` in a file called `<CANCER_TYPE>_feature_importance_with_<TOP_FEATURES_TO_PLOT_FEAT_IMP>_features_top_5_features.pdf`
+
 ### 1D
 Run the corresponding commands in the Jupyter notebook `../analysis/ML/paper_umaps.ipynb`
 
@@ -102,6 +104,7 @@ Instructions analogous to those for 1C.
 Instructions analogous to those for 1C. 
 
 ## Supplementary Fig 6
+For 6A, instructions analogous to those for 1C. For 6B, 
 
 ## Supplementary Fig 7
 Instructions analogous to those for 1C. 
