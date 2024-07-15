@@ -43,11 +43,10 @@ if __name__=="__main__":
         lFilelists = lFilelists + glob.glob(f"{current_dir}/../mutation_data/bed_files/{cancer_type}*.bed")
     print(lFilelists)
 #lFilelists=["/ahg/regevdata/projects/ICA_Lung/Wooseung/CellOrigin/Data/BarcodeGroup/LAML-KR.bed"]
-    for sPathFile in enumerate(lFilelists):
+    for sPathFile in lFilelists:
         # num_donors = len(donors)
         # i = num_donors - decrement_by
         # while i > 0:
-        print(sPathFile)
         if subsample:
             data = pr.read_bed(sPathFile).df
             donors = np.unique(data["Score"]).tolist()
