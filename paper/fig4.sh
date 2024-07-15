@@ -78,18 +78,18 @@
 #done
 
 
-Rscript ../analysis/ML/plot_top_features.R \
---cancer_types=CNS-Medullo,CNS-GBM,Liver-HCC,Skin-Melanoma,Lung-SCC,Kidney-ChRCC \
---cell_number_filter=100 \
---datasets=Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney-Bingren,Shendure,Rawlins_fetal_lung,Tsankov-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney \
---tissues_to_consider=adult_brain,brain,frontal_cortex,cerebrum,cerebellum-adult_brain,frontal_cortex,cerebrum,brain,cerebellum-all-all-lung,fetal_lung-all \
---ML_model=XGB \
---seed_range=1-10 \
---folds_for_test_set=1-10 \
---feature_importance_method=permutation_importance \
---folds_for_test_set=1-10 \
---robustness_analysis \
---subsampled_mutations \
---annotation=finalized_annotation \
---top_features_to_plot=1 \
---cell_types_keep="NULL,NULL,NULL,NULL,lung Neuroendocrine-Tsankov,NULL"
+#Rscript ../analysis/ML/plot_top_features.R \
+#--cancer_types=CNS-Medullo,CNS-GBM,Liver-HCC,Skin-Melanoma,Lung-SCC,Kidney-ChRCC \
+#--cell_number_filter=100 \
+#--datasets=Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney-Bingren,Shendure,Rawlins_fetal_lung,Tsankov-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney \
+#--tissues_to_consider=adult_brain,brain,frontal_cortex,cerebrum,cerebellum-adult_brain,frontal_cortex,cerebrum,brain,cerebellum-all-all-lung,fetal_lung-all \
+#--ML_model=XGB \
+#--seed_range=1-10 \
+#--folds_for_test_set=1-10 \
+#--feature_importance_method=permutation_importance \
+#--folds_for_test_set=1-10 \
+#--robustness_analysis \
+#--subsampled_mutations \
+#--annotation=finalized_annotation \
+#--top_features_to_plot=1 \
+#--cell_types_keep="NULL,NULL,NULL,NULL,lung Neuroendocrine-Tsankov,NULL"
