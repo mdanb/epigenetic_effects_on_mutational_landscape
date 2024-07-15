@@ -26,6 +26,7 @@ The next figures require a shared ArchR object. To create this object, we first 
 Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_colon --cores=1
 Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Shendure --cores=1
 Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_brain --cores=1
+Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_pbmc_bm --cores=1
 ```
 
 Once the Arrow files are created, we create a shared ArchR object:
