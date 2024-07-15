@@ -121,7 +121,7 @@ respectively.
 Instructions analogous to those for 1C. 
 
 ### Sup Fig 2B
-For this figure, you need the download the MAF file with the mutation data, which can be found at https://drive.google.com/file/d/1loUifgMF9YkY5_uQ0ARmRZH5hX3po4-E/view?usp=drive_link. Once that's downloaded, put it in `../data/mutation_data`. 
+For this figure, you need the download the MAF file with the mutation data, which can be found at https://drive.google.com/file/d/1loUifgMF9YkY5_uQ0ARmRZH5hX3po4-E/view?usp=drive_link. Once that's downloaded, put it in `../data/mutation_data` and gunzip the file.
 Run the command below the Supplementary Fig2B comment. This will create a figure in `../figures` called `oncoplot.pdf`. 
 
 ## Supplementary Fig 3
