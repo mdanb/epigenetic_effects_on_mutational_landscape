@@ -5,7 +5,7 @@ import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--cancer_types', nargs="+", type=str, default=None)
-parser.add_argument('--subsampled', type=bool, default=False)
+parser.add_argument('--subsampled', action="store_true")
 
 config = parser.parse_args()
 cancer_types = config.cancer_types
