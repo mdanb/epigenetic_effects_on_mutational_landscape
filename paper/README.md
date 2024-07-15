@@ -15,10 +15,10 @@ sh robustness_scripts/robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7.sh
 from within `analysis/ML`. 
 
 ### 1D
-See Jupyter notebook `analysis/ML/paper_umaps.ipynb`
+Run the corresponding commands in the Jupyter notebook `analysis/ML/paper_umaps.ipynb`
 
 ### 1F
-See bash script
+Run the command under the Figure 1F comment. 
 
 ## Aside
 The next figures require a shared ArchR object. The following steps require quite a bit of memory, so if it doesn't work when you first run it, increase the amount of memory till it works. Also note that for the Shendure dataset, we only need Pancreas and Stomach files. So you can delete the other files or move them to a temporary location. To create this object, we first create Arrow files (can increase number of cores depending on available resources).
