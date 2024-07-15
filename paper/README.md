@@ -66,3 +66,27 @@ Instructions analogous to those for 1C.
 ### 3F
 Instructions analogous to those for 1C. 
 
+
+## Figure 4
+### 4A
+Instructions analogous to those for 1C. 
+
+### 4B
+Instructions analogous to those for 
+
+### 4C
+Instructions analogous to those for 
+
+### 4D
+Instructions analogous to those for 
+
+### 4E
+Instructions analogous to those for
+
+### 4F
+Instructions analogous to those for 
+
+### 4G
+Instructions analogous to those for 
+
+
