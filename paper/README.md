@@ -72,21 +72,16 @@ Instructions analogous to those for 1C.
 Instructions analogous to those for 1C. 
 
 ### 4B
-Instructions analogous to those for 
+Instructions analogous to those for 2A.
 
 ### 4C
-Instructions analogous to those for 
+Instructions analogous to those for 1B. 
 
 ### 4D
-Instructions analogous to those for 
+Instructions analogous to those for 1C. 
 
 ### 4E
-Instructions analogous to those for
+Start by running `../data/scripts/create_subsampled_data.sh` (uncomment the lines in that script for which you want to create the subsampled data for). Then, instructions are analogous to those for 1C. 
 
-### 4F
-Instructions analogous to those for 
-
-### 4G
-Instructions analogous to those for 
 
 
