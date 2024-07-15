@@ -54,27 +54,42 @@
 # sh ../data/scripts/create_subsampled_data.sh 
 
 #for i in 1 $(seq 5 5 35); do
-#        python3 prep_ML_model_scripts.py --tissues_to_consider lung fetal_lung --cancer_types Lung-SCC_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Shendure Rawlins_fetal_lung Tsankov --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --cell_types_keep="lung Neuroendocrine-Tsankov" --submit_jobs
+#        python3 ../analysis/ML/prep_ML_model_scripts.py --tissues_to_consider lung fetal_lung --cancer_types Lung-SCC_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Shendure Rawlins_fetal_lung Tsankov --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --cell_types_keep="lung Neuroendocrine-Tsankov" --submit_jobs
 #done
 
 #for i in 1 $(seq 5 5 35); do
-#        python3 prep_ML_model_scripts.py --tissues_to_consider all --cancer_types Kidney-ChRCC_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Greenleaf_pbmc_bm Greenleaf_colon Shendure Tsankov Yang_kidney --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --submit_jobs
+#        python3 ../analysis/ML/prep_ML_model_scripts.py --tissues_to_consider all --cancer_types Kidney-ChRCC_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Greenleaf_pbmc_bm Greenleaf_colon Shendure Tsankov Yang_kidney --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --submit_jobs
 #done
 
 #for i in 1 $(seq 5 5 35); do
-#       python3 prep_ML_model_scripts.py --tissues_to_consider adult_brain frontal_cortex cerebrum brain cerebellum --cancer_types CNS-GBM_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Bingren_adult_brain Greenleaf_brain Shendure --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --submit_jobs
+#       python3 ../analysis/ML/prep_ML_model_scripts.py --tissues_to_consider adult_brain frontal_cortex cerebrum brain cerebellum --cancer_types CNS-GBM_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Bingren_adult_brain Greenleaf_brain Shendure --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --submit_jobs
 #done
 
 #for i in 1 $(seq 5 5 35); do
-#       python3 prep_ML_model_scripts.py --tissues_to_consider adult_brain frontal_cortex cerebrum brain cerebellum --cancer_types CNS-Medullo_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Bingren_adult_brain Greenleaf_brain Shendure --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --submit_jobs
+#       python3 ../analysis/ML/prep_ML_model_scripts.py --tissues_to_consider adult_brain frontal_cortex cerebrum brain cerebellum --cancer_types CNS-Medullo_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Bingren_adult_brain Greenleaf_brain Shendure --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --submit_jobs
 #done
 
 #for i in 1 $(seq 5 5 35); do
-#        python3 prep_ML_model_scripts.py --tissues_to_consider all --cancer_types Skin-Melanoma_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Greenleaf_pbmc_bm Greenleaf_colon Shendure Tsankov Yang_kidney --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --submit_jobs
+#        python3 ../analysis/ML/prep_ML_model_scripts.py --tissues_to_consider all --cancer_types Skin-Melanoma_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Greenleaf_pbmc_bm Greenleaf_colon Shendure Tsankov Yang_kidney --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --submit_jobs
 #done
 
 #for i in 1 $(seq 5 5 35); do
-#        python3 prep_ML_model_scripts.py --tissues_to_consider all --cancer_types Liver-HCC_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Greenleaf_pbmc_bm Greenleaf_colon Shendure Tsankov Yang_kidney --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --submit_jobs
+#        python3 ../analysis/ML/prep_ML_model_scripts.py --tissues_to_consider all --cancer_types Liver-HCC_n_$i --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Greenleaf_pbmc_bm Greenleaf_colon Shendure Tsankov Yang_kidney --seed_interval=1-10 --top_features_to_plot 1 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --subsampled_mutations --mem_per_core 1 --test_set_perf_num_features all --top_features_to_plot_feat_imp 1 2 5 10 --submit_jobs
 #done
 
 
+Rscript ../analysis/ML/plot_top_features.R \
+--cancer_types=CNS-Medullo,CNS-GBM,Liver-HCC,Skin-Melanoma,Lung-SCC,Kidney-ChRCC \
+--cell_number_filter=100 \
+--datasets=Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Bingren_adult_brain,Greenleaf_brain,Shendure-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney-Bingren,Shendure,Rawlins_fetal_lung,Tsankov-Bingren,Greenleaf_colon,Greenleaf_pbmc_bm,Shendure,Tsankov,Yang_kidney \
+--tissues_to_consider=adult_brain,brain,frontal_cortex,cerebrum,cerebellum-adult_brain,frontal_cortex,cerebrum,brain,cerebellum-all-all-lung,fetal_lung-all \
+--ML_model=XGB \
+--seed_range=1-10 \
+--folds_for_test_set=1-10 \
+--feature_importance_method=permutation_importance \
+--folds_for_test_set=1-10 \
+--robustness_analysis \
+--subsampled_mutations \
+--annotation=finalized_annotation \
+--top_features_to_plot=1 \
+--cell_types_keep="NULL,NULL,NULL,NULL,lung Neuroendocrine-Tsankov,NULL"
