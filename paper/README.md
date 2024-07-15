@@ -83,5 +83,9 @@ Instructions analogous to those for 1C.
 ### 4E
 Start by running `../data/scripts/create_subsampled_data.sh` (uncomment the lines in that script for which you want to create the subsampled data for). Then, instructions are analogous to those for 1C. 
 
+## Supplementary Fig 1
+Instructions analogous to those for 1C.
+
+
 
 
