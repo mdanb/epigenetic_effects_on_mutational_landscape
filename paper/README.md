@@ -24,7 +24,7 @@ See bash script
 The next figures require a shared ArchR object. The following steps require quite a bit of memory, so if it doesn't work when you first run it, increase the amount of memory till it works. Also note that for the Shendure dataset, we only need Pancreas and Stomach files. So you can delete the other files or move them to a temporary location. To create this object, we first create Arrow files (can increase number of cores depending on available resources).
 ```
 Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_colon --cores=1
-Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Shendure --cores=1
+Rscript ../data/scripts/create_arrow_files_and_tss.R S--dataset=Shendure --cores=1
 Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_brain --cores=1
 Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_pbmc_bm --cores=1
 ```
@@ -36,7 +36,7 @@ Rscript ../data/scripts/create_ArchR_project --cores=1
 
 ## Figure 2
 ### 2A
-
+Run the commands below the Figure 2A comment. The first command creates the ArchR object associated with the colon UMAP. It also gets metacells that are needed for the metacell correlation analysis. The next command creates the binned scATAC fragment data per cell, which is needed for obtaining correlations on a per-cell basis (and then using these to obtain metacell correlations). The final command performs the metacell correlation analysis and plots the results in `../figures/mss.pdf`
 
 
 
