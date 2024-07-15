@@ -121,6 +121,7 @@ respectively.
 Instructions analogous to those for 1C. 
 
 ### Sup Fig 2B
+Run the command below the Supplementary Fig2B comment. This will create 
 
 ## Supplementary Fig 3
 Instructions analogous to those for 1C. 
