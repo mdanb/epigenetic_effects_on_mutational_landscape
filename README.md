@@ -492,6 +492,8 @@ sh download_all_scatac_data.sh
 
 This will download the different scATAC datasets used in their respective directories in `data/bed_files`. Lung and Kidney data can be downloaded at https://drive.google.com/drive/u/0/folders/1EwYbwtKSI3Am6Q4FYBtffaNvnVPcPqFa. 
 
+TODO: SHARE ANNOTATION INFO INCLUDING CUSTOM LUNG
+
 We also provide the processed scATAC (ready for input into ML models) in the following directories:
 - `data/processed_data/count_overlap_data/combined_count_overlaps/finalized_annotation/`: Contains the most common annotations used across the paper
 - `data/processed_data/count_overlap_data/combined_count_overlaps/Greenleaf_colon_remove_cancer_merge_normal_unaffected/`: In addition to normal colon scATAC data, this also contains data from polyp tissue for colon. 
