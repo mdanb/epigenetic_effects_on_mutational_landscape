@@ -134,6 +134,7 @@ SampleOrder=c(Both.SCLC.MutID,RB1.NonTP53.SCLC,OnlyTP53.SCLC,TP53.RB1.SCLC.nonMu
 
 
 # Plot
+pdf("../figures/oncoplot.pdf")
 oncoplot(maf = LungData, colors = vc_cols, genes=Driver.genes,clinicalFeatures = c('Cancer_Type'),
          sortByAnnotation = F,draw_titv = F,showTitle=F,
          leftBarData = Mut.Percentage.SCLC,
@@ -143,3 +144,4 @@ oncoplot(maf = LungData, colors = vc_cols, genes=Driver.genes,clinicalFeatures =
          keepGeneOrder=T,removeNonMutated = F,sampleOrder=SampleOrder,
          sepwd_samples = 0,sepwd_genes = 0,legendFontSize = 1,annotationFontSize =1,fontSize = 0.7,anno_height=0.5
 )
+dev.off()

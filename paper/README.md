@@ -121,7 +121,7 @@ respectively.
 Instructions analogous to those for 1C. 
 
 ### Sup Fig 2B
-Run the command below the Supplementary Fig2B comment. This will create 
+Run the command below the Supplementary Fig2B comment. This will create a figure in ../figures called `oncoplot.pdf`. 
 
 ## Supplementary Fig 3
 Instructions analogous to those for 1C. 
