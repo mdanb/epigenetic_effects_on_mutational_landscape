@@ -47,6 +47,7 @@ if __name__=="__main__":
         # num_donors = len(donors)
         # i = num_donors - decrement_by
         # while i > 0:
+        print(sPathFile)
         if subsample:
             data = pr.read_bed(sPathFile).df
             donors = np.unique(data["Score"]).tolist()
