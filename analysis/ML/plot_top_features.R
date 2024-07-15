@@ -1997,30 +1997,25 @@ if (subsampled_mutations) {
     #   df$cancer_type <- factor(df$cancer_type, levels = c("CNS-Medullo", "Liver-HCC"))
     df$cancer_type <- factor(df$cancer_type, levels = c("CNS-Medullo", "Kidney-ChRCC", 
                                                         "Liver-HCC", "CNS-GBM",
-                                                        "Lung-SCC", "Skin-Melanoma"))
-    #   df$cancer_type <- factor(df$cancer_type, levels = c("CNS-Medullo", 
-    #                                                       "Liver-HCC"))
-    #   df$cancer_type <- factor(df$cancer_type, levels = c("CNS-Medullo", 
-    #                                                       "Liver-HCC", "CNS-GBM",
-    #                                                       "Skin-Melanoma"))
-    
-    #   dodge_width <- 0.9 / length(unique(df$cancer_type))
-    #   p <- ggplot(df, aes(x = num_samples, y = test_set_perf, 
-    #                       color = cancer_type, group = interaction(num_samples, cancer_type))) +
-    #     geom_boxplot(lwd = 2, outlier.shape = 19, outlier.size = 5, width = 5) +
-    #     theme_bw() +
-    #     theme(
-    #       axis.text.y = element_text(size = 50),
-    #       axis.text.x = element_text(size = 40, angle = 60, vjust = 1, hjust=1),
-    #       strip.text.x = element_blank(),
-    #       axis.title.x = element_blank(),
-    #       axis.title.y = element_blank(),
-    #       legend.text = element_text(size=30),
-    #       legend.title=element_text(size=30),
-    #       panel.grid.major.x = element_blank(),
-    #       panel.grid.minor.x = element_blank()
-    #     ) + 
-    #     scale_x_continuous(breaks=unique(df$num_samples))
+                                                        "Lung-SCC", "Skin-Melanoma"))    
+    #     p <- ggplot(df) +
+    #       geom_boxplot(aes(x = as.factor(num_samples), y = test_set_perf, 
+    #                        fill = cancer_type), lwd = 0.5, outlier.shape = 19, outlier.size = 5,
+    #                    width=0.65, alpha=0.6) +
+    #       theme_bw() +
+    #       theme(
+    #         axis.text.y = element_text(size = 50),
+    #         axis.text.x = element_text(size = 40),
+    #         strip.text.x = element_blank(),
+    #         axis.title.x = element_blank(),
+    #         axis.title.y = element_blank(),
+    #         legend.text = element_text(size=30),
+    #         legend.title=element_text(size=30),
+    #         panel.grid.major.x = element_blank(),
+    #         panel.grid.minor.x = element_blank()
+    #       ) +
+    #       scale_fill_manual(values=cols) +
+    #       scale_y_continuous(breaks=c(-100,-50, 0, 20, 40,60,80,100))
     
     p <- ggplot(df) +
       geom_boxplot(aes(x = as.factor(num_samples), y = test_set_perf, 
@@ -2040,9 +2035,6 @@ if (subsampled_mutations) {
       ) +
       scale_fill_manual(values=cols) +
       scale_y_continuous(breaks=c(-100,-50, 0, 20, 40,60,80,100))
-    
-    #+
-    #       scale_x_log10()
     
     print(p)
     ggsave(paste(savepath, savefile, sep = "/"), width = width, height = height, 
@@ -2080,9 +2072,12 @@ if (subsampled_mutations) {
     #         ) +
     #         scale_x_continuous(breaks=unique(df$num_samples))
     p <- ggplot(df) +
-      geom_bar(aes(x = as.factor(num_samples), y = n, fill = cancer_type),
-               stat="identity", position="dodge",
-               width=0.65, alpha=0.6) + 
+      #       geom_bar(aes(x = as.factor(num_samples), y = n, fill = cancer_type),
+      #                stat="identity", position="dodge",
+      #                width=0.65, alpha=0.6) + 
+      geom_point(aes(x = as.factor(num_samples), y = n, color=cancer_type), size=10) +
+      geom_line(aes(x = as.numeric(as.factor(num_samples)), y = n, color=cancer_type, lwd=1)) +
+      
       theme_bw() +
       theme(
         axis.text.y = element_text(size = 50),
@@ -2095,7 +2090,7 @@ if (subsampled_mutations) {
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank()
       ) +
-      scale_fill_manual(values=cols)
+      scale_color_manual(values=cols)
     
     print(p)
     ggsave(paste(savepath, savefile, sep = "/"), width = width, height = height, limitsize = FALSE)
@@ -2132,15 +2127,15 @@ if (subsampled_mutations) {
                                         "Lung-SCC", "Skin-Melanoma"))
   num_samples_5 = subsampled_mutation_df %>% filter(num_samples == 5, 
                                                     cancer_type %in% 
-                                                    c("Liver-HCC", "CNS-GBM", 
-                                                      "Lung-SCC", "Skin-Melanoma"))
+                                                      c("Liver-HCC", "CNS-GBM", 
+                                                        "Lung-SCC", "Skin-Melanoma"))
   unique(num_samples_5 %>% 
-    group_by(cancer_type) %>% 
-    mutate(med=median(test_set_perf)) %>%
-    select(cancer_type, med))
-  
-  
+           group_by(cancer_type) %>% 
+           mutate(med=median(test_set_perf)) %>%
+           select(cancer_type, med))
 }
+
+
 
 
 
