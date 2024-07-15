@@ -29,9 +29,9 @@ Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_brain -
 Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_pbmc_bm --cores=1
 ```
 
-Once the Arrow files are created, we create a shared ArchR object:
+Once the Arrow files are created, we create a shared ArchR object (again, can increase number of cores depending on available resources):
 ```
-Rscript ../data/scripts/create_ArchR_project
+Rscript ../data/scripts/create_ArchR_project --cores=1
 ```
 
 ## Figure 2
