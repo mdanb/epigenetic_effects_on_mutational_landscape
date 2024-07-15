@@ -490,7 +490,7 @@ cd data/scripts
 sh download_all_scatac_data.sh
 ```
 
-This will download the different scATAC datasets used in their respective directories in `data/bed_files`. Lung and Kidney data can be downloaded at hhttps://drive.google.com/file/d/1loUifgMF9YkY5_uQ0ARmRZH5hX3po4-E/view?usp=drive_link. 
+This will download the different scATAC datasets used in their respective directories in `data/bed_files`. Lung and Kidney data can be downloaded at https://drive.google.com/file/d/1Fmt4NlJ-J-EXqM7WCKckT1l9ldXRoNLK/view?usp=drive_link. 
 
 TODO: SHARE ANNOTATION INFO INCLUDING CUSTOM LUNG
 
