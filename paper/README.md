@@ -47,3 +47,22 @@ Instructions analogous to those for 2A.
 ### 2D
 Instructions analogous to those for 1C.
 
+## Figure 3
+### 3A
+Instructions analogous to those for 1D.
+
+### 3B
+Instructions analogous to those for 1C.
+
+### 3C
+Instructions analogous to those for 1D. 
+
+### 3D
+Instructions analogous to those for 2A. 
+
+### 3E
+Instructions analogous to those for 1C. 
+
+### 3F
+Instructions analogous to those for 1C. 
+
