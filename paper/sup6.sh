@@ -26,5 +26,20 @@
 
 
 ## Supp Fig 6B
+# Rscript ../analysis/ArchR_analysis/reannotate_datasets.R \
+#--cores=8
+#--dataset=Shendure
+#--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt
+#--sep_for_metadata=\t
+#--cell_type_col_in_metadata=cell_type
+#--tissue=all
+#--nfrags_filter=1
+#--tss_filter=0
+#--min_cells_per_cell_type=1
+#--filter_per_cell_type
+#--marker_genes=ACTA2,TAGLN,MYH11,COL1A2,COL1A1,DCM
+
+
+
 
 
