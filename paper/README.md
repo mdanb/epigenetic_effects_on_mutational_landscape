@@ -6,37 +6,86 @@ The instructions for each figure refer to the lines in the correspondingly named
 To build the models for that were used to obtain the COT predictions for Figure 1B, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1B comment (note that you will need to set things up to run jobs in parallel, as explained in the README of the homepage of this repo). To plot the results after building the models, run the call to `../analysis/ML/plot_top_features.R` . This will create a PDF in `figures` called `grid_analysis.pdf`.
 
 ### 1C
-To build the models for that were used to obtain the COT predictions for Figure 1C, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1C comment. These will also create bash scripts containing commands for plotting the results (in `analysis/ML/robustness_scripts`). Each script will be named with a unique ID. Run these from `analysis/ML` e.g assuming the unique ID is `robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7`, run 
+To build the models for that were used to obtain the COT predictions for Figure 1C, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1C comment. These will also create bash scripts containing commands for plotting the results (in `../analysis/ML/robustness_scripts`). Each script will be named with a unique ID. Run these from `../analysis/ML` e.g assuming the unique ID is `robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7`, run 
 
 ```
 sh robustness_scripts/robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7.sh
 ``` 
 
-from within `analysis/ML`. 
+from within `../analysis/ML`. 
 
 ### 1D
-See Jupyter notebook `analysis/ML/paper_umaps.ipynb`
+Run the corresponding commands in the Jupyter notebook `../analysis/ML/paper_umaps.ipynb`
 
 ### 1F
-See bash script
+Run the command under the Figure 1F comment. 
 
+## Aside
+The next figures require a shared ArchR object. The following steps require quite a bit of memory, so if it doesn't work when you first run it, increase the amount of memory till it works. Also note that for the Shendure dataset, we only need Pancreas and Stomach files. So you can delete the other files or move them to a temporary location. To create this object, we first create Arrow files (can increase number of cores depending on available resources).
+```
+Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_colon --cores=1
+Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Shendure --cores=1
+Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_brain --cores=1
+Rscript ../data/scripts/create_arrow_files_and_tss.R --dataset=Greenleaf_pbmc_bm --cores=1
+```
+
+Once the Arrow files are created, we create a shared ArchR object (again, can increase number of cores depending on available resources):
+```
+Rscript ../data/scripts/create_ArchR_project --cores=1
+```
 
 ## Figure 2
 ### 2A
-NOTE: TODO
-Note: The following steps require quite a bit of memory, so if it doesn't work when you first run it, increase the amount of memory till it works. Alternatively, we've shared the R object associated with these steps. 
+Run the commands below the Figure 2A comment. The first command creates the ArchR object associated with the colon UMAP. It also gets metacells that are needed for the metacell correlation analysis. The next command creates the binned scATAC fragment data per cell, which is needed for obtaining correlations on a per-cell basis (and then using these to obtain metacell correlations). The final command performs the metacell correlation analysis and plots the results in `../figures/mss.pdf`
 
-```
-cd ../data/scripts/
-Rscript create_arrow_files_and_tss.R --dataset=Greenleaf_colon --cores=1
-Rscript create_arrow_files_and_tss.R --dataset=Shendure --cores=1
-Rscript create_arrow_files_and_tss.R --dataset=Greenleaf_brain --cores=1
-Rscript create_ArchR_project.R --cores=8
-```
+### 2B
+Instructions analogous to those for 1C. 
 
 ### 2C
-NOTE: TODO
+Instructions analogous to those for 2A. 
 
 ### 2D
+Instructions analogous to those for 1C.
+
+## Figure 3
+### 3A
+Instructions analogous to those for 1D.
+
+### 3B
+Instructions analogous to those for 1C.
+
+### 3C
+Instructions analogous to those for 1D. 
+
+### 3D
+Instructions analogous to those for 2A. 
+
+### 3E
+Instructions analogous to those for 1C. 
+
+### 3F
+Instructions analogous to those for 1C. 
+
+
+## Figure 4
+### 4A
+Instructions analogous to those for 1C. 
+
+### 4B
+Instructions analogous to those for 2A.
+
+### 4C
+Instructions analogous to those for 1B. 
+
+### 4D
+Instructions analogous to those for 1C. 
+
+### 4E
+Start by running `../data/scripts/create_subsampled_data.sh` (uncomment the lines in that script for which you want to create the subsampled data for). Then, instructions are analogous to those for 1C. 
+
+## Supplementary Fig 1
+Instructions analogous to those for 1C.
+
+
 
 
