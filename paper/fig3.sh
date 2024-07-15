@@ -17,6 +17,8 @@
 ### Fig 3D ###
 #Rscript ../analysis/ArchR_analysis/reannotate_datasets.R --cores=8 --dataset=Shendure --metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt --sep_for_metadata=\t --cell_type_col_in_metadata=cell_type --tissue=all --nfrags_filter=1 --tss_filter=0 --min_cells_per_cell_type=1 --filter_per_cell_type --plot_custom_column  --color_embedding_by=cell_type --get_metacells
 
+#Rscript ../data/scripts/create_count_overlaps.R --dataset=Shendure --cores=8 --annotation=default_annotation --overlaps_per_cell
+
 #Rscript ../analysis/correlation_analysis_clean.R --fig3_adeno
 #Rscript ../analysis/correlation_analysis_clean.R --fig3_neuro
 
