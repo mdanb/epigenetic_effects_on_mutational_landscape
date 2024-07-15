@@ -86,7 +86,17 @@ Instructions analogous to those for 1C.
 Start by running `../data/scripts/create_subsampled_data.sh` (uncomment the lines in that script for which you want to create the subsampled data for). Then, instructions are analogous to those for 1C. 
 
 ## Supplementary Fig 1
-Instructions analogous to those for 1C. Note that the extra figures (top feature appearances and test set performance boxplots) can be found in the folder `../figures/models/XGB/<CANCER_TYPE>/scATAC_source_<DATASETS>_cell_number_filter_<CELL_NUMBER_FILTER>_annotation_<ANNOTATION>_seed_all_seeds/backwards_elimination_results/` as `<CANCER_TYPE>_top_feature_appearances.pdf` and `<CANCER_TYPE>_top_feature_test_set_perf_with_<TOP_FEATURES_TO_PLOT>_features.pdf`, respectively. 
+Instructions analogous to those for 1C. Note that the extra figures (top feature appearances and test set performance boxplots) can be found in the folder 
+```../figures/models/XGB/<CANCER_TYPE>/scATAC_source_<DATASETS>_cell_number_filter_<CELL_NUMBER_FILTER>_annotation_<ANNOTATION>_seed_all_seeds/backwards_elimination_results/```
+as
+
+```<CANCER_TYPE>_top_feature_appearances.pdf``` 
+
+and 
+
+```<CANCER_TYPE>_top_feature_test_set_perf_with_<TOP_FEATURES_TO_PLOT>_features.pdf```
+
+respectively. 
 
 ## Supplementary Fig 2
 ### Sup Fig 2A
