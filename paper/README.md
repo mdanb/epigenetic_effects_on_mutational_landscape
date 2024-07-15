@@ -86,6 +86,13 @@ Start by running `../data/scripts/create_subsampled_data.sh` (uncomment the line
 ## Supplementary Fig 1
 Instructions analogous to those for 1C.
 
+## Supplementary Fig 2
+### Sup Fig 2A
+Instructions analogous to those for 1C. 
+
+### Sup Fig 2B
+
+
 
 
 
