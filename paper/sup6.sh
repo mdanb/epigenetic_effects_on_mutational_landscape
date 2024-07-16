@@ -37,7 +37,7 @@
 #--tss_filter=0
 #--min_cells_per_cell_type=1
 #--filter_per_cell_type
-#--marker_genes=ACTA2,TAGLN,MYH11,COL1A2,COL1A1,DCM
+#--marker_genes=ACTA2,TAGLN,MYH11,COL1A2,COL3A1,DCN
 
 
 
