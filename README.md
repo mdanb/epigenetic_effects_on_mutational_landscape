@@ -2,7 +2,7 @@
 
 This repository houses the codebase for the paper **Learning the cellular origins of cancer using single-cell chromatin landscapes**. In this paper, we proposed SCOTI (**S**ingle-cell **C**ell **O**f **T**ransformation **I**dentification), which offers a straightforward and cost-effective framework enabling cancer biologists to ascertain the COT at cell-type resolution for a given cancer mutation profile via scATAC sequencing of suspected normal tissues of origin. 
  
-In the first section below, we provide an example of how to pre-process data and prepare it as input for SCOTI, in addition to then running SCOTI. To reproduce paper figures, see scripts in this directory, named by the corresponding figure. 
+In the first section below, we provide an example of how to pre-process data and prepare it as input for SCOTI, in addition to then running SCOTI. To reproduce paper figures, see scripts in the directory `paper`, named by the corresponding figure. 
 
 # Setting up your conda environment
 First, we need to up our conda environment. To do this, run
