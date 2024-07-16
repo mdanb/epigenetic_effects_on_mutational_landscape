@@ -492,7 +492,7 @@ sh download_all_scatac_data.sh
 
 This will download the different scATAC datasets used in their respective directories in `data/bed_files`. Lung and Kidney data can be downloaded at https://drive.google.com/file/d/1Fmt4NlJ-J-EXqM7WCKckT1l9ldXRoNLK/view?usp=drive_link. 
 
-TODO: SHARE ANNOTATION INFO INCLUDING CUSTOM LUNG
+Annotation data for all datasets can be found at https://drive.google.com/file/d/1ZXkQI90rX8UVYKEa16jOuL-u5npUyHSi/view?usp=drive_link. Download these and place them in `data/metadata`. 
 
 We also provide the processed scATAC (ready for input into ML models) in the following directories:
 - `data/processed_data/count_overlap_data/combined_count_overlaps/finalized_annotation/`: Contains the most common annotations used across the paper
