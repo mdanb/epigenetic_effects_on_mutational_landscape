@@ -73,41 +73,22 @@ helper <- function(files, migrated_filepaths, ch, cores) {
 }
 
 get_files_not_done <- function(files, dir_path) {
-  # migrated_filepaths_bgz = paste(dir_path, gsub(".gz", ".bgz",
-  #                                               lapply(strsplit(files, split = "/"), "[", 4)),
-  #                                sep = "/")
-  
-  # migrated_filepaths_tbi = paste(dir_path, gsub(".gz", ".bgz", 
-  #                                     paste(lapply(strsplit(files, split = "/"),
-  #                                     "[", 4), "tbi", sep=".")),
-  #                                sep="/")
-  # if (grepl("bedpe", files[1])) {
-  #   migrated_filepaths = paste(dir_path, 
-  #                              gsub(".gz", ".bgz",
-  #                                   lapply(strsplit(files, split = "/"), "[", 4)),
-  #                              sep = "/")
-    
-  # } else {
   migrated_filepaths = paste(dir_path, 
                              gsub(".gz", "",
-                             lapply(strsplit(files, split = "/"), "[", 4)),
+                             basename(files)),
                              sep = "/")
   migrated_filepaths = paste(dir_path, 
                              gsub(".bedpe.gz", ".bed",
-                                  lapply(strsplit(files, split = "/"), "[", 4)),
+                                  basename(files)),
                              sep = "/")
-  # }
   files_not_done = c()
   migrated_filepaths_not_done = c()
   for (i in 1:length(migrated_filepaths)) {
     bgz_file = migrated_filepaths[i]
     
-    # bgz_file = paste(migrated_filepaths[i], ".bgz", sep="")
-    # if (!file.exists(bgz_file) || !file.exists(migrated_filepaths_tbi[i])) {
     if (!file.exists(bgz_file)) {
       migrated_filepaths_not_done = append(migrated_filepaths_not_done, 
                                            bgz_file)
-                                           # migrated_filepaths[i])
       files_not_done = append(files_not_done, files[i])
     }
   }
@@ -133,7 +114,7 @@ if (dataset == "Bingren") {
                      pattern="tsv.gz",
                      full.names=TRUE)
 } else if (dataset == "Greenleaf_pbmc_bm") {
-  dir_path = "../bed_files/greenleaf_pbmc_bm_scATAC/migrated_to_hg19"
+  dir_path = "../bed_files/greenleaf_pbmc_bm_scATAC/migrated_to_hg38"
   dir.create(dir_path)
   files = list.files("../bed_files/greenleaf_pbmc_bm_scATAC",
                      pattern="tsv.gz",
@@ -171,7 +152,7 @@ if (dataset == "Bingren") {
 } else if (dataset == "Shendure") {
   dir_path = "../bed_files/JShendure_scATAC/migrated_to_hg38"
   dir.create(dir_path)
-  files = list.files("../bed_files/",
+  files = list.files("../bed_files/JShendure_scATAC",
                      pattern="gz",
                      full.names=TRUE)
 }
