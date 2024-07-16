@@ -320,7 +320,7 @@ We then create a database called `optuna_db` associated with this user (again, w
 ```
 createdb -O my_user optuna_db
 ```
-Now, change line 828 in `ML_utils.py` to reflect the name of the database, as well as the username and password that you chose for your user (note that we're writing the password in the script, which is not good practice, but for our purposes it's fine). In our case:
+Now, change line 827 in `ML_utils.py` to reflect the name of the database, as well as the username and password that you chose for your user (note that we're writing the password in the script, which is not good practice, but for our purposes it's fine). In our case:
 
 ```
 postgresql://my_user:password@{hostname}:5432/optuna_db
