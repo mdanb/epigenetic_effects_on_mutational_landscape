@@ -208,7 +208,7 @@ python3 build_ML_model.py \
 --sqlite \
 --test_set_perf_num_features all \
 --custom_mutations \
---which_interval_ranges test_ranges
+--which_interval_ranges test_ranges \
 --dataset_abbrev GL_t
 ```
 
