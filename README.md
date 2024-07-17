@@ -278,7 +278,7 @@ To obtain more confidence in our prediction, we can run the model multiple times
 ```
 initdb -D sqldb
 ```
-We will change the configurations of the database to make it less restrictive so that our database can accept connections from other hosts (the jobs that will be running the model). To do this, edit the file `analysis/ML/sqldb/postgresql.conf` so that:
+We will change the configurations of the database to make it less restrictive so that our database can accept connections from other hosts (the jobs that will be running the model). (Keep in mind that our models were running on a secure server, you will need to make sure you adjust the security setting depending on how you run the model),  To do this, edit the file `analysis/ML/sqldb/postgresql.conf` so that:
 - listen_addresses = '*'
 - max_connections = 10000
 
