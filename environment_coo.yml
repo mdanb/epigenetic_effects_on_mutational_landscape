@@ -21,6 +21,7 @@ dependencies:
   - fftw=3.3.10
   - hdf5=1.12.1
   - bedtools=2.31.1
+  - libxcrypt=4.4.36
   #- libgcc-ng=14.1.0
   #- libstdcxx-ng=14.1.0
   #- libcxx=16.0.6
