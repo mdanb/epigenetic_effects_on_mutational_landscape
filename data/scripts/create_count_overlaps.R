@@ -198,7 +198,7 @@ if (which_interval_ranges == "polak") {
 dir.create("../processed_data/count_overlap_data", recursive=TRUE)   
 cell_counts_dir = paste("../processed_data/cell_counts_per_sample", 
                         annotation, sep = "/")
-dir.create(cell_counts_dir)
+dir.create(cell_counts_dir, recursive=TRUE)
 
 # Note: later functions not parallelized since this is already parallelized
 if (dataset == "Bingren") {
