@@ -26,7 +26,8 @@
 
 
 ## Supp Fig 6B
-# Rscript ../analysis/ArchR_analysis/reannotate_datasets.R \
+# cd ../analysis/ArchR_analysis
+# Rscript reannotate_datasets.R \
 #--cores=8
 #--dataset=Shendure
 #--metadata_for_celltype_fn=GSE149683_File_S2.Metadata_of_high_quality_cells.txt

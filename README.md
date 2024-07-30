@@ -30,7 +30,8 @@ To run SCOTI, we first need to create aggregated, binned scATAC and mutation pro
 We'll start with scATAC, and we'll use the data from [**Single-Cell Multiomic Analysis Identifies Regulatory Programs in Mixed-Phenotype Acute Leukemia**](https://www.nature.com/articles/s41587-019-0332-7) as an example, which comes from PBMC and bonemarrow. After cloning this repository, download the fragment files:
 
 ```
-sh get_scATAC_data_from_links.sh ../greenleaf_blood_bone_marrow/greenleaf_blood_bm_ftp_links.txt ../bed_files/Greenleaf_test/migrated_to_hg19/ *gz
+mkdir -p ../bed_files/Greenleaf_test/migrated_to_hg19/
+sh get_scATAC_data_from_links.sh ../greenleaf_blood_bm_ftp_links.txt ../bed_files/Greenleaf_test/migrated_to_hg19/ '*gz'
 ```
 
 This will download the files to the directory `data/bed_files/Greenleaf_test/migrated_to_hg19`. 
@@ -278,7 +279,7 @@ To obtain more confidence in our prediction, we can run the model multiple times
 ```
 initdb -D sqldb
 ```
-We will change the configurations of the database to make it less restrictive so that our database can accept connections from other hosts (the jobs that will be running the model). To do this, edit the file `analysis/ML/sqldb/postgresql.conf` so that:
+We will change the configurations of the database to make it less restrictive so that our database can accept connections from other hosts (the jobs that will be running the model). Keep in mind that our models were running on a secure server, you will need to make sure you adjust the security settings depending on how you plan to run the model. To do this, edit the file `analysis/ML/sqldb/postgresql.conf` so that:
 - listen_addresses = '*'
 - max_connections = 10000
 
