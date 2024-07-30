@@ -31,7 +31,7 @@ We'll start with scATAC, and we'll use the data from [**Single-Cell Multiomic An
 
 ```
 mkdir -p ../bed_files/Greenleaf_test/migrated_to_hg19/
-sh get_scATAC_data_from_links.sh ../greenleaf_blood_bm_ftp_links.txt ../bed_files/Greenleaf_test/migrated_to_hg19/ *gz
+sh get_scATAC_data_from_links.sh ../greenleaf_blood_bm_ftp_links.txt ../bed_files/Greenleaf_test/migrated_to_hg19/ '*gz'
 ```
 
 This will download the files to the directory `data/bed_files/Greenleaf_test/migrated_to_hg19`. 
