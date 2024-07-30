@@ -30,7 +30,7 @@ To run SCOTI, we first need to create aggregated, binned scATAC and mutation pro
 We'll start with scATAC, and we'll use the data from [**Single-Cell Multiomic Analysis Identifies Regulatory Programs in Mixed-Phenotype Acute Leukemia**](https://www.nature.com/articles/s41587-019-0332-7) as an example, which comes from PBMC and bonemarrow. After cloning this repository, download the fragment files:
 
 ```
-mkdir ../bed_files/Greenleaf_test/migrated_to_hg19/
+mkdir -p ../bed_files/Greenleaf_test/migrated_to_hg19/
 sh get_scATAC_data_from_links.sh ../greenleaf_blood_bm_ftp_links.txt ../bed_files/Greenleaf_test/migrated_to_hg19/ *gz
 ```
 
