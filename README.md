@@ -414,7 +414,7 @@ python3 prep_ML_model_scripts.py \
 --cores=8 \
 --seed_interval_step=5 \
 --custom_mutations \
---mem_per_core 1 \
+--mem_per_core 16000 \
 --which_interval_ranges=test_ranges
 ```
 
