@@ -92,7 +92,7 @@ In this example:
 `interval_ranges_test_ranges_Greenleaf_test_combined_count_overlaps_metadata.rds`
 
 ## Mutation data (SNV) pre-processing
-To create aggregated, binned mutation profiles, we first need a [MAF file](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/) with the mutation (SNV) data. For this example, we will use Non-Hodgkin lymphoma (Lymph-BNHL). We have the corresponding MAF file in `data/mutation_data/`, called `Lymph-BNHL_SNV_with_SEX.txt`. Your file, if using your own mutation data, should be called `[CANCER_TYPE]_SNV_with_SEX.txt`. Next, we begin by parsing the file:
+To create aggregated, binned mutation profiles, we first need a [MAF file](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/) with the mutation (SNV) data. For this example, we will use Non-Hodgkin lymphoma (Lymph-BNHL). We have the corresponding MAF file, called `Lymph-BNHL_SNV_with_SEX.txt`, in [Google Drive](https://drive.google.com/drive/u/0/folders/1Y3QT6v88fGFZPhM3DjXPt6PKbBBApGmF). This should be downloaded, unzipped, and placed in `data/mutation_data/`. Your file, if using your own mutation data, should be called `[CANCER_TYPE]_SNV_with_SEX.txt`. Next, we begin by parsing the file:
 
 ```
 python3 2_Sorting_MutationFileSex_CancerType.py --cancer_types [CANCER_TYPE]
