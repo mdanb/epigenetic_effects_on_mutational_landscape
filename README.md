@@ -397,7 +397,7 @@ We're now ready to submit multiple jobs in parallel to train our models. To do t
   Submit the jobs (useful to set off for debugging).
 </details>
 
-Note that if you are not using UGE, you will need to modify lines 196-205 and 239 to reflect your job manager specifics. 
+Note that if you are not using UGE, you will need to modify lines 204-227 and 247 to reflect your job manager specifics. 
 We start by testing things out before submitting jobs, so we will first omit `--submit_jobs`:
 
 ```
