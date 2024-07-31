@@ -124,7 +124,7 @@ Putting these together for our example:
 python3 2_Sorting_MutationFileSex_CancerType.py --cancer_types Lymph-BNHL
 python3 3_Intersect_paz_cancertypes.py --cancer_types Lymph-BNHL
 python3 4_AssembleCout_paz_Cancergroup.py --cancer_types Lymph-BNHL
-Rscript align_mutations_to_ranges --cancer_types Lymph-BNHL
+Rscript align_mutations_to_ranges.R --cancer_types Lymph-BNHL
 ```
 
 ## Running SCOTI
