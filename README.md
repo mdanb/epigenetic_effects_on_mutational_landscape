@@ -92,7 +92,7 @@ In this example:
 `interval_ranges_test_ranges_Greenleaf_test_combined_count_overlaps_metadata.rds`
 
 ## Mutation data (SNV) pre-processing
-To create aggregated, binned mutation profiles, we first need a [MAF file](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/) with the mutation (SNV) data. For this example, we will use Non-Hodgkin lymphoma (Lymph-BNHL). We have the corresponding MAF file in `data/mutation_data/`, called `Lymph-BNHL_SNV_with_SEX.txt`. Your file, if using your own mutation data, should be called `[CANCER_TYPE]_SNV_with_SEX.txt`. Next, we begin by parsing the file:
+To create aggregated, binned mutation profiles, we first need a [MAF file](https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/) with the mutation (SNV) data. For this example, we will use Non-Hodgkin lymphoma (Lymph-BNHL). We have the corresponding MAF file, called `Lymph-BNHL_SNV_with_SEX.txt`, in [Google Drive](https://drive.google.com/drive/u/0/folders/1Y3QT6v88fGFZPhM3DjXPt6PKbBBApGmF). This should be downloaded, unzipped, and placed in `data/mutation_data/`. Your file, if using your own mutation data, should be called `[CANCER_TYPE]_SNV_with_SEX.txt`. Next, we begin by parsing the file:
 
 ```
 python3 2_Sorting_MutationFileSex_CancerType.py --cancer_types [CANCER_TYPE]
@@ -124,7 +124,7 @@ Putting these together for our example:
 python3 2_Sorting_MutationFileSex_CancerType.py --cancer_types Lymph-BNHL
 python3 3_Intersect_paz_cancertypes.py --cancer_types Lymph-BNHL
 python3 4_AssembleCout_paz_Cancergroup.py --cancer_types Lymph-BNHL
-Rscript align_mutations_to_ranges --cancer_types Lymph-BNHL
+Rscript align_mutations_to_ranges.R --cancer_types Lymph-BNHL
 ```
 
 ## Running SCOTI
@@ -321,7 +321,7 @@ We then create a database called `optuna_db` associated with this user (again, w
 ```
 createdb -O my_user optuna_db
 ```
-Now, change line 827 in `ML_utils.py` to reflect the name of the database, as well as the username and password that you chose for your user (note that we're writing the password in the script, which is not good practice, but for our purposes it's fine). In our case:
+Now, change line 839 in `ML_utils.py` to reflect the name of the database, as well as the username and password that you chose for your user (note that we're writing the password in the script, which is not good practice, but for our purposes it's fine). In our case:
 
 ```
 postgresql://my_user:password@{hostname}:5432/optuna_db
@@ -397,7 +397,7 @@ We're now ready to submit multiple jobs in parallel to train our models. To do t
   Submit the jobs (useful to set off for debugging).
 </details>
 
-Note that if you are not using UGE, you will need to modify lines 196-205 and 239 to reflect your job manager specifics. 
+Note that if you are not using UGE, you will need to modify lines 204-227 and 247 to reflect your job manager specifics. 
 We start by testing things out before submitting jobs, so we will first omit `--submit_jobs`:
 
 ```
