@@ -321,7 +321,7 @@ We then create a database called `optuna_db` associated with this user (again, w
 ```
 createdb -O my_user optuna_db
 ```
-Now, change line 827 in `ML_utils.py` to reflect the name of the database, as well as the username and password that you chose for your user (note that we're writing the password in the script, which is not good practice, but for our purposes it's fine). In our case:
+Now, change line 839 in `ML_utils.py` to reflect the name of the database, as well as the username and password that you chose for your user (note that we're writing the password in the script, which is not good practice, but for our purposes it's fine). In our case:
 
 ```
 postgresql://my_user:password@{hostname}:5432/optuna_db
@@ -397,7 +397,7 @@ We're now ready to submit multiple jobs in parallel to train our models. To do t
   Submit the jobs (useful to set off for debugging).
 </details>
 
-Note that if you are not using UGE, you will need to modify lines 196-205 and 239 to reflect your job manager specifics. 
+Note that if you are not using UGE, you will need to modify lines 204-227 and 247 to reflect your job manager specifics. 
 We start by testing things out before submitting jobs, so we will first omit `--submit_jobs`:
 
 ```
