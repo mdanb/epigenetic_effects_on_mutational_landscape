@@ -228,7 +228,7 @@ for fold in fold_for_test_set_range:
                                    "",
                                    "source /broad/software/scripts/useuse",
                                    "use Anaconda",
-                                   "source activate /ahg/regevdata/projects/ICA_Lung/Wooseung/conda/coosim",
+                                   "source activate /ahg/regevdata/projects/ICA_Lung/Wooseung/conda/coo",
                                    ""])
         job_script = '\n'.join([job_script,
                                 python_command])
