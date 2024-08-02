@@ -415,7 +415,7 @@ python3 prep_ML_model_scripts.py \
 --seed_interval_step=5 \
 --custom_mutations \
 --mem_per_core 1 \
---which_interval_ranges=test_ranges
+--which_interval_ranges=test_ranges \
 --dataset_abbrev GL_t
 ```
 
