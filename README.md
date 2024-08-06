@@ -415,7 +415,8 @@ python3 prep_ML_model_scripts.py \
 --seed_interval_step=5 \
 --custom_mutations \
 --mem_per_core 1 \
---which_interval_ranges=test_ranges
+--which_interval_ranges=test_ranges \
+--dataset_abbrev GL_t
 ```
 
 This creates 20 bash scripts in `analysis/ML` which correspond to the jobs that would be submitted if we were to keep `--submit_jobs`. To make sure the jobs will run, we test out one of the scripts:
@@ -440,6 +441,7 @@ python3 prep_ML_model_scripts.py \
 --custom_mutations \
 --mem_per_core 1 \
 --which_interval_ranges=test_ranges \
+--dataset_abbrev GL_t \
 --submit_jobs
 ```
 

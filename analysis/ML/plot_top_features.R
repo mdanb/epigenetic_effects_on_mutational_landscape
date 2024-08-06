@@ -370,6 +370,23 @@ parser <- add_option(parser, c("--add_p_to_file"), action="store_true",
 #                                   "--grid_cell_types=skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes Oligodendrocytes SH,lung AT2 TS,lung Basal TS",
 #                                   "--fig1b"))
 
+# args = parse_args(parser, args= c("--cancer_types=Lymph-BNHL",
+#                                   "--cell_number_filter=100",
+#                                   "--datasets=Greenleaf_test",
+#                                   "--ML_model=XGB",
+#                                   "--top_features_to_plot_feat_imp=2,5,10",
+#                                   "--top_features_to_plot=1,2,5,10",
+#                                   "--seed_range=1-10",
+#                                   "--feature_importance_method=permutation_importance",
+#                                   "--folds_for_test_set=1-10",
+#                                   "--robustness_analysis",
+#                                   "--annotation=test_annotation",
+#                                   "--tissues_to_consider=all",
+#                                   "--top_features_to_plot=1,2,5,10"
+#                                   ))
+
+
+
 args = parse_args(parser)
 
 cancer_names = hash("Skin-Melanoma"="Melanoma",
@@ -880,10 +897,13 @@ construct_top_feat_barplot <- function(df_test, savefile, savepath,
   color = rep("#000000", nrow(df) - 1)
   color = append(color, "#EE4B2B")
   num_appearances = df[["n_top_feature"]]
+  df$top_feature <- factor(df$top_feature, levels = rev(df$top_feature))
   p <- ggplot(df) +
-    geom_col(aes(x = n_top_feature, y = factor(top_feature,
-                                               levels=rev(df[["top_feature"]])),
+    geom_col(aes(x = n_top_feature, y = top_feature,
                  fill=color), lwd=1.2) +
+    # geom_col(aes(x = n_top_feature, y = factor(top_feature,
+    #                                            levels=rev(df[["top_feature"]])),
+    #              fill=color), lwd=1.2) +
     geom_text(aes(x = n_top_feature + 7,
                   y = top_feature),
               label = paste0("n=", num_appearances), size=60) +
