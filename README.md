@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16753796.svg)](https://doi.org/10.5281/zenodo.16753796)
+
 # Learning the cellular origins of cancer using single-cell chromatin landscapes
 
 This repository houses the codebase for the paper **Learning the cellular origins of cancer using single-cell chromatin landscapes**. In this paper, we proposed SCOOP (**S**ingle-cell **C**ell **O**f **O**rigin **P**redictor), which offers a straightforward and cost-effective framework enabling cancer biologists to ascertain the COO at cell-type resolution for a given cancer mutation profile via scATAC sequencing of suspected normal tissues of origin. 
