@@ -1,3 +1,7 @@
+### Fig 1a ###
+#python3 ../analysis/ML/prep_ML_model_scripts.py --cancer_types Lung-AdenoCA --datasets Bingren Shendure Rawlins_fetal_lung Tsankov --scATAC_cell_number_filter=100 --annotation_dir=finalized_annotation --seed_interval=1-10 --fold_for_test_set_range=1-10 --seed_interval_step=5 --n_optuna_trials_prebackward_selection=50 --n_optuna_trials_backward_selection=50 --cores=8 --feature_importance_method=permutation_importance --test_set_perf_num_features all --top_features_to_plot_feat_imp 5 --cell_types_keep="lung Neuroendocrine-Tsankov" --tissues_to_consider "lung" "fetal_lung" --woo_pcawg #--submit_jobs --add_p_to_file --add_perf_to_file
+# run robustness plotting from analysis/ML as explained in README
+
 ### Fig 1B ###
 #python3 ../analysis/ML/prep_ML_model_scripts.py --cancer_types Skin-Melanoma --scATAC_cell_number_filter 100 --annotation_dir finalized_annotation --datasets Bingren Shendure Greenleaf_colon Greenleaf_pbmc_bm Tsankov Yang_kidney --seed_interval=1-10 --n_optuna_trials_prebackward_selection 50 --n_optuna_trials_backward_selection 50 --feature_importance_method=permutation_importance --fold_for_test_set_range 1-10 --test_set_perf_num_features all --cores=8 --seed_interval_step=5 --woo_pcawg --mem_per_core 1 --grid_analysis --grid_cell_types "skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS" --top_features_to_plot=1 #--submit_jobs --add_perf_to_file_grid
 
@@ -18,8 +22,7 @@
 #Rscript ../analysis/ML/plot_top_features.R --cancer_types="Skin-Melanoma,Liver-HCC,ColoRect-AdenoCA,multiple_myeloma,Eso-AdenoCa,CNS-GBM,Lung-AdenoCA,Lung-SCC" --datasets="Bingren,Shendure,Greenleaf_colon,Greenleaf_blood_bm,Tsankov" --ML_model=XGB --annotation="finalized_annotation,finalized_annotation,finalized_annotation,new_intermediate_blood_bm_annotation,finalized_annotation,finalized_annotation,finalized_annotation,finalized_annotation" --robustness_analysis --seed_range=1-10 --feature_importance_method=permutation_importance --folds_for_test_set=1-10 --grid_analysis --top_features_to_plot=1 --grid_cell_types="skin_sun_exposed Melanocyte BR,liver Hepatoblasts SH,normal_colon Stem GL_Co,bonemarrow B GL_BlBm,stomach Goblet cells SH,cerebrum Astrocytes-Oligodendrocytes SH,lung AT2 TS,lung Basal TS" --fig1b
 
 ### Fig 1C ###
-#python3 ../analysis/ML/prep_ML_model_scripts.py --cancer_types Lung-AdenoCA --datasets Bingren Shendure Rawlins_fetal_lung Tsankov --scATAC_cell_number_filter=100 --annotation_dir=finalized_annotation --seed_interval=1-10 --fold_for_test_set_range=1-10 --seed_interval_step=5 --n_optuna_trials_prebackward_selection=50 --n_optuna_trials_backward_selection=50 --cores=8 --feature_importance_method=permutation_importance --test_set_perf_num_features all --top_features_to_plot_feat_imp 5 --cell_types_keep="lung Neuroendocrine-Tsankov" --tissues_to_consider "lung" "fetal_lung" --woo_pcawg #--submit_jobs --add_p_to_file --add_perf_to_file
-# run robustness plotting from analysis/ML as explained in README
+
 
 #python3 ../analysis/ML/prep_ML_model_scripts.py --cancer_types Lung-SCC --datasets Bingren Shendure Rawlins_fetal_lung Tsankov --scATAC_cell_number_filter=100 --annotation_dir=finalized_annotation --seed_interval=1-10 --fold_for_test_set_range=1-10 --seed_interval_step=5 --n_optuna_trials_prebackward_selection=50 --n_optuna_trials_backward_selection=50 --cores=8 --feature_importance_method=permutation_importance --test_set_perf_num_features all --top_features_to_plot_feat_imp 5 --cell_types_keep="lung Neuroendocrine-Tsankov" --tissues_to_consider "lung" "fetal_lung" --woo_pcawg --add_p_to_file --submit_jobs --add_perf_to_file
 # run robustness plotting from analysis/ML as explained in README
@@ -32,6 +35,15 @@
 
 ### Fig 1D ###
 # See Jupyter notebook ../analysis/paper_umaps.ipynb 
+
+###Fig 1f###
+
+#python3 ../analysis/ML/prep_ML_model_scripts.py --cancer_types MSKScaled --datasets Bingren Shendure Rawlins_fetal_lung Tsankov --scATAC_cell_number_filter=100 --annotation_dir=finalized_annotation --seed_interval=1-10 --fold_for_test_set_range=1-10 --seed_interval_step=5 --n_optuna_trials_prebackward_selection=50 --n_optuna_trials_backward_selection=50 --cores=10 --mem_per_core=1 --feature_importance_method=permutation_importance --test_set_perf_num_features all --top_features_to_plot_feat_imp 5 --cell_types_keep="lung Neuroendocrine-Tsankov" --tissues_to_consider "lung" "fetal_lung" --custom_mutations --submit_jobs --add_p_to_file --add_perf_to_file
+# run robustness plotting from analysis/ML as explained in README
+
+#python3 prep_ML_model_scripts.py --cancer_types Chromothripsis --datasets Bingren Shendure Rawlins_fetal_lung Tsankov --scATAC_cell_number_filter=100 --annotation_dir=finalized_annotation --seed_interval=1-10 --fold_for_test_set_range=1-10 --seed_interval_step=5 --n_optuna_trials_prebackward_selection=50 --n_optuna_trials_backward_selection=50 --cores=10 --mem_per_core=1 --feature_importance_method=permutation_importance --test_set_perf_num_features all --top_features_to_plot_feat_imp 5 --cell_types_keep="lung Neuroendocrine-Tsankov" --tissues_to_consider "lung" "fetal_lung" --custom_mutations --submit_jobs --add_p_to_file --add_perf_to_file
+#
+
 
 ### Fig 1F ###
 #Rscript ../analysis/plot_prolif_rate.R
