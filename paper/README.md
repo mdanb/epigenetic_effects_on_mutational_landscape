@@ -158,7 +158,7 @@ respectively.
 Instructions analogous to those for 1c. 
 
 ### Sup Fig 2b
-For this figure, you need the download the MAF file with the mutation data, which can be found at https://drive.google.com/file/d/1loUifgMF9YkY5_uQ0ARmRZH5hX3po4-E/view?usp=drive_link. Once that's downloaded, put it in `../data/mutation_data` and gunzip the file.
+For this figure, you need the download the MAF file with the mutation data, which can be found at https://zenodo.org/records/16754569/files/InputMutation.maf.tar.gz?download=1 and clinical data, which can be downloaded using this https://zenodo.org/records/16754569/files/Clinical.tsv?download=1 . Once that's downloaded, put it in `../data/mutation_data` and gunzip the file.
 Run the command below the Supplementary Fig2b comment. This will create a figure in `../figures` called `oncoplot.pdf`. 
 
 ## Supplementary Fig 3
