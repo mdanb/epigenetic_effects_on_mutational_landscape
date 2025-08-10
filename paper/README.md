@@ -2,11 +2,14 @@
 The instructions for each figure refer to the lines in the correspondingly named bash script. All data was pre-processed as explained in the README in the homepage of this repo. 
 
 ## Figure 1 
-### 1B
+
+### 1a
+To build the models for that were used to obtain the COO predictions for Figure 1A, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1C comment. These will also create bash scripts containing commands for plotting the results (in `../analysis/ML/robustness_scripts`). Each script will be named with a unique ID. Run these from `../analysis/ML` e.g assuming the unique ID is `robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7`, run 
+
+### 1b
 To build the models for that were used to obtain the COO predictions for Figure 1B, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1B comment (note that you will need to set things up to run jobs in parallel, as explained in the README of the homepage of this repo). To plot the results after building the models, run the call to `../analysis/ML/plot_top_features.R` . This will create a PDF in `figures` called `grid_analysis.pdf`.
 
-### 1C
-To build the models for that were used to obtain the COO predictions for Figure 1C, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1C comment. These will also create bash scripts containing commands for plotting the results (in `../analysis/ML/robustness_scripts`). Each script will be named with a unique ID. Run these from `../analysis/ML` e.g assuming the unique ID is `robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7`, run 
+
 
 ```
 sh robustness_scripts/robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7.sh
@@ -26,11 +29,28 @@ in a file called
 <CANCER_TYPE>_feature_importance_with_<TOP_FEATURES_TO_PLOT_FEAT_IMP>_features_top_5_features.pdf
 ```
 
-### 1D
+### 1c
+
+Instructions analogous to those for 1a.
+
+### 1d
 Run the corresponding commands in the Jupyter notebook `../analysis/ML/paper_umaps.ipynb`
 
-### 1F
-Run the command under the Figure 1F comment. 
+### 1e
+Run the corresponding commands in the Jupyter notebook `../analysis/ML/fig1e.ipynb`
+
+### 1f
+Instructions analogous to those for 1a.
+
+### 1g
+Instructions analogous to those for 1a.
+
+### 1h
+Run the command under the Figure 1h comment.
+
+
+
+
 
 ## Aside
 The next figures require a shared ArchR object. The following steps require quite a bit of memory, so if it doesn't work when you first run it, increase the amount of memory till it works. Also note that for the Shendure dataset, we only need Pancreas and Stomach files. So you can delete the other files or move them to a temporary location. To create this object, we first create Arrow files (can increase number of cores depending on available resources).
