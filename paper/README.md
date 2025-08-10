@@ -67,53 +67,70 @@ Rscript ../data/scripts/create_ArchR_project.R --cores=1
 ```
 
 ## Figure 2
-### 2A
+### 2a
 Run the commands below the Figure 2A comment. The first command creates the ArchR object associated with the colon UMAP. It also gets metacells that are needed for the metacell correlation analysis. The next command creates the binned scATAC fragment data per cell, which is needed for obtaining correlations on a per-cell basis (and then using these to obtain metacell correlations). The final command performs the metacell correlation analysis and plots the results in `../figures/mss.pdf`
 
-### 2B
-Instructions analogous to those for 1C. 
+### 2b
+Instructions analogous to those for 1a. 
 
-### 2C
-Instructions analogous to those for 2A. 
+### 2c
+Instructions analogous to those for 2c. 
 
-### 2D
-Instructions analogous to those for 1C.
+### 2d
+Instructions analogous to those for 1a.
 
 ## Figure 3
-### 3A
-Instructions analogous to those for 1D.
+### 3a
+Instructions analogous to those for 1a.
 
-### 3B
-Instructions analogous to those for 1C.
+### 3b
+Instructions analogous to those for 1d.
 
 ### 3C
-Instructions analogous to those for 1D. 
+Instructions analogous to those for 1d. 
 
-### 3D
-Instructions analogous to those for 2A. 
+### 3d
+Instructions analogous to those for 2a. 
 
-### 3E
-Instructions analogous to those for 1C. 
+### 3e
+Instructions analogous to those for 1a. 
 
-### 3F
-Instructions analogous to those for 1C. 
+### 3g
+Instructions analogous to those for 1a. 
 
 
 ## Figure 4
-### 4A
-Instructions analogous to those for 1C. 
+### 4a
+Run the corresponding commands in the path `../metaplasia_analysis`
 
-### 4B
-Instructions analogous to those for 2A.
+### 4b
+Run the corresponding commands in the path `../metaplasia_analysis`
 
-### 4C
-Instructions analogous to those for 1B. 
+### 4c
+Run the corresponding commands in the path `../metaplasia_analysis`
 
-### 4D
-Instructions analogous to those for 1C. 
+### 4d
+Run the corresponding commands in the path `../metaplasia_analysis`
 
-### 4E
+### 4e
+Instructions analogous to those for 1a. 
+
+## Figure 5
+
+### fig 5a
+Instructions analogous to those for 1a.
+
+### fig 5b
+Instructions analogous to those for 2a. 
+
+### fig 5c
+Instructions analogous to those for 1c. 
+
+
+### fig 5d
 Start by running `../data/scripts/create_subsampled_data.sh` (uncomment the lines in that script for which you want to create the subsampled data for). Then, instructions are analogous to those for 1C. 
+
+
 
 ## Supplementary Fig 1
 Instructions analogous to those for 1C. Note that the extra figures (top feature appearances and test set performance boxplots) can be found in the folder 
