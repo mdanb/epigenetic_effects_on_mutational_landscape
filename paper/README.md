@@ -6,11 +6,6 @@ The instructions for each figure refer to the lines in the correspondingly named
 ### 1a
 To build the models for that were used to obtain the COO predictions for Figure 1A, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1C comment. These will also create bash scripts containing commands for plotting the results (in `../analysis/ML/robustness_scripts`). Each script will be named with a unique ID. Run these from `../analysis/ML` e.g assuming the unique ID is `robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7`, run 
 
-### 1b
-To build the models for that were used to obtain the COO predictions for Figure 1B, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1B comment (note that you will need to set things up to run jobs in parallel, as explained in the README of the homepage of this repo). To plot the results after building the models, run the call to `../analysis/ML/plot_top_features.R` . This will create a PDF in `figures` called `grid_analysis.pdf`.
-
-
-
 ```
 sh robustness_scripts/robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7.sh
 ``` 
@@ -28,6 +23,11 @@ in a file called
 ```
 <CANCER_TYPE>_feature_importance_with_<TOP_FEATURES_TO_PLOT_FEAT_IMP>_features_top_5_features.pdf
 ```
+
+
+### 1b
+To build the models for that were used to obtain the COO predictions for Figure 1B, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1B comment (note that you will need to set things up to run jobs in parallel, as explained in the README of the homepage of this repo). To plot the results after building the models, run the call to `../analysis/ML/plot_top_features.R` . This will create a PDF in `figures` called `grid_analysis.pdf`.
+
 
 ### 1c
 
