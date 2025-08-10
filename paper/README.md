@@ -4,7 +4,7 @@ The instructions for each figure refer to the lines in the correspondingly named
 ## Figure 1 
 
 ### 1a
-To build the models for that were used to obtain the COO predictions for Figure 1A, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1C comment. These will also create bash scripts containing commands for plotting the results (in `../analysis/ML/robustness_scripts`). Each script will be named with a unique ID. Run these from `../analysis/ML` e.g assuming the unique ID is `robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7`, run 
+To build the models for that were used to obtain the COO predictions for Figure 1a, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1a comment. These will also create bash scripts containing commands for plotting the results (in `../analysis/ML/robustness_scripts`). Each script will be named with a unique ID. Run these from `../analysis/ML` e.g assuming the unique ID is `robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7`, run 
 
 ```
 sh robustness_scripts/robustness_c9e9655b-a9b5-4462-a064-db7f69e33ec7.sh
@@ -26,7 +26,7 @@ in a file called
 
 
 ### 1b
-To build the models for that were used to obtain the COO predictions for Figure 1B, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1B comment (note that you will need to set things up to run jobs in parallel, as explained in the README of the homepage of this repo). To plot the results after building the models, run the call to `../analysis/ML/plot_top_features.R` . This will create a PDF in `figures` called `grid_analysis.pdf`.
+To build the models for that were used to obtain the COO predictions for Figure 1b, run `../analysis/ML/prep_ML_model_scripts.py` calls below the Figure 1b comment (note that you will need to set things up to run jobs in parallel, as explained in the README of the homepage of this repo). To plot the results after building the models, run the call to `../analysis/ML/plot_top_features.R` . This will create a PDF in `figures` called `grid_analysis.pdf`.
 
 
 ### 1c
@@ -68,7 +68,7 @@ Rscript ../data/scripts/create_ArchR_project.R --cores=1
 
 ## Figure 2
 ### 2a
-Run the commands below the Figure 2A comment. The first command creates the ArchR object associated with the colon UMAP. It also gets metacells that are needed for the metacell correlation analysis. The next command creates the binned scATAC fragment data per cell, which is needed for obtaining correlations on a per-cell basis (and then using these to obtain metacell correlations). The final command performs the metacell correlation analysis and plots the results in `../figures/mss.pdf`
+Run the commands below the Figure 2a comment. The first command creates the ArchR object associated with the colon UMAP. It also gets metacells that are needed for the metacell correlation analysis. The next command creates the binned scATAC fragment data per cell, which is needed for obtaining correlations on a per-cell basis (and then using these to obtain metacell correlations). The final command performs the metacell correlation analysis and plots the results in `../figures/mss.pdf`
 
 ### 2b
 Instructions analogous to those for 1a. 
