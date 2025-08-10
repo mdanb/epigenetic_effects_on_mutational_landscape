@@ -34,10 +34,10 @@ in a file called
 Instructions analogous to those for 1a.
 
 ### 1d
-Run the corresponding commands in the Jupyter notebook `../analysis/ML/paper_umaps.ipynb`
+Run the corresponding commands in the Jupyter notebook `../analysis/paper_umaps.ipynb`
 
 ### 1e
-Run the corresponding commands in the Jupyter notebook `../analysis/ML/fig1e.ipynb`
+Run the corresponding commands in the Jupyter notebook `../analysis/fig1e.ipynb`
 
 ### 1f
 Instructions analogous to those for 1a.
@@ -154,31 +154,54 @@ and
 respectively. 
 
 ## Supplementary Fig 2
-### Sup Fig 2A
-Instructions analogous to those for 1C. 
+### Sup Fig 2a
+Instructions analogous to those for 1c. 
 
-### Sup Fig 2B
+### Sup Fig 2b
 For this figure, you need the download the MAF file with the mutation data, which can be found at https://drive.google.com/file/d/1loUifgMF9YkY5_uQ0ARmRZH5hX3po4-E/view?usp=drive_link. Once that's downloaded, put it in `../data/mutation_data` and gunzip the file.
-Run the command below the Supplementary Fig2B comment. This will create a figure in `../figures` called `oncoplot.pdf`. 
+Run the command below the Supplementary Fig2b comment. This will create a figure in `../figures` called `oncoplot.pdf`. 
 
 ## Supplementary Fig 3
-Instructions analogous to those for 1C. 
+Instructions analogous to those for 1c. 
 
 ## Supplementary Fig 4
-Instructions analogous to those for 1C. 
+Instructions analogous to those for 1c. 
 
 ## Supplementary Fig 5
-Instructions analogous to those for 1C. 
+Instructions analogous to those for 1c. 
 
 ## Supplementary Fig 6
-### Sup Fig 6A
-Instructions analogous to those for 1C. 
+### Sup Fig 6a
+Run the corresponding commands in the path `../metaplasia_analysis`
 
-### Sup Fig 6B
-Run the command below the Supplementary Fig6B comment. This will create the marker gene feature plots in `../figures` as `temp.pdf`.  
+### Sup Fig 6b
+Run the corresponding commands in the path `../metaplasia_analysis`
+
+### Sup Fig 6c
+Instructions analogous to those for 1c. 
+
+### Sup Fig 6d
+Instructions analogous to those for 1c. 
 
 ## Supplementary Fig 7
-Instructions analogous to those for 1C. 
+Instructions analogous to those for 1c. 
+
+## Supplementary Fig 8
+### Sup Fig 8a
+Instructions analogous to those for 1c. 
+
+### Sup Fig 8b
+Run the command below the Supplementary Fig6B comment. This will create the marker gene feature plots in `../figures` as `temp.pdf`.  
+
+## Supplementary Fig 9
+Instructions analogous to those for 1c. 
+
+## Supplementary Fig 10
+Instructions analogous to those for 1c. 
+
+## Supplementary Fig 11
+Run the corresponding commands in the Jupyter notebook `../analysis/sup11.ipynb`
+
 
 
 
