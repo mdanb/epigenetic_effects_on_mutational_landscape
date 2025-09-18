@@ -2,7 +2,7 @@
 
 # Learning the cellular origins of cancer using single-cell chromatin landscapes
 
-This repository houses the codebase for the paper **Learning the cellular origins of cancer using single-cell chromatin landscapes**. In this paper, we proposed SCOOP (**S**ingle-cell **C**ell **O**f **O**rigin **P**redictor), which offers a straightforward and cost-effective framework enabling cancer biologists to ascertain the COO at cell-type resolution for a given cancer mutation profile via scATAC sequencing of suspected normal tissues of origin. 
+This repository houses the codebase for the paper [**Learning the cellular origins of cancer using single-cell chromatin landscapes**](https://doi.org/10.1038/s41467-025-63957-3). In this paper, we proposed SCOOP (**S**ingle-cell **C**ell **O**f **O**rigin **P**redictor), which offers a straightforward and cost-effective framework enabling cancer biologists to ascertain the COO at cell-type resolution for a given cancer mutation profile via scATAC sequencing of suspected normal tissues of origin. 
  
 In the first section below, we provide an example of how to pre-process data and prepare it as input for SCOOP, in addition to then running SCOOP. To reproduce paper figures, see scripts in the directory `paper`, named by the corresponding figure. 
 
